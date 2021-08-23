@@ -1,0 +1,15 @@
+option omit_equals;
+
+message {
+
+  string filename;
+  bytes content;
+  int max_files;
+  long period_ms;
+  // NO LONGER USED but left here to avoid errors about 'unknown field':
+  bool riverview_only;
+
+  // This is set true if a file was actually generated
+  //
+  bool generated;
+}

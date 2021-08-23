@@ -1,0 +1,107 @@
+[!package_decl]
+
+[!imports]
+
+@@/**
+@@ * Generated Java data class (do not edit!)
+@@ *
+@@ * Instances of this class should be considered immutable.  A mutable copy of an instance
+@@ * can be constructed by calling the toBuilder() method.  When clients pass instances to other
+@@ * code, if mutation of those instances is not desired, then the client should ensure that the
+@@ * instance is not actually a Builder (e.g. by calling build() if necessary).
+@@ */
+public class [!class] implements {{js.data.AbstractData|AbstractData}} {
+
+  @@// Field 'getters'
+
+[!class_getter_implementation]
+
+  @@/**
+  @@ * Construct a builder from this data class object.
+  @@ * Where appropriate, this object's values are defensively copied to mutable versions
+  @@ */
+  @Override
+  public Builder toBuilder() {
+    return new Builder(this);
+  }
+
+  @@// Constants used to refer to the fields, e.g., as they appear in json maps
+
+[!string_constants]
+
+[!to_string]
+
+  @@/**
+  @@ * Serialize this object to a json map
+  @@ */
+[!to_json]
+
+  @@/**
+  @@ * The instance is already immutable, so return unchanged
+  @@ */
+  @Override
+  public [!class] build() {
+    return this;
+  }
+
+[!parse]
+
+  @@/**
+  @@ * Construct a new builder for objects of this data class
+  @@ */
+  public static Builder newBuilder() {
+    return new Builder(DEFAULT_INSTANCE);
+  }
+
+[!equals]
+
+[!hashcode]
+
+[!instance_fields]
+
+  public static final class Builder extends [!class] {
+
+    private Builder([!class] m) {
+[!copy_to_builder]    }
+
+    @Override
+    public Builder toBuilder() {
+      return this;
+    }
+
+    @Override
+    public int hashCode() {
+      m__hashcode = 0;
+      return super.hashCode();
+    }
+
+    @@/**
+    @@ * Create an immutable version of this builder.  Where appropriate, defensive, immutable copies
+    @@ * are made of the builder fields.
+    @@ */
+    @Override
+    public [!class] build() {
+      [!class] r = new [!class]();
+[!copyfield_from_builder]      return r;
+    }
+
+    @@// Field 'setters'.  Where appropriate, if an argument is immutable, a mutable copy is stored instead
+
+[!setters]
+
+  }
+
+[!class_specific]
+
+  @@/**
+  @@ * The default (immutable) instance of this data object
+  @@ */
+  public static final [!class] DEFAULT_INSTANCE = new [!class]();
+
+  @@/**
+  @@ * The private constructor.  To create new instances, use newBuilder()
+  @@ */
+  private [!class]() {
+[!init_instance_fields]  }
+
+}

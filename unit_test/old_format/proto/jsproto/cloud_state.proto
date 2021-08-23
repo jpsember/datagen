@@ -1,0 +1,3 @@
+// Represents the state of 'push to cloud' operations for a barn session
+
+enum { none, pending, aborted, completed }

@@ -1,0 +1,7 @@
+// Map of CloudSessionInfo objects, mapped to session id
+
+class jsproto.CloudSessionInfo;
+
+message {
+  map string CloudSessionInfo session_info;
+}

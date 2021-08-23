@@ -1,0 +1,4 @@
+message {
+  int total_sessions;
+  int total_images;
+}

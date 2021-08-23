@@ -1,0 +1,20 @@
+message {
+
+  // If false, we will generate errors instead of warnings, to track down some potential problems with API calls;
+  // see issue #1612
+  bool non_strict;
+
+  int max_images_per_session;
+  int max_images;
+  int max_sessions;
+  int max_images_per_zip_file;
+  string version;
+  bool retain_simulation_images;
+
+  // The amount of time to buffer images in the TemporalOrderingPipe.
+  // If zero, omits the pipe.
+  //
+  // !!!! Deprecated?  See issue #1758.
+  //
+  long temporal_buffer_ms;
+}

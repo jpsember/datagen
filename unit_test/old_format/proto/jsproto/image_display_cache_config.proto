@@ -1,0 +1,16 @@
+message {
+
+  // Where the cached images are to be stored
+  //
+  File path;
+
+  // URL for cached images
+  //
+  string url;
+
+  // Apply special algorithm to avoid dark...light oscillation (issue #1767)
+  //
+  bool adaptive_normalization;
+
+  int capacity;
+}

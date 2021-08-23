@@ -1,0 +1,59 @@
+message {
+
+  bool disabled;
+
+  // If true, uses VelocityPipe to help estimate platform speed
+  // when no udder detections are available
+  //
+  bool include_image_velocity;
+
+  // Factor to convert image velocity (from VelocityPipe) to platform velocity
+  // (i.e., the velocity calculated when udder detections are available)
+  //
+  float image_to_platform_factor;
+
+  // Ideal location of center of udder within image
+  //
+  IPoint udder_center;
+
+  float min_platform_speed;
+
+  int bracket_size_default;
+  int bracket_size_min;
+  int bracket_size_max;
+
+  // The (approximate) separation between stalls predicted for this barn
+  //
+  int default_stall_separation;
+
+  // The exponential smoothing factor to apply when updating focus_velocity_avg
+  //
+  float velocity_smoothing_factor;
+
+  // Defaults to RawImage.IMAGE_SIZE
+  //
+  IPoint image_size;
+
+  // Maximum number of pixels that udder y-coordinate, or dimensions, can change
+  // from previous
+  //
+  int max_udder_change;
+
+  // Maximum number of pixels of horizontal movement
+  //
+  int max_horizontal_change;
+
+  // Minimum delta t
+  //
+  float min_time_difference_sec;
+
+  float bracket_size_smoothing_factor;
+  float stall_width_smoothing_factor;
+
+  int near_edge_padding;
+
+  // VelocityPipe
+  //
+  float vp_platform_vel_smoothing_factor;
+  IPoint vp_max_speed;
+}

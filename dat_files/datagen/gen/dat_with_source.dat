@@ -1,0 +1,9 @@
+fields {
+  // Path to .dat file, relative to datagen_config.dat_path
+  //
+  string dat_rel_path;
+
+  // Path to source file (xxx.java or xxxx.py), relative to datagen_config.source_path
+  //
+  string source_rel_path;
+}

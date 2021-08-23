@@ -1,0 +1,1 @@
+enum { push, ok, fail }

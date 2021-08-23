@@ -1,0 +1,15 @@
+[!package_decl]
+
+@@/**
+@@ * Generated Java source (do not edit!)
+@@ */
+public enum [!class] {
+
+[!enum_values]
+
+  @@/**
+  @@ * The default value for this enum type
+  @@ */
+  public static final [!class] DEFAULT_INSTANCE = [!default_value];
+
+}

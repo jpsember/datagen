@@ -1,0 +1,28 @@
+enum Language;
+
+fields {
+  File start_dir;
+  File dat_path = "dat_files";
+
+  // If defined, converts from old .proto format to .dat format
+  //
+  File proto_path;
+
+  Language language;
+  File source_path;
+  bool clean;
+  bool delete_old;
+  bool treat_warnings_as_errors;
+
+  // Include extended comments in generated source files
+  //
+  bool comments;
+
+  // For Python, a prefix to add to the packages of data types
+  //
+  string python_package;
+
+  // For Python, if nonempty, used instead of source_path
+  //
+  File python_source_path;
+}

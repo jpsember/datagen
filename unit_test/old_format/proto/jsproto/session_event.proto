@@ -1,0 +1,5 @@
+message {
+  long startTime;
+  long stopTime;
+  int frameCount;
+}

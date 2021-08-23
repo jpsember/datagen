@@ -1,0 +1,27 @@
+enum jsproto.DetectionRenderType;
+enum jsproto.ImageMode;
+
+message {
+
+  IPoint size;
+  DetectionRenderType udder_detection;
+
+  bool sharpen;
+  bool aim_guide;
+  int minimum_confidence;
+
+  // Minimum elapsed time to replace a result with one with a lower confidence
+  long refresh_delay;
+
+  ImageMode mode;
+
+  int grid_cell_size;
+  int warm_start;
+  int warm_size;
+  int num_colors;
+
+  int rgba0;
+  int rgba1;
+
+  // (temporary comment to trigger pojo rebuild, see issue #1807)
+}

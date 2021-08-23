@@ -1,0 +1,24 @@
+// Configuration options for CowIdManager
+
+option omit_equals;
+
+message {
+  IPoint image_size;
+
+  // Length of time to keep cow id messages within buffer
+  long expiry_time;
+
+  bool simulated_id_service;
+
+  // Normally, CowIdManager submits results to IdService and removes the results
+  // when they are available.  For test purposes, set this true to disable this behaviour
+  // (so IdService inputs/outputs can be tested in isolation):
+  bool detached_id_service;
+
+  // If defined, caches API results to this directory (for test or simulation purposes)
+  File cache_file;
+
+  int min_digits;
+  int max_digits;
+  string regex_pattern;
+}

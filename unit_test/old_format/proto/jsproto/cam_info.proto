@@ -1,0 +1,4 @@
+message {
+
+  long last_udder_detection_timestamp;
+}
