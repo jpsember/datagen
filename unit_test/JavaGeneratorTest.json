@@ -20,7 +20,8 @@
   "typeJsonListVarious" : 1494,
    "typeJsonMapVarious" : 2264,
       "typeLongVarious" : 3191,
-       "typeMapVarious" : 5103,
+          "typeMapTemp" : 8151,
+       "typeMapVarious" : 9996,
      "typeShortVarious" : 4511,
            "typeString" : 1409
 }

@@ -115,7 +115,7 @@ public class MapDataType extends DataType {
           f.javaName(), ".entrySet())", IN, //
           "j.put(", wrappedKeyType().sourceGenerateSerializeToObjectExpression("e.getKey()"), ", ",
           wrappedValueType().sourceGenerateSerializeToObjectExpression("e.getValue()"), ");", OUT, //
-          "m.put(", QUOTE, f.nameStringConstant(), ", j);", //
+          "m.put(", f.nameStringConstant(), ", j);", //
           CLOSE, CR);
     }
     sourceEndIf(s);
@@ -157,7 +157,7 @@ public class MapDataType extends DataType {
     if (python()) {
       throw notSupported("Maps not supported in Python (yet)");
     } else {
-      s.a("r = r * 37 + m",f.javaName(),".hashCode();");
+      s.a("r = r * 37 + m", f.javaName(), ".hashCode();");
     }
   }
 
