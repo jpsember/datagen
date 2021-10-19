@@ -63,7 +63,7 @@ public class DoubleArrayDataType extends DataContractDataType {
     String constName = "DEF_" + fieldDef.nameStringConstant();
     sb.a("  private static final ", typeName(), " ", constName, " = ");
     scanner.read(SQOP);
-    sb.a("[");
+    sb.a("{");
     for (int index = 0;; index++) {
       if (scanner.readIf(SQCL) != null)
         break;
@@ -76,7 +76,7 @@ public class DoubleArrayDataType extends DataContractDataType {
       }
       sb.a(scanner.read(NUMBER).text());
     }
-    sb.a("];").cr();
+    sb.a("};").cr();
     return constName;
   }
 
