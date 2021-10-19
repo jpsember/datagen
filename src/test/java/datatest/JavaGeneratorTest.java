@@ -228,13 +228,12 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeDoubleVarious() {
-    rv();
     p().pr("fields {", INDENT, //
         "double alpha;", CR, //
         "double beta = " + Double.MAX_VALUE + ";", CR, //
         "?double gamma;", CR, //
         "?*double epsilon;", CR, //
-        "*double hotel = \"3, 1e-3\";", CR, //
+        "*double hotel = [3, 1e-3];", CR, //
         OUTDENT, "}");
     compile();
   }
