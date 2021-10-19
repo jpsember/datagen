@@ -32,6 +32,8 @@ import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
 import datagen.parsing.Scanner;
+import js.data.DoubleArray;
+import js.json.JSList;
 
 public class DoubleArrayDataType extends DataContractDataType {
 
@@ -58,13 +60,32 @@ public class DoubleArrayDataType extends DataContractDataType {
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
+    SourceBuilder sb = classSpecificSource;
     if (python())
       throw notSupported("not supported yet");
     String constName = "DEF_" + fieldDef.nameStringConstant();
     String strText = scanner.read(STRING).text();
+
+    pr("strText:", strText);
+    strText = "[" + strText.substring(1, strText.length()-1) + "]";
+    JSList asList = new JSList(strText);
+    double[] array = DoubleArray.DEFAULT_INSTANCE.parse(asList).array();
+
     todo("We can do this parsing at code generation time");
-    classSpecificSource.a("  private static final ", typeName(), " ", constName, " = ", //
-        ParseTools.PKG_DOUBLE_ARRAY, ".DEFAULT_INSTANCE.parse(", strText, ").array();", CR);
+    sb.a("  private static final ", typeName(), " ", constName, " = ");
+    if (true) {
+      sb.a("[");
+      int i = -1;
+      for (double x : array) {
+        i++;
+        if (i > 0)
+          sb.a(", ");
+        sb.a(x);
+      }
+      sb.a("]");
+    } else
+      sb.a(ParseTools.PKG_DOUBLE_ARRAY, ".DEFAULT_INSTANCE.parse(", strText, ").array()");
+    sb.a(";").cr();
     return constName;
   }
 
