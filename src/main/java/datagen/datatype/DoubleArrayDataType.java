@@ -24,6 +24,7 @@
  **/
 package datagen.datatype;
 
+import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
 import datagen.DataType;
@@ -57,7 +58,14 @@ public class DoubleArrayDataType extends DataContractDataType {
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    throw notSupported("not supported yet");
+    if (python())
+      throw notSupported("not supported yet");
+    String constName = "DEF_" + fieldDef.nameStringConstant();
+    String strText = scanner.read(STRING).text();
+    todo("We can do this parsing at code generation time");
+    classSpecificSource.a("  private static final ", typeName(), " ", constName, " = ", //
+        ParseTools.PKG_DOUBLE_ARRAY, ".DEFAULT_INSTANCE.parse(", strText, ").array();", CR);
+    return constName;
   }
 
   public String getSerializeDataType() {
