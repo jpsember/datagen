@@ -155,13 +155,18 @@ public class DatagenOper extends AppOper {
             + SourceGen.sourceFileExtension(config.language());
         File sourceFile = new File(config.sourcePath(), relativeClassFile);
 
+        if (config.clean()) {
+          // If we haven't yet done so, delete the 'gen' directory that will contain this source file
+          discardGenDirectory(sourceFile);
+        }
+
         DatWithSource fileEntry = DatWithSource.newBuilder().datRelPath(rel.getPath())
             .sourceRelPath(relativeClassFile).build();
 
         if (config.clean() || !sourceFile.exists() || sourceFile.lastModified() < d.abs(rel).lastModified()) {
           if (verbose()) {
             if (sourceFile.exists())
-              log("file is out of date:", config.sourcePath());
+              log("file is out of date:", relativeClassFile);
             else
               log("could not locate:", INDENT, relativeClassFile);
           }
@@ -349,6 +354,21 @@ public class DatagenOper extends AppOper {
     return output;
   }
 
+  private void discardGenDirectory(File sourceFile) {
+    String path = sourceFile.toString();
+    int cursor = path.lastIndexOf("/gen/");
+    if (cursor < 0)
+      setError("Cannot find generated directory for source file:", sourceFile);
+    File genDirectory = new File(path.substring(0, cursor) + "/gen");
+    if (mGenDirectoriesSet.add(genDirectory)) {
+      if (genDirectory.exists()) {
+        log("Deleting existing generated source directory:", genDirectory);
+        files().deleteDirectory(genDirectory);
+      }
+    }
+  }
+
+  private Set<File> mGenDirectoriesSet = hashSet();
   private Context mContext;
   private List<DatWithSource> mGeneratedSourceFilesToFreshen = arrayList();
 
