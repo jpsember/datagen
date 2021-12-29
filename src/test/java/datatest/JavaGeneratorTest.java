@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import datagen.gen.Unused;
+import datagen.gen.SampleDataType;
 import js.data.ByteArray;
 import js.data.DataUtil;
 import js.data.IntArray;
@@ -70,12 +70,12 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeIntListSerialization() {
-    Unused.Builder b = Unused.newBuilder();
+    SampleDataType.Builder b = SampleDataType.newBuilder();
     b.i3(SAMPLE_INTS);
-    Unused x = b.build();
+    SampleDataType x = b.build();
     String s = DataUtil.toString(x);
     JSMap m = new JSMap(s);
-    Unused u2 = Unused.DEFAULT_INSTANCE.parse(m);
+    SampleDataType u2 = SampleDataType.DEFAULT_INSTANCE.parse(m);
     log("Original:", INDENT, x);
     log("Parsed:", INDENT, u2);
     assertEquals(x, u2);
@@ -119,12 +119,12 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeByteListSerialization() {
-    Unused.Builder b = Unused.newBuilder();
+    SampleDataType.Builder b = SampleDataType.newBuilder();
     b.b3(SAMPLE_BYTES);
-    Unused x = b.build();
+    SampleDataType x = b.build();
     String s = DataUtil.toString(x);
     JSMap m = new JSMap(s);
-    Unused u2 = Unused.DEFAULT_INSTANCE.parse(m);
+    SampleDataType u2 = SampleDataType.DEFAULT_INSTANCE.parse(m);
     log("Original:", INDENT, x);
     log("Parsed:", INDENT, u2);
     assertEquals(x, u2);
@@ -143,12 +143,12 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeShortListSerialization() {
-    Unused.Builder b = Unused.newBuilder();
+    SampleDataType.Builder b = SampleDataType.newBuilder();
     b.s3(SAMPLE_SHORTS);
-    Unused x = b.build();
+    SampleDataType x = b.build();
     String s = DataUtil.toString(x);
     JSMap m = new JSMap(s);
-    Unused u2 = Unused.DEFAULT_INSTANCE.parse(m);
+    SampleDataType u2 = SampleDataType.DEFAULT_INSTANCE.parse(m);
     log("Original:", INDENT, x);
     log("Parsed:", INDENT, u2);
     assertEquals(x, u2);
@@ -174,12 +174,12 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeLongListSerialization() {
-    Unused.Builder b = Unused.newBuilder();
+    SampleDataType.Builder b = SampleDataType.newBuilder();
     b.l3(SAMPLE_LONGS);
-    Unused x = b.build();
+    SampleDataType x = b.build();
     String s = DataUtil.toString(x);
     JSMap m = new JSMap(s);
-    Unused u2 = Unused.DEFAULT_INSTANCE.parse(m);
+    SampleDataType u2 = SampleDataType.DEFAULT_INSTANCE.parse(m);
     log("Original:", INDENT, x);
     log("Parsed:", INDENT, u2);
     dump("original:", x.l3());
@@ -200,15 +200,15 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeFloatListSerialization() {
-    Unused.Builder u = Unused.newBuilder();
+    SampleDataType.Builder u = SampleDataType.newBuilder();
     float[] SAMPLE_FLOATS = { 3.1415f, 1000f };
 
     u.f3(SAMPLE_FLOATS);
-    Unused v = u.build();
+    SampleDataType v = u.build();
     String s = DataUtil.toString(v);
 
     JSMap m = new JSMap(s);
-    Unused w = Unused.DEFAULT_INSTANCE.parse(m);
+    SampleDataType w = SampleDataType.DEFAULT_INSTANCE.parse(m);
     log("Original:", INDENT, v);
     log("Parsed:", INDENT, w);
     assertEquals(v, w);
@@ -216,15 +216,15 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeDoubleListSerialization() {
-    Unused.Builder u = Unused.newBuilder();
+    SampleDataType.Builder u = SampleDataType.newBuilder();
     double[] SAMPLE_DOUBLES = { 3.1415, 1000.0 };
 
     u.d3(SAMPLE_DOUBLES);
-    Unused v = u.build();
+    SampleDataType v = u.build();
     String s = DataUtil.toString(v);
 
     JSMap m = new JSMap(s);
-    Unused w = Unused.DEFAULT_INSTANCE.parse(m);
+    SampleDataType w = SampleDataType.DEFAULT_INSTANCE.parse(m);
     log("Original:", INDENT, v);
     log("Parsed:", INDENT, w);
     assertEquals(v, w);
@@ -482,7 +482,7 @@ public class JavaGeneratorTest extends GenBaseTest {
     int[] ints = { 1, 2, 3, 4 };
     long[] longs = { 1, 2, 3, 4 };
 
-    Unused.Builder b = Unused.newBuilder();
+    SampleDataType.Builder b = SampleDataType.newBuilder();
     b.b3(bytes);
     b.d3(doubles);
     b.f3(floats);
@@ -490,7 +490,7 @@ public class JavaGeneratorTest extends GenBaseTest {
     b.i3(ints);
     b.l3(longs);
 
-    Unused ba = b.build();
+    SampleDataType ba = b.build();
     JSMap json = ba.toJson();
 
     pr(DASHES);
@@ -506,7 +506,7 @@ public class JavaGeneratorTest extends GenBaseTest {
     pr(ByteArray.with(ba.b3()));
     pr(DASHES);
 
-    Unused bb = Files.parseAbstractDataOpt(Unused.DEFAULT_INSTANCE, json);
+    SampleDataType bb = Files.parseAbstractDataOpt(SampleDataType.DEFAULT_INSTANCE, json);
     checkState(ba.equals(bb));
     pr("Verifying objects are equal after serialization/deserialization:");
     pr(bb);

@@ -16,7 +16,7 @@ import js.json.JSMap;
  * code, if mutation of those instances is not desired, then the client should ensure that the
  * instance is not actually a Builder (e.g. by calling build() if necessary).
  */
-public class Unused implements AbstractData {
+public class SampleDataType implements AbstractData {
 
   // Field 'getters'
 
@@ -218,16 +218,16 @@ public class Unused implements AbstractData {
    * The instance is already immutable, so return unchanged
    */
   @Override
-  public Unused build() {
+  public SampleDataType build() {
     return this;
   }
 
   @Override
-  public Unused parse(Object obj) {
-    return new Unused((JSMap) obj);
+  public SampleDataType parse(Object obj) {
+    return new SampleDataType((JSMap) obj);
   }
 
-  private Unused(JSMap m) {
+  private SampleDataType(JSMap m) {
     mB1 = m.opt(B1, (byte) 0);
     mB2 = m.optByte(B2);
     {
@@ -331,9 +331,9 @@ public class Unused implements AbstractData {
   public boolean equals(Object object) {
     if (this == object)
       return true;
-    if (object == null || !(object instanceof Unused))
+    if (object == null || !(object instanceof SampleDataType))
       return false;
-    Unused other = (Unused) object;
+    SampleDataType other = (SampleDataType) object;
     if (other.hashCode() != hashCode())
       return false;
     if (!(mB1 == other.mB1))
@@ -519,9 +519,9 @@ public class Unused implements AbstractData {
   protected double[] mD4;
   protected int m__hashcode;
 
-  public static final class Builder extends Unused {
+  public static final class Builder extends SampleDataType {
 
-    private Builder(Unused m) {
+    private Builder(SampleDataType m) {
       mB1 = m.mB1;
       mB2 = m.mB2;
       mB3 = m.mB3;
@@ -564,8 +564,8 @@ public class Unused implements AbstractData {
      * are made of the builder fields.
      */
     @Override
-    public Unused build() {
-      Unused r = new Unused();
+    public SampleDataType build() {
+      SampleDataType r = new SampleDataType();
       r.mB1 = mB1;
       r.mB2 = mB2;
       r.mB3 = mB3;
@@ -720,12 +720,12 @@ public class Unused implements AbstractData {
   /**
    * The default (immutable) instance of this data object
    */
-  public static final Unused DEFAULT_INSTANCE = new Unused();
+  public static final SampleDataType DEFAULT_INSTANCE = new SampleDataType();
 
   /**
    * The private constructor.  To create new instances, use newBuilder()
    */
-  private Unused() {
+  private SampleDataType() {
     mB3 = DataUtil.EMPTY_BYTE_ARRAY;
     mS3 = DataUtil.EMPTY_SHORT_ARRAY;
     mI3 = DataUtil.EMPTY_INT_ARRAY;
