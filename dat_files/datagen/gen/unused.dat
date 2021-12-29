@@ -1,5 +1,6 @@
-// An unused generated class; only used to verify that
-// there are no compilation errors in the result
+// Used to verify that there are no compilation errors in the result;
+// also used in some unit tests that require a data type with fields of various types;
+// TODO: rename to something less misleading, e.g. SampleDataType
 //
 
 fields {

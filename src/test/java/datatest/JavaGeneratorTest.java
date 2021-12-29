@@ -29,8 +29,12 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import datagen.gen.Unused;
+import js.data.ByteArray;
 import js.data.DataUtil;
+import js.data.IntArray;
 import js.data.LongArray;
+import js.data.ShortArray;
+import js.file.Files;
 import js.json.JSMap;
 
 import static js.base.Tools.*;
@@ -465,6 +469,49 @@ public class JavaGeneratorTest extends GenBaseTest {
         "map string string delta;", CR, //
         OUTDENT, "}");
     compile();
+  }
+
+  @Test
+  public void base64Encoding() {
+    redirectSystemOut();
+
+    byte[] bytes = { 1, 2, 3, 4, -1, -2, -3, -4, 127, -128 };
+    double[] doubles = { 1.234, 1.234e4, 1.234e8 };
+    float[] floats = { 1.234f, 1.234e4f, 1.234e8f };
+    short[] shorts = { 1, 2, 3, 4 };
+    int[] ints = { 1, 2, 3, 4 };
+    long[] longs = { 1, 2, 3, 4 };
+
+    Unused.Builder b = Unused.newBuilder();
+    b.b3(bytes);
+    b.d3(doubles);
+    b.f3(floats);
+    b.s3(shorts);
+    b.i3(ints);
+    b.l3(longs);
+
+    Unused ba = b.build();
+    JSMap json = ba.toJson();
+
+    pr(DASHES);
+
+    pr("Serialized data type:");
+    pr(json);
+    pr(DASHES);
+
+    pr("Printing primitive arrays:");
+
+    pr(IntArray.with(ba.i3()));
+    pr(ShortArray.with(ba.s3()));
+    pr(ByteArray.with(ba.b3()));
+    pr(DASHES);
+
+    Unused bb = Files.parseAbstractDataOpt(Unused.DEFAULT_INSTANCE, json);
+    checkState(ba.equals(bb));
+    pr("Verifying objects are equal after serialization/deserialization:");
+    pr(bb);
+    pr(DASHES);
+    assertSystemOut();
   }
 
 }
