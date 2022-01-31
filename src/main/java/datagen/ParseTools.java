@@ -31,15 +31,20 @@ import java.util.regex.Pattern;
 
 import datagen.gen.Language;
 import datagen.gen.QualifiedName;
-import datagen.parsing.DFA;
 import js.file.Files;
+import js.parsing.DFA;
 import js.parsing.MacroParser;
 import js.parsing.RegExp;
 
 public final class ParseTools {
 
-  public static final String DATA_DEFINITION_EXT = "dat";
-  public static final String DOT_DATA_DEFINITION_EXTENSION = "." + DATA_DEFINITION_EXT;
+  public static final String EXT_DATA_DEFINITION = "dat";
+  public static final String DOT_EXT_DATA_DEFINITION = "." + EXT_DATA_DEFINITION;
+
+  @Deprecated
+  public static final String DATA_DEFINITION_EXT = EXT_DATA_DEFINITION;
+  @Deprecated
+  public static final String DOT_DATA_DEFINITION_EXTENSION = DOT_EXT_DATA_DEFINITION;
 
   // Have the compiler calculate the sequence of values
   private static int x = 0;
@@ -73,18 +78,6 @@ public final class ParseTools {
       sDFA = new DFA(Files.readString(Datagen.class, "tokens.dfa"));
     }
     return sDFA;
-  }
-
-  public static long ensureIntegerValue(String numberString, long min, long max) {
-    try {
-      long value = Long.parseLong(numberString);
-      if (value < min || value > max)
-        throw new IllegalArgumentException(
-            "integral value out of range of " + min + "..." + max + ": " + numberString);
-      return value;
-    } catch (Throwable t) {
-      throw badArg("expected an integer, not:", quote(numberString));
-    }
   }
 
   public static float parseFloatValue(String numberString) {
@@ -284,4 +277,5 @@ public final class ParseTools {
   public static final String immutableCopyOfMap(String expr) {
     return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
   }
+
 }

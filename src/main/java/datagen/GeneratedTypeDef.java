@@ -94,7 +94,7 @@ public final class GeneratedTypeDef extends BaseObject {
       if (dataType == null) {
         {
           // Verify that a .dat file exists matching this type, in the same directory as the one we're compiling
-          String datFilename = convertCamelToUnderscore(typeName) + ParseTools.DOT_DATA_DEFINITION_EXTENSION;
+          String datFilename = convertCamelToUnderscore(typeName) + ParseTools.DOT_EXT_DATA_DEFINITION;
           File currentDatFile = new File(context().config.datPath(), context().datWithSource.datRelPath());
           File datFile = new File(currentDatFile.getParentFile(), datFilename);
           if (!datFile.exists())

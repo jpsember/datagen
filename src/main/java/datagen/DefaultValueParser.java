@@ -24,7 +24,7 @@
  **/
 package datagen;
 
-import datagen.parsing.Scanner;
+import js.parsing.Scanner;
 
 public interface DefaultValueParser {
 

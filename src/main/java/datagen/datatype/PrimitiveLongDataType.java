@@ -29,7 +29,7 @@ import static js.base.Tools.*;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
-import datagen.parsing.Scanner;
+import js.parsing.Scanner;
 import static datagen.ParseTools.*;
 
 /**
@@ -53,7 +53,7 @@ public class PrimitiveLongDataType extends DataType {
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    long value = ensureIntegerValue(scanner.read(NUMBER).text(), Long.MIN_VALUE, Long.MAX_VALUE);
+    long value = Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Long.MIN_VALUE, Long.MAX_VALUE);
     if (python())
       return Long.toString(value);
     return Long.toString(value) + "L";

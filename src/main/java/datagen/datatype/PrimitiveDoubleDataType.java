@@ -29,7 +29,7 @@ import static js.base.Tools.*;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
-import datagen.parsing.Scanner;
+import js.parsing.Scanner;
 import static datagen.ParseTools.*;
 
 public class PrimitiveDoubleDataType extends DataType {

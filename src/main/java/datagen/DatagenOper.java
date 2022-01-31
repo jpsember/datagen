@@ -38,9 +38,8 @@ import js.app.AppOper;
 import js.data.DataUtil;
 import js.file.DirWalk;
 import js.file.Files;
-
-import datagen.parsing.Scanner;
-import datagen.parsing.Token;
+import js.parsing.Scanner;
+import js.parsing.Token;
 
 public class DatagenOper extends AppOper {
 
@@ -119,7 +118,7 @@ public class DatagenOper extends AppOper {
     context.config = config;
 
     {
-      DirWalk d = new DirWalk(config.datPath()).withRecurse(true).withExtensions(DATA_DEFINITION_EXT);
+      DirWalk d = new DirWalk(config.datPath()).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
       if (d.files().isEmpty()) {
         pr("(...no .dat files were found in:", config.datPath() + ")");
       }
@@ -138,7 +137,7 @@ public class DatagenOper extends AppOper {
         }
 
         // Determine source file corresponding to this one.
-        String protoName = chomp(rel.getName(), DOT_DATA_DEFINITION_EXTENSION);
+        String protoName = chomp(rel.getName(), DOT_EXT_DATA_DEFINITION);
 
         String sourceClassName;
         switch (config.language()) {
@@ -267,7 +266,7 @@ public class DatagenOper extends AppOper {
       }
       filesExamined++;
       File source = w.abs(f);
-      File target = Files.setExtension(new File(config.datPath(), f.getPath()), DATA_DEFINITION_EXT);
+      File target = Files.setExtension(new File(config.datPath(), f.getPath()), EXT_DATA_DEFINITION);
 
       files().mkdirs(target.getParentFile());
 

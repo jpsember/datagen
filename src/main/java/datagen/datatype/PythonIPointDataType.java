@@ -31,7 +31,7 @@ import static datagen.SourceBuilder.*;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
-import datagen.parsing.Scanner;
+import js.parsing.Scanner;
 
 /**
  * Python IPoints are represented as a list [x,y].
@@ -57,9 +57,9 @@ public final class PythonIPointDataType extends DataType {
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
     scanner.read(BROP);
-    int x = scanner.readInt();
+    int x = scanner.readInt(NUMBER);
     scanner.read(COMMA);
-    int y = scanner.readInt();
+    int y = scanner.readInt(NUMBER);
     scanner.read(BRCL);
     return String.format("[%d, %d]", x, y);
   }

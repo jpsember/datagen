@@ -29,7 +29,7 @@ import static js.base.Tools.*;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
-import datagen.parsing.Scanner;
+import js.parsing.Scanner;
 import static datagen.ParseTools.*;
 
 /**
@@ -51,7 +51,7 @@ public class PrimitiveByteDataType extends DataType {
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    int value = (int) ensureIntegerValue(scanner.read(NUMBER).text(), Byte.MIN_VALUE, Byte.MAX_VALUE);
+    int value = (int) Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Byte.MIN_VALUE, Byte.MAX_VALUE);
     return Integer.toString(value);
   }
 

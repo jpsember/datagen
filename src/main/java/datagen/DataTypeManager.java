@@ -149,9 +149,9 @@ public final class DataTypeManager extends BaseObject {
   private static final DefaultValueParser IPOINT_PARSER = (scanner, classSpecificSource, fieldDef) -> {
     String typeName = fieldDef.dataType().typeName();
     scanner.read(SQOP);
-    int x = scanner.readInt();
+    int x = scanner.readInt(NUMBER);
     scanner.read(COMMA);
-    int y = scanner.readInt();
+    int y = scanner.readInt(NUMBER);
     scanner.read(SQCL);
     String constName = "DEF_" + fieldDef.nameStringConstant();
     classSpecificSource.a("  private static final ", fieldDef.dataType().typeName(), " ", constName,

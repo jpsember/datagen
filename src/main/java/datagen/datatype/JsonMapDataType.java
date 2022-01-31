@@ -32,7 +32,7 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import datagen.parsing.Scanner;
+import js.parsing.Scanner;
 
 /**
  * For Python, this will generate python dicts, to the extent that they are

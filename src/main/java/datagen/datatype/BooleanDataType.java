@@ -30,8 +30,8 @@ import static js.base.Tools.*;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
-import datagen.parsing.Scanner;
 import js.data.DataUtil;
+import js.parsing.Scanner;
 
 public class BooleanDataType extends DataType {
 

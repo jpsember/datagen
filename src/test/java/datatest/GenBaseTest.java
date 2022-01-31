@@ -110,7 +110,7 @@ public abstract class GenBaseTest extends MyTestCase {
     String content = ty.mPrBuffer.toString();
     checkState(!content.isEmpty());
     File datFile = new File(ty.mDatSubdir,
-        convertCamelToUnderscore(ty.mTypeName) + ParseTools.DOT_DATA_DEFINITION_EXTENSION);
+        convertCamelToUnderscore(ty.mTypeName) + ParseTools.DOT_EXT_DATA_DEFINITION);
     Files.S.writeString(datFile, content);
   }
 
@@ -157,7 +157,7 @@ public abstract class GenBaseTest extends MyTestCase {
 
   protected final void generateDummyDatFile(String name) {
     File datFile = new File(mDatRecord.mDatSubdir,
-        convertCamelToUnderscore(name) + ParseTools.DOT_DATA_DEFINITION_EXTENSION);
+        convertCamelToUnderscore(name) + ParseTools.DOT_EXT_DATA_DEFINITION);
     checkState(!datFile.exists());
     Files.S.writeString(datFile, "fields{int unused;}");
   }

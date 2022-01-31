@@ -31,7 +31,7 @@ import static datagen.SourceBuilder.*;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
-import datagen.parsing.Scanner;
+import js.parsing.Scanner;
 
 public final class StringDataType extends DataType {
 

@@ -34,10 +34,10 @@ import datagen.datatype.DataContractDataType;
 import datagen.datatype.EnumDataType;
 import datagen.gen.QualifiedName;
 import datagen.gen.TypeStructure;
-import datagen.parsing.ScanException;
-import datagen.parsing.Scanner;
-import datagen.parsing.Token;
 import js.file.Files;
+import js.parsing.ScanException;
+import js.parsing.Scanner;
+import js.parsing.Token;
 import js.base.BaseObject;
 import js.data.DataUtil;
 
@@ -221,7 +221,7 @@ final class DataDefinitionParser extends BaseObject {
     //
     String enumName;
     String className2 = chomp(new File(mContext.datWithSource.datRelPath()).getName(),
-        DOT_DATA_DEFINITION_EXTENSION);
+        DOT_EXT_DATA_DEFINITION);
     enumName = DataUtil.convertUnderscoresToCamelCase(className2);
     QualifiedName className = parseQualifiedName(enumName, determinePackageName());
     EnumDataType enumDataType = new EnumDataType();

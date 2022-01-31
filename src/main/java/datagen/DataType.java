@@ -26,7 +26,7 @@ package datagen;
 
 import datagen.gen.Language;
 import datagen.gen.QualifiedName;
-import datagen.parsing.Scanner;
+import js.parsing.Scanner;
 import js.data.DataUtil;
 
 import static datagen.SourceBuilder.*;
