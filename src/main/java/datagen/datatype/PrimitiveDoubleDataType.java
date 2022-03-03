@@ -53,9 +53,19 @@ public class PrimitiveDoubleDataType extends DataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    if (f.optional())
+    if (python()) {
+      if (f.optional()) {
+        notSupported("optional Python floats");
+      } else {
+        s.a("r = r * 37 + int(self._", f.javaName(), ")");
+      }
+      return;
+    }
+
+    if (f.optional()) {
+      halt("will this work for optional values?");
       s.a("r = r * 37 + m", f.javaName(), ".intValue();");
-    else
+    } else
       s.a("r = r * 37 + (int) m", f.javaName(), ";");
   }
 

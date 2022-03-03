@@ -295,9 +295,8 @@ public abstract class DataType implements DefaultValueParser {
    */
   public String deserializeStringToJavaValue(String stringValueExpression) {
     if (isPrimitive())
-      return typeName() + ".parse" + DataUtil.capitalizeFirst(typeName()) + "(" + stringValueExpression
-          + ")";
-    throw new UnsupportedOperationException("deserializeStringToJavaValue for dataType:" + getClass());
+      return typeName() + ".parse" + DataUtil.capitalizeFirst(typeName()) + "(" + stringValueExpression + ")";
+    throw notSupported("deserializeStringToJavaValue for dataType:", getClass());
   }
 
   /**
@@ -311,21 +310,20 @@ public abstract class DataType implements DefaultValueParser {
   public String deserializeJsonToJavaValue(String jsonValue) {
     if (isPrimitive())
       return jsonValue;
-    throw new UnsupportedOperationException("deserializeJsonToJavaValue for dataType:" + getClass());
+    throw notSupported("deserializeJsonToJavaValue for dataType:" + getClass());
   }
 
   // ------------------------------------------------------------------
   // Hashcode and Equals methods
   // ------------------------------------------------------------------
 
-
   public void sourceGenerateEquals(SourceBuilder s, String a, String b) {
-    if (isPrimitive())  
-        s.a(a, " == ", b);
-      else 
-    s.a(a, ".equals(", b, ")");
+    if (isPrimitive())
+      s.a(a, " == ", b);
+    else
+      s.a(a, ".equals(", b, ")");
   }
-  
+
   /**
    * Generate source code to continue the calculation of a value for hashCode().
    *

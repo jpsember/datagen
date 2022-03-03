@@ -56,11 +56,11 @@ public final class PythonIPointDataType extends DataType {
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    scanner.read(BROP);
+    scanner.read(SQOP);
     int x = scanner.readInt(NUMBER);
     scanner.read(COMMA);
     int y = scanner.readInt(NUMBER);
-    scanner.read(BRCL);
+    scanner.read(SQCL);
     return String.format("[%d, %d]", x, y);
   }
 

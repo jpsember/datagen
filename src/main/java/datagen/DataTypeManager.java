@@ -57,6 +57,7 @@ public final class DataTypeManager extends BaseObject {
       add("short", PrimitiveLongDataType.SINGLETON);
       add("int", PrimitiveLongDataType.SINGLETON);
       add("long", PrimitiveLongDataType.SINGLETON);
+      // There is no distinction between floats and doubles in Python; just use PrimitiveDoubleDataType
       add("float", PrimitiveDoubleDataType.SINGLETON);
       add("double", PrimitiveDoubleDataType.SINGLETON);
       add("File", StringDataType.SINGLETON);

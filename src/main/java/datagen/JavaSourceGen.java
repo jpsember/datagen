@@ -357,7 +357,7 @@ public final class JavaSourceGen extends SourceGen {
   private void generateEnumValues(GeneratedTypeDef def) {
     EnumDataType dt = def.enumDataType();
     s().in();
-    int i = -1;
+    int i = INIT_INDEX;
     for (String label : dt.labels()) {
       i++;
       if (i > 0)
