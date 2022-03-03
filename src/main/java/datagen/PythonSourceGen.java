@@ -28,6 +28,7 @@ import java.io.File;
 import java.util.List;
 
 import datagen.datatype.EnumDataType;
+import js.data.DataUtil;
 import js.file.Files;
 import js.json.JSMap;
 import js.parsing.MacroParser;
@@ -106,13 +107,23 @@ public class PythonSourceGen extends SourceGen {
     content = ParseTools.adjustLinefeeds(content, config().language());
 
     File target = sourceFile();
-    context().files.mkdirs(Files.parent(target));
+    File parent = Files.parent(target);
+    context().files.mkdirs(parent);
     boolean wrote = context().files.writeIfChanged(target, content);
     if (wrote)
       log(".....updated:", sourceFileRelative());
     else {
       target.setLastModified(System.currentTimeMillis());
       log("...freshened:", sourceFileRelative());
+    }
+
+    // This is annoying, but to make relative imports work in Python we need to ensure
+    // there's an (empty) file '__init__.py' in the same directory as any Python file.
+    //
+    if (!context().files.dryRun()) {
+      File sentinelFile = new File(parent, "__init__.py");
+      if (!sentinelFile.exists())
+        context().files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
     }
   }
 
