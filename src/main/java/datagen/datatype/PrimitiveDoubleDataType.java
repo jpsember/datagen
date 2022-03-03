@@ -57,6 +57,8 @@ public class PrimitiveDoubleDataType extends DataType {
       if (f.optional()) {
         notSupported("optional Python floats");
       } else {
+        alert("experimenting with import");
+        s.a("# {{from pycore.base import *|unused}}").cr();
         s.a("r = r * 37 + int(self._", f.javaName(), ")");
       }
       return;
