@@ -33,6 +33,7 @@ import datagen.FieldDef;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
+@Deprecated // Issue #8: have better approach
 public final class PythonIPointDataType extends DataType {
 
   

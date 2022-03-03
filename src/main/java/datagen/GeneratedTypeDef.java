@@ -100,10 +100,9 @@ public final class GeneratedTypeDef extends BaseObject {
           if (!datFile.exists())
             badArg("No definition file found at", datFile, INDENT, "...use 'extern' to declare its location");
         }
-        dataType = new DataContractDataType();
-        QualifiedName qn = ParseTools.parseQualifiedName(typeName, mContext.generatedTypeDef.packageName());
-        qn = ParseTools.addPythonPrefix(qn, mContext);
-        dataType.setQualifiedClassName(qn);
+        DataContractDataType contractType = new DataContractDataType();
+        contractType.parseQualifiedName(mContext, typeName);
+        dataType = contractType;
         dataTypes.add(dataType.qualifiedClassName().className(), dataType);
       }
     }

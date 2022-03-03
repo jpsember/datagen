@@ -27,10 +27,12 @@ package datagen.datatype;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
+import datagen.gen.QualifiedName;
 import js.data.DataUtil;
 
 /**
@@ -152,6 +154,16 @@ public class DataContractDataType extends DataType {
   @Override
   public String deserializeJsonToJavaValue(String jsonValue) {
     return ourDefaultValue() + ".parse((JSMap) " + jsonValue + ")";
+  }
+
+  public void parseQualifiedName(Context context, String typeName) {
+    // We may not yet have a generated type to provide a default package
+    String defaultPackageName = null;
+    if (context.generatedTypeDef != null)  
+      defaultPackageName = context.generatedTypeDef.packageName();
+    QualifiedName qn = ParseTools.parseQualifiedName(typeName, defaultPackageName);
+    qn = ParseTools.addPythonPrefix(qn, context);
+    setQualifiedClassName(qn);
   }
 
 }

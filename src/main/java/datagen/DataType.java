@@ -70,10 +70,10 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   /**
-   * Optional method to specify the qualified class name
+   * Specify the qualified class name
    */
   protected String provideQualifiedClassNameExpr() {
-    return null;
+    throw notSupported("no qualified class name expression provided");
   }
 
   /**
@@ -109,6 +109,11 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   private String mTypeName;
+
+  public void assertNotPython() {
+    if (python())
+      throw notSupported("unexpected for python");
+  }
 
   /**
    * Determine if the type is a primitive type, e.g. int, short, etc

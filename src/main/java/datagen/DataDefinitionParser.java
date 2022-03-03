@@ -59,10 +59,13 @@ final class DataDefinitionParser extends BaseObject {
 
       if (mContext.generatedTypeDef == null)
         badArg("No 'fields {...}' specified");
-      reportUnusedReferences();
+      if (false && mContext.python())
+        alert("skipping unused references for python");
+      else
+        reportUnusedReferences();
 
     } catch (Throwable t) {
-      if (t instanceof ScanException)
+      if (t instanceof ScanException || alert("always throwing"))
         throw t;
       if (mLastReadToken != null) {
         Throwable t2 = mLastReadToken.fail(t.toString());

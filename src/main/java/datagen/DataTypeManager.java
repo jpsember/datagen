@@ -61,7 +61,7 @@ public final class DataTypeManager extends BaseObject {
       add("float", PrimitiveDoubleDataType.SINGLETON);
       add("double", PrimitiveDoubleDataType.SINGLETON);
       add("File", StringDataType.SINGLETON);
-      add("IPoint", PythonIPointDataType.SINGLETON);
+      add("IPoint", constructPythonDataType("IPoint"));
       break;
     case JAVA:
       add("byte", PrimitiveByteDataType.SINGLETON);
@@ -159,6 +159,12 @@ public final class DataTypeManager extends BaseObject {
         "  = new ", typeName, "(", x, ", ", y, ");", CR);
     return constName;
   };
+
+  private DataType constructPythonDataType(String typeName) {
+    DataContractDataType dataType = new DataContractDataType();
+    dataType.parseQualifiedName(mContext, typeName);
+    return dataType;
+  }
 
   private final Context mContext;
   private final Map<String, DataType> mTypeMap;
