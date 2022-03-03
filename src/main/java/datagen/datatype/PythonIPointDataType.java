@@ -33,25 +33,20 @@ import datagen.FieldDef;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-/**
- * Python IPoints are represented as a list [x,y].
- * 
- * For simplicity, we will assume each such IPoint is immutable; so we won't
- * make defensive copies. We *will* still make defensive copies of lists of
- * IPoints.
- *
- */
 public final class PythonIPointDataType extends DataType {
+
+  
+  private static final String IMPORT_EXPR =        "{{from pycore.base import *|IPoint}}";
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    return "python.IPoint";
+    return IMPORT_EXPR; //"pycore.IPoint";
   }
 
-  @Override
-  public final String ourDefaultValue() {
-    return "[0, 0]";
-  }
+//  @Override
+//  public final String ourDefaultValue() {
+//    return "[0, 0]";
+//  }
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
@@ -61,7 +56,7 @@ public final class PythonIPointDataType extends DataType {
     scanner.read(COMMA);
     int y = scanner.readInt(NUMBER);
     scanner.read(SQCL);
-    return String.format("[%d, %d]", x, y);
+    return String.format("%s[%d, %d]", IMPORT_EXPR, x, y);
   }
 
   @Override
