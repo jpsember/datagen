@@ -63,7 +63,6 @@ public class PrimitiveDoubleDataType extends DataType {
     }
 
     if (f.optional()) {
-      halt("will this work for optional values?");
       s.a("r = r * 37 + m", f.javaName(), ".intValue();");
     } else
       s.a("r = r * 37 + (int) m", f.javaName(), ";");
