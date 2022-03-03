@@ -84,18 +84,18 @@ public class DatagenOper extends AppOper {
     }
 
     if (Files.empty(config.sourcePath())) {
-      String s;
+      File f;
       switch (config.language()) {
       default:
         throw notSupported(config.language());
       case JAVA:
-        s = "src/main/java";
+        f = new File("src/main/java");
         break;
       case PYTHON:
-        s = "py";
+        f = Files.currentDirectory();
         break;
       }
-      config.sourcePath(new File(s));
+      config.sourcePath(f);
     }
 
     File sourcePathRel = config.sourcePath();

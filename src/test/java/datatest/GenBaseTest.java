@@ -90,7 +90,7 @@ public abstract class GenBaseTest extends MyTestCase {
 
   private void generateDirs() {
     if (dr().mDatSubdirRelPath == null)
-      setDatSubdir("gen");
+      setDatSubdir(mLanguage == Language.PYTHON ? "" : "gen");
     if (dr().mDatSubdirRelPath.isEmpty())
       dr().mDatSubdir = datFilesDir();
     else
