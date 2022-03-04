@@ -27,7 +27,6 @@ package datagen;
 import java.util.Map;
 
 import datagen.datatype.*;
-import datagen.gen.QualifiedName;
 import js.base.BaseObject;
 import js.data.AbstractData;
 import js.geometry.FPoint;
@@ -62,7 +61,7 @@ public final class DataTypeManager extends BaseObject {
       add("float", PrimitiveDoubleDataType.SINGLETON);
       add("double", PrimitiveDoubleDataType.SINGLETON);
       add("File", StringDataType.SINGLETON);
-      addPython("pycore.ipoint.IPoint").withSerializeExpression("to_json(False)");
+      add("IPoint", new PyIPointDataType());
       break;
     case JAVA:
       add("byte", PrimitiveByteDataType.SINGLETON);
@@ -142,18 +141,6 @@ public final class DataTypeManager extends BaseObject {
     DataType dataType = new DataContractDataType();
     dataType.setQualifiedClassName(ParseTools.parseQualifiedName(defaultInstance.getClass().getName()));
     add(dataType.qualifiedClassName().className(), dataType, parser);
-  }
-
-  /**
-   * Add a DataContractDataType for Python that supports the abstract data type
-   * contract
-   */
-  private DataContractDataType addPython(String qualifiedName) {
-    DataContractDataType dataType = new DataContractDataType();
-    QualifiedName qn = ParseTools.parseQualifiedName(qualifiedName);
-    dataType.setQualifiedClassName(qn);
-    add(qn.className(), dataType);
-    return dataType;
   }
 
   private void add(AbstractData defaultInstance) {

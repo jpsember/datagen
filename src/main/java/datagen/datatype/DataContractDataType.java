@@ -36,6 +36,7 @@ import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
 import datagen.gen.QualifiedName;
+import js.data.DataUtil;
 import js.parsing.Scanner;
 import js.parsing.Token;
 
@@ -70,13 +71,6 @@ public class DataContractDataType extends DataType {
 
   public String getSerializeDataType() {
     return "Object";
-  }
-
-  public String getSerializeToJSONValue(String value) {
-    if (python())
-      return value + "." + mSerExpr;
-    else
-      return value + ".toJson()";
   }
 
   // Make this final for now to avoid unintended overriding
@@ -128,7 +122,10 @@ public class DataContractDataType extends DataType {
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    return getSerializeToJSONValue(valueExpression);
+    if (python())
+      return valueExpression + ".to_dict()";
+    else
+      return valueExpression + ".toJson()";
   }
 
   @Override
@@ -155,15 +152,37 @@ public class DataContractDataType extends DataType {
   }
 
   public void parseQualifiedName(Context context, String typeName) {
+    boolean db = false && alert("db mode") && typeName.contains("Vol");
     // We may not yet have a generated type to provide a default package
-
     String defaultPackageName = null;
     if (context.python())
       defaultPackageName = "pycore";
-    if (context.generatedTypeDef != null)
+
+    if (context.generatedTypeDef != null) {
       defaultPackageName = context.generatedTypeDef.packageName();
+      if (context.python()) {
+        // If typeName is Xyz, make sure default package ends with xyz, adding if necessary
+        String packageSuff = "." + DataUtil.convertCamelCaseToUnderscores(typeName);
+        if (!("." + defaultPackageName).endsWith(packageSuff)) {
+          defaultPackageName = defaultPackageName + packageSuff;
+        }
+      }
+    }
+
+    if (db)
+      pr("parseQualifiedName, typeName:", typeName, "defaultPackageName:", defaultPackageName);
+
     QualifiedName qn = ParseTools.parseQualifiedName(typeName, defaultPackageName);
+    if (db)
+      pr("parsed:", INDENT, qn);
     qn = ParseTools.addPythonPrefix(qn, context);
+    if (db)
+      pr("added pref:", INDENT, qn);
+
+    if (db) {
+      die("parse qual name:", typeName, "produced:", INDENT, qn);
+    }
+
     setQualifiedClassName(qn);
   }
 
@@ -225,10 +244,4 @@ public class DataContractDataType extends DataType {
     throw notSupported("can't parse default value for token:", t);
   }
 
-  public DataContractDataType withSerializeExpression(String expr) {
-    mSerExpr = expr;
-    return this;
-  }
-
-  private String mSerExpr = "to_dict()";
 }
