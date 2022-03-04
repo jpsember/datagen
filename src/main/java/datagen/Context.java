@@ -31,6 +31,7 @@ import java.util.Set;
 import datagen.gen.DatWithSource;
 import datagen.gen.DatagenConfig;
 import datagen.gen.Language;
+import datagen.gen.QualifiedName;
 import js.file.Files;
 
 public final class Context {
@@ -48,8 +49,25 @@ public final class Context {
   public Language language() {
     return config.language();
   }
-       
+
+  public static String verifyImportExpr(String importExpr) {
+    if (alert("temporary method to verify things")
+        && !(importExpr.startsWith("java") || importExpr.startsWith("js"))
+        && !(importExpr.startsWith("from") || importExpr.startsWith("impor"))) {
+      throw badArg("import expr:", importExpr);
+    }
+    return importExpr;
+  }
+
+  public String constructImportExpression(QualifiedName nm) {
+    if (python()) {
+      return "from " + nm.packagePath() + " import " + nm.className();
+    } else
+      return nm.combined();
+  }
+
   public void includeImport(String importExpr) {
+    Context.verifyImportExpr(importExpr);
     mImportedClasses.add(importExpr);
   }
 

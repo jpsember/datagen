@@ -24,8 +24,11 @@
  **/
 package datagen.datatype;
 
+import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
+
+import java.util.List;
 
 import datagen.Context;
 import datagen.DataType;
@@ -33,7 +36,8 @@ import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
 import datagen.gen.QualifiedName;
-import js.data.DataUtil;
+import js.parsing.Scanner;
+import js.parsing.Token;
 
 /**
  * DataType that wraps objects that implement the DataType interface
@@ -44,14 +48,10 @@ public class DataContractDataType extends DataType {
   public String ourDefaultValue() {
     if (mDefValue == null) {
       if (python()) {
-        String filename = DataUtil.convertCamelCaseToUnderscores(qualifiedClassName().className());
-        mDefValue = ParseTools
-            .importExpression(
-                "from " + qualifiedClassName().packagePath() + "." + filename + " import "
-                    + qualifiedClassName().className(),
+        mDefValue =
+            ParseTools.importExpression(
+                context().constructImportExpression(qualifiedClassName()),
                 qualifiedClassName().className() + ".default_instance");
-        if (todo("!IPoint python impl generates bad data"))
-          checkState(!mDefValue.contains("IPoint"));
       } else {
         mDefValue = ParseTools.importExpression(qualifiedClassName().combined(),
             qualifiedClassName().className()) + ".DEFAULT_INSTANCE";
@@ -75,6 +75,7 @@ public class DataContractDataType extends DataType {
   }
 
   public String getSerializeToJSONValue(String value) {
+    todo("IPoint python should override to use json instead of to_dict");
     if (python())
       return value + ".to_dict()";
     else
@@ -158,12 +159,73 @@ public class DataContractDataType extends DataType {
 
   public void parseQualifiedName(Context context, String typeName) {
     // We may not yet have a generated type to provide a default package
+
     String defaultPackageName = null;
-    if (context.generatedTypeDef != null)  
+    if (context.python())
+      defaultPackageName = "pycore";
+    if (context.generatedTypeDef != null)
       defaultPackageName = context.generatedTypeDef.packageName();
     QualifiedName qn = ParseTools.parseQualifiedName(typeName, defaultPackageName);
     qn = ParseTools.addPythonPrefix(qn, context);
     setQualifiedClassName(qn);
+  }
+
+  @Override
+  public String parseDefaultValue(Scanner scanner, SourceBuilder sb, FieldDef fieldDef) {
+
+    if (!python())
+      return super.parseDefaultValue(scanner, sb, fieldDef);
+
+    // Attempt to infer from the tokens how to parse a default value
+
+    Token t = scanner.peek();
+
+    // If it looks like [ ...., ...]
+    //
+    // then scan a sequence of comma-delimited strings, and pass as arguments to a constructor
+    // 
+    if (t.id(SQOP)) {
+      scanner.read();
+      List<String> exprs = arrayList();
+      boolean commaExp = false;
+      while (scanner.readIf(SQCL) == null) {
+        if (commaExp) {
+          scanner.read(COMMA);
+          commaExp = false;
+          continue;
+        }
+        exprs.add(scanner.read().text());
+        commaExp = true;
+      }
+
+      String constName;
+      if (python()) {
+        constName = "DEF" + fieldDef.nameStringConstant(false);
+        sb.a(constName, "  = ", typeName(), "(");
+        int i = INIT_INDEX;
+        for (String expr : exprs) {
+          i++;
+          if (i > 0)
+            sb.a(", ");
+          sb.a(expr);
+        }
+        sb.a(")", CR);
+      } else {
+        constName = "DEF_" + fieldDef.nameStringConstant();
+        sb.a("  private static final ", fieldDef.dataType().typeName(), " ", constName, "  = new ",
+            typeName(), "(");
+        int i = INIT_INDEX;
+        for (String expr : exprs) {
+          i++;
+          if (i > 0)
+            sb.a(", ");
+          sb.a(expr);
+        }
+        sb.a(");", CR);
+      }
+      return constName;
+    }
+    throw notSupported("can't parse default value for token:", t);
   }
 
 }

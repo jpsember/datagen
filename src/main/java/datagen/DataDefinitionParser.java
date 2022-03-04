@@ -76,6 +76,8 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void reportUnusedReferences() {
+    if (false && alert(
+        "disabled")) return;
     String summary = mContext.dataTypeManager.unusedReferencesSummary();
     if (!summary.isEmpty()) {
       if (mContext.config.treatWarningsAsErrors()) {

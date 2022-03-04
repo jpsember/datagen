@@ -123,7 +123,6 @@ public abstract class SourceGen extends BaseObject {
     parser.withTemplate(template);
     String result = parser.content(key -> {
       // See if this occurrence lies within a string constant; if so, return the original text
-      todo("!I don't think this will work as expected; it won't return the original {{ }} parts");
       {
         int quotesCount = 0;
         for (int cursor = parser.keyCursor(); cursor > 0; cursor--) {

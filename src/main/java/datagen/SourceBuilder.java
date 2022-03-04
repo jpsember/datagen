@@ -251,5 +251,7 @@ public class SourceBuilder {
   private List<Integer> mOldIndentStack = arrayList();
 
   @Deprecated
-  public String debugContent() {return mStringBuilder.toString();}
+  public String debugContent() {
+    return mStringBuilder.toString();
+  }
 }

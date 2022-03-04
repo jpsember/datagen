@@ -86,7 +86,8 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   protected String provideTypeName() {
-    return ParseTools.importExpression(qualifiedClassName().combined(), qualifiedClassName().className());
+    return ParseTools.importExpression(context().constructImportExpression(qualifiedClassName()),
+        qualifiedClassName().className());
   }
 
   public List<String> auxilliaryImportExpressions() {

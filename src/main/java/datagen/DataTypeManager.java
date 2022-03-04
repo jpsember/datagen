@@ -27,6 +27,7 @@ package datagen;
 import java.util.Map;
 
 import datagen.datatype.*;
+import datagen.gen.QualifiedName;
 import js.base.BaseObject;
 import js.data.AbstractData;
 import js.geometry.FPoint;
@@ -61,7 +62,7 @@ public final class DataTypeManager extends BaseObject {
       add("float", PrimitiveDoubleDataType.SINGLETON);
       add("double", PrimitiveDoubleDataType.SINGLETON);
       add("File", StringDataType.SINGLETON);
-      add("IPoint", constructPythonDataType("IPoint"));
+      addPython("pycore.ipoint.IPoint");
       break;
     case JAVA:
       add("byte", PrimitiveByteDataType.SINGLETON);
@@ -143,11 +144,23 @@ public final class DataTypeManager extends BaseObject {
     add(dataType.qualifiedClassName().className(), dataType, parser);
   }
 
+  /**
+   * Add a DataContractDataType for Python that supports the abstract data type
+   * contract
+   */
+  private void addPython(String qualifiedName) {
+    DataContractDataType dataType = new DataContractDataType();
+    QualifiedName qn = ParseTools.parseQualifiedName(qualifiedName);
+    dataType.setQualifiedClassName(qn);
+    add(qn.className(), dataType);
+  }
+
   private void add(AbstractData defaultInstance) {
     add(defaultInstance, null);
   }
 
   private static final DefaultValueParser IPOINT_PARSER = (scanner, classSpecificSource, fieldDef) -> {
+    todo("maybe use the contract data type for this?");
     String typeName = fieldDef.dataType().typeName();
     scanner.read(SQOP);
     int x = scanner.readInt(NUMBER);
@@ -159,12 +172,6 @@ public final class DataTypeManager extends BaseObject {
         "  = new ", typeName, "(", x, ", ", y, ");", CR);
     return constName;
   };
-
-  private DataType constructPythonDataType(String typeName) {
-    DataContractDataType dataType = new DataContractDataType();
-    dataType.parseQualifiedName(mContext, typeName);
-    return dataType;
-  }
 
   private final Context mContext;
   private final Map<String, DataType> mTypeMap;

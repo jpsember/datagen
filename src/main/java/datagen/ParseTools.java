@@ -232,6 +232,7 @@ public final class ParseTools {
   }
 
   public static String importExpression(String importText, String sourceText) {
+    Context.verifyImportExpr(importText);
     return "{{" + importText + "|" + sourceText + "}}";
   }
 
