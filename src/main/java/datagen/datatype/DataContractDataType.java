@@ -152,7 +152,6 @@ public class DataContractDataType extends DataType {
   }
 
   public void parseQualifiedName(Context context, String typeName) {
-    boolean db = false && alert("db mode") && typeName.contains("Vol");
     // We may not yet have a generated type to provide a default package
     String defaultPackageName = null;
     if (context.python())
@@ -170,14 +169,6 @@ public class DataContractDataType extends DataType {
     }
 
     QualifiedName qn = ParseTools.parseQualifiedName(typeName, defaultPackageName);
-    if (db)
-      pr("parseQualifiedName, typeName:", typeName, "defaultPackageName:", defaultPackageName, "yeilds:",
-          INDENT, qn);
-    qn = ParseTools.addPythonPrefix(qn, context);
-    if (db)
-      pr("added pref:", INDENT, qn);
-    if (db)
-      die("investigate");
     setQualifiedClassName(qn);
   }
 

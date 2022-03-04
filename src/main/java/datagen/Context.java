@@ -50,8 +50,8 @@ public final class Context {
     return config.language();
   }
 
-  public static String verifyImportExpr(String importExpr) {
-    if (alert("temporary method to verify things")
+  public  String verifyImportExpr(String importExpr) {
+    if (python() && alert("temporary method to verify things")
         && !(importExpr.startsWith("java") || importExpr.startsWith("js"))
         && !(importExpr.startsWith("from") || importExpr.startsWith("impor"))) {
       throw badArg("import expr:", importExpr);
@@ -67,7 +67,7 @@ public final class Context {
   }
 
   public void includeImport(String importExpr) {
-    Context.verifyImportExpr(importExpr);
+    verifyImportExpr(importExpr);
     mImportedClasses.add(importExpr);
   }
 

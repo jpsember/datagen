@@ -65,8 +65,10 @@ final class DataDefinitionParser extends BaseObject {
         reportUnusedReferences();
 
     } catch (Throwable t) {
-      if (t instanceof ScanException || alert("always throwing"))
+      if (t instanceof ScanException || alert("always throwing")) {
+        pr(t);
         throw t;
+      }
       if (mLastReadToken != null) {
         Throwable t2 = mLastReadToken.fail(t.toString());
         throw new RuntimeException(t2.getMessage(), t);
@@ -76,8 +78,6 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void reportUnusedReferences() {
-    if (false && alert(
-        "disabled")) return;
     String summary = mContext.dataTypeManager.unusedReferencesSummary();
     if (!summary.isEmpty()) {
       if (mContext.config.treatWarningsAsErrors()) {
@@ -144,12 +144,9 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void auxProcClass(DataType dataType) {
-    boolean skipPrefix = readIf(EXCLAIM) != null;
     String nameExpression = read(ID);
     read(SEMI);
     QualifiedName qualifiedClassName = parseQualifiedName(nameExpression, determinePackageName());
-    if (!skipPrefix)
-      qualifiedClassName = addPythonPrefix(qualifiedClassName, mContext);
     dataType.setQualifiedClassName(qualifiedClassName);
     dataType.setDeclaredFlag();
     mContext.dataTypeManager.add(qualifiedClassName.className(), dataType);

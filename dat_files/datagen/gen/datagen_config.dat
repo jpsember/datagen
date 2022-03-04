@@ -18,10 +18,6 @@ fields {
   //
   bool comments;
 
-  // For Python, a prefix to add to the packages of data types
-  //
-  string python_package;
-
   // For Python, if nonempty, used instead of source_path
   //
   File python_source_path;

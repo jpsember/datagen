@@ -110,18 +110,6 @@ public final class ParseTools {
     return buildQualifiedName(pkg, className);
   }
 
-  public static QualifiedName addPythonPrefix(QualifiedName qualifiedClassName, Context context) {
-    if (context.python()) {
-      String pythonPref = context.config.pythonPackage();
-      if (!pythonPref.isEmpty()) {
-        todo("!see if this field is actually required now that we have pythonSourcePath()");
-        String newPackage = pythonPref + "." + qualifiedClassName.packagePath();
-        qualifiedClassName = buildQualifiedName(newPackage, qualifiedClassName.className());
-      }
-    }
-    return qualifiedClassName;
-  }
-
   public static QualifiedName buildQualifiedName(String packagePath, String typeName) {
     String combined = typeName;
     if (!packagePath.isEmpty())
@@ -232,7 +220,6 @@ public final class ParseTools {
   }
 
   public static String importExpression(String importText, String sourceText) {
-    Context.verifyImportExpr(importText);
     return "{{" + importText + "|" + sourceText + "}}";
   }
 

@@ -105,13 +105,6 @@ public class DatagenOper extends AppOper {
     // If the output source directory doesn't exist, make it
     config.sourcePath(files().mkdirs(getFile(config.startDir(), sourcePathRel)));
 
-    {
-      if (config.language() != Language.PYTHON) {
-        if (!nullOrEmpty(config.pythonPackage()))
-          badArg("python_package not supported if not Python");
-      }
-    }
-
     log("source directory:", config.sourcePath());
     log(" dat directory:", config.datPath());
 
