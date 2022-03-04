@@ -81,17 +81,6 @@ public class PythonGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void externIgnorePrefix() {
-    p().pr("extern !abc.xyz.Foo;", CR);
-    p().pr("fields {", INDENT, //
-        "Foo delta;", CR, //
-        "?Foo optional;", CR, //
-        OUTDENT, "}");
-    addArg("python_package", "zebra.yak");
-    compile();
-  }
-
-  @Test
   public void ints() {
     p().pr("fields {", INDENT, //
         "int alpha;", CR, //

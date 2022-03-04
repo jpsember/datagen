@@ -61,6 +61,7 @@ public final class Context {
 
   public String constructImportExpression(QualifiedName nm) {
     if (python()) {
+      pr(".........returning 'from' expr");
       return "from " + nm.packagePath() + " import " + nm.className();
     } else
       return nm.combined();

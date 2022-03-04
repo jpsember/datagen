@@ -76,6 +76,8 @@ public class DatagenOper extends AppOper {
       config.datPath(datPath);
 
       context.config = config;
+if (context.python())
+  pr("PYTHON");
 
       performConvert();
       return;

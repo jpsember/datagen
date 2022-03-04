@@ -250,8 +250,4 @@ public class SourceBuilder {
   private List<Boolean> mConditionalStack = arrayList();
   private List<Integer> mOldIndentStack = arrayList();
 
-  @Deprecated
-  public String debugContent() {
-    return mStringBuilder.toString();
-  }
 }

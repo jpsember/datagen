@@ -41,11 +41,6 @@ public final class ParseTools {
   public static final String EXT_DATA_DEFINITION = "dat";
   public static final String DOT_EXT_DATA_DEFINITION = "." + EXT_DATA_DEFINITION;
 
-  @Deprecated
-  public static final String DATA_DEFINITION_EXT = EXT_DATA_DEFINITION;
-  @Deprecated
-  public static final String DOT_DATA_DEFINITION_EXTENSION = DOT_EXT_DATA_DEFINITION;
-
   // Have the compiler calculate the sequence of values
   private static int x = 0;
 
