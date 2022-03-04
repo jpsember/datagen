@@ -62,7 +62,7 @@ public final class DataTypeManager extends BaseObject {
       add("float", PrimitiveDoubleDataType.SINGLETON);
       add("double", PrimitiveDoubleDataType.SINGLETON);
       add("File", StringDataType.SINGLETON);
-      addPython("pycore.ipoint.IPoint");
+      addPython("pycore.ipoint.IPoint").withSerializeExpression("to_json(False)");
       break;
     case JAVA:
       add("byte", PrimitiveByteDataType.SINGLETON);
@@ -148,11 +148,12 @@ public final class DataTypeManager extends BaseObject {
    * Add a DataContractDataType for Python that supports the abstract data type
    * contract
    */
-  private void addPython(String qualifiedName) {
+  private DataContractDataType addPython(String qualifiedName) {
     DataContractDataType dataType = new DataContractDataType();
     QualifiedName qn = ParseTools.parseQualifiedName(qualifiedName);
     dataType.setQualifiedClassName(qn);
     add(qn.className(), dataType);
+    return dataType;
   }
 
   private void add(AbstractData defaultInstance) {

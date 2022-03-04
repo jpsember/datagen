@@ -48,10 +48,8 @@ public class DataContractDataType extends DataType {
   public String ourDefaultValue() {
     if (mDefValue == null) {
       if (python()) {
-        mDefValue =
-            ParseTools.importExpression(
-                context().constructImportExpression(qualifiedClassName()),
-                qualifiedClassName().className() + ".default_instance");
+        mDefValue = ParseTools.importExpression(context().constructImportExpression(qualifiedClassName()),
+            qualifiedClassName().className() + ".default_instance");
       } else {
         mDefValue = ParseTools.importExpression(qualifiedClassName().combined(),
             qualifiedClassName().className()) + ".DEFAULT_INSTANCE";
@@ -75,9 +73,8 @@ public class DataContractDataType extends DataType {
   }
 
   public String getSerializeToJSONValue(String value) {
-    todo("IPoint python should override to use json instead of to_dict");
     if (python())
-      return value + ".to_dict()";
+      return value + "." + mSerExpr;
     else
       return value + ".toJson()";
   }
@@ -228,4 +225,10 @@ public class DataContractDataType extends DataType {
     throw notSupported("can't parse default value for token:", t);
   }
 
+  public DataContractDataType withSerializeExpression(String expr) {
+    mSerExpr = expr;
+    return this;
+  }
+
+  private String mSerExpr = "to_dict()";
 }
