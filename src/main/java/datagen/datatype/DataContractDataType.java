@@ -169,20 +169,15 @@ public class DataContractDataType extends DataType {
       }
     }
 
-    if (db)
-      pr("parseQualifiedName, typeName:", typeName, "defaultPackageName:", defaultPackageName);
-
     QualifiedName qn = ParseTools.parseQualifiedName(typeName, defaultPackageName);
     if (db)
-      pr("parsed:", INDENT, qn);
+      pr("parseQualifiedName, typeName:", typeName, "defaultPackageName:", defaultPackageName, "yeilds:",
+          INDENT, qn);
     qn = ParseTools.addPythonPrefix(qn, context);
     if (db)
       pr("added pref:", INDENT, qn);
-
-    if (db) {
-      die("parse qual name:", typeName, "produced:", INDENT, qn);
-    }
-
+    if (db)
+      die("investigate");
     setQualifiedClassName(qn);
   }
 

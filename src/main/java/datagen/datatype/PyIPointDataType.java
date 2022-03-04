@@ -65,7 +65,7 @@ public class PyIPointDataType extends DataType {
     int y = scanner.readInt(NUMBER);
     scanner.read(SQCL);
     String constName = "DEF" + fieldDef.nameStringConstant(false);
-    sb.a(constName, "  = ", typeName(), ".new_builder().set_x(", x, ").set_y(", y, ").build()", CR);
+    sb.a(constName, "  = ", typeName(), ".with_x_y(", x, ", ", y, ")", CR);
     return constName;
   }
 
