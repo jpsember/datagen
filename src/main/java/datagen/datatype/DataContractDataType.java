@@ -122,10 +122,15 @@ public class DataContractDataType extends DataType {
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
+    return getSerializeToJSONValue(valueExpression);
+  }
+
+  public String getSerializeToJSONValue(String value) {
+    todo("why is this method public?");
     if (python())
-      return valueExpression + ".to_dict()";
+      return value + ".to_dict()";
     else
-      return valueExpression + ".toJson()";
+      return value + ".toJson()";
   }
 
   @Override
