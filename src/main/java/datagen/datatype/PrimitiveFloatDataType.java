@@ -24,7 +24,6 @@
  **/
 package datagen.datatype;
 
-import static js.base.Tools.*;
 
 import datagen.DataType;
 import datagen.FieldDef;
@@ -59,19 +58,14 @@ public class PrimitiveFloatDataType extends DataType {
       s.a("r = r * 37 + (int)m", f.javaName(), ";");
   }
 
-
   @Override
   public DataType optionalVariant() {
-    return BOXED_SINGLETON;
+    return new Boxed();
   }
 
   @Override
   public DataType listVariant() {
-    return FloatArrayDataType.SINGLETON;
-  }
-
-  private PrimitiveFloatDataType() {
-    loadTools();
+    return new Boxed();
   }
 
   private static class Boxed extends PrimitiveFloatDataType {
@@ -87,8 +81,5 @@ public class PrimitiveFloatDataType extends DataType {
     }
 
   }
-
-  public static final DataType SINGLETON = new PrimitiveFloatDataType();
-  private static final DataType BOXED_SINGLETON = new Boxed();
 
 }

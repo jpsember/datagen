@@ -31,7 +31,9 @@ import java.util.List;
 
 import datagen.DataType;
 import datagen.FieldDef;
+import datagen.ParseTools;
 import datagen.SourceBuilder;
+import js.data.DataUtil;
 
 public class EnumDataType extends DataType {
 
@@ -47,7 +49,12 @@ public class EnumDataType extends DataType {
   }
 
   private String pythonClassName() {
-    return checkNotNull(mPyCl);
+    if (mPyCl == null) {
+      String filename = DataUtil.convertCamelCaseToUnderscores(qualifiedClassName().className());
+      mPyCl = ParseTools.importExpression("from " + qualifiedClassName().packagePath() + "." + filename
+          + " import " + qualifiedClassName().className(), qualifiedClassName().className());
+    }
+    return mPyCl;
   }
 
   private String mPyCl;

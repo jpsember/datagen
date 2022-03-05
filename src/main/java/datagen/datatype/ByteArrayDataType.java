@@ -26,7 +26,6 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
-import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
@@ -119,9 +118,4 @@ public class ByteArrayDataType extends DataContractDataType {
     }
   }
 
-  private ByteArrayDataType() {
-  }
-
-  @Deprecated
-  public static final DataType SINGLETON = new ByteArrayDataType();
 }

@@ -36,7 +36,7 @@ import js.file.Files;
 
 public final class Context {
 
-  public static final boolean WTF = true && alert("investigating a nasty bug");
+  public static final boolean WTF = false && alert("investigating a nasty bug");
 
   public static boolean sJava;
   public DatagenConfig config;
@@ -92,4 +92,12 @@ public final class Context {
       die("checkWTF failed with:", importText);
   }
 
+  private Context() {
+  }
+
+  public static Context SHARED_INSTANCE;
+
+  public static void prepare() {
+    SHARED_INSTANCE = new Context();
+  }
 }

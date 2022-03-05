@@ -65,15 +65,12 @@ public class PrimitiveByteDataType extends DataType {
 
   @Override
   public DataType optionalVariant() {
-    return BOXED_SINGLETON;
+    return   new Boxed();
   }
 
   @Override
   public DataType listVariant() {
-    return ByteArrayDataType.SINGLETON;
-  }
-
-  private PrimitiveByteDataType() {
+    return new ByteArrayDataType();
   }
 
   private static class Boxed extends PrimitiveByteDataType {
@@ -89,10 +86,5 @@ public class PrimitiveByteDataType extends DataType {
     }
 
   }
-
-  @Deprecated
-   public static final DataType SINGLETON = new PrimitiveByteDataType();
-  @Deprecated
-   private static final DataType BOXED_SINGLETON = new Boxed();
 
 }

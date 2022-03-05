@@ -62,18 +62,15 @@ public class PrimitiveIntegerDataType extends DataType {
 
   @Override
   public DataType optionalVariant() {
-    return BOXED_SINGLETON;
+    return new Boxed();
   }
 
   @Override
   public DataType listVariant() {
-    return IntArrayDataType.SINGLETON;
+    return new IntArrayDataType();
   }
 
-  private PrimitiveIntegerDataType() {
-  }
-
-  private static class BoxedIntegerDataType extends PrimitiveIntegerDataType {
+  private static class Boxed extends PrimitiveIntegerDataType {
 
     @Override
     protected String provideQualifiedClassNameExpr() {
@@ -86,8 +83,5 @@ public class PrimitiveIntegerDataType extends DataType {
     }
 
   }
-
-  public static final DataType SINGLETON = new PrimitiveIntegerDataType();
-  private static final DataType BOXED_SINGLETON = new BoxedIntegerDataType();
 
 }

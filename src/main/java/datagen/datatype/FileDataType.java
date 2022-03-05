@@ -36,9 +36,6 @@ import js.parsing.Scanner;
 
 public final class FileDataType extends DataType {
 
-  private FileDataType() {
-  }
-
   @Override
   protected String provideQualifiedClassNameExpr() {
     return "java.io.File";
@@ -106,7 +103,5 @@ public final class FileDataType extends DataType {
   public String deserializeJsonToJavaValue(String jsonValue) {
     return "new " + typeName() + "((String) " + jsonValue + ")";
   }
-  @Deprecated
-  public static final DataType SINGLETON = new FileDataType();
 
 }

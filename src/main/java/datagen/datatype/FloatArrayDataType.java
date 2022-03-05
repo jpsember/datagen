@@ -26,7 +26,6 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
-import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
@@ -122,11 +121,5 @@ public class FloatArrayDataType extends DataContractDataType {
       break;
     }
   }
-
-  private FloatArrayDataType() {
-  }
-
-  @Deprecated
-  public static final DataType SINGLETON = new FloatArrayDataType();
 
 }

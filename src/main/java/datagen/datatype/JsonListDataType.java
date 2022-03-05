@@ -74,10 +74,4 @@ public class JsonListDataType extends DataType {
         "), ", f.optional(), ");", CR);
   }
 
-  private JsonListDataType() {
-  }
-
-  @Deprecated
-   public static final DataType SINGLETON = new JsonListDataType();
-
 }

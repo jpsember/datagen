@@ -27,7 +27,6 @@ package datagen.datatype;
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
-import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
@@ -142,10 +141,5 @@ public class DoubleArrayDataType extends DataContractDataType {
       break;
     }
   }
-
-  private DoubleArrayDataType() {
-  }
-  @Deprecated
-  public static final DataType SINGLETON = new DoubleArrayDataType();
 
 }

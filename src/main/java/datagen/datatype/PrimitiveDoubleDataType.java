@@ -70,16 +70,12 @@ public class PrimitiveDoubleDataType extends DataType {
 
   @Override
   public DataType optionalVariant() {
-    return BOXED_SINGLETON;
+    return new Boxed();
   }
 
   @Override
   public DataType listVariant() {
-    return DoubleArrayDataType.SINGLETON;
-  }
-
-  private PrimitiveDoubleDataType() {
-    loadTools();
+    return new DoubleArrayDataType();
   }
 
   private static class Boxed extends PrimitiveDoubleDataType {
@@ -95,8 +91,5 @@ public class PrimitiveDoubleDataType extends DataType {
     }
 
   }
-
-  public static final DataType SINGLETON = new PrimitiveDoubleDataType();
-  private static final DataType BOXED_SINGLETON = new Boxed();
 
 }

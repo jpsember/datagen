@@ -73,17 +73,14 @@ public class PrimitiveLongDataType extends DataType {
 
   @Override
   public DataType optionalVariant() {
-    return BOXED_SINGLETON;
+    return new Boxed();
   }
 
   @Override
   public DataType listVariant() {
     if (python())
       return null;
-    return LongArrayDataType.SINGLETON;
-  }
-
-  private PrimitiveLongDataType() {
+    return new LongArrayDataType();
   }
 
   private static class Boxed extends PrimitiveLongDataType {
@@ -109,9 +106,5 @@ public class PrimitiveLongDataType extends DataType {
 
   }
 
-  @Deprecated
-  public static final DataType SINGLETON = new PrimitiveLongDataType();
-  @Deprecated
-  private static final DataType BOXED_SINGLETON = new Boxed();
 
 }

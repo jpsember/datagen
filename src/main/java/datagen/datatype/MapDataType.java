@@ -40,7 +40,6 @@ public class MapDataType extends DataType {
     setQualifiedClassName(
         ParseTools.parseQualifiedName("java.util.Map<" + wrappedKeyType.qualifiedClassName().className() + ","
             + wrappedValueType.qualifiedClassName().className() + ">"));
-    setContext(mWrappedKeyType.context());
   }
 
   public DataType wrappedKeyType() {

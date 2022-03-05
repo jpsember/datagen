@@ -39,12 +39,8 @@ import java.util.List;
  */
 public abstract class DataType implements DefaultValueParser {
 
-  public final void setContext(Context context) {
-    mContext = context;
-  }
-
   public final Context context() {
-    return mContext;
+    return Context.SHARED_INSTANCE;
   }
 
   public final boolean python() {
@@ -83,7 +79,7 @@ public abstract class DataType implements DefaultValueParser {
    */
   public final String typeName() {
     if (Context.WTF)
-      pr("getting typeName for",getClass().getName(),"currently:",mTypeName);
+      pr("getting typeName for", getClass().getName(), "currently:", mTypeName);
     if (mTypeName == null) {
       mTypeName = provideTypeName();
     }
@@ -435,6 +431,5 @@ public abstract class DataType implements DefaultValueParser {
   private boolean mDeclared;
   private boolean mUsedFlag;
   private QualifiedName mClassWithPackage;
-  private Context mContext;
 
 }

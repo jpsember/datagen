@@ -59,8 +59,10 @@ public class DatagenOper extends AppOper {
 
   @Override
   public void perform() {
-    Context context = new Context();
-    mContext = context;
+
+    Context.prepare();
+    Context context = Context.SHARED_INSTANCE;
+
     DatagenConfig.Builder config = (DatagenConfig.Builder) config().toBuilder();
 
     if (Files.nonEmpty(config.startDir()))
@@ -76,9 +78,8 @@ public class DatagenOper extends AppOper {
       config.datPath(datPath);
 
       context.config = config;
-if (context.python())
-  pr("PYTHON");
-
+      if (context.python())
+        pr("PYTHON");
       performConvert();
       return;
     } else {
@@ -113,7 +114,7 @@ if (context.python())
     context.config = config;
     if (!context.python())
       Context.sJava = true;
-    
+
     {
       DirWalk d = new DirWalk(config.datPath()).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
       if (d.files().isEmpty()) {
@@ -185,10 +186,10 @@ if (context.python())
       context.datWithSource = entry;
       context.config = config.toBuilder();
       context.files = files();
-      context.dataTypeManager = new DataTypeManager(context);
+      context.dataTypeManager = new DataTypeManager();
       context.generatedTypeDef = null;
 
-      DataDefinitionParser p = new DataDefinitionParser(context);
+      DataDefinitionParser p = new DataDefinitionParser();
       p.setVerbose(verbose());
       try {
         p.parse();
@@ -224,8 +225,9 @@ if (context.python())
   }
 
   private void deleteOldSourceFiles() {
-    DirWalk dirWalk = new DirWalk(mContext.config.sourcePath()).withRecurse(true)
-        .withExtensions(SourceGen.sourceFileExtension(mContext.language()));
+    Context context = Context.SHARED_INSTANCE;
+    DirWalk dirWalk = new DirWalk(context.config.sourcePath()).withRecurse(true)
+        .withExtensions(SourceGen.sourceFileExtension(context.language()));
     todo("!is this working with the new relative paths for DatWithSource?");
     for (File sourceFile : dirWalk.files()) {
       // If file is not in a directory we wrote generated files to, ignore
@@ -251,7 +253,7 @@ if (context.python())
    * Convert all .proto files to .dat files
    */
   private void performConvert() {
-    DatagenConfig config = mContext.config;
+    DatagenConfig config = Context.SHARED_INSTANCE.config;
     log("proto directory:", config.protoPath());
     log("  dat directory:", config.datPath());
 
@@ -365,7 +367,6 @@ if (context.python())
   }
 
   private Set<File> mGenDirectoriesSet = hashSet();
-  private Context mContext;
   private List<DatWithSource> mGeneratedSourceFilesToFreshen = arrayList();
 
   // Set of Java files corresponding to all .dat files found

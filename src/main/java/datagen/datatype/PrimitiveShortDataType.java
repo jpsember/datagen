@@ -63,15 +63,12 @@ public class PrimitiveShortDataType extends DataType {
 
   @Override
   public DataType optionalVariant() {
-    return BOXED_SINGLETON;
+    return new BoxedDataType();
   }
 
   @Override
   public DataType listVariant() {
-    return ShortArrayDataType.SINGLETON;
-  }
-
-  private PrimitiveShortDataType() {
+    return new ShortArrayDataType();
   }
 
   private static class BoxedDataType extends PrimitiveShortDataType {
@@ -87,10 +84,5 @@ public class PrimitiveShortDataType extends DataType {
     }
 
   }
-
-  @Deprecated
-   public static final DataType SINGLETON = new PrimitiveShortDataType();
-  @Deprecated
-   private static final DataType BOXED_SINGLETON = new BoxedDataType();
 
 }

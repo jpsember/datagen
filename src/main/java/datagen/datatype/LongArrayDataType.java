@@ -26,7 +26,6 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
-import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
@@ -118,11 +117,5 @@ public class LongArrayDataType extends DataContractDataType {
       break;
     }
   }
-
-  private LongArrayDataType() {
-  }
-
-  @Deprecated
-   public static final DataType SINGLETON = new LongArrayDataType();
 
 }

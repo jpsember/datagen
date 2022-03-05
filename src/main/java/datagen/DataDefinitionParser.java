@@ -46,10 +46,6 @@ import js.data.DataUtil;
  */
 final class DataDefinitionParser extends BaseObject {
 
-  public DataDefinitionParser(Context context) {
-    mContext = context;
-  }
-
   public void parse() {
     try {
       prepareHandlers();
@@ -203,7 +199,6 @@ final class DataDefinitionParser extends BaseObject {
 
         // See if there is a parser for default values for this field.  This can either be the data type's parseDefaultValue() method,
         // or one mapped to the type's class (in case it is outside of the datagen project)
-       pr("field datatype:",fieldDef.dataType());
         String key = fieldDef.dataType().typeName();
         DefaultValueParser parser = mContext.dataTypeManager.parser(key);
         if (parser == null)
@@ -261,7 +256,7 @@ final class DataDefinitionParser extends BaseObject {
     return mPackageName;
   }
 
-  private final Context mContext;
+  private final Context mContext = Context.SHARED_INSTANCE;
   private Scanner mScanner;
   private Token mLastReadToken;
   private String mPackageName;

@@ -38,7 +38,6 @@ public class ListDataType extends DataType {
     mWrappedType = wrappedType;
     setQualifiedClassName(ParseTools
         .parseQualifiedName("java.util.List<" + wrappedType.qualifiedClassName().className() + ">"));
-    setContext(mWrappedType.context());
   }
 
   @Override

@@ -26,7 +26,6 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
-import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
@@ -119,11 +118,5 @@ public class ShortArrayDataType extends DataContractDataType {
       break;
     }
   }
-
-  private ShortArrayDataType() {
-  }
-
-  @Deprecated
-  public static final DataType SINGLETON = new ShortArrayDataType();
 
 }

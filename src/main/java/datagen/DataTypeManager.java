@@ -44,45 +44,46 @@ import static js.base.Tools.*;
  */
 public final class DataTypeManager extends BaseObject {
 
-  public DataTypeManager(Context context) {
-    pr("constructing DataTypeManager, language:", context.language());
-
-    mContext = context;
+  public DataTypeManager() {
+    Context context = Context.SHARED_INSTANCE;
     mTypeMap = concurrentHashMap();
     mDefaultValueParserMap = concurrentHashMap();
 
-    pr("adding types for:",context.language());
+    DataType tmp;
+
     switch (context.language()) {
     default:
       throw notSupported();
     case PYTHON:
-      add("byte", PrimitiveLongDataType.SINGLETON);
-      add("short", PrimitiveLongDataType.SINGLETON);
-      add("int", PrimitiveLongDataType.SINGLETON);
-      add("long", PrimitiveLongDataType.SINGLETON);
+      tmp = new PrimitiveLongDataType();
+      add("byte", tmp);
+      add("short", tmp);
+      add("int", tmp);
+      add("long", tmp);
       // There is no distinction between floats and doubles in Python; just use PrimitiveDoubleDataType
-      add("float", PrimitiveDoubleDataType.SINGLETON);
-      add("double", PrimitiveDoubleDataType.SINGLETON);
+      tmp = new PrimitiveDoubleDataType();
+      add("float", tmp);
+      add("double", tmp);
       add("File", new StringDataType());
       add("IPoint", new PyIPointDataType());
       break;
     case JAVA:
-      add("byte", PrimitiveByteDataType.SINGLETON);
-      add("short", PrimitiveShortDataType.SINGLETON);
-      add("int", PrimitiveIntegerDataType.SINGLETON);
-      add("long", PrimitiveLongDataType.SINGLETON);
-      add("float", PrimitiveFloatDataType.SINGLETON);
-      add("double", PrimitiveDoubleDataType.SINGLETON);
-      add("File", FileDataType.SINGLETON);
+      add("byte", new PrimitiveByteDataType());
+      add("short", new PrimitiveShortDataType());
+      add("int", new PrimitiveIntegerDataType());
+      add("long", new PrimitiveLongDataType());
+      add("float", new PrimitiveFloatDataType());
+      add("double", new PrimitiveDoubleDataType());
+      add("File", new FileDataType());
       add(IPoint.DEFAULT_INSTANCE, IPOINT_PARSER);
       break;
     }
     add("string", new StringDataType());
-    add("bool", BooleanDataType.SINGLETON);
-    add("JSMap", JsonMapDataType.SINGLETON);
-    add("JSList", JsonListDataType.SINGLETON);
+    add("bool", new BooleanDataType());
+    add("JSMap", new JsonMapDataType());
+    add("JSList", new JsonListDataType());
 
-    todo("!avoid including IPoint and other variants if Python; instead, supply some other");
+    todo("avoid including IPoint and other variants if Python; instead, supply some other");
     add(IRect.DEFAULT_INSTANCE);
     add(FPoint.DEFAULT_INSTANCE);
     add(FRect.DEFAULT_INSTANCE);
@@ -104,15 +105,6 @@ public final class DataTypeManager extends BaseObject {
   public void add(String key, DataType dataType, DefaultValueParser defaultValueParser) {
     DataType previousMapping = mTypeMap.put(key, dataType);
     checkState(previousMapping == null, "duplicate data type for key:", key);
-
-    todo("if we get rid of the singleton in the types, and make Context a singleton, this can be omitted");
-    // Store a reference to the context within this type, and any of its variants
-    //
-    dataType.setContext(mContext);
-    if (dataType.optionalVariant() != dataType)
-      dataType.optionalVariant().setContext(mContext);
-    if (dataType.listVariant() != null)
-      dataType.listVariant().setContext(mContext);
     if (defaultValueParser != null)
       mDefaultValueParserMap.put(dataType.typeName(), defaultValueParser);
   }
@@ -165,7 +157,6 @@ public final class DataTypeManager extends BaseObject {
     return constName;
   };
 
-  private final Context mContext;
   private final Map<String, DataType> mTypeMap;
   private final Map<String, DefaultValueParser> mDefaultValueParserMap;
 

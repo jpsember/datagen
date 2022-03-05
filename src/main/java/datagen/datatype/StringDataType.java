@@ -35,10 +35,6 @@ import js.parsing.Scanner;
 
 public final class StringDataType extends DataType {
 
-  public StringDataType() {
-    pr("******************** constructing StringDataType");
-  }
-
   @Override
   protected String provideQualifiedClassNameExpr() {
     return "java.lang.String";

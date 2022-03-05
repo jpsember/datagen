@@ -90,10 +90,4 @@ public final class JsonMapDataType extends DataType {
         "), ", f.optional(), ");", CR);
   }
 
-  private JsonMapDataType() {
-  }
-
-  @Deprecated
-  public static final DataType SINGLETON = new JsonMapDataType();
-
 }

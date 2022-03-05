@@ -42,7 +42,7 @@ public class BooleanDataType extends DataType {
 
   @Override
   public DataType optionalVariant() {
-    return BOXED_SINGLETON;
+    return new Boxed(); 
   }
 
   @Override
@@ -121,10 +121,5 @@ public class BooleanDataType extends DataType {
     }
 
   }
-
-  @Deprecated
-  public static final DataType SINGLETON = new BooleanDataType();
-  @Deprecated
-   private static final DataType BOXED_SINGLETON = new Boxed();
 
 }
