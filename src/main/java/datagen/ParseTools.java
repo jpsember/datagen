@@ -215,7 +215,6 @@ public final class ParseTools {
   }
 
   public static String importExpression(String importText, String sourceText) {
-    Context.checkWTF(importText);
     return "{{" + importText + "|" + sourceText + "}}";
   }
 

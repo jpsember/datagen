@@ -117,11 +117,6 @@ public abstract class SourceGen extends BaseObject {
    */
   public final String extractImportStatements(String template) {
     MacroParser parser = new MacroParser();
-    if (false && Context.WTF)
-      pr(VERT_SP,DASHES,CR, "extracting import statements, template:",CR,template,DASHES);
-    if (Context.WTF)
-      pr("extracting import statements");
-    
     parser.withPattern(ParseTools.IMPORT_REGEXP);
     parser.withTemplate(template);
     String result = parser.content(key -> {
@@ -146,7 +141,6 @@ public abstract class SourceGen extends BaseObject {
       String s0 = subExp.get(0);
       String s1 = subExp.get(1);
       QualifiedName qualifiedName = ParseTools.parseQualifiedName(s0);
-      Context.checkWTF(key);
       context().includeImport(qualifiedName.combined());
       return s1;
     });

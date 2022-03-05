@@ -55,7 +55,6 @@ public class DataContractDataType extends DataType {
         mDefValue = ParseTools.importExpression(qualifiedClassName().combined(),
             qualifiedClassName().className()) + ".DEFAULT_INSTANCE";
       }
-      if (Context.WTF) pr("DataContractType, defValue set to:",mDefValue);
     }
     return mDefValue;
   }

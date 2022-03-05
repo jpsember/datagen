@@ -54,8 +54,6 @@ public abstract class DataType implements DefaultValueParser {
   public final void setQualifiedClassName(QualifiedName qn) {
     checkState(mClassWithPackage == null);
     mClassWithPackage = qn;
-    if (Context.WTF)
-      pr("...set qual class name:", qn.className());
   }
 
   public final QualifiedName qualifiedClassName() {
@@ -78,20 +76,14 @@ public abstract class DataType implements DefaultValueParser {
    * Get qualified package and class name for the type
    */
   public final String typeName() {
-    if (Context.WTF)
-      pr("getting typeName for", getClass().getName(), "currently:", mTypeName);
-    if (mTypeName == null) {
+    if (mTypeName == null)
       mTypeName = provideTypeName();
-    }
-    Context.checkWTF(mTypeName);
     return mTypeName;
   }
 
   protected String provideTypeName() {
     String tn = ParseTools.importExpression(context().constructImportExpression(qualifiedClassName()),
         qualifiedClassName().className());
-    if (Context.WTF)
-      pr("provideTypeName:", tn);
     return tn;
   }
 

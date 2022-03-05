@@ -83,8 +83,6 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void prepareHandlers() {
-    if (Context.WTF)
-      pr("===================== prepareHandlers");
     mHandlers = hashMap();
     mHandlers.put(EXTERN, () -> procExtern());
     mHandlers.put(FIELDS, () -> procDataType());
@@ -110,8 +108,6 @@ final class DataDefinitionParser extends BaseObject {
     mScanner.setSourceDescription(datPath);
     mLastReadToken = null;
     mPackageName = null;
-    if (Context.WTF)
-      pr("clearing imports");
     mContext.getImports().clear();
   }
 

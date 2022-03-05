@@ -36,9 +36,6 @@ import js.file.Files;
 
 public final class Context {
 
-  public static final boolean WTF = false && alert("investigating a nasty bug");
-
-  public static boolean sJava;
   public DatagenConfig config;
   public Files files;
   public GeneratedTypeDef generatedTypeDef;
@@ -55,26 +52,14 @@ public final class Context {
 
   public String constructImportExpression(QualifiedName nm) {
     if (python()) {
-      Context.assertNotJava();
-      String imptExpr = "from " + nm.packagePath() + " import " + nm.className();
-      if (WTF)
-        pr("constructed impt expr:", imptExpr);
-      return imptExpr;
+      return "from " + nm.packagePath() + " import " + nm.className();
     } else {
       return nm.combined();
     }
   }
 
-  private static void assertNotJava() {
-    if (sJava)
-      throw die("sJava is true");
-  }
-
   public void includeImport(String importExpr) {
-    boolean wasNew = mImportedClasses.add(importExpr);
-    if (WTF && wasNew)
-      pr("...included import:", importExpr, "size:", mImportedClasses.size());
-    checkWTF(importExpr);
+    mImportedClasses.add(importExpr);
   }
 
   public Set<String> getImports() {
@@ -82,15 +67,6 @@ public final class Context {
   }
 
   private final Set<String> mImportedClasses = hashSet();
-
-  public static void checkWTF(String importText) {
-    if (!WTF)
-      return;
-    if (!sJava)
-      return;
-    if (importText.contains("from"))
-      die("checkWTF failed with:", importText);
-  }
 
   private Context() {
   }

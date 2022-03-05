@@ -112,8 +112,6 @@ public class DatagenOper extends AppOper {
     log(" dat directory:", config.datPath());
 
     context.config = config;
-    if (!context.python())
-      Context.sJava = true;
 
     {
       DirWalk d = new DirWalk(config.datPath()).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
