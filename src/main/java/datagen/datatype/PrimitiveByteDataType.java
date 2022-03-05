@@ -90,7 +90,9 @@ public class PrimitiveByteDataType extends DataType {
 
   }
 
-  public static final DataType SINGLETON = new PrimitiveByteDataType();
-  private static final DataType BOXED_SINGLETON = new Boxed();
+  @Deprecated
+   public static final DataType SINGLETON = new PrimitiveByteDataType();
+  @Deprecated
+   private static final DataType BOXED_SINGLETON = new Boxed();
 
 }

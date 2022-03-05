@@ -126,6 +126,7 @@ public class FloatArrayDataType extends DataContractDataType {
   private FloatArrayDataType() {
   }
 
+  @Deprecated
   public static final DataType SINGLETON = new FloatArrayDataType();
 
 }

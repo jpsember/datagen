@@ -109,7 +109,9 @@ public class PrimitiveLongDataType extends DataType {
 
   }
 
+  @Deprecated
   public static final DataType SINGLETON = new PrimitiveLongDataType();
+  @Deprecated
   private static final DataType BOXED_SINGLETON = new Boxed();
 
 }

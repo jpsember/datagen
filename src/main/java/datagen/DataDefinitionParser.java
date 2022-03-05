@@ -87,6 +87,8 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void prepareHandlers() {
+    if (Context.WTF)
+      pr("===================== prepareHandlers");
     mHandlers = hashMap();
     mHandlers.put(EXTERN, () -> procExtern());
     mHandlers.put(FIELDS, () -> procDataType());
@@ -112,6 +114,8 @@ final class DataDefinitionParser extends BaseObject {
     mScanner.setSourceDescription(datPath);
     mLastReadToken = null;
     mPackageName = null;
+    if (Context.WTF)
+      pr("clearing imports");
     mContext.getImports().clear();
   }
 
@@ -199,6 +203,7 @@ final class DataDefinitionParser extends BaseObject {
 
         // See if there is a parser for default values for this field.  This can either be the data type's parseDefaultValue() method,
         // or one mapped to the type's class (in case it is outside of the datagen project)
+       pr("field datatype:",fieldDef.dataType());
         String key = fieldDef.dataType().typeName();
         DefaultValueParser parser = mContext.dataTypeManager.parser(key);
         if (parser == null)

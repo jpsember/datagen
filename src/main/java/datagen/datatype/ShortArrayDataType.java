@@ -123,6 +123,7 @@ public class ShortArrayDataType extends DataContractDataType {
   private ShortArrayDataType() {
   }
 
+  @Deprecated
   public static final DataType SINGLETON = new ShortArrayDataType();
 
 }

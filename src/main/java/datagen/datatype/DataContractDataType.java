@@ -55,6 +55,7 @@ public class DataContractDataType extends DataType {
         mDefValue = ParseTools.importExpression(qualifiedClassName().combined(),
             qualifiedClassName().className()) + ".DEFAULT_INSTANCE";
       }
+      if (Context.WTF) pr("DataContractType, defValue set to:",mDefValue);
     }
     return mDefValue;
   }
@@ -126,7 +127,7 @@ public class DataContractDataType extends DataType {
   }
 
   public String getSerializeToJSONValue(String value) {
-    todo("why is this method public?");
+   // todo("why is this method public?");
     if (python())
       return value + ".to_dict()";
     else

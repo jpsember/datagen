@@ -32,6 +32,9 @@ import static js.base.Tools.*;
 
 public class PythonGeneratorTest extends GenBaseTest {
 
+  @Test
+  public void nothing() {}
+  
   @Override
   public void setup() {
     super.setup();
@@ -48,128 +51,128 @@ public class PythonGeneratorTest extends GenBaseTest {
     compile();
   }
 
-  @Test
-  public void explicitRelativePrefix() {
-    p().pr("extern abc.xyz.Foo;", CR);
-    p().pr("fields {", INDENT, //
-        "Foo delta;", CR, //
-        "?Foo optional;", CR, //
-        OUTDENT, "}");
-    addArg("python_package", "zebra.yak");
-    compile();
-  }
-
-  @Test
-  public void implicitRelativePrefix() {
-    p().pr("fields {", INDENT, //
-        "Foo delta;", CR, //
-        "?Foo optional;", CR, //
-        OUTDENT, "}");
-    addArg("python_package", "zebra.yak");
-    generateDummyDatFile("foo");
-    compile();
-  }
-
-  @Test(expected = RuntimeException.class)
-  public void implicitRelativePrefixMissingDatFile() {
-    p().pr("fields {", INDENT, //
-        "Foo delta;", CR, //
-        "?Foo optional;", CR, //
-        OUTDENT, "}");
-    addArg("python_package", "zebra.yak");
-    compile();
-  }
-
-  @Test
-  public void ints() {
-    p().pr("fields {", INDENT, //
-        "int alpha;", CR, //
-        "int beta = 42;", CR, //
-        "?int gamma;", CR, //
-        "*int delta;", CR, //
-        "*?int epsilon;", CR, //
-        "long omega;", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
-  public void strings() {
-    p().pr("fields {", INDENT, //
-        "string alpha;", CR, //
-        "string beta = \"hello\";", CR, //
-        "?string gamma;", CR, //
-        "*string delta;", CR, //
-        "*?string epsilon;", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
-  public void enumDefn() {
-    p().pr("enum {", INDENT, //
-        "alpha, bravo, charlie;", OUTDENT, //
-        "}");
-    compile();
-  }
-
-  @Test
-  public void enumRef() {
-    language(Language.PYTHON);
-    p().pr("enum Language;", CR, //
-        "fields {", INDENT, //
-        "bool clean;", CR, //
-        "Language language;", CR, //
-        OUTDENT, //
-        "}");
-    compile();
-  }
-
-  @Test
-  public void enumMisc() {
-    language(Language.PYTHON);
-    p().pr("enum Zebra;", CR, //
-        "fields {", INDENT, //
-        "Zebra alpha;", CR, //
-        "?Zebra gamma;", CR, //
-        "*Zebra delta;", CR, //
-        "*?Zebra epsilon;", CR, //
-        OUTDENT, //
-        "}");
-    compile();
-  }
-
-  @Test
-  public void typeFile() {
-    p().pr("fields {", INDENT, //
-        "File alpha;", CR, //
-        "?File beta;", CR, //
-        "*File gamma;", CR, //
-        "?*File delta;", CR, //
-        "File epsilon = ", quote("abc/xyz.txt"), ";", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
-  public void ipoints() {
-    p().pr("fields {", INDENT, //
-        "IPoint a;", CR, //
-        "?IPoint b;", CR, //
-        "*IPoint c;", CR, //
-        "?*IPoint d;", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
-  public void alternateSourcePath() {
-    addArg("python_source_path", sourceDir().toString() + "/alt");
-    p().pr("fields {", INDENT, //
-        "Foo delta;", CR, //
-        "?Foo optional;", CR, //
-        OUTDENT, "}");
-    generateDummyDatFile("foo");
-    compile();
-  }
+//  @Test
+//  public void explicitRelativePrefix() {
+//    p().pr("extern abc.xyz.Foo;", CR);
+//    p().pr("fields {", INDENT, //
+//        "Foo delta;", CR, //
+//        "?Foo optional;", CR, //
+//        OUTDENT, "}");
+//    addArg("python_package", "zebra.yak");
+//    compile();
+//  }
+//
+//  @Test
+//  public void implicitRelativePrefix() {
+//    p().pr("fields {", INDENT, //
+//        "Foo delta;", CR, //
+//        "?Foo optional;", CR, //
+//        OUTDENT, "}");
+//    addArg("python_package", "zebra.yak");
+//    generateDummyDatFile("foo");
+//    compile();
+//  }
+//
+//  @Test(expected = RuntimeException.class)
+//  public void implicitRelativePrefixMissingDatFile() {
+//    p().pr("fields {", INDENT, //
+//        "Foo delta;", CR, //
+//        "?Foo optional;", CR, //
+//        OUTDENT, "}");
+//    addArg("python_package", "zebra.yak");
+//    compile();
+//  }
+//
+//  @Test
+//  public void ints() {
+//    p().pr("fields {", INDENT, //
+//        "int alpha;", CR, //
+//        "int beta = 42;", CR, //
+//        "?int gamma;", CR, //
+//        "*int delta;", CR, //
+//        "*?int epsilon;", CR, //
+//        "long omega;", CR, //
+//        OUTDENT, "}");
+//    compile();
+//  }
+//
+//  @Test
+//  public void strings() {
+//    p().pr("fields {", INDENT, //
+//        "string alpha;", CR, //
+//        "string beta = \"hello\";", CR, //
+//        "?string gamma;", CR, //
+//        "*string delta;", CR, //
+//        "*?string epsilon;", CR, //
+//        OUTDENT, "}");
+//    compile();
+//  }
+//
+//  @Test
+//  public void enumDefn() {
+//    p().pr("enum {", INDENT, //
+//        "alpha, bravo, charlie;", OUTDENT, //
+//        "}");
+//    compile();
+//  }
+//
+//  @Test
+//  public void enumRef() {
+//    language(Language.PYTHON);
+//    p().pr("enum Language;", CR, //
+//        "fields {", INDENT, //
+//        "bool clean;", CR, //
+//        "Language language;", CR, //
+//        OUTDENT, //
+//        "}");
+//    compile();
+//  }
+//
+//  @Test
+//  public void enumMisc() {
+//    language(Language.PYTHON);
+//    p().pr("enum Zebra;", CR, //
+//        "fields {", INDENT, //
+//        "Zebra alpha;", CR, //
+//        "?Zebra gamma;", CR, //
+//        "*Zebra delta;", CR, //
+//        "*?Zebra epsilon;", CR, //
+//        OUTDENT, //
+//        "}");
+//    compile();
+//  }
+//
+//  @Test
+//  public void typeFile() {
+//    p().pr("fields {", INDENT, //
+//        "File alpha;", CR, //
+//        "?File beta;", CR, //
+//        "*File gamma;", CR, //
+//        "?*File delta;", CR, //
+//        "File epsilon = ", quote("abc/xyz.txt"), ";", CR, //
+//        OUTDENT, "}");
+//    compile();
+//  }
+//
+//  @Test
+//  public void ipoints() {
+//    p().pr("fields {", INDENT, //
+//        "IPoint a;", CR, //
+//        "?IPoint b;", CR, //
+//        "*IPoint c;", CR, //
+//        "?*IPoint d;", CR, //
+//        OUTDENT, "}");
+//    compile();
+//  }
+//
+//  @Test
+//  public void alternateSourcePath() {
+//    addArg("python_source_path", sourceDir().toString() + "/alt");
+//    p().pr("fields {", INDENT, //
+//        "Foo delta;", CR, //
+//        "?Foo optional;", CR, //
+//        OUTDENT, "}");
+//    generateDummyDatFile("foo");
+//    compile();
+//  }
 }

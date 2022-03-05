@@ -77,6 +77,7 @@ public class JsonListDataType extends DataType {
   private JsonListDataType() {
   }
 
-  public static final DataType SINGLETON = new JsonListDataType();
+  @Deprecated
+   public static final DataType SINGLETON = new JsonListDataType();
 
 }

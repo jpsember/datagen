@@ -93,6 +93,7 @@ public final class JsonMapDataType extends DataType {
   private JsonMapDataType() {
   }
 
+  @Deprecated
   public static final DataType SINGLETON = new JsonMapDataType();
 
 }

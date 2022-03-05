@@ -123,6 +123,7 @@ public class IntArrayDataType extends DataContractDataType {
   private IntArrayDataType() {
   }
 
-  public static final DataType SINGLETON = new IntArrayDataType();
+  @Deprecated
+   public static final DataType SINGLETON = new IntArrayDataType();
 
 }

@@ -45,10 +45,13 @@ import static js.base.Tools.*;
 public final class DataTypeManager extends BaseObject {
 
   public DataTypeManager(Context context) {
+    pr("constructing DataTypeManager, language:", context.language());
+
     mContext = context;
     mTypeMap = concurrentHashMap();
     mDefaultValueParserMap = concurrentHashMap();
 
+    pr("adding types for:",context.language());
     switch (context.language()) {
     default:
       throw notSupported();
@@ -60,7 +63,7 @@ public final class DataTypeManager extends BaseObject {
       // There is no distinction between floats and doubles in Python; just use PrimitiveDoubleDataType
       add("float", PrimitiveDoubleDataType.SINGLETON);
       add("double", PrimitiveDoubleDataType.SINGLETON);
-      add("File", StringDataType.SINGLETON);
+      add("File", new StringDataType());
       add("IPoint", new PyIPointDataType());
       break;
     case JAVA:
@@ -74,7 +77,7 @@ public final class DataTypeManager extends BaseObject {
       add(IPoint.DEFAULT_INSTANCE, IPOINT_PARSER);
       break;
     }
-    add("string", StringDataType.SINGLETON);
+    add("string", new StringDataType());
     add("bool", BooleanDataType.SINGLETON);
     add("JSMap", JsonMapDataType.SINGLETON);
     add("JSList", JsonListDataType.SINGLETON);
@@ -102,6 +105,7 @@ public final class DataTypeManager extends BaseObject {
     DataType previousMapping = mTypeMap.put(key, dataType);
     checkState(previousMapping == null, "duplicate data type for key:", key);
 
+    todo("if we get rid of the singleton in the types, and make Context a singleton, this can be omitted");
     // Store a reference to the context within this type, and any of its variants
     //
     dataType.setContext(mContext);

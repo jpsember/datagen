@@ -35,6 +35,10 @@ import js.parsing.Scanner;
 
 public final class StringDataType extends DataType {
 
+  public StringDataType() {
+    pr("******************** constructing StringDataType");
+  }
+
   @Override
   protected String provideQualifiedClassNameExpr() {
     return "java.lang.String";
@@ -88,6 +92,7 @@ public final class StringDataType extends DataType {
     return jsonStringValue;
   }
 
+  @Deprecated // We can't use singletons, since we may be switching languages
   public static final DataType SINGLETON = new StringDataType();
 
 }

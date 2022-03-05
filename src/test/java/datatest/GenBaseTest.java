@@ -47,7 +47,6 @@ public abstract class GenBaseTest extends MyTestCase {
     checkState(!mDatRecords.isEmpty());
     for (DatRecord ty : mDatRecords)
       writeDat(ty);
-
     addArg("language", mLanguage.toString().toLowerCase());
     addArg(DatagenConfig.DAT_PATH, datFilesDir(), DatagenConfig.SOURCE_PATH, sourceDir());
     if (verbose())

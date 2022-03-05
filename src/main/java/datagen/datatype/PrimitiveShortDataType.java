@@ -88,7 +88,9 @@ public class PrimitiveShortDataType extends DataType {
 
   }
 
-  public static final DataType SINGLETON = new PrimitiveShortDataType();
-  private static final DataType BOXED_SINGLETON = new BoxedDataType();
+  @Deprecated
+   public static final DataType SINGLETON = new PrimitiveShortDataType();
+  @Deprecated
+   private static final DataType BOXED_SINGLETON = new BoxedDataType();
 
 }

@@ -27,6 +27,7 @@ package datagen.datatype;
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
@@ -39,8 +40,11 @@ public class PyIPointDataType extends DataType {
   public String ourDefaultValue() {
     todo("consider using decorators instead of having to have a bunch of classes...?");
     if (mDefValue == null) {
+      pr("we are constructing an import expression for the Python data type");
       mDefValue = ParseTools.importExpression(context().constructImportExpression(qualifiedClassName()),
           qualifiedClassName().className() + ".default_instance");
+      if (Context.WTF)
+        pr("DataContractType, defValue set to:", mDefValue);
     }
     return mDefValue;
   }

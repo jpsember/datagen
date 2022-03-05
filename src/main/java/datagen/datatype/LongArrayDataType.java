@@ -122,6 +122,7 @@ public class LongArrayDataType extends DataContractDataType {
   private LongArrayDataType() {
   }
 
-  public static final DataType SINGLETON = new LongArrayDataType();
+  @Deprecated
+   public static final DataType SINGLETON = new LongArrayDataType();
 
 }

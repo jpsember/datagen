@@ -122,5 +122,6 @@ public class ByteArrayDataType extends DataContractDataType {
   private ByteArrayDataType() {
   }
 
+  @Deprecated
   public static final DataType SINGLETON = new ByteArrayDataType();
 }

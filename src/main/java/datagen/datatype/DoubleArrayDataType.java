@@ -145,7 +145,7 @@ public class DoubleArrayDataType extends DataContractDataType {
 
   private DoubleArrayDataType() {
   }
-
+  @Deprecated
   public static final DataType SINGLETON = new DoubleArrayDataType();
 
 }

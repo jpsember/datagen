@@ -111,7 +111,9 @@ if (context.python())
     log(" dat directory:", config.datPath());
 
     context.config = config;
-
+    if (!context.python())
+      Context.sJava = true;
+    
     {
       DirWalk d = new DirWalk(config.datPath()).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
       if (d.files().isEmpty()) {

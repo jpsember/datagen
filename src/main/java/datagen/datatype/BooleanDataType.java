@@ -122,7 +122,9 @@ public class BooleanDataType extends DataType {
 
   }
 
+  @Deprecated
   public static final DataType SINGLETON = new BooleanDataType();
-  private static final DataType BOXED_SINGLETON = new Boxed();
+  @Deprecated
+   private static final DataType BOXED_SINGLETON = new Boxed();
 
 }

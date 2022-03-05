@@ -79,11 +79,16 @@ public final class JavaSourceGen extends SourceGen {
 
     // Perform pass 1 of macro substitution
     //
+    String tmp = null;
+    if (false && Context.WTF)
+      tmp = content;
     {
       MacroParser parser = new MacroParser();
       parser.withTemplate(content).withMapper(m);
       content = parser.content();
     }
+    if (false && Context.WTF)
+      pr("template was:", tmp);
 
     // Pass 2: strip package names, add to set for import statements
     //
@@ -108,11 +113,21 @@ public final class JavaSourceGen extends SourceGen {
     // Pass 5: remove extraneous linefeeds
     //
     content = ParseTools.adjustLinefeeds(content, config().language());
-
+    Context.checkWTF(content);
     File target = sourceFile();
     context().files.mkdirs(Files.parent(target));
 
+    if (false && Context.WTF) {
+      pr("target:", target);
+      pr("parent:", Files.parent(target));
+      pr("curr dir:", Files.currentDirectory());
+    }
     boolean wrote = context().files.writeIfChanged(target, content);
+    if (false && Context.WTF) {
+      pr("wrote:", wrote);
+      if (content.length() > 40)
+        pr("content:", content.substring(0, 40));
+    }
     if (wrote)
       log(".....updated:", sourceFileRelative());
     else {
@@ -317,7 +332,7 @@ public final class JavaSourceGen extends SourceGen {
     }
 
     s.a("if (!(");
-    f.dataType().sourceGenerateEquals(s, a,b);
+    f.dataType().sourceGenerateEquals(s, a, b);
     s.a("))");
 
     s.a(IN, "return false;", OUT);

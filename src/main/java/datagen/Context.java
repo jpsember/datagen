@@ -36,6 +36,9 @@ import js.file.Files;
 
 public final class Context {
 
+  public static final boolean WTF = true && alert("investigating a nasty bug");
+
+  public static boolean sJava;
   public DatagenConfig config;
   public Files files;
   public GeneratedTypeDef generatedTypeDef;
@@ -50,26 +53,28 @@ public final class Context {
     return config.language();
   }
 
-  public  String verifyImportExpr(String importExpr) {
-    if (python() && alert("temporary method to verify things")
-        && !(importExpr.startsWith("java") || importExpr.startsWith("js"))
-        && !(importExpr.startsWith("from") || importExpr.startsWith("impor"))) {
-      throw badArg("import expr:", importExpr);
-    }
-    return importExpr;
-  }
-
   public String constructImportExpression(QualifiedName nm) {
     if (python()) {
-      pr(".........returning 'from' expr");
-      return "from " + nm.packagePath() + " import " + nm.className();
-    } else
+      Context.assertNotJava();
+      String imptExpr = "from " + nm.packagePath() + " import " + nm.className();
+      if (WTF)
+        pr("constructed impt expr:", imptExpr);
+      return imptExpr;
+    } else {
       return nm.combined();
+    }
+  }
+
+  private static void assertNotJava() {
+    if (sJava)
+      throw die("sJava is true");
   }
 
   public void includeImport(String importExpr) {
-    verifyImportExpr(importExpr);
-    mImportedClasses.add(importExpr);
+    boolean wasNew = mImportedClasses.add(importExpr);
+    if (WTF && wasNew)
+      pr("...included import:", importExpr, "size:", mImportedClasses.size());
+    checkWTF(importExpr);
   }
 
   public Set<String> getImports() {
@@ -77,5 +82,14 @@ public final class Context {
   }
 
   private final Set<String> mImportedClasses = hashSet();
+
+  public static void checkWTF(String importText) {
+    if (!WTF)
+      return;
+    if (!sJava)
+      return;
+    if (importText.contains("from"))
+      die("checkWTF failed with:", importText);
+  }
 
 }
