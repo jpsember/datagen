@@ -27,6 +27,8 @@ package datagen.datatype;
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
+import java.util.List;
+
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
@@ -56,26 +58,54 @@ public class DoubleArrayDataType extends DataContractDataType {
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    SourceBuilder sb = classSpecificSource;
-    if (python())
-      throw notSupported("not supported yet");
-    String constName = "DEF_" + fieldDef.nameStringConstant();
-    sb.a("  private static final ", typeName(), " ", constName, " = ");
-    scanner.read(SQOP);
-    sb.a("{");
-    for (int index = 0;; index++) {
-      if (scanner.readIf(SQCL) != null)
-        break;
-      if (index > 0) {
-        scanner.read(COMMA);
-        // Allow an extraneous trailing comma
+
+    List<String> parsedNumbers = arrayList();
+
+    {
+      scanner.read(SQOP);
+      for (int index = 0;; index++) {
         if (scanner.readIf(SQCL) != null)
           break;
+        if (index > 0) {
+          scanner.read(COMMA);
+          // Allow an extraneous trailing comma
+          if (scanner.readIf(SQCL) != null)
+            break;
+        }
+        parsedNumbers.add(scanner.read(NUMBER).text());
+      }
+    }
+
+    SourceBuilder sb = classSpecificSource;
+
+    if (python()) {
+      String constName = "DEF" + fieldDef.nameStringConstant(false);
+      sb.a(constName, "  = [");
+      int index = INIT_INDEX;
+      for (String numberText : parsedNumbers) {
+        index++;
+        if (index > 0) {
+          sb.a(",");
+        }
+        sb.a(numberText);
+      }
+      sb.a("]", CR);
+      return constName;
+    }
+
+    String constName = "DEF_" + fieldDef.nameStringConstant();
+    sb.a("  private static final ", typeName(), " ", constName, " = ");
+    sb.a("{");
+    int index = INIT_INDEX;
+    for (String numberText : parsedNumbers) {
+      index++;
+      if (index > 0) {
         sb.a(",");
       }
-      sb.a(scanner.read(NUMBER).text());
+      sb.a(numberText);
     }
     sb.a("};").cr();
+
     return constName;
   }
 
@@ -87,6 +117,8 @@ public class DoubleArrayDataType extends DataContractDataType {
     switch (language()) {
     default:
       throw notSupported();
+    case PYTHON:
+      return "json.dumps(" + value + ")";
     case JAVA:
       return ParseTools.PKG_DOUBLE_ARRAY + ".with(" + value + ").toJson()";
     }
@@ -102,6 +134,8 @@ public class DoubleArrayDataType extends DataContractDataType {
     switch (language()) {
     default:
       throw notSupported();
+    case PYTHON:
+      return "x";
     case JAVA:
       return ParseTools.PKG_DOUBLE_ARRAY + ".DEFAULT_INSTANCE.parse(x).array()";
     }
@@ -112,6 +146,15 @@ public class DoubleArrayDataType extends DataContractDataType {
     switch (language()) {
     default:
       throw notSupported();
+    case PYTHON: {
+      String defaultValue = f.defaultValueOrNull();
+      if (defaultValue.equals("None"))
+        s.a(targetExpr, " = x;");
+      else
+        s.a(targetExpr, " = ", "x", " if x is not None else ", defaultValue);
+    }
+      break;
+
     case JAVA:
       String defaultValue = f.defaultValueOrNull();
       if (defaultValue.equals("null"))
@@ -136,6 +179,9 @@ public class DoubleArrayDataType extends DataContractDataType {
     switch (language()) {
     default:
       throw notSupported();
+    case PYTHON:
+      s.a("r = r * 37 + int(sum(self._", f.javaName(), "))");
+      break;
     case JAVA:
       s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.javaName(), ");");
       break;

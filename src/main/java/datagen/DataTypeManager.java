@@ -83,7 +83,6 @@ public final class DataTypeManager extends BaseObject {
     add("JSMap", new JsonMapDataType());
     add("JSList", new JsonListDataType());
 
-    todo("avoid including IPoint and other variants if Python; instead, supply some other");
     add(IRect.DEFAULT_INSTANCE);
     add(FPoint.DEFAULT_INSTANCE);
     add(FRect.DEFAULT_INSTANCE);
@@ -144,7 +143,6 @@ public final class DataTypeManager extends BaseObject {
   }
 
   private static final DefaultValueParser IPOINT_PARSER = (scanner, classSpecificSource, fieldDef) -> {
-    todo("maybe use the contract data type for this?");
     String typeName = fieldDef.dataType().typeName();
     scanner.read(SQOP);
     int x = scanner.readInt(NUMBER);
