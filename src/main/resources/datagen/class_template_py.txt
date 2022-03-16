@@ -4,7 +4,7 @@
 [!imports]
 
 \\2
-class [!class]:
+class [!class]({{from pycore.base import AbstractData|AbstractData}}):
 @@  """
 @@  Generated Python data class (do not edit!)
 @@
@@ -45,10 +45,11 @@ class [!class]:
     @@"""
 
   \\
-  @classmethod
-  def parse(cls, obj):
+  def parse(self, obj):
     @@"""
     @@Parse immutable instance from an object (which is probably a dict, or a tuple)
+    @@
+    @@The 'self' object is probably not used, except as a 'holder' for the parser
     @@"""
     inst = [!class]()
 [!parse]
@@ -73,37 +74,8 @@ class [!class]:
 
 
   \\
-  def build(self):
-    @@"""
-    @@Build instance to an immutable instance, if it is not already
-    @@"""
-    return self
-
-
-
-
-
-
-  \\
   def to_dict(self):
 [!to_dict]
-
-
-
-
-
-
-  \\
-  def to_json(self, pretty=True):
-    if pretty:
-      return {{import json|json}}.dumps(self.to_dict(), indent=2, sort_keys=True)
-    else:
-      return {{import json|json}}.dumps(self.to_dict(), sort_keys=True)
-
-  \\
-  def __str__(self):
-    return self.to_json()
-
 
 
 
