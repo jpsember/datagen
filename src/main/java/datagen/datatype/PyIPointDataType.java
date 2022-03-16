@@ -37,7 +37,7 @@ public class PyIPointDataType extends DataType {
 
   @Override
   public String ourDefaultValue() {
-    todo("consider using decorators instead of having to have a bunch of classes...?");
+    // TODO: "consider using decorators instead of having to have a bunch of classes...?"
     if (mDefValue == null) {
       mDefValue = ParseTools.importExpression(context().constructImportExpression(qualifiedClassName()),
           qualifiedClassName().className() + ".default_instance");
