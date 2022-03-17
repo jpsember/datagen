@@ -242,7 +242,6 @@ public abstract class DataType implements DefaultValueParser {
    * Default implementation returns the input value
    */
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-  if (true)  return getClass().getSimpleName()+"!!!"+valueExpression;
     return valueExpression;
   }
 
