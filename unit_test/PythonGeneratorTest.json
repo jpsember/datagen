@@ -1,1 +1,12 @@
-{ "ints" : 9747 }
+{    "alternateSourcePath" : 3818,
+                "enumDefn" : 5301,
+                "enumMisc" : 4497,
+                 "enumRef" : 9810,
+  "explicitRelativePrefix" : 4393,
+     "externDefaultPrefix" : 1870,
+  "implicitRelativePrefix" : 1328,
+                    "ints" : 9747,
+                 "ipoints" : 5964,
+                 "strings" : 4629,
+                "typeFile" : 2413
+}
