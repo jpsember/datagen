@@ -74,8 +74,8 @@ class [!class]({{from pycore.base import AbstractData|AbstractData}}):
 
 
   \\
-  def to_dict(self):
-[!to_dict]
+  def to_json(self):
+[!to_json]
 
 
 

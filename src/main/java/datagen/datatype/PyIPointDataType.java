@@ -27,13 +27,12 @@ package datagen.datatype;
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
-import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public class PyIPointDataType extends DataType {
+public class PyIPointDataType extends DataContractDataType {
 
   @Override
   public String ourDefaultValue() {
@@ -51,10 +50,6 @@ public class PyIPointDataType extends DataType {
 
   public String getConstructFromX() {
     return "x.build()";
-  }
-
-  public String getSerializeToJSONValue(String value) {
-    return value + "." + "to_json(False)";
   }
 
   @Override

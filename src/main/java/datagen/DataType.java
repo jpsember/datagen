@@ -237,11 +237,12 @@ public abstract class DataType implements DefaultValueParser {
 
   /**
    * Generate source code to convert value to one appropriate to be stored
-   * within a JSMap (or dict, if Python)
+   * within a JSMap (or, if Python, compatible with json.dumps)
    *
    * Default implementation returns the input value
    */
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
+  if (true)  return getClass().getSimpleName()+"!!!"+valueExpression;
     return valueExpression;
   }
 

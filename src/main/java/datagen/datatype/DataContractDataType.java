@@ -126,9 +126,8 @@ public class DataContractDataType extends DataType {
   }
 
   public String getSerializeToJSONValue(String value) {
-   // todo("why is this method public?");
     if (python())
-      return value + ".to_dict()";
+      return value + ".to_json()";
     else
       return value + ".toJson()";
   }

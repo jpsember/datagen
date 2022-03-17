@@ -63,7 +63,7 @@ public class PythonSourceGen extends SourceGen {
       m.put("parse", generateParse(def));
       m.put("class_getter_implementation", generateGetters(def));
       m.put("copy_to_builder", generateImmutableToBuilder(def));
-      m.put("to_dict", generateToDict(def));
+      m.put("to_json", generateToJson(def));
       m.put("hashcode", generateHashCode(def));
       m.put("equals", generateEquals(def));
       m.put("setters", generateSetters(def));
@@ -181,7 +181,7 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateToDict(GeneratedTypeDef def) {
+  private String generateToJson(GeneratedTypeDef def) {
     SourceBuilder s = s();
     s.in(mInset + 2);
 
