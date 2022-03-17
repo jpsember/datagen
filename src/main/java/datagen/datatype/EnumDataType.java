@@ -79,9 +79,8 @@ public class EnumDataType extends DataType {
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    if (python()) {
-      return valueExpression + ".value";
-    }
+    if (python())
+      return valueExpression;
     return valueExpression + ".toString().toLowerCase()";
   }
 

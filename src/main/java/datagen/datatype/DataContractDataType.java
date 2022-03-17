@@ -85,7 +85,7 @@ public class DataContractDataType extends DataType {
       //
       s.a("x = obj.get(", f.nameStringConstant(), ")", CR);
       s.a("if x is not None:", IN);
-      s.a("inst._", f.javaName(), " = ", f.defaultValueOrNull(), ".parse(x)", OUT);
+      s.a("inst._", f.javaName(), " = ", pythonDeserializeExpr(f, "x"), OUT);
       return;
     }
 
@@ -109,6 +109,13 @@ public class DataContractDataType extends DataType {
     );
 
     s.close();
+  }
+
+  /**
+   * Get Python expression to deserialize a (json/dict) value
+   */
+  public String pythonDeserializeExpr(FieldDef f, String expr) {
+    return f.defaultValueOrNull() + ".parse(" + expr + ")";
   }
 
   @Override

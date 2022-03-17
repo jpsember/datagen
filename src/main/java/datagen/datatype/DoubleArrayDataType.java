@@ -43,6 +43,9 @@ public class DoubleArrayDataType extends DataContractDataType {
       case JAVA:
         mDefValue = ParseTools.PKG_DATAUTIL + ".EMPTY_DOUBLE_ARRAY";
         break;
+      case PYTHON:
+        mDefValue = "[]";
+        break;
       default:
         throw notSupported();
       }
@@ -118,7 +121,7 @@ public class DoubleArrayDataType extends DataContractDataType {
     default:
       throw notSupported();
     case PYTHON:
-      return "json.dumps(" + value + ")";
+      return value;
     case JAVA:
       return ParseTools.PKG_DOUBLE_ARRAY + ".with(" + value + ").toJson()";
     }
@@ -139,6 +142,11 @@ public class DoubleArrayDataType extends DataContractDataType {
     case JAVA:
       return ParseTools.PKG_DOUBLE_ARRAY + ".DEFAULT_INSTANCE.parse(x).array()";
     }
+  }
+
+  @Override
+  public String pythonDeserializeExpr(FieldDef f, String expr) {
+    return expr + ".copy()";
   }
 
   @Override

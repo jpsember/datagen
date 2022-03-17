@@ -4,19 +4,12 @@
 @@  """
 @@  Generated Python enum class (do not edit!)
 @@  """
-from enum import Enum, unique
 
 \\2
-@unique
-class [!class](Enum):
+class [!class]:
 
 \\
 [!enum_values]
-
-
-\\
-  def __str__(self):
-    return str(self.value)
 
 
 \\2

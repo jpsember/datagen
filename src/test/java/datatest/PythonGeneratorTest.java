@@ -98,6 +98,14 @@ public class PythonGeneratorTest extends GenBaseTest {
   }
 
   @Test
+  public void doubles() {
+    p().pr("fields {", INDENT, //
+        "*double foo;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
   public void strings() {
     p().pr("fields {", INDENT, //
         "string alpha;", CR, //
