@@ -76,15 +76,16 @@ public class DataContractDataType extends DataType {
   // Make this final for now to avoid unintended overriding
   @Override
   public final void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
+
     if (python()) {
-      s.a("x = obj.get(", f.nameStringConstant(), ", ", f.defaultValueOrNull(), ")", CR);
-      if (f.optional()) {
-        s.a("if x is not None:", IN);
-      }
-      s.a("inst._", f.javaName(), " = ", getConstructFromX(), CR);
-      if (f.optional()) {
-        s.a(OUT);
-      }
+
+      // If there is a value for this key, use the type's default instance to parse that value
+      // and store that parsed value.
+      // Otherwise, if there is no value, leave the current value alone (which may be None, e.g. if value is optional)
+      //
+      s.a("x = obj.get(", f.nameStringConstant(), ")", CR);
+      s.a("if x is not None:", IN);
+      s.a("inst._", f.javaName(), " = ", f.defaultValueOrNull(), ".parse(x)", OUT);
       return;
     }
 
