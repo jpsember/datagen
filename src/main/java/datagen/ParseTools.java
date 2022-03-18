@@ -38,6 +38,8 @@ import js.parsing.RegExp;
 
 public final class ParseTools {
 
+  public static final boolean SHOW_STACK_TRACES = false && alert("showing full stack traces");
+
   public static final String EXT_DATA_DEFINITION = "dat";
   public static final String DOT_EXT_DATA_DEFINITION = "." + EXT_DATA_DEFINITION;
 
@@ -224,6 +226,12 @@ public final class ParseTools {
     return importExpression(arg, arg.substring(cursor + 1));
   }
 
+  private static String pythonImportExpression(String arg) {
+    int cursor = arg.lastIndexOf(' ');
+    checkArgument(cursor > 0);
+    return importExpression(arg, arg.substring(cursor + 1));
+  }
+
   // Qualified class names for some of my data types (and Java's), in case they change or get substituted in future
   //
   public static final String PKG_DATAUTIL = javaImportExpression("js.data.DataUtil");
@@ -242,6 +250,8 @@ public final class ParseTools {
   public static final String PKG_SHORT_ARRAY = javaImportExpression("js.data.ShortArray");
   public static final String PKG_FLOAT_ARRAY = javaImportExpression("js.data.FloatArray");
   public static final String PKG_DOUBLE_ARRAY = javaImportExpression("js.data.DoubleArray");
+
+  public static final String PKGPY_DATAUTIL = pythonImportExpression("from pycore.datautil import DataUtil");
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 

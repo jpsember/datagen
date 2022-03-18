@@ -164,7 +164,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void ipoints() {
+  public void ipoints() { 
     p().pr("fields {", INDENT, //
         "IPoint a;", CR, //
         "?IPoint b;", CR, //

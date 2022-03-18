@@ -121,7 +121,8 @@ public class DataContractDataType extends DataType {
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     if (python()) {
-      super.sourceDeserializeFromList(s, f);
+      s.a("inst._", f.javaName(), " = ", ParseTools.PKGPY_DATAUTIL, ".parse_list_of_objects(", typeName(),
+          ".default_instance, obj.get(", f.nameStringConstant(), "), ", f.optional() ? "True" : "False", ")");
       return;
     }
     s.a("m", f.javaName(), " = ", ParseTools.PKG_DATAUTIL, ".parseListOfObjects(", typeName(),

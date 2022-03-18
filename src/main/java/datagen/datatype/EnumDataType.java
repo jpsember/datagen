@@ -40,15 +40,16 @@ public class EnumDataType extends DataType {
   @Override
   public String ourDefaultValue() {
     if (mDefValue == null) {
-      if (python()) {
+      if (python())
         mDefValue = pythonClassName() + ".default_instance";
-      } else
+      else
         mDefValue = typeName() + ".DEFAULT_INSTANCE";
     }
     return mDefValue;
   }
 
   private String pythonClassName() {
+    todo("!Why is this method necessary?  Ought to be able to call typeName()");
     if (mPyCl == null) {
       String filename = DataUtil.convertCamelCaseToUnderscores(qualifiedClassName().className());
       mPyCl = ParseTools.importExpression("from " + qualifiedClassName().packagePath() + "." + filename

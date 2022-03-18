@@ -197,7 +197,7 @@ public class DatagenOper extends AppOper {
         File sourceFile = new File(config.sourcePath(), entry.sourceRelPath());
         registerGeneratedSourceFile(sourceFile);
       } catch (Throwable t) {
-        if (!app().catchingErrors())
+        if (!app().catchingErrors() || SHOW_STACK_TRACES)
           throw t;
         setError("Processing", entry.datRelPath(), INDENT, t.getMessage());
       }

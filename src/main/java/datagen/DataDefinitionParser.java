@@ -61,7 +61,7 @@ final class DataDefinitionParser extends BaseObject {
         reportUnusedReferences();
 
     } catch (Throwable t) {
-      if (t instanceof ScanException) {
+      if (t instanceof ScanException || SHOW_STACK_TRACES) {
         throw t;
       }
       if (mLastReadToken != null) {
