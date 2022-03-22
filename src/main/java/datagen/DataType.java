@@ -163,6 +163,11 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   @Override
+  public String parseLiteralValue(Scanner scanner, SourceBuilder classSpecificSource) {
+    throw notSupported("parseLiteralValue for:", typeName());
+  }
+
+  @Override
   public String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource, FieldDef fieldDef) {
     throw notSupported("default value for:", typeName());
   }

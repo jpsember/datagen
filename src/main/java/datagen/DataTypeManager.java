@@ -35,6 +35,7 @@ import js.geometry.IPoint;
 import js.geometry.IRect;
 import js.geometry.Matrix;
 import js.geometry.Polygon;
+import js.parsing.Scanner;
 
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
@@ -142,17 +143,26 @@ public final class DataTypeManager extends BaseObject {
     add(defaultInstance, null);
   }
 
-  private static final DefaultValueParser IPOINT_PARSER = (scanner, classSpecificSource, fieldDef) -> {
-    String typeName = fieldDef.dataType().typeName();
-    scanner.read(SQOP);
-    int x = scanner.readInt(NUMBER);
-    scanner.read(COMMA);
-    int y = scanner.readInt(NUMBER);
-    scanner.read(SQCL);
-    String constName = "DEF_" + fieldDef.nameStringConstant();
-    classSpecificSource.a("  private static final ", fieldDef.dataType().typeName(), " ", constName,
-        "  = new ", typeName, "(", x, ", ", y, ");", CR);
-    return constName;
+  private static final DefaultValueParser IPOINT_PARSER = new DefaultValueParser() {
+    @Override
+    public String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource, FieldDef fieldDef) {
+      //(scanner, classSpecificSource, fieldDef) -> {
+      String typeName = fieldDef.dataType().typeName();
+      scanner.read(SQOP);
+      int x = scanner.readInt(NUMBER);
+      scanner.read(COMMA);
+      int y = scanner.readInt(NUMBER);
+      scanner.read(SQCL);
+      String constName = "DEF_" + fieldDef.nameStringConstant();
+      classSpecificSource.a("  private static final ", fieldDef.dataType().typeName(), " ", constName,
+          "  = new ", typeName, "(", x, ", ", y, ");", CR);
+      return constName;
+    }
+
+    @Override
+    public String parseLiteralValue(Scanner scanner, SourceBuilder classSpecificSource) {
+      throw notSupported("parseLiteralValue for IPOINT_PARSER");
+    }
   };
 
   private final Map<String, DataType> mTypeMap;

@@ -234,6 +234,7 @@ public final class ParseTools {
 
   // Qualified class names for some of my data types (and Java's), in case they change or get substituted in future
   //
+  public static final String PKG_TOOLS = javaImportExpression("js.base.Tools");
   public static final String PKG_DATAUTIL = javaImportExpression("js.data.DataUtil");
   public static final String PKG_JSMAP = javaImportExpression("js.json.JSMap");
   public static final String PKG_JSLIST = javaImportExpression("js.json.JSList");

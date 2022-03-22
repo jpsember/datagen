@@ -30,4 +30,5 @@ public interface DefaultValueParser {
 
   String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource, FieldDef fieldDef);
 
+  String parseLiteralValue(Scanner scanner, SourceBuilder classSpecificSource);
 }

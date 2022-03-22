@@ -48,6 +48,11 @@ public final class StringDataType extends DataType {
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
+    return parseLiteralValue(scanner, classSpecificSource);
+  }
+
+  @Override
+  public String parseLiteralValue(Scanner scanner, SourceBuilder classSpecificSource) {
     return scanner.read(STRING).text();
   }
 

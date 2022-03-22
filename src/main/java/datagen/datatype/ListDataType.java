@@ -24,13 +24,17 @@
  **/
 package datagen.datatype;
 
+import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
+
+import java.util.List;
 
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
+import js.parsing.Scanner;
 
 public class ListDataType extends DataType {
 
@@ -143,6 +147,59 @@ public class ListDataType extends DataType {
       s.a("r = r * 37 + x.hashCode();", OUT);
       s.a(OUT);
     }
+  }
+
+  @Override
+  public String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource, FieldDef fieldDef) {
+
+    List<String> parsedExpressions = arrayList();
+
+    {
+      scanner.read(SQOP);
+      for (int index = 0;; index++) {
+        if (scanner.readIf(SQCL) != null)
+          break;
+        if (index > 0) {
+          scanner.read(COMMA);
+          // Allow an extraneous trailing comma
+          if (scanner.readIf(SQCL) != null)
+            break;
+        }
+        String expr = wrappedType().parseLiteralValue(scanner, classSpecificSource);
+        parsedExpressions.add(expr);
+      }
+    }
+
+    SourceBuilder sb = classSpecificSource;
+
+    if (python()) {
+      String constName = "DEF" + fieldDef.nameStringConstant(false);
+      sb.a(constName, "  = [");
+      int index = INIT_INDEX;
+      for (String expr : parsedExpressions) {
+        index++;
+        if (index > 0) {
+          sb.a(",");
+        }
+        sb.a(expr);
+      }
+      sb.a("]", CR);
+      return constName;
+    }
+
+    String constName = "DEF_" + fieldDef.nameStringConstant();
+    sb.a("  private static final ", typeName(), " ", constName, " = ", ParseTools.PKG_TOOLS, ".arrayList(");
+    int index = INIT_INDEX;
+    for (String expr : parsedExpressions) {
+      index++;
+      if (index > 0) {
+        sb.a(",");
+      }
+      sb.a(expr);
+    }
+    sb.a(");").cr();
+
+    return constName;
   }
 
   private final DataType mWrappedType;
