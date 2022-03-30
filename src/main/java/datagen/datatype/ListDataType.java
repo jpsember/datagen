@@ -111,6 +111,8 @@ public class ListDataType extends DataType {
       todo("!for Python, we may want to convert individual items for other types, as we are doing for enums");
       if (wrappedType() instanceof EnumDataType) {
         s.a("m[", f.nameStringConstant(true), "] = [x.value for x in self._", f.javaName(), "]", CR);
+      } else if (wrappedType() instanceof DataContractDataType) {
+        s.a("m[", f.nameStringConstant(true), "] = [x.to_json() for x in self._", f.javaName(), "]", CR);
       } else
         s.a("m[", f.nameStringConstant(true), "] = self._", f.javaName(), ".copy()", CR);
     } else {
