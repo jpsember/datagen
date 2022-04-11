@@ -36,6 +36,7 @@ public class PrimitiveDoubleDataType extends DataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
+    loadTools();
     return "java.lang.double";
   }
 
@@ -54,11 +55,7 @@ public class PrimitiveDoubleDataType extends DataType {
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
     if (python()) {
-      if (f.optional()) {
-        notSupported("optional Python floats");
-      } else {
-        s.a("r = r * 37 + int(self._", f.javaName(), ")");
-      }
+      s.a("r = r * 37 + int(self._", f.javaName(), ")");
       return;
     }
 
