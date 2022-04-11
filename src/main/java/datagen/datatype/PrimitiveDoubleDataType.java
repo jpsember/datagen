@@ -54,6 +54,14 @@ public class PrimitiveDoubleDataType extends DataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
+
+    //    if (python()) {
+    //      // Adapted from PrimitiveLongDataType, which is used for ints and longs in Python
+    //      die("not supported yet");
+    //      super.sourceHashCalculationCode(s, f);
+    //      return;
+    //    }    
+    //    
     if (python()) {
       s.a("r = r * 37 + int(self._", f.javaName(), ")");
       return;
@@ -84,7 +92,16 @@ public class PrimitiveDoubleDataType extends DataType {
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.javaName(), " = m.optDouble(", f.nameStringConstant(), ");");
+      switch (language()) {
+      default:
+        throw notSupported();
+      case PYTHON:
+        super.sourceDeserializeFromObject(s, f);
+        break;
+      case JAVA:
+        s.a("m", f.javaName(), " = m.optDouble(", f.nameStringConstant(), ");");
+        break;
+      }
     }
 
   }

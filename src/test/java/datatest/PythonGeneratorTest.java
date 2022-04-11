@@ -101,6 +101,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   public void doubles() {
     p().pr("fields {", INDENT, //
         "*double foo;", CR, //
+        "?double golf;", CR, //  seems to be correct...
         OUTDENT, "}");
     compile();
   }
