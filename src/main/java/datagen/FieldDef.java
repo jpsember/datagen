@@ -35,9 +35,10 @@ import static js.base.Tools.*;
 public final class FieldDef extends BaseObject {
 
   public FieldDef(String name, DataType dataType, DataType dataType2, boolean optional) {
+    todo("dataType2 not used");
+    loadTools();
     mName = name;
     mDataType = dataType;
-    mDataType2 = dataType2;
     mOptional = optional;
     if (dataType.python()) {
       // If we add a '_' prefix, the Python inspection reports a warning about a 'protected member';
@@ -57,11 +58,6 @@ public final class FieldDef extends BaseObject {
 
   public DataType dataType() {
     return mDataType;
-  }
-
-  @Deprecated // This field doesn't seem to be required at present
-  public DataType dataType2() {
-    return mDataType2;
   }
 
   public boolean optional() {
@@ -116,17 +112,20 @@ public final class FieldDef extends BaseObject {
    * optional
    */
   public String defaultValueOrNull() {
-    loadTools();
+    return nullIfOptional(defaultValueSource());
+  }
+
+  // final for the time being
+  public final String defaultValueSource() {
     if (mDefaultValueSource == null)
       setDefaultValue(dataType().ourDefaultValue());
-    return nullIfOptional(mDefaultValueSource);
+    return mDefaultValueSource;
   }
 
   private final String mName;
   private final String mNameStringConstant;
   private final String mNameStringConstantQualified;
   private final DataType mDataType;
-  private final DataType mDataType2;
   private final boolean mOptional;
   private String mJavaName;
   private String mJavaNameCapFirst;

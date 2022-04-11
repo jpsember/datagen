@@ -115,7 +115,7 @@ public class DataContractDataType extends DataType {
    * Get Python expression to deserialize a (json/dict) value
    */
   public String pythonDeserializeExpr(FieldDef f, String expr) {
-    return f.defaultValueOrNull() + ".parse(" + expr + ")";
+    return f.defaultValueSource() + ".parse(" + expr + ")";
   }
 
   @Override
