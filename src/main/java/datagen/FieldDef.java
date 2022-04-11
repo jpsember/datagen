@@ -34,8 +34,7 @@ import static js.base.Tools.*;
  */
 public final class FieldDef extends BaseObject {
 
-  public FieldDef(String name, DataType dataType, DataType dataType2, boolean optional) {
-    todo("dataType2 not used");
+  public FieldDef(String name, DataType dataType,   boolean optional) {
     loadTools();
     mName = name;
     mDataType = dataType;

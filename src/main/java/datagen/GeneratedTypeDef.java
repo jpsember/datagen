@@ -146,7 +146,7 @@ public final class GeneratedTypeDef extends BaseObject {
     }
     complexType.setUsedFlag();
 
-    FieldDef f = new FieldDef(fieldName, complexType, dataType2, optional);
+    FieldDef f = new FieldDef(fieldName, complexType,   optional);
     mFields.add(f);
     return f;
   }
