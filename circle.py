@@ -7,14 +7,13 @@ from pycore.base import *
 class Circle(AbstractData):
 
   # Define serialization keys
-  # TODO: what are these? global variables?  Class variables?  Can't seem to print them
+  # These are class variables (see https://stackoverflow.com/questions/3434581)
+  # and can be accessed from outside e.g. 'print(Circle._1)'
   #
   _0 = "radius"
   _1 = "label"
 
   # Declare default value for this data class; declare it here, initialize it later
-  #
-  # TODO: does this declare a 'class variable' (i.e. singleton) as we want, as opposed to an instance field?
   #
   default_instance = None
 
