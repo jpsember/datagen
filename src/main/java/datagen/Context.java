@@ -24,8 +24,6 @@
  **/
 package datagen;
 
-import static js.base.Tools.*;
-
 import datagen.gen.DatWithSource;
 import datagen.gen.DatagenConfig;
 import js.file.Files;
@@ -41,11 +39,6 @@ public final class Context {
   public DataTypeManager dataTypeManager;
   public DatWithSource datWithSource;
 
-
-  private Context() {
-    loadTools();
-  }
-
   public static Context SHARED_INSTANCE = new Context();
 
   /**
@@ -54,4 +47,8 @@ public final class Context {
   public static void prepare() {
     SHARED_INSTANCE = new Context();
   }
+
+  private Context() {
+  }
+
 }
