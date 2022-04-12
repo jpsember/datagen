@@ -42,7 +42,7 @@ import js.file.Files;
 public class DatagenOper extends AppOper {
 
   protected String getHelpDescription() {
-    return "Generate Java data classes from .dat files";
+    return "Generate source files from .dat files";
   }
 
   @Override
@@ -57,47 +57,15 @@ public class DatagenOper extends AppOper {
 
   @Override
   public void perform() {
-
-    DatagenConfig.Builder config = (DatagenConfig.Builder) config().toBuilder();
-
-    if (Files.nonEmpty(config.startDir()))
-      config.startDir(config.startDir().getAbsoluteFile());
-
-    File datPath = getFile(config.startDir(), config.datPath());
-    config.datPath(Files.assertDirectoryExists(datPath, "dat_dir"));
-
-    if (Files.empty(config.sourcePath())) {
-      File f;
-      switch (config.language()) {
-      default:
-        throw Context.languageNotSupported();
-      case JAVA:
-        f = new File("src/main/java");
-        break;
-      case PYTHON:
-        f = Files.currentDirectory();
-        break;
-      }
-      config.sourcePath(f);
-    }
-
-    File sourcePathRel = config.sourcePath();
-    if (config.language() == Language.PYTHON && !Files.empty(config.pythonSourcePath()))
-      sourcePathRel = config.pythonSourcePath();
-
-    // If the output source directory doesn't exist, make it
-    config.sourcePath(files().mkdirs(getFile(config.startDir(), sourcePathRel)));
-
-    log("source directory:", config.sourcePath());
-    log(" dat directory:", config.datPath());
+    DatagenConfig config = prepareConfig();
 
     {
-      DirWalk d = new DirWalk(config.datPath()).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
-      if (d.files().isEmpty()) {
+      DirWalk dirWalk = new DirWalk(config.datPath()).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
+      if (dirWalk.files().isEmpty()) {
         pr("(...no .dat files were found in:", config.datPath() + ")");
       }
 
-      for (File rel : d.filesRelative()) {
+      for (File rel : dirWalk.filesRelative()) {
         String relPathExpr;
         {
           File relPath = rel.getParentFile();
@@ -136,7 +104,8 @@ public class DatagenOper extends AppOper {
         DatWithSource fileEntry = DatWithSource.newBuilder().datRelPath(rel.getPath())
             .sourceRelPath(relativeClassFile).build();
 
-        if (config.clean() || !sourceFile.exists() || sourceFile.lastModified() < d.abs(rel).lastModified()) {
+        if (config.clean() || !sourceFile.exists()
+            || sourceFile.lastModified() < dirWalk.abs(rel).lastModified()) {
           if (verbose()) {
             if (sourceFile.exists())
               log("file is out of date:", relativeClassFile);
@@ -160,7 +129,7 @@ public class DatagenOper extends AppOper {
 
       // Reset context for a new file
       Context.prepare(files(), config, entry);
-      
+
       DataDefinitionParser p = new DataDefinitionParser();
       p.setVerbose(verbose());
       try {
@@ -181,6 +150,45 @@ public class DatagenOper extends AppOper {
 
     if (config.deleteOld())
       deleteOldSourceFiles();
+  }
+
+  /**
+   * Prepare DatagenConfig object by reading it from the configuration
+   * arguments, and applying any default values or additional processing
+   */
+  private DatagenConfig prepareConfig() {
+    DatagenConfig.Builder config = (DatagenConfig.Builder) config().toBuilder();
+
+    if (Files.nonEmpty(config.startDir()))
+      config.startDir(config.startDir().getAbsoluteFile());
+
+    config.datPath(Files.assertDirectoryExists(getFile(config.startDir(), config.datPath()), "dat_path"));
+
+    if (Files.empty(config.sourcePath())) {
+      File f;
+      switch (config.language()) {
+      default:
+        throw Context.languageNotSupported();
+      case JAVA:
+        f = new File("src/main/java");
+        break;
+      case PYTHON:
+        f = Files.currentDirectory();
+        break;
+      }
+      config.sourcePath(f);
+    }
+
+    File sourcePathRel = config.sourcePath();
+    if (config.language() == Language.PYTHON && !Files.empty(config.pythonSourcePath()))
+      sourcePathRel = config.pythonSourcePath();
+
+    // If the output source directory doesn't exist, make it
+    config.sourcePath(files().mkdirs(getFile(config.startDir(), sourcePathRel)));
+
+    log("source directory:", config.sourcePath());
+    log(" dat directory:", config.datPath());
+    return config.build();
   }
 
   /**
