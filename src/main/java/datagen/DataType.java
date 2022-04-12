@@ -44,7 +44,7 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   public final boolean python() {
-    return context().python();
+    return language() == Language.PYTHON;
   }
 
   public final Language language() {
@@ -65,6 +65,18 @@ public abstract class DataType implements DefaultValueParser {
     return mClassWithPackage;
   }
 
+  protected String constructImportExpression() {
+    QualifiedName nm = qualifiedClassName();
+    switch (language()) {
+    default:
+      throw notSupported(language());
+    case PYTHON:
+      return "from " + nm.packagePath() + " import " + nm.className();
+    case JAVA:
+      return nm.combined();
+    }
+  }
+
   /**
    * Specify the qualified class name
    */
@@ -82,9 +94,7 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   protected String provideTypeName() {
-    String tn = ParseTools.importExpression(context().constructImportExpression(qualifiedClassName()),
-        qualifiedClassName().className());
-    return tn;
+    return ParseTools.importExpression(constructImportExpression(), qualifiedClassName().className());
   }
 
   public List<String> auxilliaryImportExpressions() {

@@ -35,6 +35,7 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
+import datagen.gen.Language;
 import datagen.gen.QualifiedName;
 import js.data.DataUtil;
 import js.parsing.Scanner;
@@ -47,15 +48,19 @@ public class DataContractDataType extends DataType {
 
   @Override
   public String ourDefaultValue() {
-    if (mDefValue == null) {
-      if (python()) {
-        mDefValue = ParseTools.importExpression(context().constructImportExpression(qualifiedClassName()),
+    if (mDefValue == null)
+      switch (language()) {
+      default:
+        throw notSupported(language());
+      case PYTHON:
+        mDefValue = ParseTools.importExpression(constructImportExpression(),
             qualifiedClassName().className() + ".default_instance");
-      } else {
-        mDefValue = ParseTools.importExpression(qualifiedClassName().combined(),
-            qualifiedClassName().className()) + ".DEFAULT_INSTANCE";
+        break;
+      case JAVA:
+        mDefValue = ParseTools.importExpression(constructImportExpression(), qualifiedClassName().className())
+            + ".DEFAULT_INSTANCE";
+        break;
       }
-    }
     return mDefValue;
   }
 
@@ -167,12 +172,12 @@ public class DataContractDataType extends DataType {
   public void parseQualifiedName(Context context, String typeName) {
     // We may not yet have a generated type to provide a default package
     String defaultPackageName = null;
-    if (context.python())
+    if (context.config.language() == Language.PYTHON)
       defaultPackageName = "pycore";
 
     if (context.generatedTypeDef != null) {
       defaultPackageName = context.generatedTypeDef.packageName();
-      if (context.python()) {
+      if (context.config.language() == Language.PYTHON) {
         // If typeName is Xyz, make sure default package ends with xyz, adding if necessary
         String packageSuff = "." + DataUtil.convertCamelCaseToUnderscores(typeName);
         if (!("." + defaultPackageName).endsWith(packageSuff)) {

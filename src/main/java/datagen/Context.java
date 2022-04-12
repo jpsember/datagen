@@ -28,8 +28,6 @@ import static js.base.Tools.*;
 
 import datagen.gen.DatWithSource;
 import datagen.gen.DatagenConfig;
-import datagen.gen.Language;
-import datagen.gen.QualifiedName;
 import js.file.Files;
 
 /**
@@ -43,19 +41,6 @@ public final class Context {
   public DataTypeManager dataTypeManager;
   public DatWithSource datWithSource;
 
-  @Deprecated // This ought to be unnecessary if we structure things right, using subclassing where appropriate...?
-  public boolean python() {
-    return config.language() == Language.PYTHON;
-  }
-
-  @Deprecated // We should perhaps have a language-specific version of the Context class... or?
-  public String constructImportExpression(QualifiedName nm) {
-    if (python()) {
-      return "from " + nm.packagePath() + " import " + nm.className();
-    } else {
-      return nm.combined();
-    }
-  }
 
   private Context() {
     loadTools();
