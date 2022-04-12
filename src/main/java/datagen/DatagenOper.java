@@ -71,9 +71,9 @@ public class DatagenOper extends AppOper {
       // Reset context for a new file
       Context.prepare(files(), config, entry);
 
-      DataDefinitionParser p = new DataDefinitionParser();
-      p.setVerbose(verbose());
       try {
+        DataDefinitionParser p = new DataDefinitionParser();
+        p.setVerbose(verbose());
         p.parse();
         SourceGen gn = SourceGen.construct();
         gn.setVerbose(verbose());

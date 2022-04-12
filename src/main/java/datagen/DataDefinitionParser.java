@@ -46,6 +46,9 @@ import js.data.DataUtil;
  */
 final class DataDefinitionParser extends BaseObject {
 
+  /**
+   * Parse .dat file; store generated type definition to Context
+   */
   public void parse() {
     try {
       prepareHandlers();
@@ -56,7 +59,6 @@ final class DataDefinitionParser extends BaseObject {
       if (Context.generatedTypeDef == null)
         badArg("No 'fields {...}' specified");
       reportUnusedReferences();
-
     } catch (Throwable t) {
       if (t instanceof ScanException || SHOW_STACK_TRACES) {
         throw t;
@@ -144,12 +146,11 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void procDataType() {
-    checkState(Context.generatedTypeDef == null, "Multiple data types per file is not allowed");
     String typeName = DataUtil.convertUnderscoresToCamelCase(
         Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
     GeneratedTypeDef msg = new GeneratedTypeDef(typeName);
-    Context.generatedTypeDef = msg;
     msg.setPackageName(determinePackageName());
+    setGeneratedTypeDef(msg);
 
     read(BROP);
 
@@ -224,7 +225,7 @@ final class DataDefinitionParser extends BaseObject {
       GeneratedTypeDef msg = new GeneratedTypeDef(className.className());
       msg.setEnum(enumDataType);
       msg.setPackageName(determinePackageName());
-      Context.generatedTypeDef = msg;
+      setGeneratedTypeDef(msg);
     }
 
     read(BROP);
@@ -246,6 +247,11 @@ final class DataDefinitionParser extends BaseObject {
       mPackageName = parentName.replace('/', '.');
     }
     return mPackageName;
+  }
+
+  private void setGeneratedTypeDef(GeneratedTypeDef d) {
+    checkState(Context.generatedTypeDef == null, "Multiple data types per file is not allowed");
+    Context.generatedTypeDef = d;
   }
 
   private Scanner mScanner;
