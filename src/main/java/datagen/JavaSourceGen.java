@@ -51,8 +51,7 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected String generateInitInstanceFields(GeneratedTypeDef def) {
-    SourceBuilder s = s();
-    in(2);
+    SourceBuilder s = s().in(2);
     for (FieldDef f : def.fields()) {
       if (f.optional())
         continue;
@@ -69,7 +68,7 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected String generateCopyFromBuilderToImmutable(GeneratedTypeDef def) {
-    in(4);
+    s().in(4);
     for (FieldDef f : def.fields()) {
       s().a(CR);
       f.dataType().sourceExpressionToImmutable(s(), f, "r.m" + f.javaName(), "m" + f.javaName());
@@ -81,8 +80,7 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected String generateSetters(GeneratedTypeDef def) {
-    SourceBuilder s = s();
-    in(2);
+    SourceBuilder s = s().in(2);
     for (FieldDef f : def.fields()) {
       s.br();
       DataType d = f.dataType();
@@ -97,8 +95,7 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected String generateToString(GeneratedTypeDef def) {
-    SourceBuilder s = s();
-    in(0);
+    SourceBuilder s = s().in(0);
     s.a("@Override", CR, //
         "public String toString()", OPEN, //
         "return toJson().prettyPrint();", CLOSE, //
@@ -108,8 +105,7 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected String generateToJson(GeneratedTypeDef def) {
-    SourceBuilder s = s();
-    in(0);
+    SourceBuilder s = s().in(0);
 
     s.a("@Override", CR, //
         "public JSMap toJson()", OPEN);
@@ -145,7 +141,7 @@ public final class JavaSourceGen extends SourceGen {
   protected String generateParse(GeneratedTypeDef def) {
     SourceBuilder s = s();
     s.br();
-    in(0);
+    s.in(0);
     s.a("@Override", CR, //
         "public ", def.name(), " parse(Object obj)", OPEN, //
         "return new ", def.name(), "((JSMap) obj);", CLOSE, //
@@ -161,8 +157,7 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected String generateGetters(GeneratedTypeDef def) {
-    SourceBuilder s = s();
-    in(0);
+    SourceBuilder s = s().in(0);
     for (FieldDef f : def.fields()) {
       s.br();
       s.a("public ", f.dataType().typeName(), " ", f.javaNameLowerFirst(), "()", OPEN, //
@@ -174,8 +169,7 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected String generateImmutableToBuilder(GeneratedTypeDef def) {
-    SourceBuilder s = s();
-    in(4);
+    SourceBuilder s = s().in(4);
     for (FieldDef f : def.fields()) {
       s.a("m", f.javaName(), " = ", f.dataType().sourceExpressionToMutable("m.m" + f.javaName()), ";", CR);
     }
@@ -185,8 +179,7 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected String generateStringConstants(GeneratedTypeDef def) {
-    SourceBuilder s = s();
-    in(0);
+    SourceBuilder s = s().in(0);
     for (FieldDef f : def.fields()) {
       s.br();
       s.a("public static final String ", f.nameStringConstant(), " = \"", f.name(), "\";");
@@ -197,8 +190,7 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected String generateInstanceFields(GeneratedTypeDef def) {
-    SourceBuilder s = s();
-    in(0);
+    SourceBuilder s = s().in(0);
     for (FieldDef f : def.fields())
       s.a("protected ", f.dataType().typeName(), " m", f.javaName(), ";", CR);
     s.a("protected int m__hashcode;");
@@ -209,8 +201,7 @@ public final class JavaSourceGen extends SourceGen {
   @Override
   protected String generateEquals(GeneratedTypeDef def) {
     String c = def.name();
-    SourceBuilder s = s();
-    in(0);
+    SourceBuilder s = s().in(0);
     s.a("@Override").cr();
     s.a("public boolean equals(Object object)", OPEN);
     {
@@ -258,8 +249,7 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected String generateHashCode(GeneratedTypeDef def) {
-    SourceBuilder s = s();
-    in(0);
+    SourceBuilder s = s().in(0);
     s.a("@Override", CR, //
         "public int hashCode()", OPEN, //
         "int r = m__hashcode;", CR, //
@@ -275,7 +265,6 @@ public final class JavaSourceGen extends SourceGen {
         OUT, CR);
     return content();
   }
- 
 
   @Override
   protected void generateEnumValues(EnumDataType dt) {

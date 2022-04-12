@@ -121,13 +121,19 @@ public class SourceBuilder {
     return this;
   }
 
+  public SourceBuilder setDefaultIndent(int indent) {
+    mIndent = indent;
+    mDefaultIndent = indent;
+  return this;
+  }
+  
   public String content() {
-    if (mIndent != 0) {
+    if (mIndent != mDefaultIndent) {
       pr("*** About to fail!");
       pr("mIndent is", mIndent);
       pr(mStringBuilder);
+      checkState(mIndent == mDefaultIndent);
     }
-    checkState(mIndent == 0);
     String result = mStringBuilder.toString();
     reset();
     return result;
@@ -244,6 +250,7 @@ public class SourceBuilder {
   private final Language mLanguage;
   private boolean mQuotePending;
   private int mIndent;
+  private int mDefaultIndent;
   private int mPendingIndent;
   private int mColumn;
   private StringBuilder mStringBuilder = new StringBuilder();

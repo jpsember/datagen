@@ -60,7 +60,6 @@ public abstract class SourceGen extends BaseObject {
     mSourceBuilder = new SourceBuilder(Context.config.language());
   }
 
-  // This was derived from the JavaSourceGen method
   public final void generate() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s().reset();
@@ -77,7 +76,7 @@ public abstract class SourceGen extends BaseObject {
       m.put("default_value", def.enumDataType().labels().get(0));
       m.put("enum_values", content());
     } else {
-      mInset = 2;
+      s().setDefaultIndent(2);
       m.put("class_getter_implementation", generateGetters(def));
       m.put("copy_to_builder", generateImmutableToBuilder(def));
       m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable(def));
@@ -90,6 +89,7 @@ public abstract class SourceGen extends BaseObject {
       m.put("string_constants", generateStringConstants(def));
       m.put("to_json", generateToJson(def));
       m.put("to_string", generateToString(def));
+      s().setDefaultIndent(0);
     }
 
     // Get any source that DataTypes may have needed to add;
@@ -224,17 +224,8 @@ public abstract class SourceGen extends BaseObject {
     return mImportedClasses;
   }
 
-  /**
-   * Call s().in(...) with a particular offset
-   */
-  protected final void in(int amount) {
-    s().in(mInset + amount);
-  }
-
   private SourceBuilder mSourceBuilder;
   private Set<String> mImportedClasses;
-
-  private int mInset;
 
   private static final String NOT_SUPPORTED = "<<not supported>>";
 
