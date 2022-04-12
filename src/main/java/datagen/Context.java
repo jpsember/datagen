@@ -45,12 +45,7 @@ public final class Context {
 
   @Deprecated // This ought to be unnecessary if we structure things right, using subclassing where appropriate...?
   public boolean python() {
-    return language() == Language.PYTHON;
-  }
-
-  @Deprecated // This just calls config.language()
-  public Language language() {
-    return config.language();
+    return config.language() == Language.PYTHON;
   }
 
   @Deprecated // We should perhaps have a language-specific version of the Context class... or?

@@ -45,7 +45,7 @@ public abstract class SourceGen extends BaseObject {
   public static SourceGen construct() {
     Context context = Context.SHARED_INSTANCE;
     SourceGen result;
-    switch (context.language()) {
+    switch (context.config.language()) {
     case JAVA:
       result = new JavaSourceGen();
       break;
@@ -53,14 +53,14 @@ public abstract class SourceGen extends BaseObject {
       result = new PythonSourceGen();
       break;
     default:
-      throw notSupported(context.language());
+      throw notSupported(context.config.language());
     }
     result.prepare();
     return result;
   }
 
   private void prepare() {
-    mSourcebuilder = new SourceBuilder(Context.SHARED_INSTANCE.language());
+    mSourcebuilder = new SourceBuilder(Context.SHARED_INSTANCE.config.language());
   }
 
   public void includeImport(String importExpr) {
@@ -78,7 +78,7 @@ public abstract class SourceGen extends BaseObject {
   }
 
   public final String sourceFileExtension() {
-    return sourceFileExtension(Context.SHARED_INSTANCE.language());
+    return sourceFileExtension(Context.SHARED_INSTANCE.config.language());
   }
 
   public static String sourceFileExtension(Language language) {

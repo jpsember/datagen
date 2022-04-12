@@ -52,7 +52,7 @@ public final class DataTypeManager extends BaseObject {
 
     DataType tmp;
 
-    switch (context.language()) {
+    switch (context.config.language()) {
     default:
       throw notSupported();
     case PYTHON:

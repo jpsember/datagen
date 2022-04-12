@@ -208,7 +208,7 @@ public class DatagenOper extends AppOper {
   private void deleteOldSourceFiles() {
     Context context = Context.SHARED_INSTANCE;
     DirWalk dirWalk = new DirWalk(context.config.sourcePath()).withRecurse(true)
-        .withExtensions(SourceGen.sourceFileExtension(context.language()));
+        .withExtensions(SourceGen.sourceFileExtension(context.config.language()));
     todo("!is this working with the new relative paths for DatWithSource?");
     for (File sourceFile : dirWalk.files()) {
       // If file is not in a directory we wrote generated files to, ignore

@@ -166,7 +166,7 @@ public final class GeneratedTypeDef extends BaseObject {
   public SourceBuilder classSpecificSourceBuilder() {
     checkState(mClassSpecificSource == null, "source already retrieved");
     if (mClassSpecificSourceBuilder == null)
-      mClassSpecificSourceBuilder = new SourceBuilder(context().language());
+      mClassSpecificSourceBuilder = new SourceBuilder(context().config.language());
     return mClassSpecificSourceBuilder;
   }
 
