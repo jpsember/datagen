@@ -68,10 +68,11 @@ public class PythonSourceGen extends SourceGen {
       m.put("equals", generateEquals(def));
       m.put("setters", generateSetters(def));
       m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable(def));
-
-      // Get any source that DataTypes may have needed to add
-      m.put("class_specific", def.getClassSpecificSource());
     }
+
+    // Get any source that DataTypes may have needed to add;
+    // must be added here, after all other keys
+    m.put("class_specific", def.getClassSpecificSource());
 
     // Perform pass 1 of macro substitution
     //

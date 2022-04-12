@@ -67,13 +67,13 @@ public final class JavaSourceGen extends SourceGen {
       m.put("copy_to_builder", generateImmutableToBuilder(def));
       m.put("string_constants", generateStringConstants(def));
       m.put("instance_fields", generateInstanceFields(def));
-
-      // Get any source that DataTypes may have needed to add
-      m.put("class_specific", def.getClassSpecificSource());
-
       m.put("equals", generateEquals(def));
       m.put("hashcode", generateHashCode(def));
     }
+
+    // Get any source that DataTypes may have needed to add;
+    // must be added here, after all other keys
+    m.put("class_specific", def.getClassSpecificSource());
 
     // Perform pass 1 of macro substitution
     //
