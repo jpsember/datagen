@@ -7,10 +7,10 @@ from pycore.base import *
 class Circle(AbstractData):
 
   # Define serialization keys
-  # TODO: can these key names (not their string values) be shorter? Maybe just field numbers, e.g. _k12?
+  # TODO: what are these? global variables?  Class variables?  Can't seem to print them
   #
-  _key_radius = "radius"
-  _key_label = "label"
+  _0 = "radius"
+  _1 = "label"
 
   # Declare default value for this data class; declare it here, initialize it later
   #
@@ -34,8 +34,8 @@ class Circle(AbstractData):
     # TODO: can we construct a builder, use its setters, and call build() instead?  Saves code, but at what cost?
     #
     inst = Circle()
-    inst._radius = obj.get(Circle._key_radius, 0)
-    inst._label = obj.get(Circle._key_label, None)
+    inst._radius = obj.get(Circle._0, 0)
+    inst._label = obj.get(Circle._1, None)
     return inst
 
 
@@ -52,9 +52,9 @@ class Circle(AbstractData):
     # TODO: can we rewrite this as a dict literal to avoid the IDE warning
     #  "This dictionary creation could be rewritten as a dictionary literal"?
     m = {}
-    m[Circle._key_radius] = self._radius
+    m[Circle._0] = self._radius
     if self._label is not None:
-      m[Circle._key_label] = self._label
+      m[Circle._1] = self._label
     return m
 
 
@@ -113,19 +113,29 @@ Circle.default_instance = Circle()
 #
 class CircleBuilder(Circle):
 
+
+  def build(self):
+    v = Circle()
+    v._radius = self._radius
+    v._label = self._label
+    return v
+
+
   # Define (hidden) methods unique to the builder;
   # can these be public, so they can be called using fluid interface?
   #
-  def _set_radius(self, value):
-    self._radius = value
-  def _set_label(self, value):
-    self._label = value
+  def set_radius(self, value):
+    self._radius = value; return self
+  def set_label(self, value):
+    self._label = value; return self
 
   # Redefine the property for the builder class
   # TODO: is this appropriate?  Or are there now two 'radius' properties, one in the parent class?
   #
-  radius = property(fget=Circle._get_radius, fset=_set_radius)
-  label = property(Circle._get_label, _set_label)
+  # TODO: IDE is warning that "Setter should not return a value"
+  #
+  radius = property(Circle._get_radius, set_radius)
+  label = property(Circle._get_label, set_label)
 
 
 def r():
@@ -135,12 +145,14 @@ def r():
 print("circle.py loaded")
 a = Circle()
 
-# NOTE: we are giving up some fluid-like capability (b.setXXX(...).setYY(...)...)
+# NOTE: we are giving up some fluid-like capability (b.setXXX(...).setYY(...)...);
+# but I have made the setters return 'self', to it is now fluidic once again
 #
 b = CircleBuilder()
 b.radius = 8
 
 
-c = b.build().to_builder()
-c.label = "surprise"
+c = b.build().to_builder().set_label("surprise").set_radius(42)
+d = c.build()
 
+pr(d)
