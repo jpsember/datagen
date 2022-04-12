@@ -65,7 +65,7 @@ public abstract class SourceGen extends BaseObject {
     s().reset();
 
     JSMap m = map();
-    m.put("package_decl", generatePackageDecl(def));
+    m.put("package_decl", generatePackageDecl());
     // In this first pass, leave the imports macro unchanged
     m.put("imports", "[!imports]");
     m.put("class", def.name());
@@ -77,18 +77,18 @@ public abstract class SourceGen extends BaseObject {
       m.put("enum_values", content());
     } else {
       s().setDefaultIndent(2);
-      m.put("class_getter_implementation", generateGetters(def));
-      m.put("copy_to_builder", generateImmutableToBuilder(def));
-      m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable(def));
-      m.put("equals", generateEquals(def));
-      m.put("hashcode", generateHashCode(def));
-      m.put("init_instance_fields", generateInitInstanceFields(def));
-      m.put("instance_fields", generateInstanceFields(def));
-      m.put("parse", generateParse(def));
-      m.put("setters", generateSetters(def));
-      m.put("string_constants", generateStringConstants(def));
-      m.put("to_json", generateToJson(def));
-      m.put("to_string", generateToString(def));
+      m.put("class_getter_implementation", generateGetters());
+      m.put("copy_to_builder", generateImmutableToBuilder());
+      m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable());
+      m.put("equals", generateEquals());
+      m.put("hashcode", generateHashCode());
+      m.put("init_instance_fields", generateInitInstanceFields());
+      m.put("instance_fields", generateInstanceFields());
+      m.put("parse", generateParse());
+      m.put("setters", generateSetters());
+      m.put("string_constants", generateStringConstants());
+      m.put("to_json", generateToJson());
+      m.put("to_string", generateToString());
       s().setDefaultIndent(0);
     }
 
@@ -231,38 +231,40 @@ public abstract class SourceGen extends BaseObject {
 
   protected abstract String getTemplate();
 
-  protected abstract String generatePackageDecl(GeneratedTypeDef def);
+  protected String generatePackageDecl() {
+    return NOT_SUPPORTED;
+  }
 
   protected abstract void generateEnumValues(EnumDataType dt);
 
-  protected abstract String generateInitInstanceFields(GeneratedTypeDef def);
+  protected abstract String generateInitInstanceFields();
 
-  protected abstract String generateCopyFromBuilderToImmutable(GeneratedTypeDef def);
+  protected abstract String generateCopyFromBuilderToImmutable();
 
-  protected abstract String generateSetters(GeneratedTypeDef def);
+  protected abstract String generateSetters();
 
-  protected String generateToString(GeneratedTypeDef def) {
+  protected String generateToString() {
     return NOT_SUPPORTED;
   }
 
-  protected abstract String generateToJson(GeneratedTypeDef def);
+  protected abstract String generateToJson();
 
   protected abstract String generateImports();
 
-  protected abstract String generateParse(GeneratedTypeDef def);
+  protected abstract String generateParse();
 
-  protected abstract String generateGetters(GeneratedTypeDef def);
+  protected abstract String generateGetters();
 
-  protected abstract String generateImmutableToBuilder(GeneratedTypeDef def);
+  protected abstract String generateImmutableToBuilder();
 
-  protected abstract String generateStringConstants(GeneratedTypeDef def);
+  protected abstract String generateStringConstants();
 
-  protected String generateInstanceFields(GeneratedTypeDef def) {
+  protected String generateInstanceFields() {
     return NOT_SUPPORTED;
   }
 
-  protected abstract String generateEquals(GeneratedTypeDef def);
+  protected abstract String generateEquals();
 
-  protected abstract String generateHashCode(GeneratedTypeDef def);
+  protected abstract String generateHashCode();
 
 }

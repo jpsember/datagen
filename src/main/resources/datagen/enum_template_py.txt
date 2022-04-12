@@ -1,5 +1,3 @@
-[!package_decl]
-
 \\2
 @@  """
 @@  Generated Python enum class (do not edit!)
