@@ -21,9 +21,12 @@ class Circle(AbstractData):
   def __init__(self):
     # Define instance fields, and set them to their default values
     #
+    # TODO: the instance field names can be compressed, e.g. '_3', and perhaps the keys could be '_k3' (since
+    # they are used less often)
+    #
     self._radius = 0
     self._label = None
-    self._hash_value = None
+    self._h = None        # cached value for __hash__ function
 
 
   @classmethod
@@ -63,15 +66,15 @@ class Circle(AbstractData):
 
   def __hash__(self):
     print("__hash__ called")
-    if self._hash_value is None:
+    if self._h is None:
       print("...recalculating cached value")
       # TODO: we can optimize to eliminate a couple of lines; i.e. r=<first value>, and last self.hash_value= <calculation>
       x = 1
       x = x * 37 + hash(self._radius)
       if self._label is not None:
         x = x * 37 + hash(self._label)
-      self._hash_value = x
-    return self._hash_value
+      self._h = x
+    return self._h
 
 
   def __eq__(self, other):
@@ -89,6 +92,8 @@ class Circle(AbstractData):
 
   # Define the (hidden) methods associated with the instance fields' properties
   #
+  # TODO: these names could be compressed by using the field names, e.g. _g4(self):
+  #
   def _get_radius(self):
     return self._radius
 
@@ -98,8 +103,6 @@ class Circle(AbstractData):
 
 
   # Define the properties representing the instance fields.  Only the builder subclass has setters
-  #
-  # TODO: rename _get, _set to be as short as possible
   #
   radius = property(_get_radius)
   label = property(_get_label)
@@ -124,7 +127,7 @@ class CircleBuilder(Circle):
   # We must override the hash function to discard any previously cached value, as we are a mutable object
   #
   def __hash__(self):
-    self._hash_value = None
+    self._h = None
     return super().__hash__()
 
 
@@ -135,8 +138,7 @@ class CircleBuilder(Circle):
     return x
 
 
-  # Define (hidden) methods unique to the builder;
-  # can these be public, so they can be called using fluid interface?
+  # Define methods unique to the builder; these are public, so they can be called using fluid interface
   #
   def set_radius(self, value):
     self._radius = value; return self
