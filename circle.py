@@ -7,8 +7,10 @@ from pycore.base import *
 class Circle(AbstractData):
 
   # Define serialization keys
+  # TODO: can these key names (not their string values) be shorter? Maybe just field numbers, e.g. _k12?
   #
   _key_radius = "radius"
+  _key_label = "label"
 
   # Declare default value for this data class; declare it here, initialize it later
   #
@@ -20,6 +22,7 @@ class Circle(AbstractData):
     # Define instance fields, and set them to their default values
     #
     self._radius = 0
+    self._label = None
 
 
   @classmethod
@@ -32,22 +35,14 @@ class Circle(AbstractData):
     #
     inst = Circle()
     inst._radius = obj.get(Circle._key_radius, 0)
+    inst._label = obj.get(Circle._key_label, None)
     return inst
 
-  # Define the (hidden) methods associated with the instance fields' properties
-  #
-  def _get_radius(self):
-    return self._radius
-
-  # Define the properties representing the instance fields.  Only the builder subclass has setters
-  #
-  radius = property(
-    fget=_get_radius
-  )
 
   def to_builder(self):
     x = CircleBuilder()
     x._radius = self._radius
+    x._label = self._label
     return x
 
 
@@ -58,6 +53,8 @@ class Circle(AbstractData):
     #  "This dictionary creation could be rewritten as a dictionary literal"?
     m = {}
     m[Circle._key_radius] = self._radius
+    if self._label is not None:
+      m[Circle._key_label] = self._label
     return m
 
 
@@ -66,15 +63,39 @@ class Circle(AbstractData):
       # TODO: we can optimize to eliminate a couple of lines; i.e. r=<first value>, and last self.hash_value= <calculation>
       r = 1
       r = r * 37 + hash(self._radius)
+      if self._label is not None:
+        r = r * 37 + hash(self._label)
       self._hash_value = r
     return self._hash_value
 
   def __eq__(self, other):
     if isinstance(other, Circle):
       return hash(self) == hash(other) \
-             and self._radius == other.__radius
+             and self._radius == other.__radius \
+             and self._label == other.__label
     else:
       return False
+
+  # ---------------------------------------------------------------------------------------
+  # Properties
+  # ---------------------------------------------------------------------------------------
+
+  # Define the (hidden) methods associated with the instance fields' properties
+  #
+  def _get_radius(self):
+    return self._radius
+
+  def _get_label(self):
+    return self._label
+
+  # Define the properties representing the instance fields.  Only the builder subclass has setters
+  #
+  # TODO: rename _get, _set to be as short as possible
+  #
+  radius = property(_get_radius)
+  label = property(_get_label)
+
+
 
 
 # Initialize the default value
@@ -88,39 +109,23 @@ Circle.default_instance = Circle()
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Define the builder subclass of this data class
 #
 class CircleBuilder(Circle):
 
-  # Define (hidden) methods unique to the builder
+  # Define (hidden) methods unique to the builder;
+  # can these be public, so they can be called using fluid interface?
   #
   def _set_radius(self, value):
     self._radius = value
+  def _set_label(self, value):
+    self._label = value
 
   # Redefine the property for the builder class
   # TODO: is this appropriate?  Or are there now two 'radius' properties, one in the parent class?
   #
-  radius = property(
-    fget=Circle._get_radius,
-    fset=_set_radius
-  )
+  radius = property(fget=Circle._get_radius, fset=_set_radius)
+  label = property(Circle._get_label, _set_label)
 
 
 def r():
@@ -129,4 +134,13 @@ def r():
 
 print("circle.py loaded")
 a = Circle()
+
+# NOTE: we are giving up some fluid-like capability (b.setXXX(...).setYY(...)...)
+#
 b = CircleBuilder()
+b.radius = 8
+
+
+c = b.build().to_builder()
+c.label = "surprise"
+
