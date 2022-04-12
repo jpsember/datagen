@@ -77,7 +77,7 @@ public abstract class SourceGen extends BaseObject {
       m.put("default_value", def.enumDataType().labels().get(0));
       m.put("enum_values", content());
     } else {
-      setInset(2);
+      mInset = 2;
       m.put("class_getter_implementation", generateGetters(def));
       m.put("copy_to_builder", generateImmutableToBuilder(def));
       m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable(def));
@@ -224,21 +224,19 @@ public abstract class SourceGen extends BaseObject {
     return mImportedClasses;
   }
 
+  /**
+   * Call s().in(...) with a particular offset
+   */
+  protected final void in(int amount) {
+    s().in(mInset + amount);
+  }
+
   private SourceBuilder mSourceBuilder;
   private Set<String> mImportedClasses;
 
-  protected final void setInset(int value) {
-    todo("refactor/document");
-    mInset = value;
-  }
-
-  protected final void inset(int amount) {
-    todo("refactor/document");
-     s().in(mInset + amount);
-  }
-
   private int mInset;
 
+  private static final String NOT_SUPPORTED = "<<not supported>>";
 
   protected abstract String getTemplate();
 
@@ -246,14 +244,15 @@ public abstract class SourceGen extends BaseObject {
 
   protected abstract void generateEnumValues(EnumDataType dt);
 
-
   protected abstract String generateInitInstanceFields(GeneratedTypeDef def);
 
   protected abstract String generateCopyFromBuilderToImmutable(GeneratedTypeDef def);
 
   protected abstract String generateSetters(GeneratedTypeDef def);
 
-  protected abstract String generateToString(GeneratedTypeDef def);
+  protected String generateToString(GeneratedTypeDef def) {
+    return NOT_SUPPORTED;
+  }
 
   protected abstract String generateToJson(GeneratedTypeDef def);
 
@@ -267,15 +266,11 @@ public abstract class SourceGen extends BaseObject {
 
   protected abstract String generateStringConstants(GeneratedTypeDef def);
 
-  protected abstract String generateInstanceFields(GeneratedTypeDef def);
+  protected String generateInstanceFields(GeneratedTypeDef def) {
+    return NOT_SUPPORTED;
+  }
 
   protected abstract String generateEquals(GeneratedTypeDef def);
-
-  //  /**
-  //   * Generate code to determine if two values of a DataType are equal, and if
-  //   * not, short-circuit an equals(...) method by returning false
-  //   */
-  //  protected abstract String generateEqualsForMemberField(SourceBuilder s, FieldDef f) ;
 
   protected abstract String generateHashCode(GeneratedTypeDef def);
 
