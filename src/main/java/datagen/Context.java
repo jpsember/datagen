@@ -34,6 +34,9 @@ import datagen.gen.Language;
 import datagen.gen.QualifiedName;
 import js.file.Files;
 
+/**
+ * This is sort of a 'god class'...
+ */
 public final class Context {
 
   public DatagenConfig config;
@@ -42,14 +45,17 @@ public final class Context {
   public DataTypeManager dataTypeManager;
   public DatWithSource datWithSource;
 
+  @Deprecated // This ought to be unnecessary if we structure things right, using subclassing where appropriate...?
   public boolean python() {
     return language() == Language.PYTHON;
   }
 
+  @Deprecated // This just calls config.language()
   public Language language() {
     return config.language();
   }
 
+  @Deprecated // We should perhaps have a language-specific version of the Context class... or?
   public String constructImportExpression(QualifiedName nm) {
     if (python()) {
       return "from " + nm.packagePath() + " import " + nm.className();
@@ -58,11 +64,13 @@ public final class Context {
     }
   }
 
+  @Deprecated // This should perhaps be moved to the SourceGen class
   public void includeImport(String importExpr) {
     mImportedClasses.add(importExpr);
   }
 
-  public Set<String> getImports() {
+  @Deprecated // This should perhaps be moved to the SourceGen class
+ public Set<String> getImports() {
     return mImportedClasses;
   }
 
