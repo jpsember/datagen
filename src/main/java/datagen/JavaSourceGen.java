@@ -43,12 +43,13 @@ public final class JavaSourceGen extends SourceGen {
 
     JSMap m = map();
     m.put("package_decl", generatePackageDecl(def));
+    // In this first pass, leave the imports macro unchanged
+    m.put("imports", "[!imports]");
     m.put("class", def.name());
 
     String content;
     if (def.isEnum()) {
       content = sEnumTemplate;
-
       generateEnumValues(def);
       m.put("enum_values", content());
       m.put("default_value", def.enumDataType().labels().get(0));
@@ -72,9 +73,6 @@ public final class JavaSourceGen extends SourceGen {
 
       m.put("equals", generateEquals(def));
       m.put("hashcode", generateHashCode(def));
-
-      // In this first pass, leave the imports macro unchanged so we can replace it after this first pass
-      m.put("imports", "[!imports]");
     }
 
     // Perform pass 1 of macro substitution

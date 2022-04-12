@@ -44,7 +44,7 @@ public class PythonSourceGen extends SourceGen {
 
     JSMap m = map();
     m.put("package_decl", generatePackageDecl(def));
-    // In this first pass, leave the imports macro unchanged so we can replace it after this first pass
+    // In this first pass, leave the imports macro unchanged  
     m.put("imports", "[!imports]");
     m.put("class", def.name());
 
@@ -71,7 +71,6 @@ public class PythonSourceGen extends SourceGen {
 
       // Get any source that DataTypes may have needed to add
       m.put("class_specific", def.getClassSpecificSource());
-
     }
 
     // Perform pass 1 of macro substitution

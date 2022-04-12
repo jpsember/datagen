@@ -52,21 +52,11 @@ public abstract class SourceGen extends BaseObject {
     }
   }
 
+  public abstract void generate();
+
   protected SourceGen() {
     mSourceBuilder = new SourceBuilder(Context.config.language());
   }
-
-  private void includeImport(String importExpr) {
-    mImportedClasses.add(importExpr);
-  }
-
-  protected final Set<String> getImports() {
-    return mImportedClasses;
-  }
-
-  private final Set<String> mImportedClasses = hashSet();
-
-  public abstract void generate();
 
   protected final File sourceFile() {
     return new File(Context.config.sourcePath(), sourceFileRelative());
@@ -76,12 +66,18 @@ public abstract class SourceGen extends BaseObject {
     return Context.datWithSource.sourceRelPath();
   }
 
-  protected final String content() {
-    return s().content();
-  }
-
+  /**
+   * Get SourceBuilder
+   */
   protected final SourceBuilder s() {
     return mSourceBuilder;
+  }
+
+  /**
+   * Get content of SourceBuilder, and reset the SourceBuilder
+   */
+  protected final String content() {
+    return s().content();
   }
 
   /**
@@ -97,6 +93,7 @@ public abstract class SourceGen extends BaseObject {
    * </pre>
    */
   protected final String extractImportStatements(String template) {
+    Set<String> statementSet = hashSet();
     MacroParser parser = new MacroParser();
     parser.withPattern(ParseTools.IMPORT_REGEXP);
     parser.withTemplate(template);
@@ -122,12 +119,23 @@ public abstract class SourceGen extends BaseObject {
       String s0 = subExp.get(0);
       String s1 = subExp.get(1);
       QualifiedName qualifiedName = ParseTools.parseQualifiedName(s0);
-      includeImport(qualifiedName.combined());
+      statementSet.add(qualifiedName.combined());
       return s1;
     });
+    mImportedClasses = statementSet;
     return result;
   }
 
+  /**
+   * Get set of import statements constructed from last call to
+   * extractImportStatements()
+   */
+  protected final Set<String> getImports() {
+    checkNotNull(mImportedClasses);
+    return mImportedClasses;
+  }
+
   private SourceBuilder mSourceBuilder;
+  private Set<String> mImportedClasses;
 
 }
