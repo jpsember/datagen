@@ -32,10 +32,6 @@ import static js.base.Tools.*;
 
 public class PythonGeneratorTest extends GenBaseTest {
 
-  @Test
-  public void nothing() {
-  }
-
   @Override
   public void setup() {
     super.setup();
@@ -49,38 +45,6 @@ public class PythonGeneratorTest extends GenBaseTest {
         "Foo delta;", CR, //
         "?Foo optional;", CR, //
         OUTDENT, "}");
-    compile();
-  }
-
-  @Test
-  public void explicitRelativePrefix() {
-    p().pr("extern abc.xyz.Foo;", CR);
-    p().pr("fields {", INDENT, //
-        "Foo delta;", CR, //
-        "?Foo optional;", CR, //
-        OUTDENT, "}");
-    addArg("python_package", "zebra.yak");
-    compile();
-  }
-
-  @Test
-  public void implicitRelativePrefix() {
-    p().pr("fields {", INDENT, //
-        "Foo delta;", CR, //
-        "?Foo optional;", CR, //
-        OUTDENT, "}");
-    addArg("python_package", "zebra.yak");
-    generateDummyDatFile("foo");
-    compile();
-  }
-
-  @Test(expected = RuntimeException.class)
-  public void implicitRelativePrefixMissingDatFile() {
-    p().pr("fields {", INDENT, //
-        "Foo delta;", CR, //
-        "?Foo optional;", CR, //
-        OUTDENT, "}");
-    addArg("python_package", "zebra.yak");
     compile();
   }
 
@@ -165,7 +129,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void ipoints() { 
+  public void ipoints() {
     p().pr("fields {", INDENT, //
         "IPoint a;", CR, //
         "?IPoint b;", CR, //
