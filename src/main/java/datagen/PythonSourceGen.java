@@ -117,12 +117,9 @@ public class PythonSourceGen extends SourceGen {
   }
 
   @Override
-  protected String generateImports() {
+  protected String generateImports(List<String> imports) {
     SourceBuilder s = s();
-    List<String> importStatements = arrayList();
-    importStatements.addAll(getImports());
-    importStatements.sort(null);
-    for (String k : importStatements) {
+    for (String k : imports) {
       s.a(k).cr();
     }
     return content();

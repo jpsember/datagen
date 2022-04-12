@@ -111,7 +111,7 @@ public abstract class SourceGen extends BaseObject {
     // Pass 3: generate the import statements
     //
     m.clear();
-    m.put("imports", generateImports());
+    m.put("imports", generateImports(mImportedClasses));
 
     {
       MacroParser parser = new MacroParser();
@@ -151,7 +151,7 @@ public abstract class SourceGen extends BaseObject {
     return new File(Context.config.sourcePath(), sourceFileRelative());
   }
 
-  protected final String sourceFileRelative() {
+  private String sourceFileRelative() {
     return Context.datWithSource.sourceRelPath();
   }
 
@@ -181,7 +181,7 @@ public abstract class SourceGen extends BaseObject {
    * Note this is different from the Java technique, but this is a better way
    * </pre>
    */
-  protected final String extractImportStatements(String template) {
+  private String extractImportStatements(String template) {
     Set<String> statementSet = hashSet();
     MacroParser parser = new MacroParser();
     parser.withPattern(ParseTools.IMPORT_REGEXP);
@@ -211,21 +211,15 @@ public abstract class SourceGen extends BaseObject {
       statementSet.add(qualifiedName.combined());
       return s1;
     });
-    mImportedClasses = statementSet;
+    List<String> lst = arrayList();
+    lst.addAll(statementSet);
+    lst.sort(null);
+    mImportedClasses = lst;
     return result;
   }
 
-  /**
-   * Get set of import statements constructed from last call to
-   * extractImportStatements()
-   */
-  protected final Set<String> getImports() {
-    checkNotNull(mImportedClasses);
-    return mImportedClasses;
-  }
-
   private SourceBuilder mSourceBuilder;
-  private Set<String> mImportedClasses;
+  private List<String> mImportedClasses;
 
   private static final String NOT_SUPPORTED = "<<not supported>>";
 
@@ -249,7 +243,7 @@ public abstract class SourceGen extends BaseObject {
 
   protected abstract String generateToJson();
 
-  protected abstract String generateImports();
+  protected abstract String generateImports(List<String> imports);
 
   protected abstract String generateParse();
 

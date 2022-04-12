@@ -126,19 +126,13 @@ public final class JavaSourceGen extends SourceGen {
   }
 
   @Override
-  protected String generateImports() {
+  protected String generateImports(List<String> imports) {
     SourceBuilder s = s();
-
-    List<String> qualifiedClassNameStrings = arrayList();
-    qualifiedClassNameStrings.addAll(getImports());
-    qualifiedClassNameStrings.sort(null);
-
-    for (String k : qualifiedClassNameStrings) {
+    for (String k : imports) {
       if (k.startsWith("java.lang."))
         continue;
       s.a("import ", k, ";").cr();
     }
-
     return content();
   }
 
