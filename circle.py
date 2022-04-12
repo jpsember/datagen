@@ -24,7 +24,7 @@ class Circle(AbstractData):
     self._radius = 0
     self._label = None
     self._hash_value = None
-    
+
 
   @classmethod
   def new_builder(cls):
@@ -62,7 +62,9 @@ class Circle(AbstractData):
 
 
   def __hash__(self):
+    print("__hash__ called")
     if self._hash_value is None:
+      print("...recalculating cached value")
       # TODO: we can optimize to eliminate a couple of lines; i.e. r=<first value>, and last self.hash_value= <calculation>
       x = 1
       x = x * 37 + hash(self._radius)
@@ -73,12 +75,11 @@ class Circle(AbstractData):
 
 
   def __eq__(self, other):
-    if isinstance(other, Circle):
-      return hash(self) == hash(other) \
-             and self._radius == other.__radius \
-             and self._label == other.__label
-    else:
+    if not isinstance(other, Circle):
       return False
+    return hash(self) == hash(other) \
+           and self._radius == other.__radius \
+           and self._label == other.__label
 
 
   # ---------------------------------------------------------------------------------------
@@ -118,6 +119,13 @@ Circle.default_instance = Circle()
 # Define the builder subclass of this data class
 #
 class CircleBuilder(Circle):
+
+
+  # We must override the hash function to discard any previously cached value, as we are a mutable object
+  #
+  def __hash__(self):
+    self._hash_value = None
+    return super().__hash__()
 
 
   def build(self):
