@@ -57,74 +57,14 @@ public class DatagenOper extends AppOper {
 
   @Override
   public void perform() {
-    DatagenConfig config = prepareConfig();
+    DatagenConfig config = datagenConfig();
 
-    {
-      DirWalk dirWalk = new DirWalk(config.datPath()).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
-      if (dirWalk.files().isEmpty()) {
-        pr("(...no .dat files were found in:", config.datPath() + ")");
-      }
-
-      for (File rel : dirWalk.filesRelative()) {
-        String relPathExpr;
-        {
-          File relPath = rel.getParentFile();
-          if (relPath == null)
-            relPathExpr = "";
-          else {
-            if (relPath.toString().contains("_SKIP_"))
-              continue;
-            relPathExpr = relPath + "/";
-          }
-        }
-
-        // Determine source file corresponding to this one.
-        String protoName = chomp(rel.getName(), DOT_EXT_DATA_DEFINITION);
-
-        String sourceClassName;
-        switch (config.language()) {
-        default:
-          throw Context.languageNotSupported();
-        case JAVA:
-          sourceClassName = DataUtil.convertUnderscoresToCamelCase(protoName);
-          break;
-        case PYTHON:
-          sourceClassName = protoName;
-          break;
-        }
-        String relativeClassFile = relPathExpr + sourceClassName + "."
-            + SourceGen.sourceFileExtension(config.language());
-        File sourceFile = new File(config.sourcePath(), relativeClassFile);
-
-        if (config.clean()) {
-          // If we haven't yet done so, delete the 'gen' directory that will contain this source file
-          discardGenDirectory(sourceFile);
-        }
-
-        DatWithSource fileEntry = DatWithSource.newBuilder().datRelPath(rel.getPath())
-            .sourceRelPath(relativeClassFile).build();
-
-        if (config.clean() || !sourceFile.exists()
-            || sourceFile.lastModified() < dirWalk.abs(rel).lastModified()) {
-          if (verbose()) {
-            if (sourceFile.exists())
-              log("file is out of date:", relativeClassFile);
-            else
-              log("could not locate:", INDENT, relativeClassFile);
-          }
-          mGeneratedSourceFilesToFreshen.add(fileEntry);
-        } else {
-          // We don't need to rebuild this file; but register it, so
-          // we clean its directory of any old files
-          registerGeneratedSourceFile(sourceFile);
-        }
-      }
-    }
-
-    if (mGeneratedSourceFilesToFreshen.isEmpty())
+    List<DatWithSource> entriesToFreshen = constructFileEntries();
+    
+    if (entriesToFreshen.isEmpty())
       log("...all files up-to-date (rerun with 'clean' option to force rebuild)");
 
-    for (DatWithSource entry : mGeneratedSourceFilesToFreshen) {
+    for (DatWithSource entry : entriesToFreshen) {
       log("...processing file:", entry.datRelPath());
 
       // Reset context for a new file
@@ -156,39 +96,110 @@ public class DatagenOper extends AppOper {
    * Prepare DatagenConfig object by reading it from the configuration
    * arguments, and applying any default values or additional processing
    */
-  private DatagenConfig prepareConfig() {
-    DatagenConfig.Builder config = (DatagenConfig.Builder) config().toBuilder();
+  private DatagenConfig datagenConfig() {
 
-    if (Files.nonEmpty(config.startDir()))
-      config.startDir(config.startDir().getAbsoluteFile());
+    if (mConfig == null) {
+      DatagenConfig.Builder config = (DatagenConfig.Builder) config().toBuilder();
 
-    config.datPath(Files.assertDirectoryExists(getFile(config.startDir(), config.datPath()), "dat_path"));
+      if (Files.nonEmpty(config.startDir()))
+        config.startDir(config.startDir().getAbsoluteFile());
 
-    if (Files.empty(config.sourcePath())) {
-      File f;
+      config.datPath(Files.assertDirectoryExists(getFile(config.startDir(), config.datPath()), "dat_path"));
+
+      if (Files.empty(config.sourcePath())) {
+        File f;
+        switch (config.language()) {
+        default:
+          throw Context.languageNotSupported();
+        case JAVA:
+          f = new File("src/main/java");
+          break;
+        case PYTHON:
+          f = Files.currentDirectory();
+          break;
+        }
+        config.sourcePath(f);
+      }
+
+      File sourcePathRel = config.sourcePath();
+      if (config.language() == Language.PYTHON && !Files.empty(config.pythonSourcePath()))
+        sourcePathRel = config.pythonSourcePath();
+
+      // If the output source directory doesn't exist, make it
+      config.sourcePath(files().mkdirs(getFile(config.startDir(), sourcePathRel)));
+
+      log("source directory:", config.sourcePath());
+      log(" dat directory:", config.datPath());
+      mConfig = config.build();
+    }
+    return mConfig;
+  }
+
+  private List<DatWithSource> constructFileEntries() {
+    List<DatWithSource> mGeneratedSourceFilesToFreshen = arrayList();
+
+    DatagenConfig config = datagenConfig();
+    DirWalk dirWalk = new DirWalk(config.datPath()).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
+    if (dirWalk.files().isEmpty())
+      pr("*** no .dat files were found in:", config.datPath());
+
+    Set<File> discardedDirectoriesSet = hashSet();
+
+    for (File rel : dirWalk.filesRelative()) {
+      String relPathExpr;
+      {
+        File relPath = rel.getParentFile();
+        if (relPath == null)
+          relPathExpr = "";
+        else {
+          if (relPath.toString().contains("_SKIP_"))
+            continue;
+          relPathExpr = relPath + "/";
+        }
+      }
+
+      // Determine source file corresponding to this one.
+      String protoName = chomp(rel.getName(), DOT_EXT_DATA_DEFINITION);
+
+      String sourceClassName;
       switch (config.language()) {
       default:
         throw Context.languageNotSupported();
       case JAVA:
-        f = new File("src/main/java");
+        sourceClassName = DataUtil.convertUnderscoresToCamelCase(protoName);
         break;
       case PYTHON:
-        f = Files.currentDirectory();
+        sourceClassName = protoName;
         break;
       }
-      config.sourcePath(f);
+      String relativeClassFile = relPathExpr + sourceClassName + "."
+          + SourceGen.sourceFileExtension(config.language());
+      File sourceFile = new File(config.sourcePath(), relativeClassFile);
+
+      if (config.clean()) {
+        // If we haven't yet done so, delete the 'gen' directory that will contain this source file
+        discardGenDirectory(discardedDirectoriesSet, sourceFile);
+      }
+
+      DatWithSource fileEntry = DatWithSource.newBuilder().datRelPath(rel.getPath())
+          .sourceRelPath(relativeClassFile).build();
+
+      if (config.clean() || !sourceFile.exists()
+          || sourceFile.lastModified() < dirWalk.abs(rel).lastModified()) {
+        if (verbose()) {
+          if (sourceFile.exists())
+            log("file is out of date:", relativeClassFile);
+          else
+            log("could not locate:", INDENT, relativeClassFile);
+        }
+        mGeneratedSourceFilesToFreshen.add(fileEntry);
+      } else {
+        // We don't need to rebuild this file; but register it, so
+        // we clean its directory of any old files
+        registerGeneratedSourceFile(sourceFile);
+      }
     }
-
-    File sourcePathRel = config.sourcePath();
-    if (config.language() == Language.PYTHON && !Files.empty(config.pythonSourcePath()))
-      sourcePathRel = config.pythonSourcePath();
-
-    // If the output source directory doesn't exist, make it
-    config.sourcePath(files().mkdirs(getFile(config.startDir(), sourcePathRel)));
-
-    log("source directory:", config.sourcePath());
-    log(" dat directory:", config.datPath());
-    return config.build();
+    return mGeneratedSourceFilesToFreshen;
   }
 
   /**
@@ -209,7 +220,7 @@ public class DatagenOper extends AppOper {
   private void deleteOldSourceFiles() {
     DirWalk dirWalk = new DirWalk(Context.config.sourcePath()).withRecurse(true)
         .withExtensions(SourceGen.sourceFileExtension(Context.config.language()));
-    todo("!is this working with the new relative paths for DatWithSource?");
+    todo("is this working with the new relative paths for DatWithSource?");
     for (File sourceFile : dirWalk.files()) {
       // If file is not in a directory we wrote generated files to, ignore
       if (!mGeneratedDirectorySet.contains(Files.parent(sourceFile)))
@@ -230,13 +241,13 @@ public class DatagenOper extends AppOper {
     mGeneratedDirectorySet.add(Files.parent(sourceFile));
   }
 
-  private void discardGenDirectory(File sourceFile) {
+  private void discardGenDirectory(Set<File> discardedDirectoriesSet, File sourceFile) {
     String path = sourceFile.toString();
     int cursor = path.lastIndexOf("/gen/");
     if (cursor < 0)
       setError("Cannot find generated directory for source file:", sourceFile);
     File genDirectory = new File(path.substring(0, cursor) + "/gen");
-    if (mGenDirectoriesSet.add(genDirectory)) {
+    if (discardedDirectoriesSet.add(genDirectory)) {
       if (genDirectory.exists()) {
         log("Deleting existing generated source directory:", genDirectory);
         files().deleteDirectory(genDirectory);
@@ -244,8 +255,7 @@ public class DatagenOper extends AppOper {
     }
   }
 
-  private Set<File> mGenDirectoriesSet = hashSet();
-  private List<DatWithSource> mGeneratedSourceFilesToFreshen = arrayList();
+  private DatagenConfig mConfig;
 
   // Set of Java files corresponding to all .dat files found
   private Set<File> mGeneratedSourceFileSet = hashSet();
