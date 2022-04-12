@@ -4,10 +4,6 @@ fields {
   File start_dir;
   File dat_path = "dat_files";
 
-  // If defined, converts from old .proto format to .dat format
-  //
-  File proto_path;
-
   Language language;
   File source_path;
   bool clean;

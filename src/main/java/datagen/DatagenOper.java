@@ -38,8 +38,6 @@ import js.app.AppOper;
 import js.data.DataUtil;
 import js.file.DirWalk;
 import js.file.Files;
-import js.parsing.Scanner;
-import js.parsing.Token;
 
 public class DatagenOper extends AppOper {
 
@@ -69,22 +67,7 @@ public class DatagenOper extends AppOper {
       config.startDir(config.startDir().getAbsoluteFile());
 
     File datPath = getFile(config.startDir(), config.datPath());
-
-    if (Files.nonEmpty(config.protoPath())) {
-      File protoPath = Files.assertDirectoryExists(getFile(config.startDir(), config.protoPath()),
-          "proto_path");
-      config.protoPath(protoPath);
-      files().mkdirs(datPath);
-      config.datPath(datPath);
-
-      context.config = config;
-      if (context.python())
-        pr("PYTHON");
-      performConvert();
-      return;
-    } else {
-      config.datPath(Files.assertDirectoryExists(datPath, "dat_dir"));
-    }
+    config.datPath(Files.assertDirectoryExists(datPath, "dat_dir"));
 
     if (Files.empty(config.sourcePath())) {
       File f;
@@ -245,109 +228,6 @@ public class DatagenOper extends AppOper {
   private void registerGeneratedSourceFile(File sourceFile) {
     mGeneratedSourceFileSet.add(sourceFile);
     mGeneratedDirectorySet.add(Files.parent(sourceFile));
-  }
-
-  /**
-   * Convert all .proto files to .dat files
-   */
-  private void performConvert() {
-    DatagenConfig config = Context.SHARED_INSTANCE.config;
-    log("proto directory:", config.protoPath());
-    log("  dat directory:", config.datPath());
-
-    DirWalk w = new DirWalk(config.protoPath()).withExtensions("proto");
-    int filesExamined = 0;
-    for (File f : w.filesRelative()) {
-      if (false && alert("skipping most files") && !f.getName().startsWith("udder_focus_config")) {
-        continue;
-      }
-      filesExamined++;
-      File source = w.abs(f);
-      File target = Files.setExtension(new File(config.datPath(), f.getPath()), EXT_DATA_DEFINITION);
-
-      files().mkdirs(target.getParentFile());
-
-      convert(source, target);
-    }
-    if (filesExamined == 0)
-      pr("*** No .proto files found in", config.protoPath());
-  }
-
-  private void convert(File source, File target) {
-    List<Token> tokens = readTokens(source);
-    List<String> strings = rewriteTokens(tokens);
-    encodeOutput(strings, target);
-  }
-
-  private void encodeOutput(List<String> strings, File target) {
-    String result = String.join("", strings);
-    files().writeString(target, result);
-  }
-
-  /**
-   * Read tokens from file (including whitespace and comments)
-   */
-  private List<Token> readTokens(File source) {
-    String fileContent = Files.readString(source);
-    // Don't skip any whitespace, since we want to preserve comments
-    Scanner scanner = new Scanner(dfa(), fileContent, -1);
-    List<Token> tokens = arrayList();
-    while (scanner.hasNext())
-      tokens.add(scanner.read());
-    return tokens;
-  }
-
-  /**
-   * Rewrite tokens based on rules
-   */
-  private List<String> rewriteTokens(List<Token> input) {
-    List<String> output = arrayList();
-
-    int icursor = 0;
-    while (icursor < input.size()) {
-      Token t = input.get(icursor);
-      String x = t.text();
-      String y = null;
-
-      switch (x) {
-      case "message":
-        x = "fields";
-        break;
-      case "class":
-        x = "extern";
-        break;
-      case "repeated":
-        x = "*";
-        break;
-      case "default":
-        x = "=";
-        break;
-      case "bytes":
-        x = "*";
-        y = "byte";
-        break;
-      case "ints":
-        x = "*";
-        y = "int";
-        break;
-      case "shorts":
-        x = "*";
-        y = "short";
-        break;
-      case "option":
-        y = x;
-        x = "// no longer supported: ";
-        break;
-      case "optional":
-        x = "?";
-        break;
-      }
-      output.add(x);
-      if (y != null)
-        output.add(y);
-      icursor++;
-    }
-    return output;
   }
 
   private void discardGenDirectory(File sourceFile) {
