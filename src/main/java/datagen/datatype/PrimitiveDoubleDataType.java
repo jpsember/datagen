@@ -26,6 +26,7 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
@@ -94,7 +95,7 @@ public class PrimitiveDoubleDataType extends DataType {
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
       switch (language()) {
       default:
-        throw notSupported();
+        throw Context.languageNotSupported();
       case PYTHON:
         super.sourceDeserializeFromObject(s, f);
         break;

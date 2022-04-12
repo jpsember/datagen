@@ -44,13 +44,8 @@ import static js.base.Tools.*;
  */
 public final class GeneratedTypeDef extends BaseObject {
 
-  public GeneratedTypeDef(Context context, String name) {
-    mContext = context;
+  public GeneratedTypeDef(String name) {
     mName = name;
-  }
-
-  public Context context() {
-    return mContext;
   }
 
   @Override
@@ -84,7 +79,7 @@ public final class GeneratedTypeDef extends BaseObject {
   }
 
   private DataType registerType(String typeName) {
-    DataTypeManager dataTypes = context().dataTypeManager;
+    DataTypeManager dataTypes = Context.dataTypeManager;
     DataType dataType = dataTypes.get(typeName);
     if (dataType == null) {
       QualifiedName className = ParseTools.parseQualifiedName(typeName);
@@ -95,13 +90,13 @@ public final class GeneratedTypeDef extends BaseObject {
         {
           // Verify that a .dat file exists matching this type, in the same directory as the one we're compiling
           String datFilename = convertCamelToUnderscore(typeName) + ParseTools.DOT_EXT_DATA_DEFINITION;
-          File currentDatFile = new File(context().config.datPath(), context().datWithSource.datRelPath());
+          File currentDatFile = new File(Context.config.datPath(), Context.datWithSource.datRelPath());
           File datFile = new File(currentDatFile.getParentFile(), datFilename);
           if (!datFile.exists())
             badArg("No definition file found at", datFile, INDENT, "...use 'extern' to declare its location");
         }
         DataContractDataType contractType = new DataContractDataType();
-        contractType.parseQualifiedName(mContext, typeName);
+        contractType.parseQualifiedName(typeName);
         dataType = contractType;
         dataTypes.add(dataType.qualifiedClassName().className(), dataType);
       }
@@ -146,7 +141,7 @@ public final class GeneratedTypeDef extends BaseObject {
     }
     complexType.setUsedFlag();
 
-    FieldDef f = new FieldDef(fieldName, complexType,   optional);
+    FieldDef f = new FieldDef(fieldName, complexType, optional);
     mFields.add(f);
     return f;
   }
@@ -166,7 +161,7 @@ public final class GeneratedTypeDef extends BaseObject {
   public SourceBuilder classSpecificSourceBuilder() {
     checkState(mClassSpecificSource == null, "source already retrieved");
     if (mClassSpecificSourceBuilder == null)
-      mClassSpecificSourceBuilder = new SourceBuilder(context().config.language());
+      mClassSpecificSourceBuilder = new SourceBuilder(Context.config.language());
     return mClassSpecificSourceBuilder;
   }
 
@@ -176,7 +171,6 @@ public final class GeneratedTypeDef extends BaseObject {
     return mClassSpecificSource;
   }
 
-  private final Context mContext;
   private final String mName;
   private String mPackageName;
   private EnumDataType mEnumDataType;

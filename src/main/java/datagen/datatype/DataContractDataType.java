@@ -51,7 +51,7 @@ public class DataContractDataType extends DataType {
     if (mDefValue == null)
       switch (language()) {
       default:
-        throw notSupported(language());
+        throw Context.languageNotSupported();
       case PYTHON:
         mDefValue = ParseTools.importExpression(constructImportExpression(),
             qualifiedClassName().className() + ".default_instance");
@@ -169,15 +169,15 @@ public class DataContractDataType extends DataType {
     return ourDefaultValue() + ".parse((JSMap) " + jsonValue + ")";
   }
 
-  public void parseQualifiedName(Context context, String typeName) {
+  public void parseQualifiedName(  String typeName) {
     // We may not yet have a generated type to provide a default package
     String defaultPackageName = null;
-    if (context.config.language() == Language.PYTHON)
+    if (Context.config.language() == Language.PYTHON)
       defaultPackageName = "pycore";
 
-    if (context.generatedTypeDef != null) {
-      defaultPackageName = context.generatedTypeDef.packageName();
-      if (context.config.language() == Language.PYTHON) {
+    if (Context.generatedTypeDef != null) {
+      defaultPackageName = Context.generatedTypeDef.packageName();
+      if (Context.config.language() == Language.PYTHON) {
         // If typeName is Xyz, make sure default package ends with xyz, adding if necessary
         String packageSuff = "." + DataUtil.convertCamelCaseToUnderscores(typeName);
         if (!("." + defaultPackageName).endsWith(packageSuff)) {

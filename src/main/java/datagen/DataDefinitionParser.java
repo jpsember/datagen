@@ -53,9 +53,9 @@ final class DataDefinitionParser extends BaseObject {
       while (scanner().hasNext())
         handler(read()).run();
 
-      if (mContext.generatedTypeDef == null)
+      if (Context.generatedTypeDef == null)
         badArg("No 'fields {...}' specified");
-        reportUnusedReferences();
+      reportUnusedReferences();
 
     } catch (Throwable t) {
       if (t instanceof ScanException || SHOW_STACK_TRACES) {
@@ -70,9 +70,9 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void reportUnusedReferences() {
-    String summary = mContext.dataTypeManager.unusedReferencesSummary();
+    String summary = Context.dataTypeManager.unusedReferencesSummary();
     if (!summary.isEmpty()) {
-      if (mContext.config.treatWarningsAsErrors()) {
+      if (Context.config.treatWarningsAsErrors()) {
         throw badArg(summary);
       } else
         pr(summary);
@@ -98,8 +98,8 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void startScanner() {
-    String datPath = mContext.datWithSource.datRelPath();
-    File absFile = new File(mContext.config.datPath(), datPath);
+    String datPath = Context.datWithSource.datRelPath();
+    File absFile = new File(Context.config.datPath(), datPath);
     String fileContent = Files.readString(absFile);
     mScanner = new Scanner(dfa(), fileContent);
     mScanner.setSourceDescription(datPath);
@@ -140,15 +140,15 @@ final class DataDefinitionParser extends BaseObject {
     QualifiedName qualifiedClassName = parseQualifiedName(nameExpression, determinePackageName());
     dataType.setQualifiedClassName(qualifiedClassName);
     dataType.setDeclaredFlag();
-    mContext.dataTypeManager.add(qualifiedClassName.className(), dataType);
+    Context.dataTypeManager.add(qualifiedClassName.className(), dataType);
   }
 
   private void procDataType() {
-    checkState(mContext.generatedTypeDef == null, "Multiple data types per file is not allowed");
+    checkState(Context.generatedTypeDef == null, "Multiple data types per file is not allowed");
     String typeName = DataUtil.convertUnderscoresToCamelCase(
-        Files.removeExtension(new File(mContext.datWithSource.datRelPath()).getName()));
-    GeneratedTypeDef msg = new GeneratedTypeDef(mContext, typeName);
-    mContext.generatedTypeDef = msg;
+        Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
+    GeneratedTypeDef msg = new GeneratedTypeDef(typeName);
+    Context.generatedTypeDef = msg;
     msg.setPackageName(determinePackageName());
 
     read(BROP);
@@ -192,7 +192,7 @@ final class DataDefinitionParser extends BaseObject {
         // See if there is a parser for default values for this field.  This can either be the data type's parseDefaultValue() method,
         // or one mapped to the type's class (in case it is outside of the datagen project)
         String key = fieldDef.dataType().typeName();
-        DefaultValueParser parser = mContext.dataTypeManager.parser(key);
+        DefaultValueParser parser = Context.dataTypeManager.parser(key);
         if (parser == null)
           parser = fieldDef.dataType();
         String defValue = parser.parseDefaultValue(scanner(), msg.classSpecificSourceBuilder(), fieldDef);
@@ -213,7 +213,7 @@ final class DataDefinitionParser extends BaseObject {
     // Otherwise, it's a definition
     //
     String enumName;
-    String className2 = chomp(new File(mContext.datWithSource.datRelPath()).getName(),
+    String className2 = chomp(new File(Context.datWithSource.datRelPath()).getName(),
         DOT_EXT_DATA_DEFINITION);
     enumName = DataUtil.convertUnderscoresToCamelCase(className2);
     QualifiedName className = parseQualifiedName(enumName, determinePackageName());
@@ -221,10 +221,10 @@ final class DataDefinitionParser extends BaseObject {
     enumDataType.setQualifiedClassName(className);
 
     {
-      GeneratedTypeDef msg = new GeneratedTypeDef(mContext, className.className());
+      GeneratedTypeDef msg = new GeneratedTypeDef(className.className());
       msg.setEnum(enumDataType);
       msg.setPackageName(determinePackageName());
-      mContext.generatedTypeDef = msg;
+      Context.generatedTypeDef = msg;
     }
 
     read(BROP);
@@ -241,14 +241,13 @@ final class DataDefinitionParser extends BaseObject {
 
   private String determinePackageName() {
     if (mPackageName == null) {
-      File datPath = new File(mContext.datWithSource.datRelPath());
+      File datPath = new File(Context.datWithSource.datRelPath());
       String parentName = nullToEmpty(datPath.getParent());
       mPackageName = parentName.replace('/', '.');
     }
     return mPackageName;
   }
 
-  private final Context mContext = Context.SHARED_INSTANCE;
   private Scanner mScanner;
   private Token mLastReadToken;
   private String mPackageName;

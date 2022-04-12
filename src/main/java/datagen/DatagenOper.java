@@ -58,9 +58,6 @@ public class DatagenOper extends AppOper {
   @Override
   public void perform() {
 
-    Context.prepare();
-    Context context = Context.SHARED_INSTANCE;
-
     DatagenConfig.Builder config = (DatagenConfig.Builder) config().toBuilder();
 
     if (Files.nonEmpty(config.startDir()))
@@ -73,7 +70,7 @@ public class DatagenOper extends AppOper {
       File f;
       switch (config.language()) {
       default:
-        throw notSupported(config.language());
+        throw Context.languageNotSupported();
       case JAVA:
         f = new File("src/main/java");
         break;
@@ -93,8 +90,6 @@ public class DatagenOper extends AppOper {
 
     log("source directory:", config.sourcePath());
     log(" dat directory:", config.datPath());
-
-    context.config = config;
 
     {
       DirWalk d = new DirWalk(config.datPath()).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
@@ -121,7 +116,7 @@ public class DatagenOper extends AppOper {
         String sourceClassName;
         switch (config.language()) {
         default:
-          throw notSupported(config.language());
+          throw Context.languageNotSupported();
         case JAVA:
           sourceClassName = DataUtil.convertUnderscoresToCamelCase(protoName);
           break;
@@ -164,12 +159,8 @@ public class DatagenOper extends AppOper {
       log("...processing file:", entry.datRelPath());
 
       // Reset context for a new file
-      context.datWithSource = entry;
-      context.config = config.toBuilder();
-      context.files = files();
-      context.dataTypeManager = new DataTypeManager();
-      context.generatedTypeDef = null;
-
+      Context.prepare(files(), config, entry);
+      
       DataDefinitionParser p = new DataDefinitionParser();
       p.setVerbose(verbose());
       try {
@@ -183,6 +174,8 @@ public class DatagenOper extends AppOper {
         if (!app().catchingErrors() || SHOW_STACK_TRACES)
           throw t;
         setError("Processing", entry.datRelPath(), INDENT, t.getMessage());
+      } finally {
+        Context.discard();
       }
     }
 
@@ -206,9 +199,8 @@ public class DatagenOper extends AppOper {
   }
 
   private void deleteOldSourceFiles() {
-    Context context = Context.SHARED_INSTANCE;
-    DirWalk dirWalk = new DirWalk(context.config.sourcePath()).withRecurse(true)
-        .withExtensions(SourceGen.sourceFileExtension(context.config.language()));
+    DirWalk dirWalk = new DirWalk(Context.config.sourcePath()).withRecurse(true)
+        .withExtensions(SourceGen.sourceFileExtension(Context.config.language()));
     todo("!is this working with the new relative paths for DatWithSource?");
     for (File sourceFile : dirWalk.files()) {
       // If file is not in a directory we wrote generated files to, ignore

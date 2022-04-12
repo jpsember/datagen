@@ -29,6 +29,7 @@ import static js.base.Tools.*;
 
 import java.util.List;
 
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
@@ -113,7 +114,7 @@ public class EnumDataType extends DataType {
       s.a("inst._", f.javaName(), " = [", pythonClassName(), "(z) for z in x]", CR);
       s.endIf(CLOSE);
     } else {
-      throw notSupported("deserializing list of Java enums from list");
+      throw Context.languageNotSupported("deserializing list of Java enums from list");
     }
   }
 

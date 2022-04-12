@@ -43,7 +43,7 @@ public final class FieldDef extends BaseObject {
       // If we add a '_' prefix, the Python inspection reports a warning about a 'protected member';
       // but that is ok for our code; we need to have underscore prefixes for the instance fields anyways
       mNameStringConstant = "_key_" + javaName();
-      mNameStringConstantQualified = dataType.context().generatedTypeDef.name() + "." + mNameStringConstant;
+      mNameStringConstantQualified = Context.generatedTypeDef.name() + "." + mNameStringConstant;
     } else {
       mNameStringConstant = name.toUpperCase();
       mNameStringConstantQualified = mNameStringConstant;

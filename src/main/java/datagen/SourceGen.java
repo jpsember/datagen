@@ -43,9 +43,8 @@ import datagen.gen.QualifiedName;
 public abstract class SourceGen extends BaseObject {
 
   public static SourceGen construct() {
-    Context context = Context.SHARED_INSTANCE;
     SourceGen result;
-    switch (context.config.language()) {
+    switch (Context.config.language()) {
     case JAVA:
       result = new JavaSourceGen();
       break;
@@ -53,14 +52,14 @@ public abstract class SourceGen extends BaseObject {
       result = new PythonSourceGen();
       break;
     default:
-      throw notSupported(context.config.language());
+      throw Context.languageNotSupported();
     }
     result.prepare();
     return result;
   }
 
   private void prepare() {
-    mSourcebuilder = new SourceBuilder(Context.SHARED_INSTANCE.config.language());
+    mSourcebuilder = new SourceBuilder(Context.config.language());
   }
 
   public void includeImport(String importExpr) {
@@ -73,18 +72,19 @@ public abstract class SourceGen extends BaseObject {
 
   private final Set<String> mImportedClasses = hashSet();
 
+  @Deprecated
   public final DatagenConfig config() {
-    return Context.SHARED_INSTANCE.config;
+    return Context.config;
   }
 
   public final String sourceFileExtension() {
-    return sourceFileExtension(Context.SHARED_INSTANCE.config.language());
+    return sourceFileExtension(Context.config.language());
   }
 
   public static String sourceFileExtension(Language language) {
     switch (language) {
     default:
-      throw notSupported(language);
+      throw Context.languageNotSupported();
     case JAVA:
       return "java";
     case PYTHON:
@@ -99,7 +99,7 @@ public abstract class SourceGen extends BaseObject {
   }
 
   public final String sourceFileRelative() {
-    return Context.SHARED_INSTANCE.datWithSource.sourceRelPath();
+    return Context.datWithSource.sourceRelPath();
   }
 
   protected String content() {

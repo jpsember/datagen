@@ -46,15 +46,14 @@ import static js.base.Tools.*;
 public final class DataTypeManager extends BaseObject {
 
   public DataTypeManager() {
-    Context context = Context.SHARED_INSTANCE;
     mTypeMap = concurrentHashMap();
     mDefaultValueParserMap = concurrentHashMap();
 
     DataType tmp;
 
-    switch (context.config.language()) {
+    switch (Context.config.language()) {
     default:
-      throw notSupported();
+      throw Context.languageNotSupported();
     case PYTHON:
       tmp = new PrimitiveLongDataType();
       add("byte", tmp);
@@ -146,7 +145,6 @@ public final class DataTypeManager extends BaseObject {
   private static final DefaultValueParser IPOINT_PARSER = new DefaultValueParser() {
     @Override
     public String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource, FieldDef fieldDef) {
-      //(scanner, classSpecificSource, fieldDef) -> {
       String typeName = fieldDef.dataType().typeName();
       scanner.read(SQOP);
       int x = scanner.readInt(NUMBER);

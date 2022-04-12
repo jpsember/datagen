@@ -38,8 +38,7 @@ import js.parsing.MacroParser;
 public final class JavaSourceGen extends SourceGen {
 
   public void generate() {
-    Context context = Context.SHARED_INSTANCE;
-    GeneratedTypeDef def = context.generatedTypeDef;
+    GeneratedTypeDef def = Context.generatedTypeDef;
     s().reset();
 
     JSMap m = map();
@@ -103,15 +102,15 @@ public final class JavaSourceGen extends SourceGen {
 
     // Pass 4: Strip (or retain) optional comments
     //
-    content = ParseTools.processOptionalComments(content, config().comments());
+    content = ParseTools.processOptionalComments(content, Context.config.comments());
 
     //
     // Pass 5: remove extraneous linefeeds
     //
-    content = ParseTools.adjustLinefeeds(content, config().language());
+    content = ParseTools.adjustLinefeeds(content, Context.config.language());
     File target = sourceFile();
-    context.files.mkdirs(Files.parent(target));
-    boolean wrote = context.files.writeIfChanged(target, content);
+    Context.files.mkdirs(Files.parent(target));
+    boolean wrote = Context.files.writeIfChanged(target, content);
     if (wrote)
       log(".....updated:", sourceFileRelative());
     else {
@@ -204,7 +203,7 @@ public final class JavaSourceGen extends SourceGen {
     SourceBuilder s = s();
 
     List<String> qualifiedClassNameStrings = arrayList();
-    qualifiedClassNameStrings.addAll( getImports());
+    qualifiedClassNameStrings.addAll(getImports());
     qualifiedClassNameStrings.sort(null);
 
     for (String k : qualifiedClassNameStrings) {

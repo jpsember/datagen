@@ -159,7 +159,7 @@ public final class ParseTools {
 
     switch (language) {
     default:
-      throw notSupported(language);
+      throw Context.languageNotSupported();
     case JAVA: {
       int blanks = 1;
       for (String line : lines) {

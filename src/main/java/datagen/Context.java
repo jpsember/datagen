@@ -24,28 +24,45 @@
  **/
 package datagen;
 
+import static js.base.Tools.*;
+
 import datagen.gen.DatWithSource;
 import datagen.gen.DatagenConfig;
 import js.file.Files;
 
 /**
- * This is sort of a 'god class'...
+ * Class containing components used while processing a single .dat file
  */
 public final class Context {
 
-  public DatagenConfig config;
-  public Files files;
-  public GeneratedTypeDef generatedTypeDef;
-  public DataTypeManager dataTypeManager;
-  public DatWithSource datWithSource;
+  public static DatagenConfig config;
+  public static Files files;
+  public static GeneratedTypeDef generatedTypeDef;
+  public static DataTypeManager dataTypeManager;
+  public static DatWithSource datWithSource;
 
-  public static Context SHARED_INSTANCE = new Context();
+  public static UnsupportedOperationException languageNotSupported(Object... messages) {
+    throw notSupported(insertStringToFront("Language not supported:", messages));
+  }
+
+  public static void prepare(Files files, DatagenConfig config, DatWithSource entry) {
+    discard();
+    Context.files = files;
+    Context.config = config.build();
+    Context.datWithSource = entry;
+    Context.dataTypeManager = new DataTypeManager();
+    Context.generatedTypeDef = null;
+  }
 
   /**
-   * Construct a new shared instance
+   * Discard old elements
    */
-  public static void prepare() {
-    SHARED_INSTANCE = new Context();
+  public static void discard() {
+    config = null;
+    files = null;
+    generatedTypeDef = null;
+    dataTypeManager = null;
+    datWithSource = null;
   }
 
   private Context() {

@@ -39,8 +39,7 @@ import static js.base.Tools.*;
 public class PythonSourceGen extends SourceGen {
 
   public void generate() {
-    Context context = Context.SHARED_INSTANCE;
-    GeneratedTypeDef def = context.generatedTypeDef;
+    GeneratedTypeDef def = Context.generatedTypeDef;
     s().reset();
 
     JSMap m = map();
@@ -100,17 +99,18 @@ public class PythonSourceGen extends SourceGen {
 
     // Pass 4: Strip (or retain) optional comments
     //
-    content = ParseTools.processOptionalComments(content, config().comments());
+    content = ParseTools.processOptionalComments(content, Context.config.comments());
 
     //
     // Pass 5: remove extraneous linefeeds
     //
-    content = ParseTools.adjustLinefeeds(content, config().language());
+    content = ParseTools.adjustLinefeeds(content, Context.config.language());
 
     File target = sourceFile();
     File parent = Files.parent(target);
-    context.files.mkdirs(parent);
-    boolean wrote = context.files.writeIfChanged(target, content);
+    Files files = Context.files;
+    files.mkdirs(parent);
+    boolean wrote = files.writeIfChanged(target, content);
     if (wrote)
       log(".....updated:", sourceFileRelative());
     else {
@@ -121,10 +121,10 @@ public class PythonSourceGen extends SourceGen {
     // This is annoying, but to make relative imports work in Python we need to ensure
     // there's an (empty) file '__init__.py' in the same directory as any Python file.
     //
-    if (!context.files.dryRun()) {
+    if (!files.dryRun()) {
       File sentinelFile = new File(parent, "__init__.py");
       if (!sentinelFile.exists())
-        context.files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
+        files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
     }
   }
 
@@ -197,7 +197,7 @@ public class PythonSourceGen extends SourceGen {
   private String generateImports() {
     SourceBuilder s = s();
     List<String> importStatements = arrayList();
-    importStatements.addAll( getImports());
+    importStatements.addAll(getImports());
     importStatements.sort(null);
     for (String k : importStatements) {
       s.a(k).cr();
