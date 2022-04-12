@@ -38,7 +38,15 @@ import static js.base.Tools.*;
 
 public class PythonSourceGen extends SourceGen {
 
-  public void generate() {
+  @Override
+  protected String getTemplate() {
+    if (Context.generatedTypeDef.isEnum())
+      return sEnumTemplate;
+    else
+      return sClassTemplate;
+  }
+
+  public void oldgenerate() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s().reset();
 
@@ -51,13 +59,12 @@ public class PythonSourceGen extends SourceGen {
     String content;
     if (def.isEnum()) {
       content = sEnumTemplate;
-      generateEnumValues(def);
+      generateEnumValues(def.enumDataType());
       m.put("default_value", def.enumDataType().labels().get(0));
       m.put("enum_values", content());
     } else {
       content = sClassTemplate;
-
-      mInset = 2;
+      setInset(2);
       m.put("class_getter_implementation", generateGetters(def));
       m.put("copy_to_builder", generateImmutableToBuilder(def));
       m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable(def));
@@ -105,11 +112,9 @@ public class PythonSourceGen extends SourceGen {
     // Pass 5: remove extraneous linefeeds
     //
     content = ParseTools.adjustLinefeeds(content, Context.config.language());
-
     File target = sourceFile();
-    File parent = Files.parent(target);
-    Files files = Context.files;
-    files.mkdirs(parent);
+    Context.files.mkdirs(Files.parent(target));
+    Files  files = Context.files;
     boolean wrote = files.writeIfChanged(target, content);
     if (wrote)
       log(".....updated:", sourceFileRelative());
@@ -118,27 +123,29 @@ public class PythonSourceGen extends SourceGen {
       log("...freshened:", sourceFileRelative());
     }
 
-    // This is annoying, but to make relative imports work in Python we need to ensure
-    // there's an (empty) file '__init__.py' in the same directory as any Python file.
-    //
-    if (!files.dryRun()) {
-      File sentinelFile = new File(parent, "__init__.py");
-      if (!sentinelFile.exists())
-        files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
-    }
+//    // This is annoying, but to make relative imports work in Python we need to ensure
+//    // there's an (empty) file '__init__.py' in the same directory as any Python file.
+//    //
+//    if (!files.dryRun()) {
+//      File sentinelFile = new File(parent, "__init__.py");
+//      if (!sentinelFile.exists())
+//        files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
+//    }
   }
 
   // ------------------------------------------------------------------
   // Source code generation for various macros
   // ------------------------------------------------------------------
 
-  private String generatePackageDecl(GeneratedTypeDef def) {
+  @Override
+  protected String generatePackageDecl(GeneratedTypeDef def) {
     return "";
   }
 
-  private String generateStringConstants(GeneratedTypeDef def) {
+  @Override
+  protected String generateStringConstants(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset);
+    inset(0);
     for (FieldDef f : def.fields()) {
       s.br();
       s.a(f.nameStringConstant(false), " = ", quote(f.name()));
@@ -147,9 +154,10 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateInitInstanceFields(GeneratedTypeDef def) {
+  @Override
+  protected String generateInitInstanceFields(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset + 2);
+    inset(2);
     for (FieldDef f : def.fields()) {
       s.a(CR, "self._", f.javaName(), " = ", f.defaultValueOrNull());
     }
@@ -157,8 +165,8 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateCopyFromBuilderToImmutable(GeneratedTypeDef def) {
-    s().in(mInset + 2);
+@Override protected String generateCopyFromBuilderToImmutable(GeneratedTypeDef def) {
+    inset(2);
     for (FieldDef f : def.fields()) {
       s().cr();
       f.dataType().sourceExpressionToImmutable(s(), f, "v._" + f.javaName(), "self._" + f.javaName());
@@ -167,9 +175,10 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateSetters(GeneratedTypeDef def) {
+  @Override
+  protected String generateSetters(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset);
+    inset(0);
     for (FieldDef f : def.fields()) {
       s.a("\\\\", CR);
       DataType d = f.dataType();
@@ -182,9 +191,10 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateToJson(GeneratedTypeDef def) {
+  @Override
+  protected String generateToJson(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset + 2);
+    inset(2);
 
     s.a("m = {}", CR);
     for (FieldDef fieldDef : def.fields())
@@ -194,7 +204,8 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateImports() {
+  @Override
+  protected String generateImports() {
     SourceBuilder s = s();
     List<String> importStatements = arrayList();
     importStatements.addAll(getImports());
@@ -205,10 +216,11 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateParse(GeneratedTypeDef def) {
+  @Override
+  protected String generateParse(GeneratedTypeDef def) {
     SourceBuilder s = s();
     s.br();
-    s.in(mInset + 2);
+    inset(2);
     for (FieldDef f : def.fields()) {
       f.dataType().sourceDeserializeFromObject(s, f);
       s.cr();
@@ -217,9 +229,10 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateGetters(GeneratedTypeDef def) {
+  @Override
+  protected String generateGetters(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset);
+    inset(0);
     for (FieldDef f : def.fields()) {
       s.a("\\\\").cr();
       s.a("def ", f.javaName(), "(self):", OPEN, //
@@ -229,9 +242,10 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateImmutableToBuilder(GeneratedTypeDef def) {
+  @Override
+  protected String generateImmutableToBuilder(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset + 2);
+    inset(2);
     s.a("x = ", def.name(), "Builder()", CR);
     for (FieldDef f : def.fields()) {
       f.dataType().sourceIfNotNull(s, f);
@@ -243,9 +257,10 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateEquals(GeneratedTypeDef def) {
+  @Override
+  protected String generateEquals(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset + 4);
+    inset(4);
     s.a("return hash(self) == hash(other)");
     if (!def.fields().isEmpty()) {
       boolean first = true;
@@ -265,9 +280,10 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateHashCode(GeneratedTypeDef def) {
+  @Override
+  protected String generateHashCode(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset + 4);
+    inset(4);
     s.a("r = 1", CR);
     for (FieldDef f : def.fields()) {
       f.dataType().sourceIfNotNull(s, f);
@@ -278,6 +294,34 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
+//  @Override
+//  protected String generateEqualsForMemberField(SourceBuilder s, FieldDef f) {
+//    return "<NOT SUPPORTED>";
+//  }
+
+  @Override
+  protected String generateInstanceFields(GeneratedTypeDef def) {
+    return "<NOT SUPPORTED>";
+  }
+
+  @Override
+  protected String generateToString(GeneratedTypeDef def) {
+    return "<NOT SUPPORTED>";
+  }
+  @Override
+  protected void postGenerate() {
+    Files files = Context.files;
+    // This is annoying, but to make relative imports work in Python we need to ensure
+    // there's an (empty) file '__init__.py' in the same directory as any Python file.
+    //
+    if (!files.dryRun()) {
+      File parent =   Files.parent(sourceFile());
+      File sentinelFile = new File(parent, "__init__.py");
+      if (!sentinelFile.exists())
+        files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
+    }
+ 
+  }
   //------------------------------------------------------------------
 
   /**
@@ -287,8 +331,8 @@ public class PythonSourceGen extends SourceGen {
     return f.javaNameLowerFirst();
   }
 
-  private void generateEnumValues(GeneratedTypeDef def) {
-    EnumDataType dt = def.enumDataType();
+  @Override
+  protected void generateEnumValues(EnumDataType dt) {
     s().in();
     for (String label : dt.labels()) {
       s().a(label, " = ", quote(label.toLowerCase())).cr();
@@ -299,5 +343,4 @@ public class PythonSourceGen extends SourceGen {
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template_py.txt");
   private static String sEnumTemplate = Files.readString(SourceGen.class, "enum_template_py.txt");
 
-  private int mInset;
 }

@@ -37,7 +37,15 @@ import js.parsing.MacroParser;
 
 public final class JavaSourceGen extends SourceGen {
 
-  public void generate() {
+  @Override
+  protected String getTemplate() {
+    if (Context.generatedTypeDef.isEnum())
+      return sEnumTemplate;
+    else
+      return sClassTemplate;
+  }
+
+  public void oldgenerate() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s().reset();
 
@@ -50,13 +58,13 @@ public final class JavaSourceGen extends SourceGen {
     String content;
     if (def.isEnum()) {
       content = sEnumTemplate;
-      generateEnumValues(def);
+      generateEnumValues(def.enumDataType());
       m.put("default_value", def.enumDataType().labels().get(0));
       m.put("enum_values", content());
     } else {
       content = sClassTemplate;
 
-      mInset = 2;
+      setInset(2);
       m.put("class_getter_implementation", generateGetters(def));
       m.put("copy_to_builder", generateImmutableToBuilder(def));
       m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable(def));
@@ -121,15 +129,17 @@ public final class JavaSourceGen extends SourceGen {
   // Source code generation for various macros
   // ------------------------------------------------------------------
 
-  private String generatePackageDecl(GeneratedTypeDef def) {
+  @Override
+  protected String generatePackageDecl(GeneratedTypeDef def) {
     String pkgName = def.packageName();
     checkArgument(!pkgName.isEmpty(), "Package name is empty");
     return "package " + pkgName + ";";
   }
 
-  private String generateInitInstanceFields(GeneratedTypeDef def) {
+  @Override
+  protected String generateInitInstanceFields(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset + 2);
+    inset(2);
     for (FieldDef f : def.fields()) {
       if (f.optional())
         continue;
@@ -144,8 +154,9 @@ public final class JavaSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateCopyFromBuilderToImmutable(GeneratedTypeDef def) {
-    s().in(mInset + 4);
+  @Override
+  protected String generateCopyFromBuilderToImmutable(GeneratedTypeDef def) {
+    inset(4);
     for (FieldDef f : def.fields()) {
       s().a(CR);
       f.dataType().sourceExpressionToImmutable(s(), f, "r.m" + f.javaName(), "m" + f.javaName());
@@ -155,9 +166,10 @@ public final class JavaSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateSetters(GeneratedTypeDef def) {
+  @Override
+  protected String generateSetters(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset + 2);
+    inset(2);
     for (FieldDef f : def.fields()) {
       s.br();
       DataType d = f.dataType();
@@ -170,9 +182,10 @@ public final class JavaSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateToString(GeneratedTypeDef def) {
+  @Override
+  protected String generateToString(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset);
+    inset(0);
     s.a("@Override", CR, //
         "public String toString()", OPEN, //
         "return toJson().prettyPrint();", CLOSE, //
@@ -180,9 +193,10 @@ public final class JavaSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateToJson(GeneratedTypeDef def) {
+  @Override
+  protected String generateToJson(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset);
+    inset(0);
 
     s.a("@Override", CR, //
         "public JSMap toJson()", OPEN);
@@ -197,7 +211,8 @@ public final class JavaSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateImports() {
+  @Override
+  protected String generateImports() {
     SourceBuilder s = s();
 
     List<String> qualifiedClassNameStrings = arrayList();
@@ -213,10 +228,11 @@ public final class JavaSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateParse(GeneratedTypeDef def) {
+  @Override
+  protected String generateParse(GeneratedTypeDef def) {
     SourceBuilder s = s();
     s.br();
-    s.in(mInset);
+    inset(0);
     s.a("@Override", CR, //
         "public ", def.name(), " parse(Object obj)", OPEN, //
         "return new ", def.name(), "((JSMap) obj);", CLOSE, //
@@ -230,9 +246,10 @@ public final class JavaSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateGetters(GeneratedTypeDef def) {
+  @Override
+  protected String generateGetters(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset);
+    inset(0);
     for (FieldDef f : def.fields()) {
       s.br();
       s.a("public ", f.dataType().typeName(), " ", f.javaNameLowerFirst(), "()", OPEN, //
@@ -242,9 +259,10 @@ public final class JavaSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateImmutableToBuilder(GeneratedTypeDef def) {
+  @Override
+  protected String generateImmutableToBuilder(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset + 4);
+    inset(4);
     for (FieldDef f : def.fields()) {
       s.a("m", f.javaName(), " = ", f.dataType().sourceExpressionToMutable("m.m" + f.javaName()), ";", CR);
     }
@@ -252,9 +270,10 @@ public final class JavaSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateStringConstants(GeneratedTypeDef def) {
+  @Override
+  protected String generateStringConstants(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset);
+    inset(0);
     for (FieldDef f : def.fields()) {
       s.br();
       s.a("public static final String ", f.nameStringConstant(), " = \"", f.name(), "\";");
@@ -263,9 +282,10 @@ public final class JavaSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateInstanceFields(GeneratedTypeDef def) {
+  @Override
+  protected String generateInstanceFields(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset);
+    inset(0);
     for (FieldDef f : def.fields())
       s.a("protected ", f.dataType().typeName(), " m", f.javaName(), ";", CR);
     s.a("protected int m__hashcode;");
@@ -273,10 +293,11 @@ public final class JavaSourceGen extends SourceGen {
     return content();
   }
 
-  private String generateEquals(GeneratedTypeDef def) {
+  @Override
+  protected String generateEquals(GeneratedTypeDef def) {
     String c = def.name();
     SourceBuilder s = s();
-    s.in(mInset);
+    inset(0);
     s.a("@Override").cr();
     s.a("public boolean equals(Object object)", OPEN);
     {
@@ -302,7 +323,7 @@ public final class JavaSourceGen extends SourceGen {
    * Generate code to determine if two values of a DataType are equal, and if
    * not, short-circuit an equals(...) method by returning false
    */
-  private void generateEqualsForMemberField(SourceBuilder s, FieldDef f) {
+private void generateEqualsForMemberField(SourceBuilder s, FieldDef f) {
     String a = "m" + f.javaName();
     String b = "other.m" + f.javaName();
 
@@ -322,9 +343,10 @@ public final class JavaSourceGen extends SourceGen {
       s.a(CLOSE);
   }
 
-  private String generateHashCode(GeneratedTypeDef def) {
+  @Override
+  protected String generateHashCode(GeneratedTypeDef def) {
     SourceBuilder s = s();
-    s.in(mInset);
+    inset(0);
     s.a("@Override", CR, //
         "public int hashCode()", OPEN, //
         "int r = m__hashcode;", CR, //
@@ -341,6 +363,9 @@ public final class JavaSourceGen extends SourceGen {
     return content();
   }
 
+  @Override
+  protected void postGenerate() {
+  }
   //------------------------------------------------------------------
 
   /**
@@ -350,8 +375,8 @@ public final class JavaSourceGen extends SourceGen {
     return f.javaNameLowerFirst();
   }
 
-  private void generateEnumValues(GeneratedTypeDef def) {
-    EnumDataType dt = def.enumDataType();
+  @Override
+  protected void generateEnumValues(EnumDataType dt) {
     s().in();
     int i = INIT_INDEX;
     for (String label : dt.labels()) {
@@ -367,5 +392,4 @@ public final class JavaSourceGen extends SourceGen {
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template.txt");
   private static String sEnumTemplate = Files.readString(SourceGen.class, "enum_template.txt");
 
-  private int mInset;
 }

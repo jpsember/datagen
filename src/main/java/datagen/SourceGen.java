@@ -25,6 +25,8 @@
 package datagen;
 
 import js.base.BaseObject;
+import js.file.Files;
+import js.json.JSMap;
 import js.parsing.MacroParser;
 
 import static js.base.Tools.*;
@@ -33,7 +35,9 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import datagen.datatype.EnumDataType;
 import datagen.gen.QualifiedName;
+
 import static datagen.Utils.*;
 
 /**
@@ -52,7 +56,93 @@ public abstract class SourceGen extends BaseObject {
     }
   }
 
-  public abstract void generate();
+  protected abstract String getTemplate();
+
+  // This was derived from the JavaSourceGen method
+  public final void generate() {
+    GeneratedTypeDef def = Context.generatedTypeDef;
+    s().reset();
+
+    JSMap m = map();
+    m.put("package_decl", generatePackageDecl(def));
+    // In this first pass, leave the imports macro unchanged
+    m.put("imports", "[!imports]");
+    m.put("class", def.name());
+
+    String content = getTemplate();
+    if (def.isEnum()) {
+      generateEnumValues(def.enumDataType());
+      m.put("default_value", def.enumDataType().labels().get(0));
+      m.put("enum_values", content());
+    } else {
+      setInset(2);
+      m.put("class_getter_implementation", generateGetters(def));
+      m.put("copy_to_builder", generateImmutableToBuilder(def));
+      m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable(def));
+      m.put("equals", generateEquals(def));
+      m.put("hashcode", generateHashCode(def));
+      m.put("init_instance_fields", generateInitInstanceFields(def));
+      m.put("instance_fields", generateInstanceFields(def));
+      m.put("parse", generateParse(def));
+      m.put("setters", generateSetters(def));
+      m.put("string_constants", generateStringConstants(def));
+      m.put("to_json", generateToJson(def));
+      m.put("to_string", generateToString(def));
+    }
+
+    // Get any source that DataTypes may have needed to add;
+    // must be added here, after all other keys
+    m.put("class_specific", def.getClassSpecificSource());
+
+    // Perform pass 1 of macro substitution
+    //
+    {
+      MacroParser parser = new MacroParser();
+      parser.withTemplate(content).withMapper(m);
+      content = parser.content();
+    }
+
+    // Pass 2: strip package names, add to set for import statements
+    //
+    content = extractImportStatements(content);
+
+    // Pass 3: generate the import statements
+    //
+    m.clear();
+    m.put("imports", generateImports());
+
+    {
+      MacroParser parser = new MacroParser();
+      parser.withTemplate(content).withMapper(m);
+      content = parser.content();
+    }
+
+    // Pass 4: Strip (or retain) optional comments
+    //
+    content = ParseTools.processOptionalComments(content, Context.config.comments());
+
+    //
+    // Pass 5: remove extraneous linefeeds
+    //
+    content = ParseTools.adjustLinefeeds(content, Context.config.language());
+    File target = sourceFile();
+    Context.files.mkdirs(Files.parent(target));
+    boolean wrote = Context.files.writeIfChanged(target, content);
+    if (wrote)
+      log(".....updated:", sourceFileRelative());
+    else {
+      target.setLastModified(System.currentTimeMillis());
+      log("...freshened:", sourceFileRelative());
+    }
+
+    postGenerate();
+  }
+
+  protected abstract void postGenerate();
+  
+  protected abstract String generatePackageDecl(GeneratedTypeDef def);
+
+  protected abstract void  generateEnumValues(EnumDataType dt);
 
   protected SourceGen() {
     mSourceBuilder = new SourceBuilder(Context.config.language());
@@ -137,5 +227,73 @@ public abstract class SourceGen extends BaseObject {
 
   private SourceBuilder mSourceBuilder;
   private Set<String> mImportedClasses;
+
+  protected void setInset(int value) {
+    mInset = value;
+  }
+
+  protected void inset(int amount) {
+    s().in(mInset + amount);
+  }
+
+  private int mInset;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  protected abstract String  generateInitInstanceFields(GeneratedTypeDef def);
+
+  protected abstract String  generateCopyFromBuilderToImmutable(GeneratedTypeDef def) ;
+
+  protected abstract String  generateSetters(GeneratedTypeDef def);
+
+  protected abstract String generateToString(GeneratedTypeDef def);
+
+  protected abstract String  generateToJson(GeneratedTypeDef def);
+  protected abstract String generateImports() ;
+  protected abstract String generateParse(GeneratedTypeDef def) ;
+  protected abstract String  generateGetters(GeneratedTypeDef def) ;
+  protected abstract String  generateImmutableToBuilder(GeneratedTypeDef def) ;
+
+  protected abstract String  generateStringConstants(GeneratedTypeDef def);
+
+  protected abstract String  generateInstanceFields(GeneratedTypeDef def);
+  protected abstract String  generateEquals(GeneratedTypeDef def) ;
+
+//  /**
+//   * Generate code to determine if two values of a DataType are equal, and if
+//   * not, short-circuit an equals(...) method by returning false
+//   */
+//  protected abstract String generateEqualsForMemberField(SourceBuilder s, FieldDef f) ;
+
+ protected abstract String generateHashCode(GeneratedTypeDef def) ;
 
 }
