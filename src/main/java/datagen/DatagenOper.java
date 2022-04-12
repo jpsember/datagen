@@ -59,8 +59,9 @@ public class DatagenOper extends AppOper {
   public void perform() {
     DatagenConfig config = datagenConfig();
 
-    List<DatWithSource> entriesToFreshen = constructFileEntries();
-    
+    Set<File> generatedSourceFileSet = hashSet();
+    List<DatWithSource> entriesToFreshen = constructFileEntries(generatedSourceFileSet);
+
     if (entriesToFreshen.isEmpty())
       log("...all files up-to-date (rerun with 'clean' option to force rebuild)");
 
@@ -77,8 +78,6 @@ public class DatagenOper extends AppOper {
         SourceGen gn = SourceGen.construct();
         gn.setVerbose(verbose());
         gn.generate();
-        File sourceFile = new File(config.sourcePath(), entry.sourceRelPath());
-        registerGeneratedSourceFile(sourceFile);
       } catch (Throwable t) {
         if (!app().catchingErrors() || SHOW_STACK_TRACES)
           throw t;
@@ -89,7 +88,7 @@ public class DatagenOper extends AppOper {
     }
 
     if (config.deleteOld())
-      deleteOldSourceFiles();
+      deleteOldSourceFiles(generatedSourceFileSet);
   }
 
   /**
@@ -135,8 +134,8 @@ public class DatagenOper extends AppOper {
     return mConfig;
   }
 
-  private List<DatWithSource> constructFileEntries() {
-    List<DatWithSource> mGeneratedSourceFilesToFreshen = arrayList();
+  private List<DatWithSource> constructFileEntries(Set<File> generatedSourceFileSet) {
+    List<DatWithSource> fileEntries = arrayList();
 
     DatagenConfig config = datagenConfig();
     DirWalk dirWalk = new DirWalk(config.datPath()).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
@@ -183,6 +182,7 @@ public class DatagenOper extends AppOper {
 
       DatWithSource fileEntry = DatWithSource.newBuilder().datRelPath(rel.getPath())
           .sourceRelPath(relativeClassFile).build();
+      generatedSourceFileSet.add(sourceFile);
 
       if (config.clean() || !sourceFile.exists()
           || sourceFile.lastModified() < dirWalk.abs(rel).lastModified()) {
@@ -192,14 +192,10 @@ public class DatagenOper extends AppOper {
           else
             log("could not locate:", INDENT, relativeClassFile);
         }
-        mGeneratedSourceFilesToFreshen.add(fileEntry);
-      } else {
-        // We don't need to rebuild this file; but register it, so
-        // we clean its directory of any old files
-        registerGeneratedSourceFile(sourceFile);
+        fileEntries.add(fileEntry);
       }
     }
-    return mGeneratedSourceFilesToFreshen;
+    return fileEntries;
   }
 
   /**
@@ -217,28 +213,24 @@ public class DatagenOper extends AppOper {
     return result;
   }
 
-  private void deleteOldSourceFiles() {
+  private void deleteOldSourceFiles(Set<File> mGeneratedSourceFileSet) {
+    Set<File> modifiedDirectorySet = hashSet();
+    for (File f : mGeneratedSourceFileSet)
+      modifiedDirectorySet.add(Files.parent(f));
+
     DirWalk dirWalk = new DirWalk(Context.config.sourcePath()).withRecurse(true)
         .withExtensions(SourceGen.sourceFileExtension(Context.config.language()));
-    todo("is this working with the new relative paths for DatWithSource?");
+
     for (File sourceFile : dirWalk.files()) {
-      // If file is not in a directory we wrote generated files to, ignore
-      if (!mGeneratedDirectorySet.contains(Files.parent(sourceFile)))
-        continue;
+      // If we generated this file, ignore
       if (mGeneratedSourceFileSet.contains(sourceFile))
+        continue;
+      // If file is not in a directory we wrote generated files to, ignore
+      if (!modifiedDirectorySet.contains(Files.parent(sourceFile)))
         continue;
       log("deleting old generated source file:", dirWalk.rel(sourceFile));
       files().deleteFile(sourceFile);
     }
-  }
-
-  /**
-   * Add generated file to list, so we don't delete it (in case the 'delete_old'
-   * option was specified)
-   */
-  private void registerGeneratedSourceFile(File sourceFile) {
-    mGeneratedSourceFileSet.add(sourceFile);
-    mGeneratedDirectorySet.add(Files.parent(sourceFile));
   }
 
   private void discardGenDirectory(Set<File> discardedDirectoriesSet, File sourceFile) {
@@ -256,10 +248,5 @@ public class DatagenOper extends AppOper {
   }
 
   private DatagenConfig mConfig;
-
-  // Set of Java files corresponding to all .dat files found
-  private Set<File> mGeneratedSourceFileSet = hashSet();
-  // Set of directories containing generated Java source files
-  private Set<File> mGeneratedDirectorySet = hashSet();;
 
 }
