@@ -52,22 +52,22 @@ public class PythonSourceGen extends SourceGen {
     if (def.isEnum()) {
       content = sEnumTemplate;
       generateEnumValues(def);
-      m.put("enum_values", content());
       m.put("default_value", def.enumDataType().labels().get(0));
+      m.put("enum_values", content());
     } else {
       content = sClassTemplate;
 
       mInset = 2;
-      m.put("string_constants", generateStringConstants(def));
-      m.put("init_instance_fields", generateInitInstanceFields(def));
-      m.put("parse", generateParse(def));
       m.put("class_getter_implementation", generateGetters(def));
       m.put("copy_to_builder", generateImmutableToBuilder(def));
-      m.put("to_json", generateToJson(def));
-      m.put("hashcode", generateHashCode(def));
-      m.put("equals", generateEquals(def));
-      m.put("setters", generateSetters(def));
       m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable(def));
+      m.put("equals", generateEquals(def));
+      m.put("hashcode", generateHashCode(def));
+      m.put("init_instance_fields", generateInitInstanceFields(def));
+      m.put("parse", generateParse(def));
+      m.put("setters", generateSetters(def));
+      m.put("string_constants", generateStringConstants(def));
+      m.put("to_json", generateToJson(def));
     }
 
     // Get any source that DataTypes may have needed to add;
