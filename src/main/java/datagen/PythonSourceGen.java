@@ -39,7 +39,8 @@ import static js.base.Tools.*;
 public class PythonSourceGen extends SourceGen {
 
   public void generate() {
-    GeneratedTypeDef def = context().generatedTypeDef;
+    Context context = Context.SHARED_INSTANCE;
+    GeneratedTypeDef def = context.generatedTypeDef;
     s().reset();
 
     JSMap m = map();
@@ -108,8 +109,8 @@ public class PythonSourceGen extends SourceGen {
 
     File target = sourceFile();
     File parent = Files.parent(target);
-    context().files.mkdirs(parent);
-    boolean wrote = context().files.writeIfChanged(target, content);
+    context.files.mkdirs(parent);
+    boolean wrote = context.files.writeIfChanged(target, content);
     if (wrote)
       log(".....updated:", sourceFileRelative());
     else {
@@ -120,10 +121,10 @@ public class PythonSourceGen extends SourceGen {
     // This is annoying, but to make relative imports work in Python we need to ensure
     // there's an (empty) file '__init__.py' in the same directory as any Python file.
     //
-    if (!context().files.dryRun()) {
+    if (!context.files.dryRun()) {
       File sentinelFile = new File(parent, "__init__.py");
       if (!sentinelFile.exists())
-        context().files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
+        context.files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
     }
   }
 
@@ -196,7 +197,7 @@ public class PythonSourceGen extends SourceGen {
   private String generateImports() {
     SourceBuilder s = s();
     List<String> importStatements = arrayList();
-    importStatements.addAll(context().getImports());
+    importStatements.addAll(Context.SHARED_INSTANCE.getImports());
     importStatements.sort(null);
     for (String k : importStatements) {
       s.a(k).cr();

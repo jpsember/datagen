@@ -71,8 +71,11 @@ public final class Context {
   private Context() {
   }
 
-  public static Context SHARED_INSTANCE;
+  public static Context SHARED_INSTANCE = new Context();
 
+  /**
+   * Construct a new shared instance
+   */
   public static void prepare() {
     SHARED_INSTANCE = new Context();
   }

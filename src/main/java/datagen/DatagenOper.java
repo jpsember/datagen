@@ -191,7 +191,7 @@ public class DatagenOper extends AppOper {
       p.setVerbose(verbose());
       try {
         p.parse();
-        SourceGen gn = SourceGen.construct(context);
+        SourceGen gn = SourceGen.construct();
         gn.setVerbose(verbose());
         gn.generate();
         File sourceFile = new File(config.sourcePath(), entry.sourceRelPath());

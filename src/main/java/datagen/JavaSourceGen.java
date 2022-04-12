@@ -38,7 +38,8 @@ import js.parsing.MacroParser;
 public final class JavaSourceGen extends SourceGen {
 
   public void generate() {
-    GeneratedTypeDef def = context().generatedTypeDef;
+    Context context = Context.SHARED_INSTANCE;
+    GeneratedTypeDef def = context.generatedTypeDef;
     s().reset();
 
     JSMap m = map();
@@ -109,8 +110,8 @@ public final class JavaSourceGen extends SourceGen {
     //
     content = ParseTools.adjustLinefeeds(content, config().language());
     File target = sourceFile();
-    context().files.mkdirs(Files.parent(target));
-    boolean wrote = context().files.writeIfChanged(target, content);
+    context.files.mkdirs(Files.parent(target));
+    boolean wrote = context.files.writeIfChanged(target, content);
     if (wrote)
       log(".....updated:", sourceFileRelative());
     else {
@@ -203,7 +204,7 @@ public final class JavaSourceGen extends SourceGen {
     SourceBuilder s = s();
 
     List<String> qualifiedClassNameStrings = arrayList();
-    qualifiedClassNameStrings.addAll(context().getImports());
+    qualifiedClassNameStrings.addAll(Context.SHARED_INSTANCE.getImports());
     qualifiedClassNameStrings.sort(null);
 
     for (String k : qualifiedClassNameStrings) {

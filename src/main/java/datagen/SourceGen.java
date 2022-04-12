@@ -41,8 +41,9 @@ import datagen.gen.QualifiedName;
  */
 public abstract class SourceGen extends BaseObject {
 
-  public static SourceGen construct(Context context) {
-    SourceGen result = null;
+  public static SourceGen construct() {
+    Context context = Context.SHARED_INSTANCE;
+    SourceGen result;
     switch (context.language()) {
     case JAVA:
       result = new JavaSourceGen();
@@ -50,24 +51,23 @@ public abstract class SourceGen extends BaseObject {
     case PYTHON:
       result = new PythonSourceGen();
       break;
+    default:
+      throw notSupported(context.language());
     }
-    if (result == null)
-      notSupported(context.language());
-    result.prepare(context);
+    result.prepare();
     return result;
   }
 
-  private void prepare(Context context) {
-    mContext = context;
-    mSourcebuilder = new SourceBuilder(context.language());
+  private void prepare() {
+    mSourcebuilder = new SourceBuilder(Context.SHARED_INSTANCE.language());
   }
 
   public final DatagenConfig config() {
-    return context().config;
+    return Context.SHARED_INSTANCE.config;
   }
 
   public final String sourceFileExtension() {
-    return sourceFileExtension(context().language());
+    return sourceFileExtension(Context.SHARED_INSTANCE.language());
   }
 
   public static String sourceFileExtension(Language language) {
@@ -88,7 +88,7 @@ public abstract class SourceGen extends BaseObject {
   }
 
   public final String sourceFileRelative() {
-    return context().datWithSource.sourceRelPath();
+    return Context.SHARED_INSTANCE.datWithSource.sourceRelPath();
   }
 
   protected String content() {
@@ -97,10 +97,6 @@ public abstract class SourceGen extends BaseObject {
 
   protected SourceBuilder s() {
     return mSourcebuilder;
-  }
-
-  protected Context context() {
-    return mContext;
   }
 
   /**
@@ -141,13 +137,12 @@ public abstract class SourceGen extends BaseObject {
       String s0 = subExp.get(0);
       String s1 = subExp.get(1);
       QualifiedName qualifiedName = ParseTools.parseQualifiedName(s0);
-      context().includeImport(qualifiedName.combined());
+      Context.SHARED_INSTANCE.includeImport(qualifiedName.combined());
       return s1;
     });
     return result;
   }
 
-  private Context mContext;
   private SourceBuilder mSourcebuilder;
 
 }
