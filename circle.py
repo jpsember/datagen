@@ -65,9 +65,7 @@ class Circle(AbstractData):
 
 
   def __hash__(self):
-    print("__hash__ called")
     if self._h is None:
-      print("...recalculating cached value")
       # TODO: we can optimize to eliminate a couple of lines; i.e. r=<first value>, and last self.hash_value= <calculation>
       x = 1
       x = x * 37 + hash(self._radius)
@@ -165,7 +163,7 @@ def r():
 
 # Initialize some things when the script is loaded
 #
-print("circle.py loaded")
+pr("circle.py loaded")
 
 a = Circle()
 
