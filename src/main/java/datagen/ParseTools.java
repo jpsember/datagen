@@ -35,6 +35,7 @@ import js.file.Files;
 import js.parsing.DFA;
 import js.parsing.MacroParser;
 import js.parsing.RegExp;
+import static datagen.Utils.*;
 
 public final class ParseTools {
 
@@ -159,7 +160,7 @@ public final class ParseTools {
 
     switch (language) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case JAVA: {
       int blanks = 1;
       for (String line : lines) {
@@ -176,7 +177,7 @@ public final class ParseTools {
     }
       break;
     case PYTHON: {
-      todo("!this can be simplified no doubt");
+      // todo("!this can be simplified no doubt");
       int blankRequest = 0;
       for (String line : lines) {
         String trimmed = line.trim();

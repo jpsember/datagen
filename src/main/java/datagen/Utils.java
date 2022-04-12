@@ -24,42 +24,32 @@
  **/
 package datagen;
 
-import datagen.gen.DatWithSource;
-import datagen.gen.DatagenConfig;
-import js.file.Files;
+import static js.base.Tools.*;
 
-/**
- * Class containing components used while processing a single .dat file
- */
-public final class Context {
+import datagen.gen.Language;
 
-  public static DatagenConfig config;
-  public static Files files;
-  public static GeneratedTypeDef generatedTypeDef;
-  public static DataTypeManager dataTypeManager;
-  public static DatWithSource datWithSource;
-
-  public static void prepare(Files files, DatagenConfig config, DatWithSource entry) {
-    discard();
-    Context.files = files;
-    Context.config = config.build();
-    Context.datWithSource = entry;
-    Context.dataTypeManager = new DataTypeManager();
-    Context.generatedTypeDef = null;
-  }
+public final class Utils {
 
   /**
-   * Discard old elements
+   * Throw UnsupportedOperationException due to an unsupported target language
    */
-  public static void discard() {
-    config = null;
-    files = null;
-    generatedTypeDef = null;
-    dataTypeManager = null;
-    datWithSource = null;
+  public static UnsupportedOperationException languageNotSupported(Object... messages) {
+    throw notSupported(insertStringToFront("Language not supported:", messages));
   }
 
-  private Context() {
+  public static String sourceFileExtension() {
+    return sourceFileExtension(Context.config.language());
+  }
+
+  public static String sourceFileExtension(Language language) {
+    switch (language) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      return "java";
+    case PYTHON:
+      return "py";
+    }
   }
 
 }

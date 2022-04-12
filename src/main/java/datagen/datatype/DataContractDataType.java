@@ -27,6 +27,7 @@ package datagen.datatype;
 import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
+import static datagen.Utils.*;
 
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class DataContractDataType extends DataType {
     if (mDefValue == null)
       switch (language()) {
       default:
-        throw Context.languageNotSupported();
+        throw languageNotSupported();
       case PYTHON:
         mDefValue = ParseTools.importExpression(constructImportExpression(),
             qualifiedClassName().className() + ".default_instance");

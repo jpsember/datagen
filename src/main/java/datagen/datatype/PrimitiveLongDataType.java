@@ -26,12 +26,12 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
-import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
+import static datagen.Utils.*;
 
 /**
  * Datatype for longs (and boxed version)
@@ -95,7 +95,7 @@ public class PrimitiveLongDataType extends DataType {
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
       switch (language()) {
       default:
-        throw Context.languageNotSupported();
+        throw languageNotSupported();
       case PYTHON:
         super.sourceDeserializeFromObject(s, f);
         break;

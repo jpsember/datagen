@@ -33,8 +33,8 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import datagen.gen.Language;
 import datagen.gen.QualifiedName;
+import static datagen.Utils.*;
 
 /**
  * Generate source code from previously parsed data fields and source templates
@@ -44,7 +44,7 @@ public abstract class SourceGen extends BaseObject {
   public static SourceGen construct() {
     switch (Context.config.language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case JAVA:
       return new JavaSourceGen();
     case PYTHON:
@@ -66,24 +66,13 @@ public abstract class SourceGen extends BaseObject {
 
   private final Set<String> mImportedClasses = hashSet();
 
-  public static String sourceFileExtension(Language language) {
-    switch (language) {
-    default:
-      throw Context.languageNotSupported();
-    case JAVA:
-      return "java";
-    case PYTHON:
-      return "py";
-    }
-  }
-
   public abstract void generate();
 
-  public final File sourceFile() {
+  protected final File sourceFile() {
     return new File(Context.config.sourcePath(), sourceFileRelative());
   }
 
-  public final String sourceFileRelative() {
+  protected final String sourceFileRelative() {
     return Context.datWithSource.sourceRelPath();
   }
 

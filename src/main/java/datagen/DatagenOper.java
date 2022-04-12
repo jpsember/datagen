@@ -26,6 +26,7 @@ package datagen;
 
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
+import static datagen.Utils.*;
 
 import java.io.File;
 import java.util.List;
@@ -72,12 +73,19 @@ public class DatagenOper extends AppOper {
       Context.prepare(files(), config, entry);
 
       try {
+
+        // Parse .dat file
+        //
         DataDefinitionParser p = new DataDefinitionParser();
         p.setVerbose(verbose());
         p.parse();
-        SourceGen gn = SourceGen.construct();
-        gn.setVerbose(verbose());
-        gn.generate();
+
+        // Generate source file in appropriate language
+        //
+        SourceGen g = SourceGen.construct();
+        g.setVerbose(verbose());
+        g.generate();
+
       } catch (Throwable t) {
         if (!app().catchingErrors() || SHOW_STACK_TRACES)
           throw t;
@@ -109,7 +117,7 @@ public class DatagenOper extends AppOper {
         File f;
         switch (config.language()) {
         default:
-          throw Context.languageNotSupported();
+          throw languageNotSupported();
         case JAVA:
           f = new File("src/main/java");
           break;
@@ -163,7 +171,7 @@ public class DatagenOper extends AppOper {
       String sourceClassName;
       switch (config.language()) {
       default:
-        throw Context.languageNotSupported();
+        throw languageNotSupported();
       case JAVA:
         sourceClassName = DataUtil.convertUnderscoresToCamelCase(protoName);
         break;
@@ -171,8 +179,7 @@ public class DatagenOper extends AppOper {
         sourceClassName = protoName;
         break;
       }
-      String relativeClassFile = relPathExpr + sourceClassName + "."
-          + SourceGen.sourceFileExtension(config.language());
+      String relativeClassFile = relPathExpr + sourceClassName + "." + sourceFileExtension(config.language());
       File sourceFile = new File(config.sourcePath(), relativeClassFile);
 
       if (config.clean()) {
@@ -219,7 +226,7 @@ public class DatagenOper extends AppOper {
       modifiedDirectorySet.add(Files.parent(f));
 
     DirWalk dirWalk = new DirWalk(Context.config.sourcePath()).withRecurse(true)
-        .withExtensions(SourceGen.sourceFileExtension(Context.config.language()));
+        .withExtensions(sourceFileExtension());
 
     for (File sourceFile : dirWalk.files()) {
       // If we generated this file, ignore

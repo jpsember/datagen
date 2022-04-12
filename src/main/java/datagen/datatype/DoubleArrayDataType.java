@@ -29,11 +29,11 @@ import static js.base.Tools.*;
 
 import java.util.List;
 
-import datagen.Context;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
+import static datagen.Utils.*;
 
 public class DoubleArrayDataType extends DataContractDataType {
 
@@ -48,7 +48,7 @@ public class DoubleArrayDataType extends DataContractDataType {
         mDefValue = "[]";
         break;
       default:
-        throw Context.languageNotSupported();
+        throw languageNotSupported();
       }
     }
     return mDefValue;
@@ -120,7 +120,7 @@ public class DoubleArrayDataType extends DataContractDataType {
   public String getSerializeToJSONValue(String value) {
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case PYTHON:
       return value;
     case JAVA:
@@ -137,7 +137,7 @@ public class DoubleArrayDataType extends DataContractDataType {
   public String getConstructFromX() {
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case PYTHON:
       return "x";
     case JAVA:
@@ -154,7 +154,7 @@ public class DoubleArrayDataType extends DataContractDataType {
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case PYTHON: {
       String defaultValue = f.defaultValueOrNull();
       if (defaultValue.equals("None"))
@@ -187,7 +187,7 @@ public class DoubleArrayDataType extends DataContractDataType {
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case PYTHON:
       s.a("r = r * 37 + int(sum(self._", f.javaName(), "))");
       break;

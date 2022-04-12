@@ -31,7 +31,7 @@ import java.util.List;
 
 import datagen.Datagen;
 import datagen.ParseTools;
-import datagen.SourceGen;
+import datagen.Utils;
 import datagen.gen.DatagenConfig;
 import datagen.gen.Language;
 import js.file.Files;
@@ -145,7 +145,7 @@ public abstract class GenBaseTest extends MyTestCase {
 
   protected final File sourceDir() {
     if (mSourceDir == null) {
-      mSourceDir = Files.S.mkdirs(new File(generatedDir(), SourceGen.sourceFileExtension(mLanguage)));
+      mSourceDir = Files.S.mkdirs(new File(generatedDir(), Utils.sourceFileExtension(mLanguage)));
     }
     return mSourceDir;
   }

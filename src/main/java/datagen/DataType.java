@@ -31,6 +31,7 @@ import js.data.DataUtil;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
+import static datagen.Utils.*;
 
 import java.util.List;
 
@@ -65,7 +66,7 @@ public abstract class DataType implements DefaultValueParser {
     QualifiedName nm = qualifiedClassName();
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case PYTHON:
       return "from " + nm.packagePath() + " import " + nm.className();
     case JAVA:
@@ -117,7 +118,7 @@ public abstract class DataType implements DefaultValueParser {
   @Deprecated // Move to Context
   public void assertNotPython() {
     if (python())
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
   }
 
   /**
@@ -161,7 +162,7 @@ public abstract class DataType implements DefaultValueParser {
   public final String nullExpr() {
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case PYTHON:
       return "None";
     case JAVA:
@@ -209,7 +210,7 @@ public abstract class DataType implements DefaultValueParser {
   public final void sourceIfNotNull(SourceBuilder s, FieldDef f) {
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case PYTHON:
       s.doIf(f.optional(), "if self._", f.javaName(), " is not None:", OPEN);
       break;
@@ -263,7 +264,7 @@ public abstract class DataType implements DefaultValueParser {
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case PYTHON:
       s.a("inst._", f.javaName(), " = obj.get(", f.nameStringConstant(), ", ", f.defaultValueOrNull(), ")");
       break;
@@ -283,7 +284,7 @@ public abstract class DataType implements DefaultValueParser {
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case PYTHON: {
       todo("!we should have some symbolic constants for things like t, inst");
       todo("!we should optimize later by having a utility class to reduce volume of boilerplate");
@@ -348,7 +349,7 @@ public abstract class DataType implements DefaultValueParser {
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case PYTHON:
       s.a("r = r * 37 + hash(self._", f.javaName(), ")");
       break;
@@ -377,7 +378,7 @@ public abstract class DataType implements DefaultValueParser {
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case PYTHON:
       if (f.optional() || isPrimitive()) {
         s.a(targetExpr, " = ", //

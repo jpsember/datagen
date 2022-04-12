@@ -25,8 +25,8 @@
 package datagen.datatype;
 
 import static js.base.Tools.*;
+import static datagen.Utils.*;
 
-import datagen.Context;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
@@ -42,7 +42,7 @@ public class ByteArrayDataType extends DataContractDataType {
         mDefValue = ParseTools.PKG_DATAUTIL + ".EMPTY_BYTE_ARRAY";
         break;
       default:
-        throw Context.languageNotSupported();
+        throw languageNotSupported();
       }
     }
     return mDefValue;
@@ -66,7 +66,7 @@ public class ByteArrayDataType extends DataContractDataType {
   public String getSerializeToJSONValue(String value) {
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case JAVA:
       return ParseTools.PKG_DATAUTIL + ".encodeBase64(" + value + ")";
     }
@@ -81,7 +81,7 @@ public class ByteArrayDataType extends DataContractDataType {
   public String getConstructFromX() {
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case JAVA:
       return ParseTools.PKG_DATAUTIL + ".parseBase64(x)";
     }
@@ -91,7 +91,7 @@ public class ByteArrayDataType extends DataContractDataType {
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case JAVA:
       String defaultValue = f.defaultValueOrNull();
       s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
@@ -112,7 +112,7 @@ public class ByteArrayDataType extends DataContractDataType {
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
     switch (language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case JAVA:
       s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.javaName(), ");");
       break;

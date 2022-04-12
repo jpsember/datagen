@@ -39,6 +39,7 @@ import js.parsing.Scanner;
 
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
+import static datagen.Utils.*;
 
 /**
  * A map of class names to DataTypes
@@ -53,7 +54,7 @@ public final class DataTypeManager extends BaseObject {
 
     switch (Context.config.language()) {
     default:
-      throw Context.languageNotSupported();
+      throw languageNotSupported();
     case PYTHON:
       tmp = new PrimitiveLongDataType();
       add("byte", tmp);

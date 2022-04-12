@@ -29,12 +29,12 @@ import static js.base.Tools.*;
 
 import java.util.List;
 
-import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.data.DataUtil;
+import static datagen.Utils.*;
 
 public class EnumDataType extends DataType {
 
@@ -114,7 +114,7 @@ public class EnumDataType extends DataType {
       s.a("inst._", f.javaName(), " = [", pythonClassName(), "(z) for z in x]", CR);
       s.endIf(CLOSE);
     } else {
-      throw Context.languageNotSupported("deserializing list of Java enums from list");
+      throw languageNotSupported("deserializing list of Java enums from list");
     }
   }
 
