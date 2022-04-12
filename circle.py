@@ -6,23 +6,25 @@ from pycore.base import *
 #
 class Circle(AbstractData):
 
+
   # Define serialization keys
   # These are class variables (see https://stackoverflow.com/questions/3434581)
   # and can be accessed from outside e.g. 'print(Circle._1)'
   #
+  # These succinct key names have the advantage that we can extract all the keys for a class
+  # e.g. by 'vars(Circle)'
+  #
   _0 = "radius"
   _1 = "label"
 
-  # Declare default value for this data class; declare it here, initialize it later
-  #
-  default_instance = None
 
   def __init__(self):
     # Define instance fields, and set them to their default values
     #
     self._radius = 0
     self._label = None
-
+    self._hash_value = None
+    
 
   @classmethod
   def new_builder(cls):
@@ -32,10 +34,10 @@ class Circle(AbstractData):
   def parse(self, obj):
     # TODO: can we construct a builder, use its setters, and call build() instead?  Saves code, but at what cost?
     #
-    inst = Circle()
-    inst._radius = obj.get(Circle._0, 0)
-    inst._label = obj.get(Circle._1, None)
-    return inst
+    x = Circle()
+    x._radius = obj.get(Circle._0, 0)
+    x._label = obj.get(Circle._1, None)
+    return x
 
 
   def to_builder(self):
@@ -48,24 +50,27 @@ class Circle(AbstractData):
   # Should this be renamed to 'serialize'?
   #
   def to_json(self):
-    # TODO: can we rewrite this as a dict literal to avoid the IDE warning
-    #  "This dictionary creation could be rewritten as a dictionary literal"?
-    m = {}
-    m[Circle._0] = self._radius
+    # Pycharm complains that this could be rewritten as a dictionary literal,
+    # but we can't handle optional values with that technique.  Disable the warning
+    # in the Pycharm preferences.
+    #
+    x = {}
+    x[Circle._0] = self._radius
     if self._label is not None:
-      m[Circle._1] = self._label
-    return m
+      x[Circle._1] = self._label
+    return x
 
 
   def __hash__(self):
     if self._hash_value is None:
       # TODO: we can optimize to eliminate a couple of lines; i.e. r=<first value>, and last self.hash_value= <calculation>
-      r = 1
-      r = r * 37 + hash(self._radius)
+      x = 1
+      x = x * 37 + hash(self._radius)
       if self._label is not None:
-        r = r * 37 + hash(self._label)
-      self._hash_value = r
+        x = x * 37 + hash(self._label)
+      self._hash_value = x
     return self._hash_value
+
 
   def __eq__(self, other):
     if isinstance(other, Circle):
@@ -75,17 +80,21 @@ class Circle(AbstractData):
     else:
       return False
 
+
   # ---------------------------------------------------------------------------------------
   # Properties
   # ---------------------------------------------------------------------------------------
+
 
   # Define the (hidden) methods associated with the instance fields' properties
   #
   def _get_radius(self):
     return self._radius
 
+
   def _get_label(self):
     return self._label
+
 
   # Define the properties representing the instance fields.  Only the builder subclass has setters
   #
@@ -96,9 +105,7 @@ class Circle(AbstractData):
 
 
 
-
-# Initialize the default value
-# TODO: can this not be done earlier?  Or, its declaration moved here?
+# Define a class variable for the default instance
 #
 Circle.default_instance = Circle()
 
@@ -114,10 +121,10 @@ class CircleBuilder(Circle):
 
 
   def build(self):
-    v = Circle()
-    v._radius = self._radius
-    v._label = self._label
-    return v
+    x = Circle()
+    x._radius = self._radius
+    x._label = self._label
+    return x
 
 
   # Define (hidden) methods unique to the builder;
@@ -128,8 +135,8 @@ class CircleBuilder(Circle):
   def set_label(self, value):
     self._label = value; return self
 
-  # Redefine the property for the builder class
-  # TODO: is this appropriate?  Or are there now two 'radius' properties, one in the parent class?
+
+  # Override the property for the builder subclass
   #
   # TODO: IDE is warning that "Setter should not return a value"
   #
@@ -137,21 +144,38 @@ class CircleBuilder(Circle):
   label = property(Circle._get_label, set_label)
 
 
+
+#########################################################################################
+#
+# Reload this script (has some unusual quirks though)
+#
 def r():
   exec(open('circle.py').read())
 
 
+# Initialize some things when the script is loaded
+#
 print("circle.py loaded")
+
 a = Circle()
 
-# NOTE: we are giving up some fluid-like capability (b.setXXX(...).setYY(...)...);
-# but I have made the setters return 'self', to it is now fluidic once again
+# Non-fluidic way:
 #
 b = CircleBuilder()
 b.radius = 8
 
 
+# Fluidic way:
+#
 c = b.build().to_builder().set_label("surprise").set_radius(42)
 d = c.build()
+
+e = Circle.new_builder()
+e.radius = 4
+
+# TODO: IDE is warning of 'unexpected argument' for 7, but the code runs...
+# something to do with forward references?
+#
+e.set_radius(7)
 
 pr(d)
