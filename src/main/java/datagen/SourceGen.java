@@ -33,7 +33,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import datagen.gen.DatagenConfig;
 import datagen.gen.Language;
 import datagen.gen.QualifiedName;
 
@@ -43,43 +42,29 @@ import datagen.gen.QualifiedName;
 public abstract class SourceGen extends BaseObject {
 
   public static SourceGen construct() {
-    SourceGen result;
     switch (Context.config.language()) {
-    case JAVA:
-      result = new JavaSourceGen();
-      break;
-    case PYTHON:
-      result = new PythonSourceGen();
-      break;
     default:
       throw Context.languageNotSupported();
+    case JAVA:
+      return new JavaSourceGen();
+    case PYTHON:
+      return new PythonSourceGen();
     }
-    result.prepare();
-    return result;
   }
 
-  private void prepare() {
-    mSourcebuilder = new SourceBuilder(Context.config.language());
+  protected SourceGen() {
+    mSourceBuilder = new SourceBuilder(Context.config.language());
   }
 
-  public void includeImport(String importExpr) {
+  private void includeImport(String importExpr) {
     mImportedClasses.add(importExpr);
   }
 
-  public Set<String> getImports() {
+  protected final Set<String> getImports() {
     return mImportedClasses;
   }
 
   private final Set<String> mImportedClasses = hashSet();
-
-  @Deprecated
-  public final DatagenConfig config() {
-    return Context.config;
-  }
-
-  public final String sourceFileExtension() {
-    return sourceFileExtension(Context.config.language());
-  }
 
   public static String sourceFileExtension(Language language) {
     switch (language) {
@@ -95,19 +80,19 @@ public abstract class SourceGen extends BaseObject {
   public abstract void generate();
 
   public final File sourceFile() {
-    return new File(config().sourcePath(), sourceFileRelative());
+    return new File(Context.config.sourcePath(), sourceFileRelative());
   }
 
   public final String sourceFileRelative() {
     return Context.datWithSource.sourceRelPath();
   }
 
-  protected String content() {
+  protected final String content() {
     return s().content();
   }
 
-  protected SourceBuilder s() {
-    return mSourcebuilder;
+  protected final SourceBuilder s() {
+    return mSourceBuilder;
   }
 
   /**
@@ -122,7 +107,7 @@ public abstract class SourceGen extends BaseObject {
    * Note this is different from the Java technique, but this is a better way
    * </pre>
    */
-  public final String extractImportStatements(String template) {
+  protected final String extractImportStatements(String template) {
     MacroParser parser = new MacroParser();
     parser.withPattern(ParseTools.IMPORT_REGEXP);
     parser.withTemplate(template);
@@ -154,6 +139,6 @@ public abstract class SourceGen extends BaseObject {
     return result;
   }
 
-  private SourceBuilder mSourcebuilder;
+  private SourceBuilder mSourceBuilder;
 
 }
