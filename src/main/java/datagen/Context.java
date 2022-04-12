@@ -26,8 +26,6 @@ package datagen;
 
 import static js.base.Tools.*;
 
-import java.util.Set;
-
 import datagen.gen.DatWithSource;
 import datagen.gen.DatagenConfig;
 import datagen.gen.Language;
@@ -64,19 +62,8 @@ public final class Context {
     }
   }
 
-  @Deprecated // This should perhaps be moved to the SourceGen class
-  public void includeImport(String importExpr) {
-    mImportedClasses.add(importExpr);
-  }
-
-  @Deprecated // This should perhaps be moved to the SourceGen class
- public Set<String> getImports() {
-    return mImportedClasses;
-  }
-
-  private final Set<String> mImportedClasses = hashSet();
-
   private Context() {
+    loadTools();
   }
 
   public static Context SHARED_INSTANCE = new Context();

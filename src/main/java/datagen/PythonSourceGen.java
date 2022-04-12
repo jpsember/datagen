@@ -197,7 +197,7 @@ public class PythonSourceGen extends SourceGen {
   private String generateImports() {
     SourceBuilder s = s();
     List<String> importStatements = arrayList();
-    importStatements.addAll(Context.SHARED_INSTANCE.getImports());
+    importStatements.addAll( getImports());
     importStatements.sort(null);
     for (String k : importStatements) {
       s.a(k).cr();

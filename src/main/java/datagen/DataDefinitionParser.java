@@ -108,7 +108,8 @@ final class DataDefinitionParser extends BaseObject {
     mScanner.setSourceDescription(datPath);
     mLastReadToken = null;
     mPackageName = null;
-    mContext.getImports().clear();
+    // I think the SourceGen will manage this, and we haven't necessarily built it yet
+//    mContext.getImports().clear();
   }
 
   private Token readIf(int type) {

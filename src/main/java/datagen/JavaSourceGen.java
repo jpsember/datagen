@@ -204,7 +204,7 @@ public final class JavaSourceGen extends SourceGen {
     SourceBuilder s = s();
 
     List<String> qualifiedClassNameStrings = arrayList();
-    qualifiedClassNameStrings.addAll(Context.SHARED_INSTANCE.getImports());
+    qualifiedClassNameStrings.addAll( getImports());
     qualifiedClassNameStrings.sort(null);
 
     for (String k : qualifiedClassNameStrings) {

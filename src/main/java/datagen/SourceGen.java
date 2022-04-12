@@ -31,6 +31,7 @@ import static js.base.Tools.*;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import datagen.gen.DatagenConfig;
 import datagen.gen.Language;
@@ -61,6 +62,16 @@ public abstract class SourceGen extends BaseObject {
   private void prepare() {
     mSourcebuilder = new SourceBuilder(Context.SHARED_INSTANCE.language());
   }
+
+  public void includeImport(String importExpr) {
+    mImportedClasses.add(importExpr);
+  }
+
+  public Set<String> getImports() {
+    return mImportedClasses;
+  }
+
+  private final Set<String> mImportedClasses = hashSet();
 
   public final DatagenConfig config() {
     return Context.SHARED_INSTANCE.config;
@@ -137,7 +148,7 @@ public abstract class SourceGen extends BaseObject {
       String s0 = subExp.get(0);
       String s1 = subExp.get(1);
       QualifiedName qualifiedName = ParseTools.parseQualifiedName(s0);
-      Context.SHARED_INSTANCE.includeImport(qualifiedName.combined());
+      includeImport(qualifiedName.combined());
       return s1;
     });
     return result;
