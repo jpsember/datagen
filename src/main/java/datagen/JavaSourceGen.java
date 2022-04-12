@@ -27,13 +27,10 @@ package datagen;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
-import java.io.File;
 import java.util.List;
 
 import datagen.datatype.EnumDataType;
 import js.file.Files;
-import js.json.JSMap;
-import js.parsing.MacroParser;
 
 public final class JavaSourceGen extends SourceGen {
 
@@ -44,90 +41,6 @@ public final class JavaSourceGen extends SourceGen {
     else
       return sClassTemplate;
   }
-
-  public void oldgenerate() {
-    GeneratedTypeDef def = Context.generatedTypeDef;
-    s().reset();
-
-    JSMap m = map();
-    m.put("package_decl", generatePackageDecl(def));
-    // In this first pass, leave the imports macro unchanged
-    m.put("imports", "[!imports]");
-    m.put("class", def.name());
-
-    String content;
-    if (def.isEnum()) {
-      content = sEnumTemplate;
-      generateEnumValues(def.enumDataType());
-      m.put("default_value", def.enumDataType().labels().get(0));
-      m.put("enum_values", content());
-    } else {
-      content = sClassTemplate;
-
-      setInset(2);
-      m.put("class_getter_implementation", generateGetters(def));
-      m.put("copy_to_builder", generateImmutableToBuilder(def));
-      m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable(def));
-      m.put("equals", generateEquals(def));
-      m.put("hashcode", generateHashCode(def));
-      m.put("init_instance_fields", generateInitInstanceFields(def));
-      m.put("instance_fields", generateInstanceFields(def));
-      m.put("parse", generateParse(def));
-      m.put("setters", generateSetters(def));
-      m.put("string_constants", generateStringConstants(def));
-      m.put("to_json", generateToJson(def));
-      m.put("to_string", generateToString(def));
-    }
-
-    // Get any source that DataTypes may have needed to add;
-    // must be added here, after all other keys
-    m.put("class_specific", def.getClassSpecificSource());
-
-    // Perform pass 1 of macro substitution
-    //
-    {
-      MacroParser parser = new MacroParser();
-      parser.withTemplate(content).withMapper(m);
-      content = parser.content();
-    }
-
-    // Pass 2: strip package names, add to set for import statements
-    //
-    content = extractImportStatements(content);
-
-    // Pass 3: generate the import statements
-    //
-    m.clear();
-    m.put("imports", generateImports());
-
-    {
-      MacroParser parser = new MacroParser();
-      parser.withTemplate(content).withMapper(m);
-      content = parser.content();
-    }
-
-    // Pass 4: Strip (or retain) optional comments
-    //
-    content = ParseTools.processOptionalComments(content, Context.config.comments());
-
-    //
-    // Pass 5: remove extraneous linefeeds
-    //
-    content = ParseTools.adjustLinefeeds(content, Context.config.language());
-    File target = sourceFile();
-    Context.files.mkdirs(Files.parent(target));
-    boolean wrote = Context.files.writeIfChanged(target, content);
-    if (wrote)
-      log(".....updated:", sourceFileRelative());
-    else {
-      target.setLastModified(System.currentTimeMillis());
-      log("...freshened:", sourceFileRelative());
-    }
-  }
-
-  // ------------------------------------------------------------------
-  // Source code generation for various macros
-  // ------------------------------------------------------------------
 
   @Override
   protected String generatePackageDecl(GeneratedTypeDef def) {
@@ -173,7 +86,7 @@ public final class JavaSourceGen extends SourceGen {
     for (FieldDef f : def.fields()) {
       s.br();
       DataType d = f.dataType();
-      s.a("public ", "Builder ", setExpr(def, f), "(", d.typeName(), " x)", OPEN);
+      s.a("public ", "Builder ", f.javaNameLowerFirst(), "(", d.typeName(), " x)", OPEN);
       String targetExpr = "m" + f.javaName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "return this;", CLOSE);
@@ -323,7 +236,7 @@ public final class JavaSourceGen extends SourceGen {
    * Generate code to determine if two values of a DataType are equal, and if
    * not, short-circuit an equals(...) method by returning false
    */
-private void generateEqualsForMemberField(SourceBuilder s, FieldDef f) {
+  private void generateEqualsForMemberField(SourceBuilder s, FieldDef f) {
     String a = "m" + f.javaName();
     String b = "other.m" + f.javaName();
 
@@ -362,18 +275,7 @@ private void generateEqualsForMemberField(SourceBuilder s, FieldDef f) {
         OUT, CR);
     return content();
   }
-
-  @Override
-  protected void postGenerate() {
-  }
-  //------------------------------------------------------------------
-
-  /**
-   * Get the name of a setter
-   */
-  private String setExpr(GeneratedTypeDef m, FieldDef f) {
-    return f.javaNameLowerFirst();
-  }
+ 
 
   @Override
   protected void generateEnumValues(EnumDataType dt) {

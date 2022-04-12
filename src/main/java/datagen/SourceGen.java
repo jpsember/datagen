@@ -56,7 +56,9 @@ public abstract class SourceGen extends BaseObject {
     }
   }
 
-  protected abstract String getTemplate();
+  protected SourceGen() {
+    mSourceBuilder = new SourceBuilder(Context.config.language());
+  }
 
   // This was derived from the JavaSourceGen method
   public final void generate() {
@@ -138,14 +140,11 @@ public abstract class SourceGen extends BaseObject {
     postGenerate();
   }
 
-  protected abstract void postGenerate();
-  
-  protected abstract String generatePackageDecl(GeneratedTypeDef def);
-
-  protected abstract void  generateEnumValues(EnumDataType dt);
-
-  protected SourceGen() {
-    mSourceBuilder = new SourceBuilder(Context.config.language());
+  /**
+   * Perform any additional tasks after source file has been generated. Default
+   * implementation does nothing
+   */
+  protected void postGenerate() {
   }
 
   protected final File sourceFile() {
@@ -228,72 +227,56 @@ public abstract class SourceGen extends BaseObject {
   private SourceBuilder mSourceBuilder;
   private Set<String> mImportedClasses;
 
-  protected void setInset(int value) {
+  protected final void setInset(int value) {
+    todo("refactor/document");
     mInset = value;
   }
 
-  protected void inset(int amount) {
-    s().in(mInset + amount);
+  protected final void inset(int amount) {
+    todo("refactor/document");
+     s().in(mInset + amount);
   }
 
   private int mInset;
 
 
+  protected abstract String getTemplate();
+
+  protected abstract String generatePackageDecl(GeneratedTypeDef def);
+
+  protected abstract void generateEnumValues(EnumDataType dt);
 
 
+  protected abstract String generateInitInstanceFields(GeneratedTypeDef def);
 
+  protected abstract String generateCopyFromBuilderToImmutable(GeneratedTypeDef def);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  protected abstract String  generateInitInstanceFields(GeneratedTypeDef def);
-
-  protected abstract String  generateCopyFromBuilderToImmutable(GeneratedTypeDef def) ;
-
-  protected abstract String  generateSetters(GeneratedTypeDef def);
+  protected abstract String generateSetters(GeneratedTypeDef def);
 
   protected abstract String generateToString(GeneratedTypeDef def);
 
-  protected abstract String  generateToJson(GeneratedTypeDef def);
-  protected abstract String generateImports() ;
-  protected abstract String generateParse(GeneratedTypeDef def) ;
-  protected abstract String  generateGetters(GeneratedTypeDef def) ;
-  protected abstract String  generateImmutableToBuilder(GeneratedTypeDef def) ;
+  protected abstract String generateToJson(GeneratedTypeDef def);
 
-  protected abstract String  generateStringConstants(GeneratedTypeDef def);
+  protected abstract String generateImports();
 
-  protected abstract String  generateInstanceFields(GeneratedTypeDef def);
-  protected abstract String  generateEquals(GeneratedTypeDef def) ;
+  protected abstract String generateParse(GeneratedTypeDef def);
 
-//  /**
-//   * Generate code to determine if two values of a DataType are equal, and if
-//   * not, short-circuit an equals(...) method by returning false
-//   */
-//  protected abstract String generateEqualsForMemberField(SourceBuilder s, FieldDef f) ;
+  protected abstract String generateGetters(GeneratedTypeDef def);
 
- protected abstract String generateHashCode(GeneratedTypeDef def) ;
+  protected abstract String generateImmutableToBuilder(GeneratedTypeDef def);
+
+  protected abstract String generateStringConstants(GeneratedTypeDef def);
+
+  protected abstract String generateInstanceFields(GeneratedTypeDef def);
+
+  protected abstract String generateEquals(GeneratedTypeDef def);
+
+  //  /**
+  //   * Generate code to determine if two values of a DataType are equal, and if
+  //   * not, short-circuit an equals(...) method by returning false
+  //   */
+  //  protected abstract String generateEqualsForMemberField(SourceBuilder s, FieldDef f) ;
+
+  protected abstract String generateHashCode(GeneratedTypeDef def);
 
 }

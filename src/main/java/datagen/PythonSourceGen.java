@@ -30,8 +30,6 @@ import java.util.List;
 import datagen.datatype.EnumDataType;
 import js.data.DataUtil;
 import js.file.Files;
-import js.json.JSMap;
-import js.parsing.MacroParser;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
@@ -46,96 +44,14 @@ public class PythonSourceGen extends SourceGen {
       return sClassTemplate;
   }
 
-  public void oldgenerate() {
-    GeneratedTypeDef def = Context.generatedTypeDef;
-    s().reset();
-
-    JSMap m = map();
-    m.put("package_decl", generatePackageDecl(def));
-    // In this first pass, leave the imports macro unchanged  
-    m.put("imports", "[!imports]");
-    m.put("class", def.name());
-
-    String content;
-    if (def.isEnum()) {
-      content = sEnumTemplate;
-      generateEnumValues(def.enumDataType());
-      m.put("default_value", def.enumDataType().labels().get(0));
-      m.put("enum_values", content());
-    } else {
-      content = sClassTemplate;
-      setInset(2);
-      m.put("class_getter_implementation", generateGetters(def));
-      m.put("copy_to_builder", generateImmutableToBuilder(def));
-      m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable(def));
-      m.put("equals", generateEquals(def));
-      m.put("hashcode", generateHashCode(def));
-      m.put("init_instance_fields", generateInitInstanceFields(def));
-      m.put("parse", generateParse(def));
-      m.put("setters", generateSetters(def));
-      m.put("string_constants", generateStringConstants(def));
-      m.put("to_json", generateToJson(def));
+  @Override
+  protected void generateEnumValues(EnumDataType dt) {
+    s().in();
+    for (String label : dt.labels()) {
+      s().a(label, " = ", quote(label.toLowerCase())).cr();
     }
-
-    // Get any source that DataTypes may have needed to add;
-    // must be added here, after all other keys
-    m.put("class_specific", def.getClassSpecificSource());
-
-    // Perform pass 1 of macro substitution
-    //
-    {
-      MacroParser parser = new MacroParser();
-      parser.withTemplate(content).withMapper(m);
-      content = parser.content();
-    }
-
-    // Pass 2: strip package names, add to set for import statements
-    //
-    content = extractImportStatements(content);
-
-    // Pass 3: generate the import statements
-    //
-    m.clear();
-    m.put("imports", generateImports());
-
-    {
-      MacroParser parser = new MacroParser();
-      parser.withTemplate(content).withMapper(m);
-      content = parser.content();
-    }
-
-    // Pass 4: Strip (or retain) optional comments
-    //
-    content = ParseTools.processOptionalComments(content, Context.config.comments());
-
-    //
-    // Pass 5: remove extraneous linefeeds
-    //
-    content = ParseTools.adjustLinefeeds(content, Context.config.language());
-    File target = sourceFile();
-    Context.files.mkdirs(Files.parent(target));
-    Files  files = Context.files;
-    boolean wrote = files.writeIfChanged(target, content);
-    if (wrote)
-      log(".....updated:", sourceFileRelative());
-    else {
-      target.setLastModified(System.currentTimeMillis());
-      log("...freshened:", sourceFileRelative());
-    }
-
-//    // This is annoying, but to make relative imports work in Python we need to ensure
-//    // there's an (empty) file '__init__.py' in the same directory as any Python file.
-//    //
-//    if (!files.dryRun()) {
-//      File sentinelFile = new File(parent, "__init__.py");
-//      if (!sentinelFile.exists())
-//        files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
-//    }
+    s().out();
   }
-
-  // ------------------------------------------------------------------
-  // Source code generation for various macros
-  // ------------------------------------------------------------------
 
   @Override
   protected String generatePackageDecl(GeneratedTypeDef def) {
@@ -165,7 +81,8 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
-@Override protected String generateCopyFromBuilderToImmutable(GeneratedTypeDef def) {
+  @Override
+  protected String generateCopyFromBuilderToImmutable(GeneratedTypeDef def) {
     inset(2);
     for (FieldDef f : def.fields()) {
       s().cr();
@@ -294,11 +211,6 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
-//  @Override
-//  protected String generateEqualsForMemberField(SourceBuilder s, FieldDef f) {
-//    return "<NOT SUPPORTED>";
-//  }
-
   @Override
   protected String generateInstanceFields(GeneratedTypeDef def) {
     return "<NOT SUPPORTED>";
@@ -308,6 +220,7 @@ public class PythonSourceGen extends SourceGen {
   protected String generateToString(GeneratedTypeDef def) {
     return "<NOT SUPPORTED>";
   }
+
   @Override
   protected void postGenerate() {
     Files files = Context.files;
@@ -315,12 +228,11 @@ public class PythonSourceGen extends SourceGen {
     // there's an (empty) file '__init__.py' in the same directory as any Python file.
     //
     if (!files.dryRun()) {
-      File parent =   Files.parent(sourceFile());
+      File parent = Files.parent(sourceFile());
       File sentinelFile = new File(parent, "__init__.py");
       if (!sentinelFile.exists())
         files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
     }
- 
   }
   //------------------------------------------------------------------
 
@@ -329,15 +241,6 @@ public class PythonSourceGen extends SourceGen {
    */
   private String setExpr(GeneratedTypeDef m, FieldDef f) {
     return f.javaNameLowerFirst();
-  }
-
-  @Override
-  protected void generateEnumValues(EnumDataType dt) {
-    s().in();
-    for (String label : dt.labels()) {
-      s().a(label, " = ", quote(label.toLowerCase())).cr();
-    }
-    s().out();
   }
 
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template_py.txt");
