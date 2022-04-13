@@ -49,10 +49,13 @@ public abstract class DataType implements DefaultValueParser {
   // Naming
   // ------------------------------------------------------------------
 
+  final boolean VB = false;
+
   public final void setQualifiedClassName(QualifiedName qn) {
     checkState(mClassWithPackage == null);
     mClassWithPackage = qn;
-    pr("mClassWithPackage:", mClassWithPackage);
+    if (VB)
+      pr("mClassWithPackage:", mClassWithPackage);
   }
 
   public final QualifiedName qualifiedClassName() {
@@ -88,8 +91,15 @@ public abstract class DataType implements DefaultValueParser {
     throw notSupported("no qualified class name expression provided;", getClass().getName());
   }
 
-  protected   String provideTypeName() {
-    todo("can this method be final?");
+  /**
+   * Construct name of type, wrapped if necessary within an "import expression"
+   * so that we are sure to generate import statements if the type appears in
+   * the source.
+   * 
+   * Can be overridden for compound types (maps, lists) to ensure the other
+   * types are wrapped in import expressions as well
+   */
+  protected String provideTypeName() {
     if (isPrimitive())
       return qualifiedClassName().className();
 
@@ -102,12 +112,13 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   /**
-   * Get qualified package and class name for the type
+   * Get type name, by calling provideTypeName() if necessary
    */
   public final String typeName() {
     if (mTypeName == null) {
       mTypeName = provideTypeName();
-      pr("mTypeName:", mTypeName);
+      if (VB)
+        pr("mTypeName:", mTypeName);
     }
     return mTypeName;
   }
@@ -144,18 +155,6 @@ public abstract class DataType implements DefaultValueParser {
     return qualifiedClassName().className().charAt(0) >= 'a';
   }
 
-  /**
-   * Get source code for type's default value, in immutable form (if
-   * applicable). This is our default value, which may be distinct from Java's
-   * default value. For example, our default value for a String is "", whereas
-   * Java's is null.
-   *
-   * The default method calls compilerInitialValue()
-   */
-  public String ourDefaultValue() {
-    return compilerInitialValue();
-  }
-
   // ------------------------------------------------------------------
   // Default values
   // ------------------------------------------------------------------
@@ -169,17 +168,15 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   /**
-   * Get the language-specific expression for "null" (i.e., "None" if Python)
+   * Get source code for type's default value, in immutable form (if
+   * applicable). This is our default value, which may be distinct from Java's
+   * default value. For example, our default value for a String is "", whereas
+   * Java's is null.
+   *
+   * The default method calls compilerInitialValue()
    */
-  public final String nullExpr() {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      return "None";
-    case JAVA:
-      return "null";
-    }
+  public String ourDefaultValue() {
+    return compilerInitialValue();
   }
 
   /**

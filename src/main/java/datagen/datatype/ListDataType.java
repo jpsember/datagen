@@ -46,8 +46,6 @@ public class ListDataType extends DataType {
 
   @Override
   protected String provideTypeName() {
-    
-    todo("can we move this to the provideQualifiedClassName method, for simplicity? Then provideTypeName can be final?");
     // We need to generate import statements for the wrapped type as well as the wrapper; but we don't want 
     // to confuse the macro substitution process 
     String wrappedImport = ParseTools.importExpression(wrappedType().qualifiedClassName().combined(), "");

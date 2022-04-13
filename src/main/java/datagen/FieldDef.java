@@ -99,7 +99,7 @@ public final class FieldDef extends BaseObject {
   public String nullIfOptional(String nonNullExpr) {
     if (!optional())
       return nonNullExpr;
-    return dataType().nullExpr();
+    return Utils.nullExpr();
   }
 
   /**

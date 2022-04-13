@@ -52,4 +52,18 @@ public final class Utils {
     }
   }
 
+  /**
+   * Get the language-specific expression for "null" (i.e., "None" if Python)
+   */
+  public static  String nullExpr() {
+    switch (Context.config.language()) {
+    default:
+      throw languageNotSupported();
+    case PYTHON:
+      return "None";
+    case JAVA:
+      return "null";
+    }
+  }
+
 }
