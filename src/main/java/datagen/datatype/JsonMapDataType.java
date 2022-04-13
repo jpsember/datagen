@@ -43,7 +43,6 @@ public final class JsonMapDataType extends DataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    todo("!Is this needed when generating Python code?");
     return "js.json.JSMap";
   }
 

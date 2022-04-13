@@ -45,6 +45,10 @@ public abstract class DataType implements DefaultValueParser {
     return Context.config.language();
   }
 
+  // ------------------------------------------------------------------
+  // Naming
+  // ------------------------------------------------------------------
+
   public final void setQualifiedClassName(QualifiedName qn) {
     checkState(mClassWithPackage == null);
     mClassWithPackage = qn;
@@ -59,6 +63,33 @@ public abstract class DataType implements DefaultValueParser {
     return mClassWithPackage;
   }
 
+  /**
+   * Specify the qualified class name
+   */
+  protected String provideQualifiedClassNameExpr() {
+    throw notSupported("no qualified class name expression provided");
+  }
+
+  protected String provideTypeName() {
+    return ParseTools.importExpression(constructImportExpression(), qualifiedClassName().className());
+  }
+
+  /**
+   * Get qualified package and class name for the type
+   */
+  public final String typeName() {
+    if (mTypeName == null) {
+      mTypeName = provideTypeName();
+      pr("typename:", mTypeName);
+    }
+    return mTypeName;
+  }
+
+  private String mTypeName;
+  private QualifiedName mClassWithPackage;
+
+  //------------------------------------------------------------------
+
   protected String constructImportExpression() {
     QualifiedName nm = qualifiedClassName();
     switch (language()) {
@@ -72,26 +103,6 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   /**
-   * Specify the qualified class name
-   */
-  protected String provideQualifiedClassNameExpr() {
-    throw notSupported("no qualified class name expression provided");
-  }
-
-  /**
-   * Get qualified package and class name for the type
-   */
-  public final String typeName() {
-    if (mTypeName == null)
-      mTypeName = provideTypeName();
-    return mTypeName;
-  }
-
-  protected String provideTypeName() {
-    return ParseTools.importExpression(constructImportExpression(), qualifiedClassName().className());
-  }
-
-  /**
    * Determine if the type is a primitive type, e.g. int, short, etc
    */
   public final boolean isPrimitive() {
@@ -99,8 +110,12 @@ public abstract class DataType implements DefaultValueParser {
     // e.g. int, double, boolean
     // vs File, Integer, Double, Boolean
     //
-    if (python())
-      todo("is this required in Python?");
+    if (python()) {
+      if (false)
+        return qualifiedClassName().packagePath().isEmpty();
+      todo("Needs work for Python;", qualifiedClassName());
+      return false;
+    }
     return qualifiedClassName().className().charAt(0) >= 'a';
   }
 
@@ -389,9 +404,7 @@ public abstract class DataType implements DefaultValueParser {
     return mDeclared;
   }
 
-  private String mTypeName;
   private boolean mDeclared;
   private boolean mUsedFlag;
-  private QualifiedName mClassWithPackage;
 
 }

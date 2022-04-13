@@ -36,13 +36,13 @@ import js.parsing.Scanner;
 public class PyBooleanDataType extends DataType {
 
   @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "xxxxxxx.yyyyy.wtf.boolean";
+  public final String compilerInitialValue() {
+    return "False";
   }
 
   @Override
-  public final String compilerInitialValue() {
-    return "False";
+  protected String provideQualifiedClassNameExpr() {
+    return "bool";
   }
 
   @Override

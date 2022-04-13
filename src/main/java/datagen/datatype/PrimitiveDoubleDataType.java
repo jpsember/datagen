@@ -24,8 +24,6 @@
  **/
 package datagen.datatype;
 
-import static js.base.Tools.*;
-
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
@@ -36,7 +34,6 @@ public class PrimitiveDoubleDataType extends DataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    loadTools();
     return "java.lang.double";
   }
 

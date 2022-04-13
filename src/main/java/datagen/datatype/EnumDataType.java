@@ -64,7 +64,7 @@ public class EnumDataType extends DataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    todo("!we can apparently calculate the hash of None in Python, so we can simplify some things?");
+    todo("we can apparently calculate the hash of None in Python, so we can simplify some things?");
     if (python()) {
       s.a("r = r * 37 + hash(self._", f.sourceName(), ")");
     } else {

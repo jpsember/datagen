@@ -35,14 +35,8 @@ import static datagen.ParseTools.*;
 public class PyIntDataType extends DataType {
 
   @Override
-  protected String provideQualifiedClassNameExpr() {
-    loadTools();
-    todo("do we really need to make defensive copies of lists in the build() method?");
-    return "??wtf??";
-  }
-
-  @Override
   public final String compilerInitialValue() {
+    todo("do we really need to make defensive copies of lists in the build() method?");
     return "0";
   }
 
@@ -51,6 +45,11 @@ public class PyIntDataType extends DataType {
       FieldDef fieldDef) {
     long value = Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Long.MIN_VALUE, Long.MAX_VALUE);
     return Long.toString(value);
+  }
+
+  @Override
+  protected String provideQualifiedClassNameExpr() {
+    return "int";
   }
 
 }

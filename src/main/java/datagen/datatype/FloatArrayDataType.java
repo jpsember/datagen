@@ -49,7 +49,6 @@ public class FloatArrayDataType extends DataContractDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    loadTools();
     return "java.lang.float[]";
   }
 

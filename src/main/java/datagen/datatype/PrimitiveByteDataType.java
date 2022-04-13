@@ -24,8 +24,6 @@
  **/
 package datagen.datatype;
 
-import static js.base.Tools.*;
-
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
@@ -39,7 +37,6 @@ public class PrimitiveByteDataType extends DataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    loadTools();
     return "java.lang.byte";
   }
 
@@ -65,7 +62,7 @@ public class PrimitiveByteDataType extends DataType {
 
   @Override
   public DataType optionalVariant() {
-    return   new Boxed();
+    return new Boxed();
   }
 
   @Override

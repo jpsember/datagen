@@ -36,8 +36,6 @@ public class BooleanDataType extends DataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    todo(
-        "Consider having language-specific versions of DataTypes, since there's a lot of 'if python' stuff going on");
     return "java.lang.boolean";
   }
 

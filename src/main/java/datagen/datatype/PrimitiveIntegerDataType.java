@@ -25,7 +25,6 @@
 package datagen.datatype;
 
 import static datagen.ParseTools.*;
-import static js.base.Tools.*;
 
 import datagen.DataType;
 import datagen.FieldDef;
@@ -39,7 +38,6 @@ public class PrimitiveIntegerDataType extends DataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    loadTools();
     return "java.lang.int";
   }
 

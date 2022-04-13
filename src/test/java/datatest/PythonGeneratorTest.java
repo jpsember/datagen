@@ -39,7 +39,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void simple() {
+  public void simple() { 
     p().pr("fields {", INDENT, //
         "int alpha = 42;", CR, //
         "? int beta;", CR, //
@@ -81,7 +81,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void doubles() { 
+  public void doubles() {  
     p().pr("fields {", INDENT, //
         "*double foo;", CR, //
         "?double golf;", CR, // 

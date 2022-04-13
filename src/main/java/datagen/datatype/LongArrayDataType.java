@@ -49,7 +49,6 @@ public class LongArrayDataType extends DataContractDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    loadTools();
     return "java.lang.long[]";
   }
 

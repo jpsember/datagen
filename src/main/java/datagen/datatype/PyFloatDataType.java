@@ -24,8 +24,6 @@
  **/
 package datagen.datatype;
 
-import static js.base.Tools.*;
-
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
@@ -36,8 +34,7 @@ public class PyFloatDataType extends DataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    loadTools();
-    return "???wtf???";
+    return "float";
   }
 
   @Override

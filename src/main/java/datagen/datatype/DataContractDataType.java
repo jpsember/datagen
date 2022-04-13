@@ -170,7 +170,7 @@ public class DataContractDataType extends DataType {
     return ourDefaultValue() + ".parse((JSMap) " + jsonValue + ")";
   }
 
-  public void parseQualifiedName(  String typeName) {
+  public void parseQualifiedName(String typeName) {
     // We may not yet have a generated type to provide a default package
     String defaultPackageName = null;
     if (Context.config.language() == Language.PYTHON)

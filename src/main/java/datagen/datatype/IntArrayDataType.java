@@ -49,7 +49,6 @@ public class IntArrayDataType extends DataContractDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    loadTools();
     return "java.lang.int[]";
   }
 
