@@ -29,7 +29,6 @@ import static js.base.Tools.*;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
 import static datagen.Utils.*;
 
 public class IntArrayDataType extends DataContractDataType {
@@ -52,12 +51,6 @@ public class IntArrayDataType extends DataContractDataType {
   protected String provideQualifiedClassNameExpr() {
     loadTools();
     return "java.lang.int[]";
-  }
-
-  @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    throw notSupported("not supported yet");
   }
 
   public String getSerializeDataType() {

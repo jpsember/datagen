@@ -167,7 +167,7 @@ public class ListDataType extends DataType {
           if (scanner.readIf(SQCL) != null)
             break;
         }
-        String expr = wrappedType().parseLiteralValue(scanner, classSpecificSource);
+        String expr = wrappedType().parseDefaultValue(scanner, classSpecificSource,null);
         parsedExpressions.add(expr);
       }
     }

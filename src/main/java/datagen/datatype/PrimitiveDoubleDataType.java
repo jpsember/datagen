@@ -48,7 +48,7 @@ public class PrimitiveDoubleDataType extends DataType {
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
+      FieldDef fieldDefUnused) {
     double value = parseDoubleValue(scanner.read(NUMBER).text());
     return Double.toString(value);
   }

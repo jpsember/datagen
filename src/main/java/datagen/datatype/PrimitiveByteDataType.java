@@ -50,7 +50,7 @@ public class PrimitiveByteDataType extends DataType {
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
+      FieldDef fieldDefUnused) {
     int value = (int) Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Byte.MIN_VALUE, Byte.MAX_VALUE);
     return Integer.toString(value);
   }

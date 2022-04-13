@@ -29,7 +29,6 @@ import static js.base.Tools.*;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
 import static datagen.Utils.*;
 
 public class ShortArrayDataType extends DataContractDataType {
@@ -51,13 +50,6 @@ public class ShortArrayDataType extends DataContractDataType {
   @Override
   protected String provideQualifiedClassNameExpr() {
     return "java.lang.short[]";
-
-  }
-
-  @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    throw notSupported("not supported yet");
   }
 
   public String getSerializeDataType() {

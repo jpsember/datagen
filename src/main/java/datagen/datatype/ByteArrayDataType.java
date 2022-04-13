@@ -30,7 +30,6 @@ import static datagen.Utils.*;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
 
 public class ByteArrayDataType extends DataContractDataType {
 
@@ -51,12 +50,6 @@ public class ByteArrayDataType extends DataContractDataType {
   @Override
   protected String provideQualifiedClassNameExpr() {
     return "java.lang.byte[]";
-  }
-
-  @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    throw notSupported();
   }
 
   public String getSerializeDataType() {

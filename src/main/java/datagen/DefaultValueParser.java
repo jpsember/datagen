@@ -30,12 +30,9 @@ import js.parsing.Scanner;
 
 public interface DefaultValueParser {
 
-  default String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource, FieldDef fieldDef) {
+  default String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
+      FieldDef fieldDefOrNull) {
     throw notSupported("parseDefaultValue");
   }
 
-  default String parseLiteralValue(Scanner scanner, SourceBuilder classSpecificSource) {
-    throw notSupported("parseDefaultValue");
-  }
-  
 }

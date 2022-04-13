@@ -50,7 +50,7 @@ public class PrimitiveIntegerDataType extends DataType {
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
+      FieldDef fieldDefUnused) {
     int value = scanner.readInt(NUMBER);
     return Integer.toString(value);
   }

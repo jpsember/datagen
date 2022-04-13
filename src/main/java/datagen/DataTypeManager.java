@@ -158,10 +158,6 @@ public final class DataTypeManager extends BaseObject {
       return constName;
     }
 
-    @Override
-    public String parseLiteralValue(Scanner scanner, SourceBuilder classSpecificSource) {
-      throw notSupported("parseLiteralValue for IPOINT_PARSER");
-    }
   };
 
   private final Map<String, DataType> mTypeMap;

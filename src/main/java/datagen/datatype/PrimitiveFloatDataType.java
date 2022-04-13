@@ -45,7 +45,7 @@ public class PrimitiveFloatDataType extends DataType {
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
+      FieldDef fieldDefUnused) {
     float value = parseFloatValue(scanner.read(NUMBER).text());
     return Float.toString(value) + "f";
   }

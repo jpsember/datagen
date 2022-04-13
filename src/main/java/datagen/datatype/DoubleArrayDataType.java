@@ -62,7 +62,6 @@ public class DoubleArrayDataType extends DataContractDataType {
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-
     List<String> parsedNumbers = arrayList();
 
     {

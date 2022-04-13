@@ -193,7 +193,6 @@ public class DataContractDataType extends DataType {
 
   @Override
   public String parseDefaultValue(Scanner scanner, SourceBuilder sb, FieldDef fieldDef) {
-
     if (!python())
       return super.parseDefaultValue(scanner, sb, fieldDef);
 
