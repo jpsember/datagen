@@ -114,8 +114,11 @@ public final class DataTypeManager extends BaseObject {
   public String unusedReferencesSummary() {
     StringBuilder sb = new StringBuilder();
     Map<String, DataType> sortedMap = treeMap();
-    for (DataType t : mTypeMap.values())
+    for (DataType t : mTypeMap.values()) {
+      if (t.isPrimitive())
+        continue;
       sortedMap.put(t.typeName(), t);
+    }
     for (DataType x : sortedMap.values()) {
       if (x.declaredFlag() && !x.usedFlag()) {
         if (sb.length() == 0)

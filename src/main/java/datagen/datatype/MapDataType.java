@@ -52,7 +52,8 @@ public class MapDataType extends DataType {
 
   @Override
   protected String provideTypeName() {
-    // We need to generate import statements for the wrapped types as well as the wrapper; but we don't want 
+    todo("can we move this to the provideQualifiedClassName method, for simplicity? Then provideTypeName can be final?");
+      // We need to generate import statements for the wrapped types as well as the wrapper; but we don't want 
     // to confuse the macro substitution process 
     String wrappedImport1 = ParseTools.importExpression(wrappedKeyType().qualifiedClassName().combined(), "");
     String wrappedImport2 = ParseTools.importExpression(wrappedValueType().qualifiedClassName().combined(),

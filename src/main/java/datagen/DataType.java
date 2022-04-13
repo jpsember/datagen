@@ -52,26 +52,53 @@ public abstract class DataType implements DefaultValueParser {
   public final void setQualifiedClassName(QualifiedName qn) {
     checkState(mClassWithPackage == null);
     mClassWithPackage = qn;
+    pr("mClassWithPackage:", mClassWithPackage);
   }
 
   public final QualifiedName qualifiedClassName() {
     // If no QualifiedName assigned yet, do so
     if (mClassWithPackage == null) {
-      String expr = provideQualifiedClassNameExpr();
-      setQualifiedClassName(ParseTools.parseQualifiedName(expr));
+      String expression = provideQualifiedClassNameExpr();
+      QualifiedName qualifiedName = ParseTools.parseQualifiedName(expression);
+      if (language() == Language.JAVA)
+        checkArgument(nonEmpty(qualifiedName.packagePath()));
+      setQualifiedClassName(qualifiedName);
     }
     return mClassWithPackage;
   }
 
   /**
-   * Specify the qualified class name
+   * Provide a qualified class name
+   * 
+   * <pre>
+   * 
+   * This is the name of the type, optionally with a fully-qualified path
+   * suitable for import statements, e.g.
+   * 
+   *    java.io.File
+   * 
+   * For Python, primitive types will not have package names, e.g.
+   * 
+   *    int
+   *    string
+   * 
+   * </pre>
    */
   protected String provideQualifiedClassNameExpr() {
-    throw notSupported("no qualified class name expression provided");
+    throw notSupported("no qualified class name expression provided;", getClass().getName());
   }
 
-  protected String provideTypeName() {
-    return ParseTools.importExpression(constructImportExpression(), qualifiedClassName().className());
+  protected   String provideTypeName() {
+    todo("can this method be final?");
+    if (isPrimitive())
+      return qualifiedClassName().className();
+
+    // Wrap the type name within an import expression so that whenever it is used,
+    // we ensure it is imported
+    // The assumption is that import expressions are needed iff type is not primitive
+    //
+    String importExpr = constructImportExpression();
+    return ParseTools.importExpression(importExpr, qualifiedClassName().className());
   }
 
   /**
@@ -80,7 +107,7 @@ public abstract class DataType implements DefaultValueParser {
   public final String typeName() {
     if (mTypeName == null) {
       mTypeName = provideTypeName();
-      pr("typename:", mTypeName);
+      pr("mTypeName:", mTypeName);
     }
     return mTypeName;
   }
@@ -90,32 +117,30 @@ public abstract class DataType implements DefaultValueParser {
 
   //------------------------------------------------------------------
 
-  protected String constructImportExpression() {
+  protected final String constructImportExpression() {
     QualifiedName nm = qualifiedClassName();
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
+    if (python()) {
+      checkArgument(nonEmpty(nm.packagePath()), nm);
       return "from " + nm.packagePath() + " import " + nm.className();
-    case JAVA:
-      return nm.combined();
     }
+    return nm.combined();
   }
 
   /**
    * Determine if the type is a primitive type, e.g. int, short, etc
    */
   public final boolean isPrimitive() {
+
+    if (python()) {
+      // If there is no package component to its qualified class name, it is primitive
+      //
+      return qualifiedClassName().packagePath().isEmpty();
+    }
+
     // If the class name starts with a lower case letter, assume it's a primitive;
     // e.g. int, double, boolean
     // vs File, Integer, Double, Boolean
     //
-    if (python()) {
-      if (false)
-        return qualifiedClassName().packagePath().isEmpty();
-      todo("Needs work for Python;", qualifiedClassName());
-      return false;
-    }
     return qualifiedClassName().className().charAt(0) >= 'a';
   }
 
@@ -357,7 +382,7 @@ public abstract class DataType implements DefaultValueParser {
     default:
       throw languageNotSupported();
     case PYTHON:
-      if (f.optional() || isPrimitive()) {
+      if (f.optional() /* || isPrimitive() */) {
         s.a(targetExpr, " = ", //
             sourceExpressionToMutable("x"));
       } else {

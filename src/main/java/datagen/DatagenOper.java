@@ -59,6 +59,7 @@ public class DatagenOper extends AppOper {
   @Override
   public void perform() {
     DatagenConfig config = datagenConfig();
+    Context.prepare(files(), config);
 
     Set<File> generatedSourceFileSet = hashSet();
     List<DatWithSource> entriesToFreshen = constructFileEntries(generatedSourceFileSet);
@@ -70,7 +71,7 @@ public class DatagenOper extends AppOper {
       log("...processing file:", entry.datRelPath());
 
       // Reset context for a new file
-      Context.prepare(files(), config, entry);
+      Context.prepare(entry);
 
       try {
 
@@ -96,7 +97,7 @@ public class DatagenOper extends AppOper {
     }
 
     if (config.deleteOld())
-      deleteOldSourceFiles(generatedSourceFileSet);
+      deleteOldSourceFiles(config.sourcePath(), generatedSourceFileSet);
   }
 
   /**
@@ -179,7 +180,7 @@ public class DatagenOper extends AppOper {
         sourceClassName = protoName;
         break;
       }
-      String relativeClassFile = relPathExpr + sourceClassName + "." + sourceFileExtension(config.language());
+      String relativeClassFile = relPathExpr + sourceClassName + "." + sourceFileExtension();
       File sourceFile = new File(config.sourcePath(), relativeClassFile);
 
       if (config.clean()) {
@@ -220,13 +221,12 @@ public class DatagenOper extends AppOper {
     return result;
   }
 
-  private void deleteOldSourceFiles(Set<File> mGeneratedSourceFileSet) {
+  private void deleteOldSourceFiles(File sourcePath, Set<File> mGeneratedSourceFileSet) {
     Set<File> modifiedDirectorySet = hashSet();
     for (File f : mGeneratedSourceFileSet)
       modifiedDirectorySet.add(Files.parent(f));
 
-    DirWalk dirWalk = new DirWalk(Context.config.sourcePath()).withRecurse(true)
-        .withExtensions(sourceFileExtension());
+    DirWalk dirWalk = new DirWalk(sourcePath).withRecurse(true).withExtensions(sourceFileExtension());
 
     for (File sourceFile : dirWalk.files()) {
       // If we generated this file, ignore

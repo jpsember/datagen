@@ -39,21 +39,22 @@ public final class Context {
   public static DataTypeManager dataTypeManager;
   public static DatWithSource datWithSource;
 
-  public static void prepare(Files files, DatagenConfig config, DatWithSource entry) {
+  public static void prepare(Files files, DatagenConfig config) {
     discard();
     Context.files = files;
     Context.config = config.build();
+  }
+
+  public static void prepare(DatWithSource entry) {
+    discard();
     Context.datWithSource = entry;
     Context.dataTypeManager = new DataTypeManager();
-    Context.generatedTypeDef = null;
   }
 
   /**
-   * Discard old elements
+   * Discard some old elements
    */
   public static void discard() {
-    config = null;
-    files = null;
     generatedTypeDef = null;
     dataTypeManager = null;
     datWithSource = null;
