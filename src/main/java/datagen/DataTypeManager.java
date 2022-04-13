@@ -56,13 +56,13 @@ public final class DataTypeManager extends BaseObject {
     default:
       throw languageNotSupported();
     case PYTHON:
-      tmp = new PrimitiveLongDataType();
+      tmp = new PyIntDataType();
       add("byte", tmp);
       add("short", tmp);
       add("int", tmp);
       add("long", tmp);
       // There is no distinction between floats and doubles in Python 
-      tmp = new PythonFloatDataType();
+      tmp = new PyFloatDataType();
       add("float", tmp);
       add("double", tmp);
       add("File", new PyStringDataType());

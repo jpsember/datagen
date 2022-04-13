@@ -31,35 +31,45 @@ import datagen.FieldDef;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
+import static datagen.Utils.*;
 
-public class PythonFloatDataType extends DataType {
+public class PyIntDataType extends DataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
     loadTools();
-    return "???wtf???";
+    return "??wtf??";
   }
 
   @Override
   public final String compilerInitialValue() {
-    return "0.0";
+    return "0";
   }
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDefUnused) {
-    double value = parseDoubleValue(scanner.read(NUMBER).text());
-    return Double.toString(value);
+      FieldDef fieldDef) {
+    long value = Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Long.MIN_VALUE, Long.MAX_VALUE);
+    return Long.toString(value);
   }
 
   @Override
-  public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + int(self._", f.sourceName(), ")");
+  public DataType optionalVariant() {
+    return new Boxed();
   }
 
   @Override
   public DataType listVariant() {
-    return new DoubleArrayDataType();
+      return null;
+  }
+
+  private static class Boxed extends PrimitiveLongDataType {
+
+    @Override
+    protected String provideQualifiedClassNameExpr() {
+      return "java.lang.Long";
+    }
+
   }
 
 }
