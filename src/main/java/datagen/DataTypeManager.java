@@ -67,6 +67,7 @@ public final class DataTypeManager extends BaseObject {
       add("double", tmp);
       add("File", new StringDataType());
       add("IPoint", new PyIPointDataType());
+      add("bool", new PyBooleanDataType());
       break;
     case JAVA:
       add("byte", new PrimitiveByteDataType());
@@ -77,10 +78,10 @@ public final class DataTypeManager extends BaseObject {
       add("double", new PrimitiveDoubleDataType());
       add("File", new FileDataType());
       add(IPoint.DEFAULT_INSTANCE, IPOINT_PARSER);
+      add("bool", new BooleanDataType());
       break;
     }
     add("string", new StringDataType());
-    add("bool", new BooleanDataType());
     add("JSMap", new JsonMapDataType());
     add("JSList", new JsonListDataType());
 

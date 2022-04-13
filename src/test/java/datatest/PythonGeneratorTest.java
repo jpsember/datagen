@@ -70,6 +70,16 @@ public class PythonGeneratorTest extends GenBaseTest {
   }
 
   @Test
+  public void bools() {
+    p().pr("fields {", INDENT, //
+        "bool alpha;", CR, //
+        "bool beta = true;", CR, //
+        "?bool gamma;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
   public void doubles() {
     p().pr("fields {", INDENT, //
         "*double foo;", CR, //

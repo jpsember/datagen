@@ -30,69 +30,58 @@ import static js.base.Tools.*;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
+import js.data.DataUtil;
 import js.parsing.Scanner;
 
-public class BooleanDataType extends DataType {
+public class PyBooleanDataType extends DataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    todo(
-        "Consider having language-specific versions of DataTypes, since there's a lot of 'if python' stuff going on");
+    todo("what is the qualified class name used for in python?  I think the 'java.lang' test is still being performed");
     return "java.lang.boolean";
   }
 
   @Override
   public DataType optionalVariant() {
+    todo("is this required for python?");
     return new Boxed();
   }
 
   @Override
   public final String compilerInitialValue() {
-    return "false";
+    return "False";
   }
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + (m", f.javaName(), " ? 1 : 0);");
+    todo("in setter, if not optional, change None to default value?  Can we have type hints?");
+    s.a("r = r * 37 + int(self._", f.javaName(), ")", CR);
   }
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    return scanner.read(BOOL).text();
+    return DataUtil.capitalizeFirst(scanner.read(BOOL).text());
   }
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("m", f.javaName(), " = m.opt(", f.nameStringConstant(), ", ");
-    if (!f.optional())
-      s.a(f.defaultValueOrNull());
-    else
-      s.a("(Boolean) null");
-    s.a(");", CR);
+    s.a("inst._", f.javaName(), " = obj.get(", f.nameStringConstant(), ", ");
+    s.a(f.defaultValueOrNull());
+    s.a(")", CR);
   }
 
-  @Override
-  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("m", f.javaName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstant(),
-        "), ", f.optional(), ");", CR);
-  }
-
-  private static class Boxed extends BooleanDataType {
+  private static class Boxed extends PyBooleanDataType {
 
     @Override
     protected String provideQualifiedClassNameExpr() {
+      notSupported("is this needed for python?");
       return "java.lang.Boolean";
     }
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.javaName(), " = m.opt(", f.nameStringConstant(), ", ");
-      if (!f.optional())
-        s.a(f.defaultValueOrNull());
-      else
-        s.a("(Boolean) null");
-      s.a(");");
+      s.a("inst._", f.javaName(), " = obj.get(", f.nameStringConstant(), ", None)");
     }
 
   }
