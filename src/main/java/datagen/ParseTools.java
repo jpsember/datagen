@@ -142,6 +142,13 @@ public final class ParseTools {
     return b.toString();
   }
 
+  /**
+   * Reformat lines to eliminate trailing whitespace and to adjust the number of
+   * blank lines
+   * 
+   * For Python, lines starting with \\n are interpreted as a request for n
+   * blank lines (if n is omitted, it is assumed n = 1)
+   */
   public static String adjustLinefeeds(String content, Language language) {
     List<String> lines = arrayList();
     int cursor = 0;
@@ -151,8 +158,7 @@ public final class ParseTools {
         n = content.length();
       String line = content.substring(cursor, n);
       // Strip any *trailing* whitespace
-      line = ("|" + line).trim().substring(1);
-      lines.add(line);
+      lines.add(trimRight(line));
       cursor = n + 1;
     }
 
@@ -177,7 +183,6 @@ public final class ParseTools {
     }
       break;
     case PYTHON: {
-      // todo("!this can be simplified no doubt");
       int blankRequest = 0;
       for (String line : lines) {
         String trimmed = line.trim();
@@ -190,9 +195,8 @@ public final class ParseTools {
           continue;
         }
         if (sb.length() != 0) {
-          for (int i = 0; i < blankRequest; i++) {
+          for (int i = 0; i < blankRequest; i++)
             sb.append('\n');
-          }
         }
         blankRequest = 0;
         sb.append(line);

@@ -100,6 +100,7 @@ public abstract class SourceGen extends BaseObject {
     //
     {
       MacroParser parser = new MacroParser();
+      //parser.alertVerbose();
       parser.withTemplate(content).withMapper(m);
       content = parser.content();
     }
@@ -119,14 +120,17 @@ public abstract class SourceGen extends BaseObject {
       content = parser.content();
     }
 
-    // Pass 4: Strip (or retain) optional comments
+    // Pass 4: Strip (or retain) optional comments.  Such comments are denoted by a line with the prefix "@@"
     //
     content = ParseTools.processOptionalComments(content, Context.config.comments());
 
     //
-    // Pass 5: remove extraneous linefeeds
+    // Pass 5: remove extraneous linefeeds; insert requested blank lines according to language.  
+    //         For Python, lines starting with "\\[n]" indicate that n blank lines are to be placed between 
+    //         the neighboring (non-blank) lines
     //
     content = ParseTools.adjustLinefeeds(content, Context.config.language());
+    
     File target = sourceFile();
     Context.files.mkdirs(Files.parent(target));
     boolean wrote = Context.files.writeIfChanged(target, content);

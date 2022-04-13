@@ -39,6 +39,14 @@ public class PythonGeneratorTest extends GenBaseTest {
   }
 
   @Test
+  public void simple() {
+    p().pr("fields {", INDENT, //
+        "int alpha = 42;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
   public void externDefaultPrefix() {
     p().pr("extern abc.xyz.Foo;", CR);
     p().pr("fields {", INDENT, //

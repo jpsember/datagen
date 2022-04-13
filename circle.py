@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 from pycore.base import *
 
 # Hand-written class to investigate how to use Python's properties to better implement
