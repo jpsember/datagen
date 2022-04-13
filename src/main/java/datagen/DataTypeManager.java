@@ -61,8 +61,8 @@ public final class DataTypeManager extends BaseObject {
       add("short", tmp);
       add("int", tmp);
       add("long", tmp);
-      // There is no distinction between floats and doubles in Python; just use PrimitiveDoubleDataType
-      tmp = new PrimitiveDoubleDataType();
+      // There is no distinction between floats and doubles in Python 
+      tmp = new PythonFloatDataType();
       add("float", tmp);
       add("double", tmp);
       add("File", new PyStringDataType());
@@ -81,7 +81,7 @@ public final class DataTypeManager extends BaseObject {
       add(IPoint.DEFAULT_INSTANCE, IPOINT_PARSER);
       add("bool", new BooleanDataType());
       add("string", new StringDataType());
-       break;
+      break;
     }
     add("JSMap", new JsonMapDataType());
     add("JSList", new JsonListDataType());

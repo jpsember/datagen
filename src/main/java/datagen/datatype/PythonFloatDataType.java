@@ -32,12 +32,12 @@ import datagen.SourceBuilder;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
 
-public class PrimitiveDoubleDataType extends DataType {
+public class PythonFloatDataType extends DataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
     loadTools();
-    return "java.lang.double";
+    return "???wtf???";
   }
 
   @Override
@@ -54,34 +54,12 @@ public class PrimitiveDoubleDataType extends DataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    if (f.optional()) {
-      s.a("r = r * 37 + m", f.sourceName(), ".intValue();");
-    } else
-      s.a("r = r * 37 + (int) m", f.sourceName(), ";");
-  }
-
-  @Override
-  public DataType optionalVariant() {
-    return new Boxed();
+    s.a("r = r * 37 + int(self._", f.sourceName(), ")");
   }
 
   @Override
   public DataType listVariant() {
     return new DoubleArrayDataType();
-  }
-
-  private static class Boxed extends PrimitiveDoubleDataType {
-
-    @Override
-    protected String provideQualifiedClassNameExpr() {
-      return "java.lang.Double";
-    }
-
-    @Override
-    public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.sourceName(), " = m.optDouble(", f.nameStringConstant(), ");");
-    }
-
   }
 
 }
