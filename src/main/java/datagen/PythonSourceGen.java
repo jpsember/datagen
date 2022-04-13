@@ -118,9 +118,10 @@ public class PythonSourceGen extends SourceGen {
 
   @Override
   protected String generateImports(List<String> imports) {
-    SourceBuilder s = s();
     for (String k : imports) {
-      s.a(k).cr();
+      pr(k);
+      checkArgument(!k.startsWith("from "),k);
+      s().a(k).cr();
     }
     return content();
   }

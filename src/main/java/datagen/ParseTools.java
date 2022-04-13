@@ -225,17 +225,31 @@ public final class ParseTools {
     return "{{" + importText + "|" + sourceText + "}}";
   }
 
+
+  public static String importExpression(QualifiedName qualifiedName) {
+    pr("import expr:",qualifiedName);
+   if (true) return javaImportExpression(qualifiedName.combined());
+    return "<not finished>";
+//    return "{{" + importText + "|" + sourceText + "}}";
+  }
+  
+  
   private static String javaImportExpression(String arg) {
+    todo("rename");
     int cursor = arg.lastIndexOf('.');
     checkArgument(cursor > 0);
     return importExpression(arg, arg.substring(cursor + 1));
   }
-
-  private static String pythonImportExpression(String arg) {
-    int cursor = arg.lastIndexOf(' ');
-    checkArgument(cursor > 0);
-    return importExpression(arg, arg.substring(cursor + 1));
-  }
+//
+//  private static String pythonImportExpression(String arg) {
+//    if(todo("this is now the same as java impt expr")) {
+//      return javaImportExpression(arg);
+//    }
+//    
+//    int cursor = arg.lastIndexOf(' ');
+//    checkArgument(cursor > 0);
+//    return importExpression(arg, arg.substring(cursor + 1));
+//  }
 
   // Qualified class names for some of my data types (and Java's), in case they change or get substituted in future
   //
@@ -257,7 +271,7 @@ public final class ParseTools {
   public static final String PKG_FLOAT_ARRAY = javaImportExpression("js.data.FloatArray");
   public static final String PKG_DOUBLE_ARRAY = javaImportExpression("js.data.DoubleArray");
 
-  public static final String PKGPY_DATAUTIL = pythonImportExpression("from pycore.datautil import DataUtil");
+  public static final String PKGPY_DATAUTIL = javaImportExpression("pycore.datautil.DataUtil");
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 

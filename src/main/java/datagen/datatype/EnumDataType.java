@@ -33,6 +33,7 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
+import datagen.gen.QualifiedName;
 import js.data.DataUtil;
 import static datagen.Utils.*;
 
@@ -54,6 +55,9 @@ public class EnumDataType extends DataType {
     todo("Why is this method necessary?  Ought to be able to call typeName()");
     if (mPyCl == null) {
       String filename = DataUtil.convertCamelCaseToUnderscores(qualifiedClassName().className());
+      QualifiedName q2 = ParseTools.parseQualifiedName(qualifiedClassName().className()+"."+filename);
+      pr("qualified name ext:",INDENT,q2);
+      die();
       mPyCl = ParseTools.importExpression("from " + qualifiedClassName().packagePath() + "." + filename
           + " import " + qualifiedClassName().className(), qualifiedClassName().className());
       

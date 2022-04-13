@@ -127,11 +127,11 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected String generateImports(List<String> imports) {
-    SourceBuilder s = s();
     for (String k : imports) {
+      // We don't need to import anything from java.lang
       if (k.startsWith("java.lang."))
         continue;
-      s.a("import ", k, ";").cr();
+      s().a("import ", k, ";").cr();
     }
     return content();
   }

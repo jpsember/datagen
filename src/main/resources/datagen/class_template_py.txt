@@ -2,7 +2,7 @@
 [!imports]
 
 \\2
-class [!class]({{from pycore.base import AbstractData|AbstractData}}):
+class [!class]({{pycore.base.AbstractData|AbstractData}}):
 @@  """
 @@  Generated Python data class (do not edit!)
 @@

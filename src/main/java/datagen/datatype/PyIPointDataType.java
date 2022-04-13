@@ -28,18 +28,10 @@ import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
 import datagen.FieldDef;
-import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
 public class PyIPointDataType extends DataContractDataType {
-
-  @Override
-  public String provideSourceDefaultValue() {
-    todo("I suspect there is a problem with the parentheses here");
-    return ParseTools.importExpression(constructImportExpression(),
-        qualifiedClassName().className() + ".default_instance");
-  }
 
   protected String provideQualifiedClassNameExpr() {
     return "pycore.ipoint.IPoint";

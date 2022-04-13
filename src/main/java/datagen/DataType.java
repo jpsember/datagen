@@ -108,6 +108,9 @@ public abstract class DataType implements DefaultValueParser {
     // we ensure it is imported
     // The assumption is that import expressions are needed iff type is not primitive
     //
+    if (alert("refactoring")) {
+      return ParseTools.importExpression(qualifiedClassName());
+    }
     String importExpr = constructImportExpression();
     return ParseTools.importExpression(importExpr, qualifiedClassName().className());
   }
@@ -131,12 +134,7 @@ public abstract class DataType implements DefaultValueParser {
 
   @Deprecated // why is this required?
   protected final String constructImportExpression() {
-    QualifiedName nm = qualifiedClassName();
-    if (python()) {
-      checkArgument(nonEmpty(nm.packagePath()), nm);
-      return "from " + nm.packagePath() + " import " + nm.className();
-    }
-    return nm.combined();
+    return qualifiedClassName().combined();
   }
 
   /**

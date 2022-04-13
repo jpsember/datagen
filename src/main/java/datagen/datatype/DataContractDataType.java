@@ -49,16 +49,15 @@ public class DataContractDataType extends DataType {
 
   @Override
   public String provideSourceDefaultValue() {
+    String imptExpr = ParseTools.importExpression(qualifiedClassName().combined(),
+        qualifiedClassName().className());
     switch (language()) {
     default:
       throw languageNotSupported();
     case PYTHON:
-      todo("I suspect there is a problem with the parentheses here");
-      return ParseTools.importExpression(constructImportExpression(),
-          qualifiedClassName().className() + ".default_instance");
+      return imptExpr + ".default_instance";
     case JAVA:
-      return ParseTools.importExpression(constructImportExpression(), qualifiedClassName().className())
-          + ".DEFAULT_INSTANCE";
+      return imptExpr + ".DEFAULT_INSTANCE";
     }
   }
 
