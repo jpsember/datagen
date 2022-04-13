@@ -31,13 +31,13 @@ import datagen.FieldDef;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
-import static datagen.Utils.*;
 
 public class PyIntDataType extends DataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
     loadTools();
+    todo("do we really need to make defensive copies of lists in the build() method?");
     return "??wtf??";
   }
 
@@ -51,25 +51,6 @@ public class PyIntDataType extends DataType {
       FieldDef fieldDef) {
     long value = Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Long.MIN_VALUE, Long.MAX_VALUE);
     return Long.toString(value);
-  }
-
-  @Override
-  public DataType optionalVariant() {
-    return new Boxed();
-  }
-
-  @Override
-  public DataType listVariant() {
-      return null;
-  }
-
-  private static class Boxed extends PrimitiveLongDataType {
-
-    @Override
-    protected String provideQualifiedClassNameExpr() {
-      return "java.lang.Long";
-    }
-
   }
 
 }

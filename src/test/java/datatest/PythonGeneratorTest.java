@@ -42,6 +42,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   public void simple() {
     p().pr("fields {", INDENT, //
         "int alpha = 42;", CR, //
+        "? int beta;", CR, //
         OUTDENT, "}");
     compile();
   }

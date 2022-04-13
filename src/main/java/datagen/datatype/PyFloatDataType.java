@@ -57,9 +57,4 @@ public class PyFloatDataType extends DataType {
     s.a("r = r * 37 + int(self._", f.sourceName(), ")");
   }
 
-  @Override
-  public DataType listVariant() {
-    return new DoubleArrayDataType();
-  }
-
 }

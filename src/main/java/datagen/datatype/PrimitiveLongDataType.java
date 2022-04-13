@@ -31,7 +31,6 @@ import datagen.FieldDef;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
-import static datagen.Utils.*;
 
 /**
  * Datatype for longs (and boxed version)
@@ -46,8 +45,6 @@ public class PrimitiveLongDataType extends DataType {
 
   @Override
   public final String compilerInitialValue() {
-    if (python())
-      return "0";
     return "0L";
   }
 
@@ -55,17 +52,11 @@ public class PrimitiveLongDataType extends DataType {
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
     long value = Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Long.MIN_VALUE, Long.MAX_VALUE);
-    if (python())
-      return Long.toString(value);
     return Long.toString(value) + "L";
   }
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    if (python()) {
-      super.sourceHashCalculationCode(s, f);
-      return;
-    }
     if (f.optional())
       s.a("r = r * 37 + m", f.sourceName(), ".intValue();");
     else
@@ -79,8 +70,6 @@ public class PrimitiveLongDataType extends DataType {
 
   @Override
   public DataType listVariant() {
-    if (python())
-      return null;
     return new LongArrayDataType();
   }
 
@@ -93,16 +82,7 @@ public class PrimitiveLongDataType extends DataType {
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      switch (language()) {
-      default:
-        throw languageNotSupported();
-      case PYTHON:
-        super.sourceDeserializeFromObject(s, f);
-        break;
-      case JAVA:
-        s.a("m", f.sourceName(), " = m.optLong(", f.nameStringConstant(), ");");
-        break;
-      }
+      s.a("m", f.sourceName(), " = m.optLong(", f.nameStringConstant(), ");");
     }
 
   }

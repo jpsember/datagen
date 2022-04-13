@@ -92,21 +92,6 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   /**
-   * Get text that generates an import for this type, but doesn't generate any
-   * source. Used for composite types, e.g. (List{type})
-   */
-  public final String compositeTypeName(DataType wrappedType) {
-    if (mTypeName == null) {
-      String exprForWrapped = "";
-      if (wrappedType != null)
-        exprForWrapped = ParseTools.importExpression(wrappedType.qualifiedClassName().combined(), "");
-      mTypeName = ParseTools.importExpression(qualifiedClassName().combined(),
-          qualifiedClassName().className()) + exprForWrapped;
-    }
-    return mTypeName;
-  }
-
-  /**
    * Determine if the type is a primitive type, e.g. int, short, etc
    */
   public final boolean isPrimitive() {
@@ -114,6 +99,8 @@ public abstract class DataType implements DefaultValueParser {
     // e.g. int, double, boolean
     // vs File, Integer, Double, Boolean
     //
+    if (python())
+      todo("is this required in Python?");
     return qualifiedClassName().className().charAt(0) >= 'a';
   }
 
@@ -381,22 +368,16 @@ public abstract class DataType implements DefaultValueParser {
   // ------------------------------------------------------------------
 
   /**
-   * Mark this data type as 'used'. This is a flag used to warn about
-   * unnecessary import statements
+   * Mark this data type as 'used'; for unnecessary import warnings
    */
   public final void setUsedFlag() {
-    if (mUsedFlag)
-      return;
     mUsedFlag = true;
   }
 
   /**
-   * Mark this data type as 'used'. This is a flag used to warn about
-   * unnecessary import statements
+   * Mark this data type as 'declared'; for unnecessary import warnings
    */
   public final void setDeclaredFlag() {
-    if (mDeclared)
-      return;
     mDeclared = true;
   }
 

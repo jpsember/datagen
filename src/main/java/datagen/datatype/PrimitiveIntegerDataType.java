@@ -57,11 +57,6 @@ public class PrimitiveIntegerDataType extends DataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    if (python()) {
-      super.sourceHashCalculationCode(s, f);
-      return;
-    }
-
     s.a("r = r * 37 + m", f.sourceName(), ";");
   }
 

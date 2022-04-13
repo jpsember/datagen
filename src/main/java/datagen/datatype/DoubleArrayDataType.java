@@ -33,23 +33,13 @@ import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
-import static datagen.Utils.*;
 
 public class DoubleArrayDataType extends DataContractDataType {
 
   @Override
   public String ourDefaultValue() {
     if (mDefValue == null) {
-      switch (language()) {
-      case JAVA:
-        mDefValue = ParseTools.PKG_DATAUTIL + ".EMPTY_DOUBLE_ARRAY";
-        break;
-      case PYTHON:
-        mDefValue = "[]";
-        break;
-      default:
-        throw languageNotSupported();
-      }
+      mDefValue = ParseTools.PKG_DATAUTIL + ".EMPTY_DOUBLE_ARRAY";
     }
     return mDefValue;
   }
@@ -80,22 +70,6 @@ public class DoubleArrayDataType extends DataContractDataType {
     }
 
     SourceBuilder sb = classSpecificSource;
-
-    if (python()) {
-      String constName = "DEF" + fieldDef.nameStringConstant(false);
-      sb.a(constName, "  = [");
-      int index = INIT_INDEX;
-      for (String numberText : parsedNumbers) {
-        index++;
-        if (index > 0) {
-          sb.a(",");
-        }
-        sb.a(numberText);
-      }
-      sb.a("]", CR);
-      return constName;
-    }
-
     String constName = "DEF_" + fieldDef.nameStringConstant();
     sb.a("  private static final ", typeName(), " ", constName, " = ");
     sb.a("{");
@@ -117,14 +91,7 @@ public class DoubleArrayDataType extends DataContractDataType {
   }
 
   public String getSerializeToJSONValue(String value) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      return value;
-    case JAVA:
-      return ParseTools.PKG_DOUBLE_ARRAY + ".with(" + value + ").toJson()";
-    }
+    return ParseTools.PKG_DOUBLE_ARRAY + ".with(" + value + ").toJson()";
   }
 
   @Override
@@ -134,14 +101,7 @@ public class DoubleArrayDataType extends DataContractDataType {
 
   @Override
   public String getConstructFromX() {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      return "x";
-    case JAVA:
-      return ParseTools.PKG_DOUBLE_ARRAY + ".DEFAULT_INSTANCE.parse(x).array()";
-    }
+    return ParseTools.PKG_DOUBLE_ARRAY + ".DEFAULT_INSTANCE.parse(x).array()";
   }
 
   @Override
@@ -151,26 +111,11 @@ public class DoubleArrayDataType extends DataContractDataType {
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON: {
-      String defaultValue = f.defaultValueOrNull();
-      if (defaultValue.equals("None"))
-        s.a(targetExpr, " = x;");
-      else
-        s.a(targetExpr, " = ", "x", " if x is not None else ", defaultValue);
-    }
-      break;
-
-    case JAVA:
-      String defaultValue = f.defaultValueOrNull();
-      if (defaultValue.equals("null"))
-        s.a(targetExpr, " = x;");
-      else
-        s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
-      break;
-    }
+    String defaultValue = f.defaultValueOrNull();
+    if (defaultValue.equals("null"))
+      s.a(targetExpr, " = x;");
+    else
+      s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
   }
 
   //------------------------------------------------------------------
@@ -184,16 +129,7 @@ public class DoubleArrayDataType extends DataContractDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      s.a("r = r * 37 + int(sum(self._", f.sourceName(), "))");
-      break;
-    case JAVA:
-      s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
-      break;
-    }
+    s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
   }
 
 }
