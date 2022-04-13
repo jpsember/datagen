@@ -44,23 +44,27 @@ import static js.base.Tools.*;
  */
 public final class GeneratedTypeDef extends BaseObject {
 
-  public GeneratedTypeDef(String name) {
-    mName = name;
+  public GeneratedTypeDef(String name, String packageName, EnumDataType enumTypeOrNull) {
+    setName(name);
+    mPackageName = nullToEmpty(packageName);
+    mEnumDataType = enumTypeOrNull;
   }
 
-  @Override
-  protected String supplyName() {
-    return mName;
+  public String packageName() {
+    return mPackageName;
   }
 
-  public void setEnum(EnumDataType dataType) {
-    mEnumDataType = dataType;
+  public List<FieldDef> fields() {
+    return mFields;
   }
 
   public boolean isEnum() {
     return mEnumDataType != null;
   }
 
+  /**
+   * Get EnumDataType for this type (must be an enum)
+   */
   public EnumDataType enumDataType() {
     checkState(isEnum());
     return mEnumDataType;
@@ -70,12 +74,71 @@ public final class GeneratedTypeDef extends BaseObject {
   public JSMap toJson() {
     JSMap m = super.toJson();
     checkState(!isEnum(), "not supported yet");
-    for (FieldDef f : mFields) {
+    for (FieldDef f : mFields)
       m.put(f.name(), f.toJson());
-    }
-    if (mPackageName != null)
+    if (nonEmpty(mPackageName))
       m.put("java_package_name", mPackageName);
     return m;
+  }
+
+  /**
+   * Add a field to this data type
+   */
+  public FieldDef addField(TypeStructure structure, String fieldName, String typeName, String type2Name,
+      boolean optional) {
+    log(structure, typeName, type2Name, fieldName, optional);
+    boolean added = mFieldNames.add(fieldName);
+    checkState(added, "duplicate field name: " + fieldName);
+
+    DataType dataType = registerType(typeName);
+    DataType dataType2 = null;
+    if (!nullOrEmpty(type2Name))
+      dataType2 = registerType(type2Name);
+
+    if (optional)
+      dataType = dataType.optionalVariant();
+    DataType complexType;
+
+    switch (structure) {
+    case SCALAR:
+      complexType = dataType;
+      break;
+    case LIST:
+      // Convert list to particular scalar types in special cases
+      complexType = dataType.listVariant();
+      if (complexType == null)
+        complexType = new ListDataType(dataType);
+      break;
+    case KEY_VALUE_MAP:
+      complexType = new MapDataType(dataType, dataType2);
+      break;
+    default:
+      throw notSupported("datatype structure", structure);
+    }
+    complexType.setUsedFlag();
+
+    FieldDef f = new FieldDef(fieldName, complexType, optional);
+    mFields.add(f);
+    return f;
+  }
+
+  /**
+   * Get buffer for writing class-specific source
+   */
+  public SourceBuilder classSpecificSourceBuilder() {
+    checkState(mClassSpecificSource == null, "source already retrieved");
+    if (mClassSpecificSourceBuilder == null)
+      mClassSpecificSourceBuilder = new SourceBuilder(Context.config.language());
+    return mClassSpecificSourceBuilder;
+  }
+
+  /**
+   * Get the accumulated class-specific source
+   */
+  public String getClassSpecificSource() {
+    if (mClassSpecificSource == null)
+      mClassSpecificSource = classSpecificSourceBuilder().content();
+    return mClassSpecificSource;
   }
 
   private DataType registerType(String typeName) {
@@ -83,8 +146,7 @@ public final class GeneratedTypeDef extends BaseObject {
     DataType dataType = dataTypes.get(typeName);
     if (dataType == null) {
       QualifiedName className = ParseTools.parseQualifiedName(typeName);
-      if (!className.packagePath().isEmpty())
-        throw badArg("Unexpected package in type name:", typeName);
+      checkArgument(className.packagePath().isEmpty(), "Unexpected package in type name:", typeName);
       dataType = dataTypes.get(className.className());
       if (dataType == null) {
         {
@@ -105,77 +167,10 @@ public final class GeneratedTypeDef extends BaseObject {
     return dataType;
   }
 
-  public FieldDef addField(TypeStructure structure, String fieldName, String typeName, String type2Name,
-      boolean optional) {
-    log(structure, typeName, type2Name, fieldName, optional);
-    boolean added = mFieldNames.add(fieldName);
-    checkState(added, "duplicate field name: " + fieldName);
-
-    DataType dataType = registerType(typeName);
-    DataType dataType2 = null;
-    if (!nullOrEmpty(type2Name))
-      dataType2 = registerType(type2Name);
-
-    if (optional)
-      dataType = dataType.optionalVariant();
-    DataType complexType;
-
-    switch (structure) {
-    case SCALAR:
-      complexType = dataType;
-      break;
-    case LIST: {
-      // Convert list to particular scalar types in special cases
-      DataType alternate = dataType.listVariant();
-      if (alternate != null)
-        complexType = alternate;
-      else
-        complexType = new ListDataType(dataType);
-    }
-      break;
-    case KEY_VALUE_MAP:
-      complexType = new MapDataType(dataType, dataType2);
-      break;
-    default:
-      throw die("unsupported datatype structure: " + structure);
-    }
-    complexType.setUsedFlag();
-
-    FieldDef f = new FieldDef(fieldName, complexType, optional);
-    mFields.add(f);
-    return f;
-  }
-
-  public List<FieldDef> fields() {
-    return mFields;
-  }
-
-  public void setPackageName(String n) {
-    mPackageName = n;
-  }
-
-  public String packageName() {
-    return nullToEmpty(mPackageName);
-  }
-
-  public SourceBuilder classSpecificSourceBuilder() {
-    checkState(mClassSpecificSource == null, "source already retrieved");
-    if (mClassSpecificSourceBuilder == null)
-      mClassSpecificSourceBuilder = new SourceBuilder(Context.config.language());
-    return mClassSpecificSourceBuilder;
-  }
-
-  public String getClassSpecificSource() {
-    if (mClassSpecificSource == null)
-      mClassSpecificSource = classSpecificSourceBuilder().content();
-    return mClassSpecificSource;
-  }
-
-  private final String mName;
-  private String mPackageName;
-  private EnumDataType mEnumDataType;
-  private List<FieldDef> mFields = arrayList();
-  private Set<String> mFieldNames = hashSet();
+  private final String mPackageName;
+  private final EnumDataType mEnumDataType;
+  private final List<FieldDef> mFields = arrayList();
+  private final Set<String> mFieldNames = hashSet();
   private SourceBuilder mClassSpecificSourceBuilder;
   private String mClassSpecificSource;
 }

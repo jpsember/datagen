@@ -148,8 +148,7 @@ final class DataDefinitionParser extends BaseObject {
   private void procDataType() {
     String typeName = DataUtil.convertUnderscoresToCamelCase(
         Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
-    GeneratedTypeDef msg = new GeneratedTypeDef(typeName);
-    msg.setPackageName(determinePackageName());
+    GeneratedTypeDef msg = new GeneratedTypeDef(typeName, determinePackageName(), null);
     setGeneratedTypeDef(msg);
 
     read(BROP);
@@ -220,13 +219,7 @@ final class DataDefinitionParser extends BaseObject {
     QualifiedName className = parseQualifiedName(enumName, determinePackageName());
     EnumDataType enumDataType = new EnumDataType();
     enumDataType.setQualifiedClassName(className);
-
-    {
-      GeneratedTypeDef msg = new GeneratedTypeDef(className.className());
-      msg.setEnum(enumDataType);
-      msg.setPackageName(determinePackageName());
-      setGeneratedTypeDef(msg);
-    }
+    setGeneratedTypeDef(new GeneratedTypeDef(className.className(), determinePackageName(), enumDataType));
 
     read(BROP);
 

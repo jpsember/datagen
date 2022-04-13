@@ -26,7 +26,6 @@ package datagen;
 
 import datagen.gen.Language;
 import datagen.gen.QualifiedName;
-import js.parsing.Scanner;
 import js.data.DataUtil;
 
 import static datagen.SourceBuilder.*;
@@ -168,16 +167,6 @@ public abstract class DataType implements DefaultValueParser {
     case JAVA:
       return "null";
     }
-  }
-
-  @Override
-  public String parseLiteralValue(Scanner scanner, SourceBuilder classSpecificSource) {
-    throw notSupported("parseLiteralValue for:", typeName());
-  }
-
-  @Override
-  public String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource, FieldDef fieldDef) {
-    throw notSupported("default value for:", typeName());
   }
 
   /**

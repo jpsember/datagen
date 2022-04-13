@@ -24,11 +24,18 @@
  **/
 package datagen;
 
+import static js.base.Tools.*;
+
 import js.parsing.Scanner;
 
 public interface DefaultValueParser {
 
-  String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource, FieldDef fieldDef);
+  default String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource, FieldDef fieldDef) {
+    throw notSupported("parseDefaultValue");
+  }
 
-  String parseLiteralValue(Scanner scanner, SourceBuilder classSpecificSource);
+  default String parseLiteralValue(Scanner scanner, SourceBuilder classSpecificSource) {
+    throw notSupported("parseDefaultValue");
+  }
+  
 }
