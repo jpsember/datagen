@@ -54,7 +54,7 @@ public class ListDataType extends DataType {
   }
 
   @Override
-  public String ourDefaultValue() {
+  public String sourceDefaultValue() {
     if (python())
       return "[]";
     return ParseTools.PKG_DATAUTIL + ".emptyList()";

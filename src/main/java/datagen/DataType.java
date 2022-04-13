@@ -169,15 +169,17 @@ public abstract class DataType implements DefaultValueParser {
 
   /**
    * Get source code for type's default value, in immutable form (if
-   * applicable). This is our default value, which may be distinct from Java's
-   * default value. For example, our default value for a String is "", whereas
-   * Java's is null.
+   * applicable). This is our default value, which may be distinct from
+   * compileInitialValue(). For example, our default value for a String is "",
+   * whereas Java's is null.
    *
    * The default method calls compilerInitialValue()
    */
-  public String ourDefaultValue() {
+  public String sourceDefaultValue() {
     return compilerInitialValue();
   }
+
+  // ------------------------------------------------------------------
 
   /**
    * Generate source code to convert a value to an mutable form, for storing

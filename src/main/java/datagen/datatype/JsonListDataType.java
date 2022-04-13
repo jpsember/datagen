@@ -42,7 +42,7 @@ public class JsonListDataType extends DataType {
   }
 
   @Override
-  public final String ourDefaultValue() {
+  public final String sourceDefaultValue() {
     return ParseTools.PKG_JSLIST + ".DEFAULT_INSTANCE";
   }
 

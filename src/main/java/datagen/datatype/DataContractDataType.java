@@ -48,7 +48,7 @@ import js.parsing.Token;
 public class DataContractDataType extends DataType {
 
   @Override
-  public String ourDefaultValue() {
+  public String sourceDefaultValue() {
     if (mDefValue == null)
       switch (language()) {
       default:
@@ -72,7 +72,7 @@ public class DataContractDataType extends DataType {
       todo("!this won't work for non-primitive data types");
       return "x.copy()";
     } else
-      return ourDefaultValue() + ".parse(x)";
+      return sourceDefaultValue() + ".parse(x)";
   }
 
   public String getSerializeDataType() {
@@ -167,7 +167,7 @@ public class DataContractDataType extends DataType {
 
   @Override
   public String deserializeJsonToJavaValue(String jsonValue) {
-    return ourDefaultValue() + ".parse((JSMap) " + jsonValue + ")";
+    return sourceDefaultValue() + ".parse((JSMap) " + jsonValue + ")";
   }
 
   public void parseQualifiedName(String typeName) {

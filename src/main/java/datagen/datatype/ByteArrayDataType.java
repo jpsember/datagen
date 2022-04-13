@@ -34,7 +34,7 @@ import datagen.SourceBuilder;
 public class ByteArrayDataType extends DataContractDataType {
 
   @Override
-  public String ourDefaultValue() {
+  public String sourceDefaultValue() {
     if (mDefValue == null) {
       switch (language()) {
       case JAVA:

@@ -34,7 +34,7 @@ import static datagen.Utils.*;
 public class FloatArrayDataType extends DataContractDataType {
 
   @Override
-  public String ourDefaultValue() {
+  public String sourceDefaultValue() {
     if (mDefValue == null) {
       switch (language()) {
       case JAVA:

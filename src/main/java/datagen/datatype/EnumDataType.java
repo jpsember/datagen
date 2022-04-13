@@ -39,7 +39,7 @@ import static datagen.Utils.*;
 public class EnumDataType extends DataType {
 
   @Override
-  public String ourDefaultValue() {
+  public String sourceDefaultValue() {
     if (mDefValue == null) {
       if (python())
         mDefValue = pythonClassName() + ".default_instance";

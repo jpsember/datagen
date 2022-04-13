@@ -35,7 +35,7 @@ import js.parsing.Scanner;
 public class PyIPointDataType extends DataContractDataType {
 
   @Override
-  public String ourDefaultValue() {
+  public String sourceDefaultValue() {
     if (mDefValue == null) {
       mDefValue = ParseTools.importExpression(constructImportExpression(),
           qualifiedClassName().className() + ".default_instance");

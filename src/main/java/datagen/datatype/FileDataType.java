@@ -42,7 +42,7 @@ public final class FileDataType extends DataType {
   }
 
   @Override
-  public final String ourDefaultValue() {
+  public final String sourceDefaultValue() {
     return PKG_FILES + ".DEFAULT";
   }
 
@@ -81,7 +81,7 @@ public final class FileDataType extends DataType {
         "if (j != null)", OPEN, //
         "result = new ", ParseTools.PKG_ARRAYLIST, "<>(j.size());", CR, //
         "for (Object z : j.wrappedList())", OPEN, //
-        typeName(), " y = ", ourDefaultValue(), ";", CR, //
+        typeName(), " y = ", sourceDefaultValue(), ";", CR, //
         "if (z != null)", OPEN, //
         getSerializeDataType(), " x = (", getSerializeDataType(), ") z;", CR, //
         "y = ", getConstructFromX(), ";", CLOSE, //
