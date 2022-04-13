@@ -49,23 +49,17 @@ public class DataContractDataType extends DataType {
 
   @Override
   public String sourceDefaultValue() {
-    if (mDefValue == null)
-      switch (language()) {
-      default:
-        throw languageNotSupported();
-      case PYTHON:
-        mDefValue = ParseTools.importExpression(constructImportExpression(),
-            qualifiedClassName().className() + ".default_instance");
-        break;
-      case JAVA:
-        mDefValue = ParseTools.importExpression(constructImportExpression(), qualifiedClassName().className())
-            + ".DEFAULT_INSTANCE";
-        break;
-      }
-    return mDefValue;
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case PYTHON:
+      return ParseTools.importExpression(constructImportExpression(),
+          qualifiedClassName().className() + ".default_instance");
+    case JAVA:
+      return ParseTools.importExpression(constructImportExpression(), qualifiedClassName().className())
+          + ".DEFAULT_INSTANCE";
+    }
   }
-
-  protected String mDefValue;
 
   public String getConstructFromX() {
     if (python()) {

@@ -113,7 +113,7 @@ public final class FieldDef extends BaseObject {
   // final for the time being
   public final String defaultValueSource() {
     if (mDefaultValueSource == null)
-      setDefaultValue(dataType().sourceDefaultValue());
+      setDefaultValue(dataType().cachedSourceDefaultValue());
     return mDefaultValueSource;
   }
 

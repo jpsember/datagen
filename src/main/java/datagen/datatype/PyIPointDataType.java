@@ -36,11 +36,8 @@ public class PyIPointDataType extends DataContractDataType {
 
   @Override
   public String sourceDefaultValue() {
-    if (mDefValue == null) {
-      mDefValue = ParseTools.importExpression(constructImportExpression(),
-          qualifiedClassName().className() + ".default_instance");
-    }
-    return mDefValue;
+    return ParseTools.importExpression(constructImportExpression(),
+        qualifiedClassName().className() + ".default_instance");
   }
 
   protected String provideQualifiedClassNameExpr() {

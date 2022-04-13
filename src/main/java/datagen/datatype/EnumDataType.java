@@ -40,13 +40,14 @@ public class EnumDataType extends DataType {
 
   @Override
   public String sourceDefaultValue() {
-    if (mDefValue == null) {
-      if (python())
-        mDefValue = pythonClassName() + ".default_instance";
-      else
-        mDefValue = typeName() + ".DEFAULT_INSTANCE";
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case PYTHON:
+      return pythonClassName() + ".default_instance";
+    case JAVA:
+      return typeName() + ".DEFAULT_INSTANCE";
     }
-    return mDefValue;
   }
 
   private String pythonClassName() {
@@ -60,7 +61,6 @@ public class EnumDataType extends DataType {
   }
 
   private String mPyCl;
-  private String mDefValue;
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {

@@ -35,16 +35,7 @@ public class IntArrayDataType extends DataContractDataType {
 
   @Override
   public String sourceDefaultValue() {
-    if (mDefValue == null) {
-      switch (language()) {
-      case JAVA:
-        mDefValue = ParseTools.PKG_DATAUTIL + ".EMPTY_INT_ARRAY";
-        break;
-      default:
-        throw languageNotSupported();
-      }
-    }
-    return mDefValue;
+    return ParseTools.PKG_DATAUTIL + ".EMPTY_INT_ARRAY";
   }
 
   @Override

@@ -35,16 +35,12 @@ public class ShortArrayDataType extends DataContractDataType {
 
   @Override
   public String sourceDefaultValue() {
-    if (mDefValue == null) {
-      switch (language()) {
-      case JAVA:
-        mDefValue = ParseTools.PKG_DATAUTIL + ".EMPTY_SHORT_ARRAY";
-        break;
-      default:
-        throw languageNotSupported();
-      }
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      return ParseTools.PKG_DATAUTIL + ".EMPTY_SHORT_ARRAY";
     }
-    return mDefValue;
   }
 
   @Override

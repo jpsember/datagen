@@ -38,10 +38,7 @@ public class DoubleArrayDataType extends DataContractDataType {
 
   @Override
   public String sourceDefaultValue() {
-    if (mDefValue == null) {
-      mDefValue = ParseTools.PKG_DATAUTIL + ".EMPTY_DOUBLE_ARRAY";
-    }
-    return mDefValue;
+    return ParseTools.PKG_DATAUTIL + ".EMPTY_DOUBLE_ARRAY";
   }
 
   @Override

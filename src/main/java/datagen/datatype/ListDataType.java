@@ -26,6 +26,7 @@ package datagen.datatype;
 
 import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
+import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 import java.util.List;
@@ -55,9 +56,14 @@ public class ListDataType extends DataType {
 
   @Override
   public String sourceDefaultValue() {
-    if (python())
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case PYTHON:
       return "[]";
-    return ParseTools.PKG_DATAUTIL + ".emptyList()";
+    case JAVA:
+      return ParseTools.PKG_DATAUTIL + ".emptyList()";
+    }
   }
 
   @Override
@@ -167,7 +173,7 @@ public class ListDataType extends DataType {
           if (scanner.readIf(SQCL) != null)
             break;
         }
-        String expr = wrappedType().parseDefaultValue(scanner, classSpecificSource,null);
+        String expr = wrappedType().parseDefaultValue(scanner, classSpecificSource, null);
         parsedExpressions.add(expr);
       }
     }
