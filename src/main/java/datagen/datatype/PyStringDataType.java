@@ -26,17 +26,18 @@ package datagen.datatype;
 
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
+import static datagen.SourceBuilder.*;
 
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public final class StringDataType extends DataType {
+public final class PyStringDataType extends DataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    return "java.lang.String";
+    return "wtf???java.lang.String";
   }
 
   @Override
@@ -52,23 +53,19 @@ public final class StringDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstant(), ", ");
-    if (!f.optional())
-      s.a(f.defaultValueOrNull());
-    else
-      s.a("(String) null");
-    s.a(");", CR);
+    s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstant(), ", ", f.defaultValueOrNull(), ")");
   }
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstant(),
-        "), ", f.optional(), ");", CR);
+    s.a("t = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"), ")", CR);
+    s.doIf(f.optional(), "if t is not None:", OPEN);
+    s.a("inst._", f.sourceName(), " = t.copy()", CR);
+    s.endIf(CLOSE);
   }
 
   @Override
   public String deserializeJsonToJavaValue(String jsonValue) {
-    todo("this should be renamed to avoid Java specific");
     return "(String) " + jsonValue;
   }
 
