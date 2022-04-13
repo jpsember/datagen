@@ -32,8 +32,6 @@ import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 import static datagen.Utils.*;
 
-import java.util.List;
-
 /**
  * Abstract base class for generating source code for a data type
  */
@@ -93,10 +91,6 @@ public abstract class DataType implements DefaultValueParser {
     return ParseTools.importExpression(constructImportExpression(), qualifiedClassName().className());
   }
 
-  public List<String> auxilliaryImportExpressions() {
-    return DataUtil.emptyList();
-  }
-
   /**
    * Get text that generates an import for this type, but doesn't generate any
    * source. Used for composite types, e.g. (List{type})
@@ -110,14 +104,6 @@ public abstract class DataType implements DefaultValueParser {
           qualifiedClassName().className()) + exprForWrapped;
     }
     return mTypeName;
-  }
-
-  private String mTypeName;
-
-  @Deprecated // Move to Context
-  public void assertNotPython() {
-    if (python())
-      throw languageNotSupported();
   }
 
   /**
@@ -422,6 +408,7 @@ public abstract class DataType implements DefaultValueParser {
     return mDeclared;
   }
 
+  private String mTypeName;
   private boolean mDeclared;
   private boolean mUsedFlag;
   private QualifiedName mClassWithPackage;
