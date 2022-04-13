@@ -36,7 +36,6 @@ import java.util.List;
 import java.util.Set;
 
 import datagen.datatype.EnumDataType;
-import datagen.gen.QualifiedName;
 
 import static datagen.Utils.*;
 
@@ -211,8 +210,7 @@ public abstract class SourceGen extends BaseObject {
       checkArgument(subExp.size() == 2, "can't parse key into subexpressions:", key, subExp);
       String s0 = subExp.get(0);
       String s1 = subExp.get(1);
-      QualifiedName qualifiedName = ParseTools.parseQualifiedName(s0);
-      statementSet.add(qualifiedName.combined());
+      statementSet.add(s0);
       return s1;
     });
     List<String> lst = arrayList();

@@ -51,11 +51,13 @@ public class EnumDataType extends DataType {
   }
 
   private String pythonClassName() {
-    todo("!Why is this method necessary?  Ought to be able to call typeName()");
+    todo("Why is this method necessary?  Ought to be able to call typeName()");
     if (mPyCl == null) {
       String filename = DataUtil.convertCamelCaseToUnderscores(qualifiedClassName().className());
       mPyCl = ParseTools.importExpression("from " + qualifiedClassName().packagePath() + "." + filename
           + " import " + qualifiedClassName().className(), qualifiedClassName().className());
+      
+      pr("constructed mPyCl:",INDENT,mPyCl,CR,typeName());
     }
     return mPyCl;
   }

@@ -52,6 +52,7 @@ public abstract class DataType implements DefaultValueParser {
   final boolean VB = false;
 
   public final void setQualifiedClassName(QualifiedName qn) {
+    todo("why is this an explicit public method?");
     checkState(mClassWithPackage == null);
     mClassWithPackage = qn;
     if (VB)
@@ -128,6 +129,7 @@ public abstract class DataType implements DefaultValueParser {
 
   //------------------------------------------------------------------
 
+  @Deprecated // why is this required?
   protected final String constructImportExpression() {
     QualifiedName nm = qualifiedClassName();
     if (python()) {

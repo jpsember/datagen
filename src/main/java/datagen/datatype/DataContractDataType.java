@@ -53,6 +53,7 @@ public class DataContractDataType extends DataType {
     default:
       throw languageNotSupported();
     case PYTHON:
+      todo("I suspect there is a problem with the parentheses here");
       return ParseTools.importExpression(constructImportExpression(),
           qualifiedClassName().className() + ".default_instance");
     case JAVA:
