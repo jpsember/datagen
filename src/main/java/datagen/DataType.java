@@ -175,13 +175,13 @@ public abstract class DataType implements DefaultValueParser {
    *
    * The default method calls compilerInitialValue()
    */
-  public String sourceDefaultValue() {
+  public String provideSourceDefaultValue() {
     return compilerInitialValue();
   }
 
-  public final String cachedSourceDefaultValue() {
+  public final String sourceDefaultValue() {
     if (mCachedSourceDefaultValue == null) {
-      mCachedSourceDefaultValue = sourceDefaultValue();
+      mCachedSourceDefaultValue = provideSourceDefaultValue();
     }
     return mCachedSourceDefaultValue;
   }

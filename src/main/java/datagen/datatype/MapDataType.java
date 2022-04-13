@@ -66,7 +66,7 @@ public class MapDataType extends DataType {
   }
 
   @Override
-  public String sourceDefaultValue() {
+  public String provideSourceDefaultValue() {
     switch (language()) {
     default:
       throw languageNotSupported();

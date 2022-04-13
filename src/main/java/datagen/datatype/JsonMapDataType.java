@@ -47,7 +47,7 @@ public final class JsonMapDataType extends DataType {
   }
 
   @Override
-  public final String sourceDefaultValue() {
+  public final String provideSourceDefaultValue() {
     if (python())
       return "[]";
     return ParseTools.PKG_JSMAP + ".DEFAULT_INSTANCE";

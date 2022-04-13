@@ -35,7 +35,7 @@ import js.parsing.Scanner;
 public class PyIPointDataType extends DataContractDataType {
 
   @Override
-  public String sourceDefaultValue() {
+  public String provideSourceDefaultValue() {
     return ParseTools.importExpression(constructImportExpression(),
         qualifiedClassName().className() + ".default_instance");
   }
@@ -59,7 +59,5 @@ public class PyIPointDataType extends DataContractDataType {
     sb.a(constName, "  = ", typeName(), ".with_x_y(", x, ", ", y, ")", CR);
     return constName;
   }
-
-  private String mDefValue;
 
 }

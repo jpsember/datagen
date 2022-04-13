@@ -34,7 +34,7 @@ import datagen.SourceBuilder;
 public class ByteArrayDataType extends DataContractDataType {
 
   @Override
-  public String sourceDefaultValue() {
+  public String provideSourceDefaultValue() {
     return ParseTools.PKG_DATAUTIL + ".EMPTY_BYTE_ARRAY";
   }
 

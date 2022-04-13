@@ -40,7 +40,7 @@ public final class StringDataType extends DataType {
   }
 
   @Override
-  public final String sourceDefaultValue() {
+  public final String provideSourceDefaultValue() {
     return "\"\"";
   }
 

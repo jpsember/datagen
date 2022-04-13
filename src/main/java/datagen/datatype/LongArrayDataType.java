@@ -34,7 +34,7 @@ import static datagen.Utils.*;
 public class LongArrayDataType extends DataContractDataType {
 
   @Override
-  public String sourceDefaultValue() {
+  public String provideSourceDefaultValue() {
     return ParseTools.PKG_DATAUTIL + ".EMPTY_LONG_ARRAY";
   }
 

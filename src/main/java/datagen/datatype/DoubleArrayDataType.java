@@ -37,7 +37,7 @@ import js.parsing.Scanner;
 public class DoubleArrayDataType extends DataContractDataType {
 
   @Override
-  public String sourceDefaultValue() {
+  public String provideSourceDefaultValue() {
     return ParseTools.PKG_DATAUTIL + ".EMPTY_DOUBLE_ARRAY";
   }
 

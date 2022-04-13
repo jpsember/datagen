@@ -34,7 +34,7 @@ import static datagen.Utils.*;
 public class IntArrayDataType extends DataContractDataType {
 
   @Override
-  public String sourceDefaultValue() {
+  public String provideSourceDefaultValue() {
     return ParseTools.PKG_DATAUTIL + ".EMPTY_INT_ARRAY";
   }
 

@@ -41,7 +41,7 @@ public final class PyStringDataType extends DataType {
   }
 
   @Override
-  public final String sourceDefaultValue() {
+  public final String provideSourceDefaultValue() {
     return "\"\"";
   }
 
