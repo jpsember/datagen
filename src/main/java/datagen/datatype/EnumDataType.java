@@ -66,10 +66,10 @@ public class EnumDataType extends DataType {
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
     todo("!we can apparently calculate the hash of None in Python, so we can simplify some things?");
     if (python()) {
-      s.a("r = r * 37 + hash(self._", f.javaName(), ")");
+      s.a("r = r * 37 + hash(self._", f.sourceName(), ")");
     } else {
-      s.doIf(f.optional(), "if (m", f.javaName(), " != null)", OPEN);
-      s.a("r = r * 37 + m", f.javaName(), ".ordinal();");
+      s.doIf(f.optional(), "if (m", f.sourceName(), " != null)", OPEN);
+      s.a("r = r * 37 + m", f.sourceName(), ".ordinal();");
       s.endIf(CLOSE);
     }
   }
@@ -93,7 +93,7 @@ public class EnumDataType extends DataType {
       if (f.optional()) {
         s.a("if x is not None:", IN);
       }
-      s.a("inst._", f.javaName(), " = x", CR);
+      s.a("inst._", f.sourceName(), " = x", CR);
       if (f.optional()) {
         s.a(OUT);
       }
@@ -101,7 +101,7 @@ public class EnumDataType extends DataType {
     } else {
       s.a(OPEN, //
           "String x = m.opt(", f.nameStringConstant(), ", \"\");", CR, //
-          "m", f.javaName(), " = x.isEmpty() ? ", typeName(), ".DEFAULT_INSTANCE : ", typeName(),
+          "m", f.sourceName(), " = x.isEmpty() ? ", typeName(), ".DEFAULT_INSTANCE : ", typeName(),
           ".valueOf(x.toUpperCase());", CLOSE);
     }
   }
@@ -111,7 +111,7 @@ public class EnumDataType extends DataType {
     if (python()) {
       s.a("x = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"), ")", CR);
       s.doIf(f.optional(), "if x is not None:", OPEN);
-      s.a("inst._", f.javaName(), " = [", pythonClassName(), "(z) for z in x]", CR);
+      s.a("inst._", f.sourceName(), " = [", pythonClassName(), "(z) for z in x]", CR);
       s.endIf(CLOSE);
     } else {
       throw languageNotSupported("deserializing list of Java enums from list");

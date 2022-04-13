@@ -59,10 +59,10 @@ public final class FileDataType extends DataType {
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.open();
     if (!f.optional())
-      s.a("m", f.javaName(), " = ", f.defaultValueOrNull(), ";", CR);
+      s.a("m", f.sourceName(), " = ", f.defaultValueOrNull(), ";", CR);
     s.a("String x = m.opt(", f.nameStringConstant(), ", (String) null);", CR, //
         "if (x != null)", OPEN, //
-        "m", f.javaName(), " = new ", typeName(), "(x);", //
+        "m", f.sourceName(), " = new ", typeName(), "(x);", //
         CLOSE //
     );
     s.close();
@@ -87,7 +87,7 @@ public final class FileDataType extends DataType {
         "y = ", getConstructFromX(), ";", CLOSE, //
         "result.add(y);", CLOSE, //
         CLOSE, //
-        "m", f.javaName(), " = ", ParseTools.immutableCopyOfList("result"), ";", //
+        "m", f.sourceName(), " = ", ParseTools.immutableCopyOfList("result"), ";", //
         CLOSE);
   }
 

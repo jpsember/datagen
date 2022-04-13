@@ -187,10 +187,10 @@ public abstract class DataType implements DefaultValueParser {
     default:
       throw languageNotSupported();
     case PYTHON:
-      s.doIf(f.optional(), "if self._", f.javaName(), " is not None:", OPEN);
+      s.doIf(f.optional(), "if self._", f.sourceName(), " is not None:", OPEN);
       break;
     case JAVA:
-      s.doIf(f.optional(), "if (m", f.javaName(), " != null)", OPEN);
+      s.doIf(f.optional(), "if (m", f.sourceName(), " != null)", OPEN);
       break;
     }
   }
@@ -215,10 +215,10 @@ public abstract class DataType implements DefaultValueParser {
     sourceIfNotNull(s, f);
     if (python()) {
       s.a("m[", f.nameStringConstant(), "] = ",
-          sourceGenerateSerializeToObjectExpression("self._" + f.javaName()));
+          sourceGenerateSerializeToObjectExpression("self._" + f.sourceName()));
     } else {
       s.a("m.put(", f.nameStringConstant(), ", ",
-          sourceGenerateSerializeToObjectExpression("m" + f.javaName()), ");");
+          sourceGenerateSerializeToObjectExpression("m" + f.sourceName()), ");");
     }
     sourceEndIf(s).cr();
   }
@@ -241,10 +241,10 @@ public abstract class DataType implements DefaultValueParser {
     default:
       throw languageNotSupported();
     case PYTHON:
-      s.a("inst._", f.javaName(), " = obj.get(", f.nameStringConstant(), ", ", f.defaultValueOrNull(), ")");
+      s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstant(), ", ", f.defaultValueOrNull(), ")");
       break;
     case JAVA:
-      s.a("m", f.javaName(), " = m.opt(", f.nameStringConstant(), ", ", f.defaultValueOrNull(), ");");
+      s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstant(), ", ", f.defaultValueOrNull(), ");");
       break;
     }
   }
@@ -266,15 +266,15 @@ public abstract class DataType implements DefaultValueParser {
       if (f.optional()) {
         s.a("t = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"), ")", CR, //
             "if t is not None:", OPEN, //
-            "inst._", f.javaName(), " = t.copy()", CLOSE);
+            "inst._", f.sourceName(), " = t.copy()", CLOSE);
       } else {
-        s.a("inst._", f.javaName(), " = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"),
+        s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"),
             ").copy()", CR);
       }
     }
       break;
     case JAVA:
-      s.a("m", f.javaName(), " = js.data.DataUtil.parse", typeName(), "List(m, ", f.nameStringConstant(),
+      s.a("m", f.sourceName(), " = js.data.DataUtil.parse", typeName(), "List(m, ", f.nameStringConstant(),
           ", ", f.optional(), ");");
       break;
     }
@@ -326,10 +326,10 @@ public abstract class DataType implements DefaultValueParser {
     default:
       throw languageNotSupported();
     case PYTHON:
-      s.a("r = r * 37 + hash(self._", f.javaName(), ")");
+      s.a("r = r * 37 + hash(self._", f.sourceName(), ")");
       break;
     case JAVA:
-      s.a("r = r * 37 + m", f.javaName(), ".hashCode();");
+      s.a("r = r * 37 + m", f.sourceName(), ".hashCode();");
       break;
     }
   }

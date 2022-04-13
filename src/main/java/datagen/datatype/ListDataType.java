@@ -110,15 +110,15 @@ public class ListDataType extends DataType {
     if (python()) {
       todo("!for Python, we may want to convert individual items for other types, as we are doing for enums");
       if (wrappedType() instanceof EnumDataType) {
-        s.a("m[", f.nameStringConstant(true), "] = [x.value for x in self._", f.javaName(), "]", CR);
+        s.a("m[", f.nameStringConstant(true), "] = [x.value for x in self._", f.sourceName(), "]", CR);
       } else if (wrappedType() instanceof DataContractDataType) {
-        s.a("m[", f.nameStringConstant(true), "] = [x.to_json() for x in self._", f.javaName(), "]", CR);
+        s.a("m[", f.nameStringConstant(true), "] = [x.to_json() for x in self._", f.sourceName(), "]", CR);
       } else
-        s.a("m[", f.nameStringConstant(true), "] = self._", f.javaName(), ".copy()", CR);
+        s.a("m[", f.nameStringConstant(true), "] = self._", f.sourceName(), ".copy()", CR);
     } else {
       s.a(OPEN, //
           ParseTools.PKG_JSLIST, " j = new ", ParseTools.PKG_JSLIST, "();", CR, //
-          "for (", wrappedType().typeName(), " x : m", f.javaName(), ")", IN, //
+          "for (", wrappedType().typeName(), " x : m", f.sourceName(), ")", IN, //
           "j.add(", wrappedType().sourceGenerateSerializeToObjectExpression("x"), ");", OUT, //
           "m.put(", f.nameStringConstant(), ", j);", //
           CLOSE, CR);
@@ -139,12 +139,12 @@ public class ListDataType extends DataType {
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
     if (python()) {
-      s.a("for x in self._", f.javaName(), ":", IN);
+      s.a("for x in self._", f.sourceName(), ":", IN);
       s.a("if x is not None:", IN);
       s.a("r = r * 37 + hash(x)", OUT);
       s.a(OUT);
     } else {
-      s.a("for (", wrappedType().typeName(), " x : m", f.javaName(), ")", IN);
+      s.a("for (", wrappedType().typeName(), " x : m", f.sourceName(), ")", IN);
       s.a("if (x != null)", IN);
       s.a("r = r * 37 + x.hashCode();", OUT);
       s.a(OUT);

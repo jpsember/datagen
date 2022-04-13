@@ -111,7 +111,7 @@ public class MapDataType extends DataType {
       s.a(OPEN, //
           ParseTools.PKG_JSMAP, " j = new ", ParseTools.PKG_JSMAP, "();", CR, //
           "for (Map.Entry<", wrappedKeyType().typeName(), ", ", wrappedValueType().typeName(), "> e : m",
-          f.javaName(), ".entrySet())", IN, //
+          f.sourceName(), ".entrySet())", IN, //
           "j.put(", wrappedKeyType().sourceGenerateSerializeToObjectExpression("e.getKey()"), ", ",
           wrappedValueType().sourceGenerateSerializeToObjectExpression("e.getValue()"), ");", OUT, //
           "m.put(", f.nameStringConstant(), ", j);", //
@@ -134,7 +134,7 @@ public class MapDataType extends DataType {
 
       s.open();
       if (!f.optional())
-        s.a("m", f.javaName(), " = ", f.defaultValueOrNull(), ";", CR);
+        s.a("m", f.sourceName(), " = ", f.defaultValueOrNull(), ";", CR);
 
       s.a(OPEN, //
           "JSMap m2 = m.optJSMap(", QUOTE, f.name(), ");", CR, //
@@ -144,7 +144,7 @@ public class MapDataType extends DataType {
           "for (Map.Entry<String, Object> e : m2.wrappedMap().entrySet())", IN, //
           "mp.put(", wrappedKeyType().deserializeStringToJavaValue("e.getKey()"), ", ",
           wrappedValueType().deserializeJsonToJavaValue("e.getValue()"), ");", OUT, //
-          "m", f.javaName(), " = ", "mp", ";", CLOSE, //
+          "m", f.sourceName(), " = ", "mp", ";", CLOSE, //
           CLOSE);
 
       s.close();
@@ -156,7 +156,7 @@ public class MapDataType extends DataType {
     if (python()) {
       throw notSupported("Maps not supported in Python (yet)");
     } else {
-      s.a("r = r * 37 + m", f.javaName(), ".hashCode();");
+      s.a("r = r * 37 + m", f.sourceName(), ".hashCode();");
     }
   }
 

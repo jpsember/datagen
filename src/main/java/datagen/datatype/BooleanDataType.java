@@ -53,7 +53,7 @@ public class BooleanDataType extends DataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + (m", f.javaName(), " ? 1 : 0);");
+    s.a("r = r * 37 + (m", f.sourceName(), " ? 1 : 0);");
   }
 
   @Override
@@ -64,7 +64,7 @@ public class BooleanDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("m", f.javaName(), " = m.opt(", f.nameStringConstant(), ", ");
+    s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstant(), ", ");
     if (!f.optional())
       s.a(f.defaultValueOrNull());
     else
@@ -74,7 +74,7 @@ public class BooleanDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("m", f.javaName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstant(),
+    s.a("m", f.sourceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstant(),
         "), ", f.optional(), ");", CR);
   }
 
@@ -87,7 +87,7 @@ public class BooleanDataType extends DataType {
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.javaName(), " = m.opt(", f.nameStringConstant(), ", ");
+      s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstant(), ", ");
       if (!f.optional())
         s.a(f.defaultValueOrNull());
       else

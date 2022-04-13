@@ -111,7 +111,7 @@ public class FloatArrayDataType extends DataContractDataType {
     default:
       throw languageNotSupported();
     case JAVA:
-      s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.javaName(), ");");
+      s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
       break;
     }
   }

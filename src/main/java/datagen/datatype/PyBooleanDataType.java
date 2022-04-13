@@ -37,14 +37,7 @@ public class PyBooleanDataType extends DataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    todo("what is the qualified class name used for in python?  I think the 'java.lang' test is still being performed");
-    return "java.lang.boolean";
-  }
-
-  @Override
-  public DataType optionalVariant() {
-    todo("is this required for python?");
-    return new Boxed();
+    return "xxxxxxx.yyyyy.wtf.boolean";
   }
 
   @Override
@@ -55,7 +48,7 @@ public class PyBooleanDataType extends DataType {
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
     todo("in setter, if not optional, change None to default value?  Can we have type hints?");
-    s.a("r = r * 37 + int(self._", f.javaName(), ")", CR);
+    s.a("r = r * 37 + int(self._", f.sourceName(), ")", CR);
   }
 
   @Override
@@ -66,24 +59,9 @@ public class PyBooleanDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("inst._", f.javaName(), " = obj.get(", f.nameStringConstant(), ", ");
+    s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstant(), ", ");
     s.a(f.defaultValueOrNull());
     s.a(")", CR);
-  }
-
-  private static class Boxed extends PyBooleanDataType {
-
-    @Override
-    protected String provideQualifiedClassNameExpr() {
-      notSupported("is this needed for python?");
-      return "java.lang.Boolean";
-    }
-
-    @Override
-    public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("inst._", f.javaName(), " = obj.get(", f.nameStringConstant(), ", None)");
-    }
-
   }
 
 }

@@ -70,7 +70,7 @@ public class PythonSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     SourceBuilder s = s().in(2);
     for (FieldDef f : def.fields()) {
-      s.a(CR, "self._", f.javaName(), " = ", f.defaultValueOrNull());
+      s.a(CR, "self._", f.sourceName(), " = ", f.defaultValueOrNull());
     }
     s.out();
     return content();
@@ -82,7 +82,7 @@ public class PythonSourceGen extends SourceGen {
     s().in(2);
     for (FieldDef f : def.fields()) {
       s().cr();
-      f.dataType().sourceExpressionToImmutable(s(), f, "v._" + f.javaName(), "self._" + f.javaName());
+      f.dataType().sourceExpressionToImmutable(s(), f, "v._" + f.sourceName(), "self._" + f.sourceName());
     }
     s().out();
     return content();
@@ -96,7 +96,7 @@ public class PythonSourceGen extends SourceGen {
       s.a("\\\\", CR);
       DataType d = f.dataType();
       s.a("def set_", setExpr(def, f), "(self, x):", OPEN);
-      String targetExpr = "self._" + f.javaName();
+      String targetExpr = "self._" + f.sourceName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "return self", CLOSE);
     }
@@ -145,8 +145,8 @@ public class PythonSourceGen extends SourceGen {
     SourceBuilder s = s().in(0);
     for (FieldDef f : def.fields()) {
       s.a("\\\\").cr();
-      s.a("def ", f.javaName(), "(self):", OPEN, //
-          "return self._", f.javaName(), CLOSE);
+      s.a("def ", f.sourceName(), "(self):", OPEN, //
+          "return self._", f.sourceName(), CLOSE);
     }
     s.out();
     return content();
@@ -159,7 +159,7 @@ public class PythonSourceGen extends SourceGen {
     s.a("x = ", def.name(), "Builder()", CR);
     for (FieldDef f : def.fields()) {
       f.dataType().sourceIfNotNull(s, f);
-      s.a("x._", f.javaName(), " = ", f.dataType().sourceExpressionToMutable("self._" + f.javaName()), CR);
+      s.a("x._", f.sourceName(), " = ", f.dataType().sourceExpressionToMutable("self._" + f.sourceName()), CR);
       f.dataType().sourceEndIf(s).cr();
     }
     s.a("return x", CR);
@@ -181,7 +181,7 @@ public class PythonSourceGen extends SourceGen {
           first = false;
         } else
           s.a(CR);
-        s.a("and self._", f.javaName(), " == other._", f.javaName());
+        s.a("and self._", f.sourceName(), " == other._", f.sourceName());
       }
       if (!first)
         s.out();
@@ -222,7 +222,7 @@ public class PythonSourceGen extends SourceGen {
    * Get the name of a setter
    */
   private String setExpr(GeneratedTypeDef m, FieldDef f) {
-    return f.javaNameLowerFirst();
+    return f.sourceNameLowerFirst();
   }
 
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template_py.txt");

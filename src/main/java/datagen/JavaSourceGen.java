@@ -62,7 +62,7 @@ public final class JavaSourceGen extends SourceGen {
       String initialValue = f.defaultValueOrNull();
       if (initialValue.equals(f.dataType().compilerInitialValue()))
         continue;
-      s.a(CR, "m", f.javaName(), " = ", initialValue, ";");
+      s.a(CR, "m", f.sourceName(), " = ", initialValue, ";");
     }
     s.out();
     return content();
@@ -74,7 +74,7 @@ public final class JavaSourceGen extends SourceGen {
     s().in(4);
     for (FieldDef f : def.fields()) {
       s().a(CR);
-      f.dataType().sourceExpressionToImmutable(s(), f, "r.m" + f.javaName(), "m" + f.javaName());
+      f.dataType().sourceExpressionToImmutable(s(), f, "r.m" + f.sourceName(), "m" + f.sourceName());
       s().a(";");
     }
     s().out();
@@ -88,8 +88,8 @@ public final class JavaSourceGen extends SourceGen {
     for (FieldDef f : def.fields()) {
       s.br();
       DataType d = f.dataType();
-      s.a("public ", "Builder ", f.javaNameLowerFirst(), "(", d.typeName(), " x)", OPEN);
-      String targetExpr = "m" + f.javaName();
+      s.a("public ", "Builder ", f.sourceNameLowerFirst(), "(", d.typeName(), " x)", OPEN);
+      String targetExpr = "m" + f.sourceName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "return this;", CLOSE);
     }
@@ -161,8 +161,8 @@ public final class JavaSourceGen extends SourceGen {
     SourceBuilder s = s().in(0);
     for (FieldDef f : def.fields()) {
       s.br();
-      s.a("public ", f.dataType().typeName(), " ", f.javaNameLowerFirst(), "()", OPEN, //
-          "return m", f.javaName(), ";", CLOSE);
+      s.a("public ", f.dataType().typeName(), " ", f.sourceNameLowerFirst(), "()", OPEN, //
+          "return m", f.sourceName(), ";", CLOSE);
     }
     s.out();
     return content();
@@ -173,7 +173,7 @@ public final class JavaSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     SourceBuilder s = s().in(4);
     for (FieldDef f : def.fields()) {
-      s.a("m", f.javaName(), " = ", f.dataType().sourceExpressionToMutable("m.m" + f.javaName()), ";", CR);
+      s.a("m", f.sourceName(), " = ", f.dataType().sourceExpressionToMutable("m.m" + f.sourceName()), ";", CR);
     }
     s.out();
     return content();
@@ -196,7 +196,7 @@ public final class JavaSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     SourceBuilder s = s().in(0);
     for (FieldDef f : def.fields())
-      s.a("protected ", f.dataType().typeName(), " m", f.javaName(), ";", CR);
+      s.a("protected ", f.dataType().typeName(), " m", f.sourceName(), ";", CR);
     s.a("protected int m__hashcode;");
     s.out();
     return content();
@@ -233,8 +233,8 @@ public final class JavaSourceGen extends SourceGen {
    * not, short-circuit an equals(...) method by returning false
    */
   private void generateEqualsForMemberField(SourceBuilder s, FieldDef f) {
-    String a = "m" + f.javaName();
-    String b = "other.m" + f.javaName();
+    String a = "m" + f.sourceName();
+    String b = "other.m" + f.sourceName();
 
     if (f.optional()) {
       s.a("if ((", a, " == null) ^ (", b, " == null))", IN, //

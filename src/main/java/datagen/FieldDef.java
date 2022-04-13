@@ -34,25 +34,20 @@ import static js.base.Tools.*;
  */
 public final class FieldDef extends BaseObject {
 
-  public FieldDef(String name, DataType dataType,   boolean optional) {
+  public FieldDef(String name, DataType dataType, boolean optional) {
     loadTools();
-    mName = name;
+    setName(name);
     mDataType = dataType;
     mOptional = optional;
     if (dataType.python()) {
       // If we add a '_' prefix, the Python inspection reports a warning about a 'protected member';
       // but that is ok for our code; we need to have underscore prefixes for the instance fields anyways
-      mNameStringConstant = "_key_" + javaName();
+      mNameStringConstant = "_key_" + sourceName();
       mNameStringConstantQualified = Context.generatedTypeDef.name() + "." + mNameStringConstant;
     } else {
       mNameStringConstant = name.toUpperCase();
       mNameStringConstantQualified = mNameStringConstant;
     }
-  }
-
-  @Override
-  protected String supplyName() {
-    return mName;
   }
 
   public DataType dataType() {
@@ -63,25 +58,25 @@ public final class FieldDef extends BaseObject {
     return mOptional;
   }
 
-  public String javaName() {
-    if (mJavaName == null) {
+  public String sourceName() {
+    if (mSourceName == null) {
       if (dataType().python()) {
-        mJavaNameCapFirst = mJavaName = DataUtil.lowerFirst(mName);
+        mSourceNameCapFirst = mSourceName = DataUtil.lowerFirst(name());
       } else {
-        mJavaNameCapFirst = DataUtil.convertUnderscoresToCamelCase(mName);
-        mJavaName = DataUtil.lowerFirst(mJavaNameCapFirst);
+        mSourceNameCapFirst = DataUtil.convertUnderscoresToCamelCase(name());
+        mSourceName = DataUtil.lowerFirst(mSourceNameCapFirst);
       }
     }
-    return mJavaNameCapFirst;
+    return mSourceNameCapFirst;
   }
 
-  public String javaNameLowerFirst() {
-    javaName();
-    return mJavaName;
+  public String sourceNameLowerFirst() {
+    sourceName();
+    return mSourceName;
   }
 
   /**
-   * Returns name assigned to the Java string constant for the field, e.g.
+   * Returns name assigned to the string constant for the field, e.g.
    * "HORSE_WEIGHT"
    */
   public final String nameStringConstant() {
@@ -121,13 +116,12 @@ public final class FieldDef extends BaseObject {
     return mDefaultValueSource;
   }
 
-  private final String mName;
   private final String mNameStringConstant;
   private final String mNameStringConstantQualified;
   private final DataType mDataType;
   private final boolean mOptional;
-  private String mJavaName;
-  private String mJavaNameCapFirst;
+  private String mSourceName;
+  private String mSourceNameCapFirst;
   private String mDefaultValueSource;
 
 }

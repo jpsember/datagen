@@ -58,7 +58,7 @@ public class PrimitiveShortDataType extends DataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + m", f.javaName(), ";");
+    s.a("r = r * 37 + m", f.sourceName(), ";");
   }
 
   @Override
@@ -80,7 +80,7 @@ public class PrimitiveShortDataType extends DataType {
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.javaName(), " = m.optShort(", f.nameStringConstant(), ");");
+      s.a("m", f.sourceName(), " = m.optShort(", f.nameStringConstant(), ");");
     }
 
   }

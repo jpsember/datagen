@@ -188,10 +188,10 @@ public class DoubleArrayDataType extends DataContractDataType {
     default:
       throw languageNotSupported();
     case PYTHON:
-      s.a("r = r * 37 + int(sum(self._", f.javaName(), "))");
+      s.a("r = r * 37 + int(sum(self._", f.sourceName(), "))");
       break;
     case JAVA:
-      s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.javaName(), ");");
+      s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
       break;
     }
   }

@@ -54,10 +54,10 @@ public final class StringDataType extends DataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     if (python()) {
-      s.a("inst._", f.javaName(), " = obj.get(", f.nameStringConstant(), ", ", f.defaultValueOrNull(), ")");
+      s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstant(), ", ", f.defaultValueOrNull(), ")");
       return;
     }
-    s.a("m", f.javaName(), " = m.opt(", f.nameStringConstant(), ", ");
+    s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstant(), ", ");
     if (!f.optional())
       s.a(f.defaultValueOrNull());
     else
@@ -70,11 +70,11 @@ public final class StringDataType extends DataType {
     if (python()) {
       s.a("t = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"), ")", CR);
       s.doIf(f.optional(), "if t is not None:", OPEN);
-      s.a("inst._", f.javaName(), " = t.copy()", CR);
+      s.a("inst._", f.sourceName(), " = t.copy()", CR);
       s.endIf(CLOSE);
       return;
     }
-    s.a("m", f.javaName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstant(),
+    s.a("m", f.sourceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstant(),
         "), ", f.optional(), ");", CR);
   }
 

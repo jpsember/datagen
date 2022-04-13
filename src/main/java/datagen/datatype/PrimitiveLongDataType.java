@@ -67,9 +67,9 @@ public class PrimitiveLongDataType extends DataType {
       return;
     }
     if (f.optional())
-      s.a("r = r * 37 + m", f.javaName(), ".intValue();");
+      s.a("r = r * 37 + m", f.sourceName(), ".intValue();");
     else
-      s.a("r = r * 37 + (int)m", f.javaName(), ";");
+      s.a("r = r * 37 + (int)m", f.sourceName(), ";");
   }
 
   @Override
@@ -100,7 +100,7 @@ public class PrimitiveLongDataType extends DataType {
         super.sourceDeserializeFromObject(s, f);
         break;
       case JAVA:
-        s.a("m", f.javaName(), " = m.optLong(", f.nameStringConstant(), ");");
+        s.a("m", f.sourceName(), " = m.optLong(", f.nameStringConstant(), ");");
         break;
       }
     }

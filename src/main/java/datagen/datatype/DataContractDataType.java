@@ -91,13 +91,13 @@ public class DataContractDataType extends DataType {
       //
       s.a("x = obj.get(", f.nameStringConstant(), ")", CR);
       s.a("if x is not None:", IN);
-      s.a("inst._", f.javaName(), " = ", pythonDeserializeExpr(f, "x"), OUT);
+      s.a("inst._", f.sourceName(), " = ", pythonDeserializeExpr(f, "x"), OUT);
       return;
     }
 
     s.open();
     if (!f.optional())
-      s.a("m", f.javaName(), " = ", f.defaultValueOrNull(), ";", CR);
+      s.a("m", f.sourceName(), " = ", f.defaultValueOrNull(), ";", CR);
 
     String typeExpr = getSerializeDataType();
     if (typeExpr.equals(ParseTools.PKG_JSMAP)) {
@@ -111,7 +111,7 @@ public class DataContractDataType extends DataType {
       s.a(getSerializeDataType(), " x = ", castExpr, "(", f.nameStringConstant(), ");", CR);
     }
     s.a("if (x != null)", OPEN, //
-        "m", f.javaName(), " = ", getConstructFromX(), ";", CLOSE //
+        "m", f.sourceName(), " = ", getConstructFromX(), ";", CLOSE //
     );
 
     s.close();
@@ -127,11 +127,11 @@ public class DataContractDataType extends DataType {
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     if (python()) {
-      s.a("inst._", f.javaName(), " = ", ParseTools.PKGPY_DATAUTIL, ".parse_list_of_objects(", typeName(),
+      s.a("inst._", f.sourceName(), " = ", ParseTools.PKGPY_DATAUTIL, ".parse_list_of_objects(", typeName(),
           ".default_instance, obj.get(", f.nameStringConstant(), "), ", f.optional() ? "True" : "False", ")");
       return;
     }
-    s.a("m", f.javaName(), " = ", ParseTools.PKG_DATAUTIL, ".parseListOfObjects(", typeName(),
+    s.a("m", f.sourceName(), " = ", ParseTools.PKG_DATAUTIL, ".parseListOfObjects(", typeName(),
         ".DEFAULT_INSTANCE, m.optJSList(", f.nameStringConstant(), "), ", f.optional(), ");");
   }
 
