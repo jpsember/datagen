@@ -133,6 +133,7 @@ public abstract class SourceGen extends BaseObject {
     File target = sourceFile();
     Context.files.mkdirs(Files.parent(target));
     boolean wrote = Context.files.writeIfChanged(target, content);
+    Context.generatedFilesSet.add(target);
     if (wrote)
       log(".....updated:", sourceFileRelative());
     else {
