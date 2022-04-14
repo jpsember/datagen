@@ -36,9 +36,7 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import datagen.gen.Language;
 import datagen.gen.QualifiedName;
-import js.data.DataUtil;
 import js.parsing.Scanner;
 import js.parsing.Token;
 
@@ -165,26 +163,7 @@ public class DataContractDataType extends DataType {
   }
 
   public void parseQualifiedName(String typeName) {
-    // We may not yet have a generated type to provide a default package
-    String defaultPackageName = null;
-    if (Context.config.language() == Language.PYTHON)
-      defaultPackageName = "pycore";
-
-    if (Context.generatedTypeDef != null) {
-      defaultPackageName = Context.generatedTypeDef.packageName();
-      if (false) {
-        die("this python special code should be handled in ParseTools I suspect");
-        if (Context.config.language() == Language.PYTHON) {
-          // If typeName is Xyz, make sure default package ends with xyz, adding if necessary
-          String packageSuff = "." + DataUtil.convertCamelCaseToUnderscores(typeName);
-          if (!("." + defaultPackageName).endsWith(packageSuff)) {
-            defaultPackageName = defaultPackageName + packageSuff;
-          }
-        }
-      }
-    }
-
-    QualifiedName qn = ParseTools.parseQualifiedName(typeName, defaultPackageName);
+    QualifiedName qn = ParseTools.parseQualifiedName(typeName, Context.generatedTypeDef.packageName());
     setQualifiedClassName(qn);
   }
 
