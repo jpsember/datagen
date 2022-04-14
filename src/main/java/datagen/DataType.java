@@ -49,14 +49,9 @@ public abstract class DataType implements DefaultValueParser {
   // Naming
   // ------------------------------------------------------------------
 
-  final boolean VB = false;
-
-  public final void setQualifiedClassName(QualifiedName qn) {
-    todo("why is this an explicit public method?");
+  public final void setQualifiedClassName(QualifiedName qualifiedName) {
     checkState(mClassWithPackage == null);
-    mClassWithPackage = qn;
-    if (VB)
-      pr("mClassWithPackage:", mClassWithPackage);
+    mClassWithPackage = qualifiedName;
   }
 
   public final QualifiedName qualifiedClassName() {
@@ -64,9 +59,6 @@ public abstract class DataType implements DefaultValueParser {
     if (mClassWithPackage == null) {
       String expression = provideQualifiedClassNameExpr();
       QualifiedName qualifiedName = ParseTools.parseQualifiedName(expression, null);
-      todo("is this check necessary?");
-      if (language() == Language.JAVA)
-        checkArgument(nonEmpty(qualifiedName.packagePath()));
       setQualifiedClassName(qualifiedName);
     }
     return mClassWithPackage;
@@ -109,18 +101,15 @@ public abstract class DataType implements DefaultValueParser {
     // we ensure it is imported
     // The assumption is that import expressions are needed iff type is not primitive
     //
-    return ParseTools.importedClassExpr(null,qualifiedClassName().combined());
+    return ParseTools.importedClassExpr(null, qualifiedClassName().combined());
   }
 
   /**
    * Get type name, by calling provideTypeName() if necessary
    */
   public final String typeName() {
-    if (mTypeName == null) {
+    if (mTypeName == null)
       mTypeName = provideTypeName();
-      if (VB)
-        pr("mTypeName:", mTypeName);
-    }
     return mTypeName;
   }
 

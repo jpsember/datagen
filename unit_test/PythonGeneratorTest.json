@@ -1,1 +1,13 @@
-{ "typeFile" : 7003 }
+{ "alternateSourcePath" : 4335,
+                "bools" : 3425,
+              "doubles" : 5131,
+             "enumDefn" : 3220,
+             "enumMisc" : 8342,
+              "enumRef" : 5407,
+  "externDefaultPrefix" : 5250,
+                 "ints" : 9228,
+              "ipoints" : 3299,
+               "simple" : 4721,
+              "strings" : 8031,
+             "typeFile" : 7003
+}
