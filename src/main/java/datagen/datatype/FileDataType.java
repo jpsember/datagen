@@ -100,7 +100,7 @@ public final class FileDataType extends DataType {
   }
 
   @Override
-  public String deserializeJsonToJavaValue(String jsonValue) {
+  public String deserializeJsonToMapValue(String jsonValue) {
     return "new " + typeName() + "((String) " + jsonValue + ")";
   }
 

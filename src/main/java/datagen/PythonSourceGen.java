@@ -217,7 +217,8 @@ public class PythonSourceGen extends SourceGen {
     if (!files.dryRun()) {
       File parent = Files.parent(sourceFile());
       File sentinelFile = new File(parent, "__init__.py");
-      if (!sentinelFile.exists())
+      Context.generatedFilesSet.add(sentinelFile);
+      if (!sentinelFile.exists())  
         files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
     }
   }

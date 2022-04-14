@@ -61,8 +61,7 @@ public class DatagenOper extends AppOper {
     DatagenConfig config = datagenConfig();
     Context.prepare(files(), config);
 
-    Set<File> generatedSourceFileSet = hashSet();
-    List<DatWithSource> entriesToFreshen = constructFileEntries(generatedSourceFileSet);
+    List<DatWithSource> entriesToFreshen = constructFileEntries(); 
 
     if (entriesToFreshen.isEmpty())
       log("...all files up-to-date (rerun with 'clean' option to force rebuild)");
@@ -73,7 +72,6 @@ public class DatagenOper extends AppOper {
       // Reset context for a new file
       Context.prepare(entry);
 
-      todo("probably simpler to require all dat files to be within a subdirectory so their package names are nonempty");
       try {
 
         // Parse .dat file
@@ -98,7 +96,7 @@ public class DatagenOper extends AppOper {
     }
 
     if (config.deleteOld())
-      deleteOldSourceFiles(config.sourcePath(), generatedSourceFileSet);
+      deleteOldSourceFiles(config.sourcePath());
   }
 
   /**
@@ -144,7 +142,7 @@ public class DatagenOper extends AppOper {
     return mConfig;
   }
 
-  private List<DatWithSource> constructFileEntries(Set<File> generatedSourceFileSet) {
+  private List<DatWithSource> constructFileEntries() {
     List<DatWithSource> fileEntries = arrayList();
 
     DatagenConfig config = datagenConfig();
@@ -183,15 +181,15 @@ public class DatagenOper extends AppOper {
       }
       String relativeClassFile = relPathExpr + sourceClassName + "." + sourceFileExtension();
       File sourceFile = new File(config.sourcePath(), relativeClassFile);
+      File genDirectory = determineGenDirectory(sourceFile);
 
       if (config.clean()) {
         // If we haven't yet done so, delete the 'gen' directory that will contain this source file
-        discardGenDirectory(discardedDirectoriesSet, sourceFile);
+        discardGenDirectory(discardedDirectoriesSet, genDirectory);
       }
 
       DatWithSource fileEntry = DatWithSource.newBuilder().datRelPath(rel.getPath())
           .sourceRelPath(relativeClassFile).build();
-      generatedSourceFileSet.add(sourceFile);
 
       if (config.clean() || !sourceFile.exists()
           || sourceFile.lastModified() < dirWalk.abs(rel).lastModified()) {
@@ -199,7 +197,7 @@ public class DatagenOper extends AppOper {
           if (sourceFile.exists())
             log("file is out of date:", relativeClassFile);
           else
-            log("could not locate:", INDENT, relativeClassFile);
+            log("could not locate generated file:", relativeClassFile);
         }
         fileEntries.add(fileEntry);
       }
@@ -222,16 +220,16 @@ public class DatagenOper extends AppOper {
     return result;
   }
 
-  private void deleteOldSourceFiles(File sourcePath, Set<File> mGeneratedSourceFileSet) {
+  private void deleteOldSourceFiles(File sourcePath) {
     Set<File> modifiedDirectorySet = hashSet();
-    for (File f : mGeneratedSourceFileSet)
+    for (File f : Context.generatedFilesSet)
       modifiedDirectorySet.add(Files.parent(f));
 
     DirWalk dirWalk = new DirWalk(sourcePath).withRecurse(true).withExtensions(sourceFileExtension());
 
     for (File sourceFile : dirWalk.files()) {
       // If we generated this file, ignore
-      if (mGeneratedSourceFileSet.contains(sourceFile))
+      if (Context.generatedFilesSet.contains(sourceFile))
         continue;
       // If file is not in a directory we wrote generated files to, ignore
       if (!modifiedDirectorySet.contains(Files.parent(sourceFile)))
@@ -241,12 +239,15 @@ public class DatagenOper extends AppOper {
     }
   }
 
-  private void discardGenDirectory(Set<File> discardedDirectoriesSet, File sourceFile) {
+  private File determineGenDirectory(File sourceFile) {
     String path = sourceFile.toString();
     int cursor = path.lastIndexOf("/gen/");
     if (cursor < 0)
       setError("Cannot find generated directory for source file:", sourceFile);
-    File genDirectory = new File(path.substring(0, cursor) + "/gen");
+    return new File(path.substring(0, cursor) + "/gen");
+  }
+
+  private void discardGenDirectory(Set<File> discardedDirectoriesSet, File genDirectory) {
     if (discardedDirectoriesSet.add(genDirectory)) {
       if (genDirectory.exists()) {
         log("Deleting existing generated source directory:", genDirectory);

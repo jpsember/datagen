@@ -158,7 +158,7 @@ public class DataContractDataType extends DataType {
   }
 
   @Override
-  public String deserializeJsonToJavaValue(String jsonValue) {
+  public String deserializeJsonToMapValue(String jsonValue) {
     return provideSourceDefaultValue() + ".parse((JSMap) " + jsonValue + ")";
   }
 

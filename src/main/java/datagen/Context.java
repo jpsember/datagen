@@ -24,9 +24,13 @@
  **/
 package datagen;
 
+import java.io.File;
+import java.util.Set;
+
 import datagen.gen.DatWithSource;
 import datagen.gen.DatagenConfig;
 import js.file.Files;
+import static js.base.Tools.*;
 
 /**
  * Class containing components used while processing a single .dat file
@@ -38,11 +42,13 @@ public final class Context {
   public static GeneratedTypeDef generatedTypeDef;
   public static DataTypeManager dataTypeManager;
   public static DatWithSource datWithSource;
+  public static Set<File> generatedFilesSet;
 
   public static void prepare(Files files, DatagenConfig config) {
     discard();
     Context.files = files;
     Context.config = config.build();
+    Context.generatedFilesSet = hashSet();
   }
 
   public static void prepare(DatWithSource entry) {

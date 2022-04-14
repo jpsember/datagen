@@ -67,13 +67,12 @@ public final class StringDataType extends DataType {
   }
 
   @Override
-  public String deserializeJsonToJavaValue(String jsonValue) {
-    todo("this should be renamed to avoid Java specific");
+  public String deserializeJsonToMapValue(String jsonValue) {
     return "(String) " + jsonValue;
   }
 
   @Override
-  public String deserializeStringToJavaValue(String jsonStringValue) {
+  public String deserializeStringToMapKey(String jsonStringValue) {
     return jsonStringValue;
   }
 

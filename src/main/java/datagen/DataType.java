@@ -302,24 +302,22 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   /**
-   * Generate source code to convert a string to a Java value. Used to
-   * deserialize JSMap keys to Map keys
+   * Generate source code to convert a string to a value to be used as a map key
    */
-  public String deserializeStringToJavaValue(String stringValueExpression) {
+  public String deserializeStringToMapKey(String stringValueExpression) {
     if (isPrimitive())
       return typeName() + ".parse" + DataUtil.capitalizeFirst(typeName()) + "(" + stringValueExpression + ")";
-    throw notSupported("deserializeStringToJavaValue for dataType:", getClass());
+    throw notSupported("deserializeStringToMapKey for dataType:", getClass());
   }
 
   /**
-   * Generate source code to deserialize a JSON value to a Java value. Used to
-   * deserialize JSMap values to Map values
+   * Generate source code to deserialize a JSON value to a value to be stored in a map
    * 
    * @param jsonValue
    *          representation of a JSMap value (from a key/value pair), or a
    *          JSList value
    */
-  public String deserializeJsonToJavaValue(String jsonValue) {
+  public String deserializeJsonToMapValue(String jsonValue) {
     if (isPrimitive())
       return jsonValue;
     throw notSupported("deserializeJsonToJavaValue for dataType:" + getClass());
