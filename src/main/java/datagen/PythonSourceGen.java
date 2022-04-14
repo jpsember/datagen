@@ -117,11 +117,13 @@ public class PythonSourceGen extends SourceGen {
   }
 
   @Override
-  protected String generateImports(List<String> imports) {
-    for (String k : imports) {
-      pr(k);
-      checkArgument(!k.startsWith("from "),k);
-      s().a(k).cr();
+  protected String generateImports(List<String> qualifiedClassNames) {
+    for (String cn : qualifiedClassNames) {
+      int cursor = cn.lastIndexOf('.');
+      if (cursor < 1 || cursor >= cn.length() - 1)
+        throw badArg("can't parse class name:", quote(cn));
+      s().a("from ", cn.substring(0, cursor), " import ",
+          cn.substring(cursor + 1)).cr();
     }
     return content();
   }
@@ -160,7 +162,8 @@ public class PythonSourceGen extends SourceGen {
     s.a("x = ", def.name(), "Builder()", CR);
     for (FieldDef f : def.fields()) {
       f.dataType().sourceIfNotNull(s, f);
-      s.a("x._", f.sourceName(), " = ", f.dataType().sourceExpressionToMutable("self._" + f.sourceName()), CR);
+      s.a("x._", f.sourceName(), " = ", f.dataType().sourceExpressionToMutable("self._" + f.sourceName()),
+          CR);
       f.dataType().sourceEndIf(s).cr();
     }
     s.a("return x", CR);

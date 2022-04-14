@@ -63,7 +63,8 @@ public abstract class DataType implements DefaultValueParser {
     // If no QualifiedName assigned yet, do so
     if (mClassWithPackage == null) {
       String expression = provideQualifiedClassNameExpr();
-      QualifiedName qualifiedName = ParseTools.parseQualifiedName(expression);
+      QualifiedName qualifiedName = ParseTools.parseQualifiedName(expression, null);
+      todo("is this check necessary?");
       if (language() == Language.JAVA)
         checkArgument(nonEmpty(qualifiedName.packagePath()));
       setQualifiedClassName(qualifiedName);
@@ -108,11 +109,7 @@ public abstract class DataType implements DefaultValueParser {
     // we ensure it is imported
     // The assumption is that import expressions are needed iff type is not primitive
     //
-    if (alert("refactoring")) {
-      return ParseTools.importExpression(qualifiedClassName());
-    }
-    String importExpr = constructImportExpression();
-    return ParseTools.importExpression(importExpr, qualifiedClassName().className());
+    return ParseTools.importedClassExpr(null,qualifiedClassName().combined());
   }
 
   /**

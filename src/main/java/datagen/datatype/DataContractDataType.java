@@ -49,7 +49,7 @@ public class DataContractDataType extends DataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    String imptExpr = ParseTools.importExpression(qualifiedClassName().combined(),
+    String imptExpr = ParseTools.importCodeExpr(qualifiedClassName().combined(),
         qualifiedClassName().className());
     switch (language()) {
     default:
@@ -172,11 +172,14 @@ public class DataContractDataType extends DataType {
 
     if (Context.generatedTypeDef != null) {
       defaultPackageName = Context.generatedTypeDef.packageName();
-      if (Context.config.language() == Language.PYTHON) {
-        // If typeName is Xyz, make sure default package ends with xyz, adding if necessary
-        String packageSuff = "." + DataUtil.convertCamelCaseToUnderscores(typeName);
-        if (!("." + defaultPackageName).endsWith(packageSuff)) {
-          defaultPackageName = defaultPackageName + packageSuff;
+      if (false) {
+        die("this python special code should be handled in ParseTools I suspect");
+        if (Context.config.language() == Language.PYTHON) {
+          // If typeName is Xyz, make sure default package ends with xyz, adding if necessary
+          String packageSuff = "." + DataUtil.convertCamelCaseToUnderscores(typeName);
+          if (!("." + defaultPackageName).endsWith(packageSuff)) {
+            defaultPackageName = defaultPackageName + packageSuff;
+          }
         }
       }
     }

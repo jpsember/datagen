@@ -31,10 +31,7 @@ import java.util.List;
 
 import datagen.DataType;
 import datagen.FieldDef;
-import datagen.ParseTools;
 import datagen.SourceBuilder;
-import datagen.gen.QualifiedName;
-import js.data.DataUtil;
 import static datagen.Utils.*;
 
 public class EnumDataType extends DataType {
@@ -45,28 +42,11 @@ public class EnumDataType extends DataType {
     default:
       throw languageNotSupported();
     case PYTHON:
-      return pythonClassName() + ".default_instance";
+      return typeName() + ".default_instance";
     case JAVA:
       return typeName() + ".DEFAULT_INSTANCE";
     }
   }
-
-  private String pythonClassName() {
-    todo("Why is this method necessary?  Ought to be able to call typeName()");
-    if (mPyCl == null) {
-      String filename = DataUtil.convertCamelCaseToUnderscores(qualifiedClassName().className());
-      QualifiedName q2 = ParseTools.parseQualifiedName(qualifiedClassName().className()+"."+filename);
-      pr("qualified name ext:",INDENT,q2);
-      die();
-      mPyCl = ParseTools.importExpression("from " + qualifiedClassName().packagePath() + "." + filename
-          + " import " + qualifiedClassName().className(), qualifiedClassName().className());
-      
-      pr("constructed mPyCl:",INDENT,mPyCl,CR,typeName());
-    }
-    return mPyCl;
-  }
-
-  private String mPyCl;
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
@@ -117,7 +97,7 @@ public class EnumDataType extends DataType {
     if (python()) {
       s.a("x = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"), ")", CR);
       s.doIf(f.optional(), "if x is not None:", OPEN);
-      s.a("inst._", f.sourceName(), " = [", pythonClassName(), "(z) for z in x]", CR);
+      s.a("inst._", f.sourceName(), " = [", typeName(), "(z) for z in x]", CR);
       s.endIf(CLOSE);
     } else {
       throw languageNotSupported("deserializing list of Java enums from list");

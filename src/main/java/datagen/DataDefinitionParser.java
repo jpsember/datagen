@@ -83,7 +83,7 @@ final class DataDefinitionParser extends BaseObject {
 
   private void prepareHandlers() {
     mHandlers = hashMap();
-    mHandlers.put(EXTERN, () -> procExtern());
+    mHandlers.put(EXTERN, () -> processExternalReference(new DataContractDataType()));
     mHandlers.put(FIELDS, () -> procDataType());
     mHandlers.put(ENUM, () -> procEnum());
   }
@@ -132,14 +132,14 @@ final class DataDefinitionParser extends BaseObject {
     throw mLastReadToken.fail(messages);
   }
 
-  private void procExtern() {
-    auxProcClass(new DataContractDataType());
-  }
-
-  private void auxProcClass(DataType dataType) {
+  /**
+   * Process a reference to an externally defined type (either a DataContractDataType or an EnumDataType)
+   */
+  private void processExternalReference(DataType dataType) {
     String nameExpression = read(ID);
     read(SEMI);
-    QualifiedName qualifiedClassName = parseQualifiedName(nameExpression, determinePackageName());
+    QualifiedName qualifiedClassName = parseQualifiedName(nameExpression, packageName());
+    todo("for python code, the import statement and whatnot must include the name of the class tacked on to the package path");
     dataType.setQualifiedClassName(qualifiedClassName);
     dataType.setDeclaredFlag();
     Context.dataTypeManager.add(qualifiedClassName.className(), dataType);
@@ -148,7 +148,7 @@ final class DataDefinitionParser extends BaseObject {
   private void procDataType() {
     String typeName = DataUtil.convertUnderscoresToCamelCase(
         Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
-    GeneratedTypeDef msg = new GeneratedTypeDef(typeName, determinePackageName(), null);
+    GeneratedTypeDef msg = new GeneratedTypeDef(typeName, packageName(), null);
     setGeneratedTypeDef(msg);
 
     read(BROP);
@@ -206,7 +206,7 @@ final class DataDefinitionParser extends BaseObject {
   private void procEnum() {
     // If this is a declaration, an id followed by ;
     if (scanner().peek().id(ID)) {
-      auxProcClass(new EnumDataType());
+      processExternalReference(new EnumDataType());
       return;
     }
 
@@ -216,10 +216,10 @@ final class DataDefinitionParser extends BaseObject {
     String className2 = chomp(new File(Context.datWithSource.datRelPath()).getName(),
         DOT_EXT_DATA_DEFINITION);
     enumName = DataUtil.convertUnderscoresToCamelCase(className2);
-    QualifiedName className = parseQualifiedName(enumName, determinePackageName());
+    QualifiedName className = parseQualifiedName(enumName, packageName());
     EnumDataType enumDataType = new EnumDataType();
     enumDataType.setQualifiedClassName(className);
-    setGeneratedTypeDef(new GeneratedTypeDef(className.className(), determinePackageName(), enumDataType));
+    setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType));
 
     read(BROP);
 
@@ -233,7 +233,10 @@ final class DataDefinitionParser extends BaseObject {
     }
   }
 
-  private String determinePackageName() {
+  /**
+   * Get package for the data type being genearted
+   */
+  private String packageName() {
     if (mPackageName == null) {
       File datPath = new File(Context.datWithSource.datRelPath());
       String parentName = nullToEmpty(datPath.getParent());

@@ -140,7 +140,7 @@ public final class DataTypeManager extends BaseObject {
    */
   private void add(AbstractData defaultInstance, DefaultValueParser parser) {
     DataType dataType = new DataContractDataType();
-    dataType.setQualifiedClassName(ParseTools.parseQualifiedName(defaultInstance.getClass().getName()));
+    dataType.setQualifiedClassName(ParseTools.parseQualifiedName(defaultInstance.getClass().getName(), null));
     add(dataType.qualifiedClassName().className(), dataType, parser);
   }
 

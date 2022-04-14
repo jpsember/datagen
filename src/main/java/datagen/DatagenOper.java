@@ -73,6 +73,7 @@ public class DatagenOper extends AppOper {
       // Reset context for a new file
       Context.prepare(entry);
 
+      todo("probably simpler to require all dat files to be within a subdirectory so their package names are nonempty");
       try {
 
         // Parse .dat file

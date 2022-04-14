@@ -145,8 +145,7 @@ public final class GeneratedTypeDef extends BaseObject {
     DataTypeManager dataTypes = Context.dataTypeManager;
     DataType dataType = dataTypes.get(typeName);
     if (dataType == null) {
-      QualifiedName className = ParseTools.parseQualifiedName(typeName);
-      checkArgument(className.packagePath().isEmpty(), "Unexpected package in type name:", typeName);
+      QualifiedName className = ParseTools.parseQualifiedName(typeName,null);
       dataType = dataTypes.get(className.className());
       if (dataType == null) {
         {

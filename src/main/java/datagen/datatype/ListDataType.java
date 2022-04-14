@@ -42,14 +42,14 @@ public class ListDataType extends DataType {
   public ListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
     setQualifiedClassName(ParseTools
-        .parseQualifiedName("java.util.List<" + wrappedType.qualifiedClassName().className() + ">"));
+        .parseQualifiedName("java.util.List<" + wrappedType.qualifiedClassName().className() + ">",null));
   }
 
   @Override
   protected String provideTypeName() {
     // We need to generate import statements for the wrapped type as well as the wrapper; but we don't want 
     // to confuse the macro substitution process 
-    String wrappedImport = ParseTools.importExpression(wrappedType().qualifiedClassName().combined(), "");
+    String wrappedImport = ParseTools.importCodeExpr(wrappedType().qualifiedClassName().combined(), "");
     String wrapperImport = ParseTools.PKG_LIST + "<" + wrappedType().qualifiedClassName().className() + ">";
     return wrappedImport + wrapperImport;
   }

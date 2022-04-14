@@ -40,7 +40,7 @@ public class MapDataType extends DataType {
     mWrappedValueType = wrappedValueType;
     setQualifiedClassName(
         ParseTools.parseQualifiedName("java.util.Map<" + wrappedKeyType.qualifiedClassName().className() + ","
-            + wrappedValueType.qualifiedClassName().className() + ">"));
+            + wrappedValueType.qualifiedClassName().className() + ">", null));
   }
 
   public DataType wrappedKeyType() {
@@ -57,9 +57,8 @@ public class MapDataType extends DataType {
         "can we move this to the provideQualifiedClassName method, for simplicity? Then provideTypeName can be final?");
     // We need to generate import statements for the wrapped types as well as the wrapper; but we don't want 
     // to confuse the macro substitution process 
-    String wrappedImport1 = ParseTools.importExpression(wrappedKeyType().qualifiedClassName().combined(), "");
-    String wrappedImport2 = ParseTools.importExpression(wrappedValueType().qualifiedClassName().combined(),
-        "");
+    String wrappedImport1 = ParseTools.importCodeExpr(wrappedKeyType().qualifiedClassName().combined(), "");
+    String wrappedImport2 = ParseTools.importCodeExpr(wrappedValueType().qualifiedClassName().combined(), "");
     String wrapperImport = ParseTools.PKG_MAP + "<" + wrappedKeyType().qualifiedClassName().className() + ","
         + wrappedValueType().qualifiedClassName().className() + ">";
     return wrappedImport1 + wrappedImport2 + wrapperImport;

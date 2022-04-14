@@ -96,6 +96,7 @@ public final class ParseTools {
     }
   }
 
+  @Deprecated // pass null for defaultPackage if necessary
   public static QualifiedName parseQualifiedName(String expr) {
     return parseQualifiedName(expr, null);
   }
@@ -221,57 +222,74 @@ public final class ParseTools {
     return result;
   }
 
-  public static String importExpression(String importText, String sourceText) {
-    return "{{" + importText + "|" + sourceText + "}}";
+  /**
+   * Wrap a class name and some source code in delimeters to the class name is
+   * imported, and the source code is generated
+   */
+  public static String importCodeExpr(String qualifiedClassName, String sourceCode) {
+    return "{{" + qualifiedClassName + "|" + sourceCode + "}}";
   }
 
+  
+  private static String javaClassExpr(String qualifiedClassName) {
+    return importedClassExpr(Language.JAVA, qualifiedClassName);
+  }
 
-  public static String importExpression(QualifiedName qualifiedName) {
-    pr("import expr:",qualifiedName);
-   if (true) return javaImportExpression(qualifiedName.combined());
-    return "<not finished>";
-//    return "{{" + importText + "|" + sourceText + "}}";
+  private static String pythonClassExpr(String qualifiedClassName) {
+    return importedClassExpr(Language.PYTHON, qualifiedClassName);
   }
-  
-  
-  private static String javaImportExpression(String arg) {
-    todo("rename");
-    int cursor = arg.lastIndexOf('.');
-    checkArgument(cursor > 0);
-    return importExpression(arg, arg.substring(cursor + 1));
+
+  /**
+   * Wrap a class name in delimeters so the class is imported, and the class
+   * name (without its package) is generated
+   */
+  public static String importedClassExpr(Language language, String qualifiedClassName) {
+    if (language == null)
+      language = Context.config.language();
+    try {
+      int cursor = qualifiedClassName.lastIndexOf('.');
+      checkState(cursor > 0 && cursor < qualifiedClassName.length() - 1);
+
+      String packageName = qualifiedClassName.substring(0, cursor);
+      String className = qualifiedClassName.substring(cursor + 1);
+
+      if (language == Language.PYTHON) {
+        // By convention, we must convert the class name to lowercase and append it to the package path,
+        // e.g.   pycore.DataUtil ->  pycore.datautil.DataUtil
+        String packageSuffix = className.toLowerCase();
+        checkArgument(!className.equals(packageSuffix));
+        String dottedSuffix = "." + packageSuffix;
+        checkArgument(!packageName.endsWith(dottedSuffix));
+        qualifiedClassName = packageName + dottedSuffix + "." + className;
+      }
+
+      return importCodeExpr(qualifiedClassName, className);
+    } catch (Throwable t) {
+      throw badArg("Failed to parse imported class expression:", quote(qualifiedClassName),"for language",language);
+    }
   }
-//
-//  private static String pythonImportExpression(String arg) {
-//    if(todo("this is now the same as java impt expr")) {
-//      return javaImportExpression(arg);
-//    }
-//    
-//    int cursor = arg.lastIndexOf(' ');
-//    checkArgument(cursor > 0);
-//    return importExpression(arg, arg.substring(cursor + 1));
-//  }
 
   // Qualified class names for some of my data types (and Java's), in case they change or get substituted in future
   //
-  public static final String PKG_TOOLS = javaImportExpression("js.base.Tools");
-  public static final String PKG_DATAUTIL = javaImportExpression("js.data.DataUtil");
-  public static final String PKG_JSMAP = javaImportExpression("js.json.JSMap");
-  public static final String PKG_JSLIST = javaImportExpression("js.json.JSList");
-  public static final String PKG_FILES = javaImportExpression("js.file.Files");
-  public static final String PKG_LIST = javaImportExpression("java.util.List");
-  public static final String PKG_MAP = javaImportExpression("java.util.Map");
-  public static final String PKG_CONCURRENT_MAP = javaImportExpression(
+  public static final String PKG_TOOLS = javaClassExpr("js.base.Tools");
+  public static final String PKG_DATAUTIL = javaClassExpr("js.data.DataUtil");
+  public static final String PKG_JSMAP = javaClassExpr("js.json.JSMap");
+  public static final String PKG_JSLIST = javaClassExpr("js.json.JSList");
+  public static final String PKG_FILES = javaClassExpr("js.file.Files");
+  public static final String PKG_LIST = javaClassExpr("java.util.List");
+  public static final String PKG_MAP = javaClassExpr("java.util.Map");
+  public static final String PKG_CONCURRENT_MAP = javaClassExpr(
       "java.util.concurrent.ConcurrentHashMap");
-  public static final String PKG_STRING = javaImportExpression("java.lang.String");
-  public static final String PKG_ARRAYS = javaImportExpression("java.util.Arrays");
-  public static final String PKG_ARRAYLIST = javaImportExpression("java.util.ArrayList");
-  public static final String PKG_JSOBJECT = javaImportExpression("js.json.JSObject");
+  public static final String PKG_STRING = javaClassExpr("java.lang.String");
+  public static final String PKG_ARRAYS = javaClassExpr("java.util.Arrays");
+  public static final String PKG_ARRAYLIST = javaClassExpr("java.util.ArrayList");
+  public static final String PKG_JSOBJECT = javaClassExpr("js.json.JSObject");
   public static final String PKG_MUTABLELIST = "new " + PKG_ARRAYLIST + "<>()";
-  public static final String PKG_SHORT_ARRAY = javaImportExpression("js.data.ShortArray");
-  public static final String PKG_FLOAT_ARRAY = javaImportExpression("js.data.FloatArray");
-  public static final String PKG_DOUBLE_ARRAY = javaImportExpression("js.data.DoubleArray");
+  public static final String PKG_SHORT_ARRAY = javaClassExpr("js.data.ShortArray");
+  public static final String PKG_FLOAT_ARRAY = javaClassExpr("js.data.FloatArray");
+  public static final String PKG_DOUBLE_ARRAY = javaClassExpr("js.data.DoubleArray");
 
-  public static final String PKGPY_DATAUTIL = javaImportExpression("pycore.datautil.DataUtil");
+  public static final String PKGPY_DATAUTIL = pythonClassExpr("pycore.DataUtil");
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 

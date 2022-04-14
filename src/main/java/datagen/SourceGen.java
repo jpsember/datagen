@@ -111,7 +111,7 @@ public abstract class SourceGen extends BaseObject {
     // Pass 3: generate the import statements
     //
     m.clear();
-    m.put("imports", generateImports(mImportedClasses));
+    m.put("imports", generateImports(mImportedClassNames));
 
     {
       MacroParser parser = new MacroParser();
@@ -179,13 +179,11 @@ public abstract class SourceGen extends BaseObject {
    * We will look for expressions of the form "{{xxxx|yyyy}}" and then:
    * 
    * 1) replace that expression with "yyyy" within the source
-   * 2) generate an import statement "xxxx" 
+   * 2) generate an import statement for (fully qualified class name) "xxxx" 
    * 
-   * Note this is different from the Java technique, but this is a better way
    * </pre>
    */
   private String extractImportStatements(String template) {
-    todo("We aren't actually generating the 'import' part for Java here");
     Set<String> statementSet = hashSet();
     MacroParser parser = new MacroParser();
     parser.withPattern(ParseTools.IMPORT_REGEXP);
@@ -217,12 +215,12 @@ public abstract class SourceGen extends BaseObject {
     List<String> lst = arrayList();
     lst.addAll(statementSet);
     lst.sort(null);
-    mImportedClasses = lst;
+    mImportedClassNames = lst;
     return result;
   }
 
   private SourceBuilder mSourceBuilder;
-  private List<String> mImportedClasses;
+  private List<String> mImportedClassNames;
 
   private static final String NOT_SUPPORTED = "<<not supported>>";
 
