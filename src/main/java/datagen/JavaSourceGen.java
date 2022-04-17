@@ -161,7 +161,7 @@ public final class JavaSourceGen extends SourceGen {
     SourceBuilder s = s().in(0);
     for (FieldDef f : def.fields()) {
       s.br();
-      s.a("public ", f.dataType().typeName(), " ", f.sourceNameLowerFirst(), "()", OPEN, //
+      s.a("public ", f.dataType().typeName(), " ", f.getterName(), "()", OPEN, //
           "return ", f.instanceName(), ";", CLOSE);
     }
     s.out();

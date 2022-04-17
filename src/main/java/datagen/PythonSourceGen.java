@@ -97,7 +97,7 @@ public class PythonSourceGen extends SourceGen {
     for (FieldDef f : def.fields()) {
       s.a("\\\\", CR);
       DataType d = f.dataType();
-      s.a("def set_", setExpr(def, f), "(self, x):", OPEN);
+      s.a("def ", f.setterName(), "(self, x):", OPEN);
       String targetExpr = "self." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "return self", CLOSE);
@@ -172,7 +172,7 @@ public class PythonSourceGen extends SourceGen {
     SourceBuilder s = s().in(0);
     for (FieldDef f : def.fields()) {
       s.a("\\\\").cr();
-      s.a("def ", DataUtil.lowerFirst(f.name()) , "(self):", OPEN, //
+      s.a("def ", DataUtil.lowerFirst(f.name()), "(self):", OPEN, //
           "return self.", f.instanceName(), CLOSE);
     }
     s.out();
@@ -209,7 +209,7 @@ public class PythonSourceGen extends SourceGen {
           first = false;
         } else
           s.a(CR);
-        s.a("and self.",f.instanceName(), " == other.", f.instanceName() );
+        s.a("and self.", f.instanceName(), " == other.", f.instanceName());
       }
       if (!first)
         s.out();
@@ -245,13 +245,6 @@ public class PythonSourceGen extends SourceGen {
       if (!sentinelFile.exists())
         files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
     }
-  }
-
-  /**
-   * Get the name of a setter
-   */
-  private String setExpr(GeneratedTypeDef m, FieldDef f) {
-    return f.sourceNameLowerFirst();
   }
 
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template_py.txt");

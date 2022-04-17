@@ -3,15 +3,15 @@ package datagen;
 import js.data.DataUtil;
 
 public class PythonFieldDef extends FieldDef {
- 
+
   @Override
   public String provideSetterName() {
-    return sourceNameLowerFirst();
+    return "set_" + provideSourceName();
   }
 
   @Override
   public String provideGetterName() {
-    return sourceNameLowerFirst();
+    return provideSourceName();
   }
 
   @Override

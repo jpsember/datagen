@@ -6,11 +6,12 @@ public class JavaFieldDef extends FieldDef {
 
   @Override
   public String provideSetterName() {
-    return sourceNameLowerFirst();
+    return DataUtil.lowerFirst(DataUtil.convertUnderscoresToCamelCase(name()));
   }
+
   @Override
   public String provideGetterName() {
-    return sourceNameLowerFirst();
+    return provideSetterName();
   }
 
   @Override

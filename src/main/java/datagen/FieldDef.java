@@ -79,8 +79,10 @@ public abstract class FieldDef extends BaseObject {
 
   protected abstract String provideInstanceName();
 
+  @Deprecated
   protected abstract String provideSourceName();
 
+  @Deprecated
   protected abstract String provideSourceNameLowerFirst();
 
   public String instanceName() {
@@ -109,7 +111,7 @@ public abstract class FieldDef extends BaseObject {
   private String mCachedSetterName;
 
   @Deprecated
-  public String sourceName() {
+  public final String sourceName() {
     if (mSourceName == null) {
       mSourceNameCapFirst = provideSourceName();
       mSourceName = provideSourceNameLowerFirst();
@@ -118,7 +120,7 @@ public abstract class FieldDef extends BaseObject {
   }
 
   @Deprecated
-  public String sourceNameLowerFirst() {
+  public final String sourceNameLowerFirst() {
     todo("have better names for sourceName, sourceNameLowerFirst, and providers");
     sourceName();
     return mSourceName;
