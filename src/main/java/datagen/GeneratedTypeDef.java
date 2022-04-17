@@ -162,7 +162,8 @@ public final class GeneratedTypeDef extends BaseObject {
         }
 
         DataType contractType = ContractDataType.construct();
-        ParseTools.parseQualifiedName(contractType,  typeName);
+        QualifiedName qn = ParseTools.parseQualifiedName(typeName, Context.generatedTypeDef.packageName());
+        contractType.setQualifiedClassName(qn);
         dataType = (DataType) contractType;
         dataTypes.add(dataType.qualifiedClassName().className(), dataType);
       }
