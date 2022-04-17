@@ -30,10 +30,11 @@ import static js.base.Tools.*;
 import java.util.List;
 
 import datagen.FieldDef;
+import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import static datagen.Utils.*;
 
-public class JavaEnumDataType extends EnumDataType {
+public class JavaEnumDataType extends JavaDataType implements EnumDataType {
 
   @Override
   protected void todoMarker() {
@@ -61,11 +62,6 @@ public class JavaEnumDataType extends EnumDataType {
       s.a("r = r * 37 + m", f.sourceName(), ".ordinal();");
       s.endIf(CLOSE);
     }
-  }
-
-  public void addLabel(String label) {
-    checkArgument(!mLabels.contains(label), "duplicate label:", label);
-    mLabels.add(label);
   }
 
   @Override
@@ -107,10 +103,20 @@ public class JavaEnumDataType extends EnumDataType {
     }
   }
 
+  //------------------------------------------------------------------
+  // EnumDataType interface
+  // ------------------------------------------------------------------
+
+  @Override
+  public void addLabel(String label) {
+    checkArgument(!mLabels.contains(label), "duplicate label:", label);
+    mLabels.add(label);
+  }
+
+  @Override
   public List<String> labels() {
     return mLabels;
   }
 
   private List<String> mLabels = arrayList();
-
 }

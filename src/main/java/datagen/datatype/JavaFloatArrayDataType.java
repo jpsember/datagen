@@ -31,7 +31,7 @@ import datagen.ParseTools;
 import datagen.SourceBuilder;
 import static datagen.Utils.*;
 
-public class FloatArrayDataType extends JavaDataContractDataType {
+public class JavaFloatArrayDataType extends JavaContractDataType {
 
   @Override
   public String provideSourceDefaultValue() {

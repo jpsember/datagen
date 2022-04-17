@@ -33,8 +33,8 @@ import java.util.List;
 
 import datagen.Context;
 import datagen.FieldDef;
+import datagen.JavaDataType;
 import datagen.ParseTools;
-import datagen.PythonDataType;
 import datagen.SourceBuilder;
 import datagen.gen.QualifiedName;
 import js.parsing.Scanner;
@@ -43,7 +43,7 @@ import js.parsing.Token;
 /**
  * DataType that wraps objects that implement the DataType interface
  */
-public class PythonDataContractDataType extends PythonDataType implements ContractDataType {
+public class JavaContractDataType extends JavaDataType implements ContractDataType {
 
   @Override
   public String provideSourceDefaultValue() {

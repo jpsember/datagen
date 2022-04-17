@@ -31,21 +31,16 @@ import datagen.ParseTools;
 import datagen.SourceBuilder;
 import static datagen.Utils.*;
 
-public class ShortArrayDataType extends JavaDataContractDataType {
+public class JavaLongArrayDataType extends JavaContractDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      return ParseTools.PKG_DATAUTIL + ".EMPTY_SHORT_ARRAY";
-    }
+    return ParseTools.PKG_DATAUTIL + ".EMPTY_LONG_ARRAY";
   }
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    return "java.lang.short[]";
+    return "java.lang.long[]";
   }
 
   public String getSerializeDataType() {
@@ -72,7 +67,7 @@ public class ShortArrayDataType extends JavaDataContractDataType {
     default:
       throw languageNotSupported();
     case JAVA:
-      return ParseTools.PKG_DATAUTIL + ".parseBase64Shorts(x)";
+      return ParseTools.PKG_DATAUTIL + ".parseBase64Longs(x)";
     }
   }
 
@@ -87,7 +82,6 @@ public class ShortArrayDataType extends JavaDataContractDataType {
       break;
     }
   }
-
   //------------------------------------------------------------------
   // Hashcode and Equals methods
   // ------------------------------------------------------------------

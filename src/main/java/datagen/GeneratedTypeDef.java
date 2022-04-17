@@ -33,12 +33,12 @@ import static datagen.Utils.*;
 
 import datagen.datatype.JavaListDataType;
 import datagen.datatype.JavaMapDataType;
-import datagen.datatype.PythonDataContractDataType;
+import datagen.datatype.PythonContractDataType;
 import datagen.datatype.PythonListDataType;
 import datagen.datatype.PythonMapDataType;
 import datagen.datatype.ContractDataType;
 import datagen.datatype.EnumDataType;
-import datagen.datatype.JavaDataContractDataType;
+import datagen.datatype.JavaContractDataType;
 import datagen.gen.QualifiedName;
 import datagen.gen.TypeStructure;
 import js.base.BaseObject;
@@ -49,10 +49,10 @@ import js.json.JSMap;
  */
 public final class GeneratedTypeDef extends BaseObject {
 
-  public GeneratedTypeDef(String name, String packageName, EnumDataType enumTypeOrNull) {
+  public GeneratedTypeDef(String name, String packageName,  DataType enumTypeOrNull) {
     setName(name);
     mPackageName = nullToEmpty(packageName);
-    mEnumDataType = enumTypeOrNull;
+    mEnumDataType = (EnumDataType)enumTypeOrNull;
   }
 
   public String packageName() {
@@ -162,8 +162,9 @@ public final class GeneratedTypeDef extends BaseObject {
             badArg("No definition file found at", datFile, INDENT, "...use 'extern' to declare its location");
         }
 
-        ContractDataType contractType = python() ? new PythonDataContractDataType()
-            : new JavaDataContractDataType();
+        todo("Have utility method");
+        ContractDataType contractType = python() ? new PythonContractDataType()
+            : new JavaContractDataType();
         contractType.parseQualifiedName(typeName);
         dataType = (DataType) contractType;
         dataTypes.add(dataType.qualifiedClassName().className(), dataType);

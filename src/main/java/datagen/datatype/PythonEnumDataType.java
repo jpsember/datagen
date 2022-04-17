@@ -30,10 +30,11 @@ import static js.base.Tools.*;
 import java.util.List;
 
 import datagen.FieldDef;
+import datagen.PythonDataType;
 import datagen.SourceBuilder;
 import static datagen.Utils.*;
 
-public class PythonEnumDataType extends EnumDataType {
+public class PythonEnumDataType extends PythonDataType implements EnumDataType {
  
   @Override
   protected void todoMarker() {
@@ -63,11 +64,7 @@ public class PythonEnumDataType extends EnumDataType {
     }
   }
 
-  public void addLabel(String label) {
-    checkArgument(!mLabels.contains(label), "duplicate label:", label);
-    mLabels.add(label);
-  }
-
+ 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
     if (python())
@@ -107,6 +104,17 @@ public class PythonEnumDataType extends EnumDataType {
     }
   }
 
+  // ------------------------------------------------------------------
+  // EnumDataType interface
+  // ------------------------------------------------------------------
+
+  @Override
+  public void addLabel(String label) {
+    checkArgument(!mLabels.contains(label), "duplicate label:", label);
+    mLabels.add(label);
+  }
+
+  @Override
   public List<String> labels() {
     return mLabels;
   }

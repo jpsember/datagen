@@ -24,23 +24,11 @@
  **/
 package datagen.datatype;
 
-import static js.base.Tools.*;
-
 import java.util.List;
 
-import datagen.DataType;
+public interface EnumDataType {
 
-public abstract class EnumDataType extends DataType {
+  void addLabel(String label);
 
-  public void addLabel(String label) {
-    checkArgument(!mLabels.contains(label), "duplicate label:", label);
-    mLabels.add(label);
-  }
-
-  public List<String> labels() {
-    return mLabels;
-  }
-
-  private List<String> mLabels = arrayList();
-
+  List<String> labels();
 }

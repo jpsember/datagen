@@ -29,18 +29,17 @@ import static js.base.Tools.*;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import static datagen.Utils.*;
 
-public class LongArrayDataType extends JavaDataContractDataType {
+public class JavaByteArrayDataType extends JavaContractDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return ParseTools.PKG_DATAUTIL + ".EMPTY_LONG_ARRAY";
+    return ParseTools.PKG_DATAUTIL + ".EMPTY_BYTE_ARRAY";
   }
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    return "java.lang.long[]";
+    return "java.lang.byte[]";
   }
 
   public String getSerializeDataType() {
@@ -48,12 +47,7 @@ public class LongArrayDataType extends JavaDataContractDataType {
   }
 
   public String getSerializeToJSONValue(String value) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      return ParseTools.PKG_DATAUTIL + ".encodeBase64(" + value + ")";
-    }
+    return ParseTools.PKG_DATAUTIL + ".encodeBase64(" + value + ")";
   }
 
   @Override
@@ -63,25 +57,15 @@ public class LongArrayDataType extends JavaDataContractDataType {
 
   @Override
   public String getConstructFromX() {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      return ParseTools.PKG_DATAUTIL + ".parseBase64Longs(x)";
-    }
+    return ParseTools.PKG_DATAUTIL + ".parseBase64(x)";
   }
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      String defaultValue = f.defaultValueOrNull();
-      s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
-      break;
-    }
+    String defaultValue = f.defaultValueOrNull();
+    s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
   }
+
   //------------------------------------------------------------------
   // Hashcode and Equals methods
   // ------------------------------------------------------------------
@@ -93,13 +77,7 @@ public class LongArrayDataType extends JavaDataContractDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
-      break;
-    }
+    s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
   }
 
 }

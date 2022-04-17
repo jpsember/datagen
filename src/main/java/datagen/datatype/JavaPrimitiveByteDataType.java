@@ -24,54 +24,65 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
-import static datagen.SourceBuilder.*;
-import static js.base.Tools.*;
-
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
-import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
+import static datagen.ParseTools.*;
 
-public class JsonListDataType extends JavaDataType {
+/**
+ * Datatype for primitive bytes, i.e. "byte x;"
+ */
+public class JavaPrimitiveByteDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    return "js.json.JSList";
+    return "java.lang.byte";
   }
 
   @Override
-  public final String provideSourceDefaultValue() {
-    return ParseTools.PKG_JSLIST + ".DEFAULT_INSTANCE";
+  public final String compilerInitialValue() {
+    return "(byte) 0";
   }
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    String constName = "DEF_" + fieldDef.nameStringConstant();
-    classSpecificSource.a("  private static final ", typeName(), " ", constName, " = new ", typeName(), "(",
-        scanner.read(STRING).text(), ");", CR);
-    return constName;
+      FieldDef fieldDefUnused) {
+    int value = (int) Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Byte.MIN_VALUE, Byte.MAX_VALUE);
+    return Integer.toString(value);
   }
 
   @Override
-  public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.open();
-    if (!f.optional())
-      s.a("m", f.sourceName(), " = ", f.defaultValueOrNull(), ";", CR);
-    s.a(typeName(), " x = m.optJSList(", f.nameStringConstant(), ");", CR, //
-        "if (x != null)", OPEN, //
-        "m", f.sourceName(), " = x.lock();", //
-        CLOSE //
-    );
-    s.close();
+  public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
+    if (f.optional())
+      s.a("r = r * 37 + m", f.sourceName(), ".byteValue();");
+    else
+      s.a("r = r * 37 + m", f.sourceName(), ";");
   }
 
   @Override
-  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstant(),
-        "), ", f.optional(), ");", CR);
+  public DataType optionalVariant() {
+    return new Boxed();
+  }
+
+  @Override
+  public DataType listVariant() {
+    return new JavaByteArrayDataType();
+  }
+
+  private static class Boxed extends JavaPrimitiveByteDataType {
+
+    @Override
+    protected String provideQualifiedClassNameExpr() {
+      return "java.lang.Byte";
+    }
+
+    @Override
+    public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
+      s.a("m", f.sourceName(), " = m.optByte(", f.nameStringConstant(), ");");
+    }
+
   }
 
 }

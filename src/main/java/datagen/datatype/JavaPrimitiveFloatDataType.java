@@ -24,6 +24,7 @@
  **/
 package datagen.datatype;
 
+
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
@@ -31,34 +32,31 @@ import datagen.SourceBuilder;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
 
-/**
- * Datatype for primitive bytes, i.e. "byte x;"
- */
-public class PrimitiveByteDataType extends JavaDataType {
+public class JavaPrimitiveFloatDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    return "java.lang.byte";
+    return "java.lang.float";
   }
 
   @Override
   public final String compilerInitialValue() {
-    return "(byte) 0";
+    return "0f";
   }
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDefUnused) {
-    int value = (int) Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Byte.MIN_VALUE, Byte.MAX_VALUE);
-    return Integer.toString(value);
+    float value = parseFloatValue(scanner.read(NUMBER).text());
+    return Float.toString(value) + "f";
   }
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
     if (f.optional())
-      s.a("r = r * 37 + m", f.sourceName(), ".byteValue();");
+      s.a("r = r * 37 + m", f.sourceName(), ".hashCode();");
     else
-      s.a("r = r * 37 + m", f.sourceName(), ";");
+      s.a("r = r * 37 + (int)m", f.sourceName(), ";");
   }
 
   @Override
@@ -68,19 +66,19 @@ public class PrimitiveByteDataType extends JavaDataType {
 
   @Override
   public DataType listVariant() {
-    return new ByteArrayDataType();
+    return new Boxed();
   }
 
-  private static class Boxed extends PrimitiveByteDataType {
+  private static class Boxed extends JavaPrimitiveFloatDataType {
 
     @Override
     protected String provideQualifiedClassNameExpr() {
-      return "java.lang.Byte";
+      return "java.lang.Float";
     }
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.sourceName(), " = m.optByte(", f.nameStringConstant(), ");");
+      s.a("m", f.sourceName(), " = m.optFloat(", f.nameStringConstant(), ");");
     }
 
   }

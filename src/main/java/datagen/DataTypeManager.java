@@ -71,18 +71,18 @@ public final class DataTypeManager extends BaseObject {
       add("string", new PyStringDataType());
       break;
     case JAVA:
-      add("byte", new PrimitiveByteDataType());
-      add("short", new PrimitiveShortDataType());
-      add("int", new PrimitiveIntegerDataType());
-      add("long", new PrimitiveLongDataType());
-      add("float", new PrimitiveFloatDataType());
-      add("double", new PrimitiveDoubleDataType());
-      add("File", new FileDataType());
+      add("byte", new JavaPrimitiveByteDataType());
+      add("short", new JavaPrimitiveShortDataType());
+      add("int", new JavaPrimitiveIntegerDataType());
+      add("long", new JavaPrimitiveLongDataType());
+      add("float", new JavaPrimitiveFloatDataType());
+      add("double", new JavaPrimitiveDoubleDataType());
+      add("File", new JavaFileDataType());
       add(IPoint.DEFAULT_INSTANCE, IPOINT_PARSER);
-      add("bool", new BooleanDataType());
-      add("string", new StringDataType());
+      add("bool", new JavaBooleanDataType());
+      add("string", new JavaStringDataType());
       add("JSMap", new JsonMapDataType());
-      add("JSList", new JsonListDataType());
+      add("JSList", new JavaJsonListDataType());
       break;
     }
 
@@ -141,7 +141,8 @@ public final class DataTypeManager extends BaseObject {
    * interface, and register it
    */
   private void add(AbstractData defaultInstance, DefaultValueParser parser) {
-    DataType dataType = python() ? new PythonDataContractDataType() : new JavaDataContractDataType();
+    todo("Have utility method");
+    DataType dataType = python() ? new PythonContractDataType() : new JavaContractDataType();
     dataType.setQualifiedClassName(ParseTools.parseQualifiedName(defaultInstance.getClass().getName(), null));
     add(dataType.qualifiedClassName().className(), dataType, parser);
   }

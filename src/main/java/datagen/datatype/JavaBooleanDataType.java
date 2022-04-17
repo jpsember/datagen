@@ -33,7 +33,7 @@ import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public class BooleanDataType extends JavaDataType {
+public class JavaBooleanDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
@@ -77,7 +77,7 @@ public class BooleanDataType extends JavaDataType {
         "), ", f.optional(), ");", CR);
   }
 
-  private static class Boxed extends BooleanDataType {
+  private static class Boxed extends JavaBooleanDataType {
 
     @Override
     protected String provideQualifiedClassNameExpr() {

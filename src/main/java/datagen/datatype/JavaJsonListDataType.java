@@ -25,55 +25,53 @@
 package datagen.datatype;
 
 import static datagen.ParseTools.*;
+import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
 import datagen.FieldDef;
 import datagen.JavaDataType;
+import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public final class StringDataType extends JavaDataType {
+public class JavaJsonListDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    return "java.lang.String";
+    return "js.json.JSList";
   }
 
   @Override
   public final String provideSourceDefaultValue() {
-    return "\"\"";
+    return ParseTools.PKG_JSLIST + ".DEFAULT_INSTANCE";
   }
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    return scanner.read(STRING).text();
+    String constName = "DEF_" + fieldDef.nameStringConstant();
+    classSpecificSource.a("  private static final ", typeName(), " ", constName, " = new ", typeName(), "(",
+        scanner.read(STRING).text(), ");", CR);
+    return constName;
   }
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstant(), ", ");
+    s.open();
     if (!f.optional())
-      s.a(f.defaultValueOrNull());
-    else
-      s.a("(String) null");
-    s.a(");", CR);
+      s.a("m", f.sourceName(), " = ", f.defaultValueOrNull(), ";", CR);
+    s.a(typeName(), " x = m.optJSList(", f.nameStringConstant(), ");", CR, //
+        "if (x != null)", OPEN, //
+        "m", f.sourceName(), " = x.lock();", //
+        CLOSE //
+    );
+    s.close();
   }
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a("m", f.sourceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstant(),
         "), ", f.optional(), ");", CR);
-  }
-
-  @Override
-  public String deserializeJsonToMapValue(String jsonValue) {
-    return "(String) " + jsonValue;
-  }
-
-  @Override
-  public String deserializeStringToMapKey(String jsonStringValue) {
-    return jsonStringValue;
   }
 
 }

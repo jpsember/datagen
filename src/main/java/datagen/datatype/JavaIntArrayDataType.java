@@ -29,17 +29,18 @@ import static js.base.Tools.*;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
+import static datagen.Utils.*;
 
-public class ByteArrayDataType extends JavaDataContractDataType {
+public class JavaIntArrayDataType extends JavaContractDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return ParseTools.PKG_DATAUTIL + ".EMPTY_BYTE_ARRAY";
+    return ParseTools.PKG_DATAUTIL + ".EMPTY_INT_ARRAY";
   }
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    return "java.lang.byte[]";
+    return "java.lang.int[]";
   }
 
   public String getSerializeDataType() {
@@ -47,7 +48,12 @@ public class ByteArrayDataType extends JavaDataContractDataType {
   }
 
   public String getSerializeToJSONValue(String value) {
-    return ParseTools.PKG_DATAUTIL + ".encodeBase64(" + value + ")";
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      return ParseTools.PKG_DATAUTIL + ".encodeBase64(" + value + ")";
+    }
   }
 
   @Override
@@ -57,13 +63,24 @@ public class ByteArrayDataType extends JavaDataContractDataType {
 
   @Override
   public String getConstructFromX() {
-    return ParseTools.PKG_DATAUTIL + ".parseBase64(x)";
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      return ParseTools.PKG_DATAUTIL + ".parseBase64Ints(x)";
+    }
   }
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    String defaultValue = f.defaultValueOrNull();
-    s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      String defaultValue = f.defaultValueOrNull();
+      s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
+      break;
+    }
   }
 
   //------------------------------------------------------------------
@@ -77,7 +94,13 @@ public class ByteArrayDataType extends JavaDataContractDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
+      break;
+    }
   }
 
 }

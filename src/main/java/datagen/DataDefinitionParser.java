@@ -32,9 +32,9 @@ import java.io.File;
 import java.util.Map;
 
 import datagen.datatype.EnumDataType;
-import datagen.datatype.JavaDataContractDataType;
+import datagen.datatype.JavaContractDataType;
 import datagen.datatype.JavaEnumDataType;
-import datagen.datatype.PythonDataContractDataType;
+import datagen.datatype.PythonContractDataType;
 import datagen.datatype.PythonEnumDataType;
 import datagen.gen.QualifiedName;
 import datagen.gen.TypeStructure;
@@ -87,8 +87,9 @@ final class DataDefinitionParser extends BaseObject {
 
   private void prepareHandlers() {
     mHandlers = hashMap();
+    todo("populate map in language-specific way");
     mHandlers.put(EXTERN, () -> processExternalReference(
-        python() ? new PythonDataContractDataType() : new JavaDataContractDataType()));
+        python() ? new PythonContractDataType() : new JavaContractDataType()));
     mHandlers.put(FIELDS, () -> procDataType());
     mHandlers.put(ENUM, () -> procEnum());
   }
@@ -210,7 +211,8 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void procEnum() {
-    EnumDataType enumDataType = python() ? new PythonEnumDataType() : new JavaEnumDataType();
+    todo("Have utility method to construct appropriate subtype");
+     DataType enumDataType = python() ? new PythonEnumDataType() : new JavaEnumDataType();
 
     // If this is a declaration, an id followed by ;
     if (scanner().peek().id(ID)) {
@@ -235,7 +237,7 @@ final class DataDefinitionParser extends BaseObject {
       if (readIf(BRCL) != null)
         break;
       String name = read(ID);
-      enumDataType.addLabel(name.toUpperCase());
+      ((EnumDataType) enumDataType).addLabel(name.toUpperCase());
       while (readIf(COMMA) != null || readIf(SEMI) != null)
         continue;
     }

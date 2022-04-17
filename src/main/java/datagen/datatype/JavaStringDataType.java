@@ -24,63 +24,56 @@
  **/
 package datagen.datatype;
 
-import datagen.DataType;
+import static datagen.ParseTools.*;
+import static js.base.Tools.*;
+
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
-import static datagen.ParseTools.*;
 
-/**
- * Datatype for primitive short integers, i.e. "short x;"
- */
-public class PrimitiveShortDataType extends JavaDataType {
+public final class JavaStringDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    return "java.lang.short";
+    return "java.lang.String";
   }
 
   @Override
-  public final String compilerInitialValue() {
-    return "(short) 0";
+  public final String provideSourceDefaultValue() {
+    return "\"\"";
   }
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    int value = (int) Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Short.MIN_VALUE,
-        Short.MAX_VALUE);
-    return Integer.toString(value);
+    return scanner.read(STRING).text();
   }
 
   @Override
-  public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + m", f.sourceName(), ";");
+  public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
+    s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstant(), ", ");
+    if (!f.optional())
+      s.a(f.defaultValueOrNull());
+    else
+      s.a("(String) null");
+    s.a(");", CR);
   }
 
   @Override
-  public DataType optionalVariant() {
-    return new BoxedDataType();
+  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+    s.a("m", f.sourceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstant(),
+        "), ", f.optional(), ");", CR);
   }
 
   @Override
-  public DataType listVariant() {
-    return new ShortArrayDataType();
+  public String deserializeJsonToMapValue(String jsonValue) {
+    return "(String) " + jsonValue;
   }
 
-  private static class BoxedDataType extends PrimitiveShortDataType {
-
-    @Override
-    protected String provideQualifiedClassNameExpr() {
-      return "java.lang.Short";
-    }
-
-    @Override
-    public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.sourceName(), " = m.optShort(", f.nameStringConstant(), ");");
-    }
-
+  @Override
+  public String deserializeStringToMapKey(String jsonStringValue) {
+    return jsonStringValue;
   }
 
 }

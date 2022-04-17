@@ -24,41 +24,39 @@
  **/
 package datagen.datatype;
 
+import static datagen.ParseTools.*;
+
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
-import static datagen.ParseTools.*;
 
 /**
- * Datatype for longs (and boxed version)
+ * Datatype for primitive integers, i.e. "int x;"
  */
-public class PrimitiveLongDataType extends JavaDataType {
+public class JavaPrimitiveIntegerDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    return "java.lang.long";
+    return "java.lang.int";
   }
 
   @Override
   public final String compilerInitialValue() {
-    return "0L";
+    return "0";
   }
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    long value = Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Long.MIN_VALUE, Long.MAX_VALUE);
-    return Long.toString(value) + "L";
+      FieldDef fieldDefUnused) {
+    int value = scanner.readInt(NUMBER);
+    return Integer.toString(value);
   }
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    if (f.optional())
-      s.a("r = r * 37 + m", f.sourceName(), ".intValue();");
-    else
-      s.a("r = r * 37 + (int)m", f.sourceName(), ";");
+    s.a("r = r * 37 + m", f.sourceName(), ";");
   }
 
   @Override
@@ -68,19 +66,19 @@ public class PrimitiveLongDataType extends JavaDataType {
 
   @Override
   public DataType listVariant() {
-    return new LongArrayDataType();
+    return new JavaIntArrayDataType();
   }
 
-  private static class Boxed extends PrimitiveLongDataType {
+  private static class Boxed extends JavaPrimitiveIntegerDataType {
 
     @Override
     protected String provideQualifiedClassNameExpr() {
-      return "java.lang.Long";
+      return "java.lang.Integer";
     }
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.sourceName(), " = m.optLong(", f.nameStringConstant(), ");");
+      s.a("m", f.sourceName(), " = m.optInt(", f.nameStringConstant(), ");");
     }
 
   }

@@ -34,7 +34,7 @@ import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public final class FileDataType extends JavaDataType {
+public final class JavaFileDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {

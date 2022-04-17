@@ -24,71 +24,41 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static js.base.Tools.*;
-
-import java.util.List;
 
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
+import static datagen.Utils.*;
 
-public class DoubleArrayDataType extends JavaDataContractDataType {
+public class JavaShortArrayDataType extends JavaContractDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return ParseTools.PKG_DATAUTIL + ".EMPTY_DOUBLE_ARRAY";
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      return ParseTools.PKG_DATAUTIL + ".EMPTY_SHORT_ARRAY";
+    }
   }
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    return "java.lang.double[]";
-  }
-
-  @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    List<String> parsedNumbers = arrayList();
-
-    {
-      scanner.read(SQOP);
-      for (int index = 0;; index++) {
-        if (scanner.readIf(SQCL) != null)
-          break;
-        if (index > 0) {
-          scanner.read(COMMA);
-          // Allow an extraneous trailing comma
-          if (scanner.readIf(SQCL) != null)
-            break;
-        }
-        parsedNumbers.add(scanner.read(NUMBER).text());
-      }
-    }
-
-    SourceBuilder sb = classSpecificSource;
-    String constName = "DEF_" + fieldDef.nameStringConstant();
-    sb.a("  private static final ", typeName(), " ", constName, " = ");
-    sb.a("{");
-    int index = INIT_INDEX;
-    for (String numberText : parsedNumbers) {
-      index++;
-      if (index > 0) {
-        sb.a(",");
-      }
-      sb.a(numberText);
-    }
-    sb.a("};").cr();
-
-    return constName;
+    return "java.lang.short[]";
   }
 
   public String getSerializeDataType() {
-    return ParseTools.PKG_JSLIST;
+    return ParseTools.PKG_STRING;
   }
 
   public String getSerializeToJSONValue(String value) {
-    return ParseTools.PKG_DOUBLE_ARRAY + ".with(" + value + ").toJson()";
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      return ParseTools.PKG_DATAUTIL + ".encodeBase64(" + value + ")";
+    }
   }
 
   @Override
@@ -98,21 +68,24 @@ public class DoubleArrayDataType extends JavaDataContractDataType {
 
   @Override
   public String getConstructFromX() {
-    return ParseTools.PKG_DOUBLE_ARRAY + ".DEFAULT_INSTANCE.parse(x).array()";
-  }
-
-  @Override
-  public String pythonDeserializeExpr(FieldDef f, String expr) {
-    return expr + ".copy()";
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      return ParseTools.PKG_DATAUTIL + ".parseBase64Shorts(x)";
+    }
   }
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    String defaultValue = f.defaultValueOrNull();
-    if (defaultValue.equals("null"))
-      s.a(targetExpr, " = x;");
-    else
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      String defaultValue = f.defaultValueOrNull();
       s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
+      break;
+    }
   }
 
   //------------------------------------------------------------------
@@ -126,7 +99,13 @@ public class DoubleArrayDataType extends JavaDataContractDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
+      break;
+    }
   }
 
 }

@@ -31,53 +31,54 @@ import datagen.SourceBuilder;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
 
-public class PrimitiveDoubleDataType extends JavaDataType {
+/**
+ * Datatype for primitive short integers, i.e. "short x;"
+ */
+public class JavaPrimitiveShortDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    return "java.lang.double";
+    return "java.lang.short";
   }
 
   @Override
   public final String compilerInitialValue() {
-    return "0.0";
+    return "(short) 0";
   }
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDefUnused) {
-    double value = parseDoubleValue(scanner.read(NUMBER).text());
-    return Double.toString(value);
+      FieldDef fieldDef) {
+    int value = (int) Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Short.MIN_VALUE,
+        Short.MAX_VALUE);
+    return Integer.toString(value);
   }
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    if (f.optional()) {
-      s.a("r = r * 37 + m", f.sourceName(), ".intValue();");
-    } else
-      s.a("r = r * 37 + (int) m", f.sourceName(), ";");
+    s.a("r = r * 37 + m", f.sourceName(), ";");
   }
 
   @Override
   public DataType optionalVariant() {
-    return new Boxed();
+    return new BoxedDataType();
   }
 
   @Override
   public DataType listVariant() {
-    return new DoubleArrayDataType();
+    return new JavaShortArrayDataType();
   }
 
-  private static class Boxed extends PrimitiveDoubleDataType {
+  private static class BoxedDataType extends JavaPrimitiveShortDataType {
 
     @Override
     protected String provideQualifiedClassNameExpr() {
-      return "java.lang.Double";
+      return "java.lang.Short";
     }
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.sourceName(), " = m.optDouble(", f.nameStringConstant(), ");");
+      s.a("m", f.sourceName(), " = m.optShort(", f.nameStringConstant(), ");");
     }
 
   }
