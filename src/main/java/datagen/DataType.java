@@ -24,7 +24,6 @@
  **/
 package datagen;
 
-import datagen.gen.Language;
 import datagen.gen.QualifiedName;
 import js.data.DataUtil;
 
@@ -36,10 +35,6 @@ import static datagen.Utils.*;
  * Abstract base class for generating source code for a data type
  */
 public abstract class DataType implements DefaultValueParser {
-
-  public final boolean python() {
-    return language() == Language.PYTHON;
-  }
 
   // ------------------------------------------------------------------
   // Naming
@@ -53,10 +48,8 @@ public abstract class DataType implements DefaultValueParser {
   public final QualifiedName qualifiedClassName() {
     // If no QualifiedName assigned yet, do so
     if (mClassWithPackage == null) {
-      String expression = provideQualifiedClassNameExpr();
-      QualifiedName qualifiedName = ParseTools.parseQualifiedName(expression, null);
-      qualifiedName = updateForPython(qualifiedName);
-      setQualifiedClassName(qualifiedName);
+      setQualifiedClassName(
+          ParseTools.updateForPython(ParseTools.parseQualifiedName(provideQualifiedClassNameExpr(), null)));
     }
     return mClassWithPackage;
   }
@@ -115,11 +108,6 @@ public abstract class DataType implements DefaultValueParser {
 
   //------------------------------------------------------------------
 
-  @Deprecated // why is this required?
-  protected final String constructImportExpression() {
-    return qualifiedClassName().combined();
-  }
-
   /**
    * Determine if the type is a primitive type, e.g. int, short, etc
    */
@@ -174,7 +162,7 @@ public abstract class DataType implements DefaultValueParser {
   // ------------------------------------------------------------------
 
   /**
-   * Generate source code to convert a value to an mutable form, for storing
+   * Generate source code to convert a value to a mutable form, for storing
    * within a builder.
    *
    * Default returns the expression unchanged. ListDataType overrides this to

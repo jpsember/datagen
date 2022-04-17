@@ -86,6 +86,7 @@ public final class DataTypeManager extends BaseObject {
     add("JSMap", new JsonMapDataType());
     add("JSList", new JsonListDataType());
 
+    todo("Might be simpler if we have separate data types for each language, and have different base classes");
     add(IRect.DEFAULT_INSTANCE);
     add(FPoint.DEFAULT_INSTANCE);
     add(FRect.DEFAULT_INSTANCE);

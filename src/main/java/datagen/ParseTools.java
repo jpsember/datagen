@@ -298,4 +298,31 @@ public final class ParseTools {
     return q;
   }
 
+
+  /**
+   * Append filename to package if appropriate (Python only); see
+   * PythonSourceGen.generateImports() for a discussion.
+   */
+  public static QualifiedName updateForPython(QualifiedName qualifiedName) {
+    QualifiedName result = qualifiedName;
+    do {
+      if (!python())
+        break;
+
+      if (!packageContainsGen(qualifiedName.packagePath()))
+        break;
+
+      String pkgElement = "." + convertCamelToUnderscore(qualifiedName.className());
+      if (qualifiedName.packagePath().endsWith(pkgElement)) {
+        pr("*** package path seems to already include class name, which is unexpected:", INDENT,
+            qualifiedName);
+        break;
+      }
+      result = ParseTools
+          .assignCombined(qualifiedName.toBuilder().packagePath(qualifiedName.packagePath() + pkgElement));
+    } while (false);
+
+    return result.build();
+  }
+
 }

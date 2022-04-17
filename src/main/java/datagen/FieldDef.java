@@ -39,14 +39,14 @@ public final class FieldDef extends BaseObject {
     setName(name);
     mDataType = dataType;
     mOptional = optional;
-    if (dataType.python()) {
+    if (Utils.python()) {
       // If we add a '_' prefix, the Python inspection reports a warning about a 'protected member';
       // but that is ok for our code; we need to have underscore prefixes for the instance fields anyways
-      mNameStringConstant = "_key_"  + sourceName();
+      mNameStringConstant = "_key_" + sourceName();
       mNameStringConstantQualified = Context.generatedTypeDef.name() + "." + mNameStringConstant;
     } else {
       mNameStringConstant = name.toUpperCase();
-      mNameStringConstantQualified =  mNameStringConstant;
+      mNameStringConstantQualified = mNameStringConstant;
     }
   }
 
@@ -60,7 +60,7 @@ public final class FieldDef extends BaseObject {
 
   public String sourceName() {
     if (mSourceName == null) {
-      if (dataType().python()) {
+      if (Utils.python()) {
         mSourceNameCapFirst = mSourceName = DataUtil.lowerFirst(name());
       } else {
         mSourceNameCapFirst = DataUtil.convertUnderscoresToCamelCase(name());

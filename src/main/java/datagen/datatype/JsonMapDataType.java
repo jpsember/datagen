@@ -32,6 +32,7 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
+import datagen.Utils;
 import js.parsing.Scanner;
 
 /**
@@ -48,7 +49,7 @@ public final class JsonMapDataType extends DataType {
 
   @Override
   public final String provideSourceDefaultValue() {
-    if (python())
+    if (Utils.python())
       return "[]";
     return ParseTools.PKG_JSMAP + ".DEFAULT_INSTANCE";
   }
@@ -56,7 +57,7 @@ public final class JsonMapDataType extends DataType {
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    if (python())
+    if (Utils.python())
       throw notSupported("Default values for Python dicts not supported yet");
     String constName = "DEF_" + fieldDef.nameStringConstant();
     classSpecificSource.a("  private static final ", typeName(), " ", constName, " = new ", typeName(), "(",
@@ -66,7 +67,7 @@ public final class JsonMapDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    if (python()) {
+    if (Utils.python()) {
       s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstant(), ", ",
          f.defaultValueOrNull(), ")", CR);
       return;

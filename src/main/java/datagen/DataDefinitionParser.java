@@ -40,7 +40,6 @@ import js.parsing.Scanner;
 import js.parsing.Token;
 import js.base.BaseObject;
 import js.data.DataUtil;
-import static datagen.Utils.*;
 
 /**
  * Parse .dat file

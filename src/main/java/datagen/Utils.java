@@ -27,7 +27,6 @@ package datagen;
 import static js.base.Tools.*;
 
 import datagen.gen.Language;
-import datagen.gen.QualifiedName;
 
 public final class Utils {
 
@@ -83,32 +82,6 @@ public final class Utils {
 
   public static boolean packageContainsGen(String packagePath) {
     return packageContainsElement(packagePath, GEN_SUBDIR_NAME);
-  }
-
-  /**
-   * Append filename to package if appropriate (Python only); see
-   * PythonSourceGen.generateImports() for a discussion.
-   */
-  public static QualifiedName updateForPython(QualifiedName qualifiedName) {
-    QualifiedName result = qualifiedName;
-    do {
-      if (!python())
-        break;
-
-      if (!packageContainsGen(qualifiedName.packagePath()))
-        break;
-
-      String pkgElement = "." + convertCamelToUnderscore(qualifiedName.className());
-      if (qualifiedName.packagePath().endsWith(pkgElement)) {
-        pr("*** package path seems to already include class name, which is unexpected:", INDENT,
-            qualifiedName);
-        break;
-      }
-      result = ParseTools
-          .assignCombined(qualifiedName.toBuilder().packagePath(qualifiedName.packagePath() + pkgElement));
-    } while (false);
-
-    return result.build();
   }
 
 }

@@ -88,6 +88,7 @@ public class ListDataType extends DataType {
     if (python()) {
       return valueExpression + ".copy()";
     }
+    todo("revisit whether we want to construct copies of things, and whether we want to enforce immutablility of compound types");
     return ParseTools.mutableCopyOfList(valueExpression);
   }
 
