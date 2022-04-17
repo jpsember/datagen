@@ -66,14 +66,14 @@ public class JavaContractDataType extends JavaDataType implements ContractDataTy
 
     String typeExpr = getSerializeDataType();
     if (typeExpr.equals(ParseTools.PKG_JSMAP)) {
-      s.a(ParseTools.PKG_JSMAP, " x = m.optJSMap(", f.nameStringConstant(), ");", CR);
+      s.a(ParseTools.PKG_JSMAP, " x = m.optJSMap(", f.nameStringConstantQualified(), ");", CR);
     } else if (typeExpr.equals(ParseTools.PKG_JSLIST)) {
-      s.a(ParseTools.PKG_JSLIST, " x = m.optJSList(", f.nameStringConstant(), ");", CR);
+      s.a(ParseTools.PKG_JSLIST, " x = m.optJSList(", f.nameStringConstantQualified(), ");", CR);
     } else {
       String castExpr = "m.optUnsafe";
       if (!typeExpr.equals("Object"))
         castExpr = "(" + typeExpr + ") " + castExpr;
-      s.a(getSerializeDataType(), " x = ", castExpr, "(", f.nameStringConstant(), ");", CR);
+      s.a(getSerializeDataType(), " x = ", castExpr, "(", f.nameStringConstantQualified(), ");", CR);
     }
     s.a("if (x != null)", OPEN, //
         "m", f.sourceName(), " = ", getConstructFromX(), ";", CLOSE //
@@ -91,7 +91,7 @@ public class JavaContractDataType extends JavaDataType implements ContractDataTy
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a("m", f.sourceName(), " = ", ParseTools.PKG_DATAUTIL, ".parseListOfObjects(", typeName(),
-        ".DEFAULT_INSTANCE, m.optJSList(", f.nameStringConstant(), "), ", f.optional(), ");");
+        ".DEFAULT_INSTANCE, m.optJSList(", f.nameStringConstantQualified(), "), ", f.optional(), ");");
   }
 
   @Override
@@ -138,7 +138,7 @@ public class JavaContractDataType extends JavaDataType implements ContractDataTy
         commaExp = true;
       }
 
-      String constName = "DEF_" + fieldDef.nameStringConstant();
+      String constName = "DEF_" + fieldDef.nameStringConstantQualified();
       sb.a("  private static final ", fieldDef.dataType().typeName(), " ", constName, "  = new ", typeName(),
           "(");
       int i = INIT_INDEX;

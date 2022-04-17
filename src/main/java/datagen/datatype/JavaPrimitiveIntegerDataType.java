@@ -78,7 +78,7 @@ public class JavaPrimitiveIntegerDataType extends JavaDataType {
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.sourceName(), " = m.optInt(", f.nameStringConstant(), ");");
+      s.a("m", f.sourceName(), " = m.optInt(", f.nameStringConstantQualified(), ");");
     }
 
   }

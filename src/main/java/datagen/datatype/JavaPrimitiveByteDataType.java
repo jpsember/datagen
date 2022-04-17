@@ -80,7 +80,7 @@ public class JavaPrimitiveByteDataType extends JavaDataType {
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.sourceName(), " = m.optByte(", f.nameStringConstant(), ");");
+      s.a("m", f.sourceName(), " = m.optByte(", f.nameStringConstantQualified(), ");");
     }
 
   }

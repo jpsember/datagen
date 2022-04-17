@@ -49,7 +49,7 @@ public final class JavaFileDataType extends JavaDataType {
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    String constName = "DEF_" + fieldDef.nameStringConstant();
+    String constName = "DEF_" + fieldDef.nameStringConstantQualified();
     classSpecificSource.a("  private static final ", typeName(), " ", constName, " = new File(",
         scanner.read(STRING).text(), ");", CR);
     return constName;
@@ -60,7 +60,7 @@ public final class JavaFileDataType extends JavaDataType {
     s.open();
     if (!f.optional())
       s.a("m", f.sourceName(), " = ", f.defaultValueOrNull(), ";", CR);
-    s.a("String x = m.opt(", f.nameStringConstant(), ", (String) null);", CR, //
+    s.a("String x = m.opt(", f.nameStringConstantQualified(), ", (String) null);", CR, //
         "if (x != null)", OPEN, //
         "m", f.sourceName(), " = new ", typeName(), "(x);", //
         CLOSE //
@@ -77,7 +77,7 @@ public final class JavaFileDataType extends JavaDataType {
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a(OPEN, //
         PKG_LIST, "<", typeName(), "> result = ", f.nullIfOptional(PKG_MUTABLELIST), ";", CR, //
-        ParseTools.PKG_JSLIST, " j = m.optJSList(", f.nameStringConstant(), ");", CR, //
+        ParseTools.PKG_JSLIST, " j = m.optJSList(", f.nameStringConstantQualified(), ");", CR, //
         "if (j != null)", OPEN, //
         "result = new ", ParseTools.PKG_ARRAYLIST, "<>(j.size());", CR, //
         "for (Object z : j.wrappedList())", OPEN, //

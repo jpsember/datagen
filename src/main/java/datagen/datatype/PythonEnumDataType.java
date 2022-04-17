@@ -48,7 +48,7 @@ public class PythonEnumDataType extends PythonDataType implements EnumDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("x = obj.get(", f.nameStringConstant(), ", ", f.defaultValueOrNull(), ")", CR);
+    s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(), ")", CR);
     if (f.optional()) {
       s.a("if x is not None:", IN);
     }
@@ -60,7 +60,7 @@ public class PythonEnumDataType extends PythonDataType implements EnumDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("x = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"), ")", CR);
+    s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR);
     s.doIf(f.optional(), "if x is not None:", OPEN);
     s.a("inst._", f.sourceName(), " = [", typeName(), "(z) for z in x]", CR);
     s.endIf(CLOSE);

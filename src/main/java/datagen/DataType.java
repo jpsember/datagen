@@ -205,10 +205,10 @@ public abstract class DataType implements DefaultValueParser {
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     sourceIfNotNull(s, f);
     if (python()) {
-      s.a("m[", f.nameStringConstant(), "] = ",
+      s.a("m[", f.nameStringConstantQualified(), "] = ",
           sourceGenerateSerializeToObjectExpression("self._" + f.sourceName()));
     } else {
-      s.a("m.put(", f.nameStringConstant(), ", ",
+      s.a("m.put(", f.nameStringConstantQualified(), ", ",
           sourceGenerateSerializeToObjectExpression("m" + f.sourceName()), ");");
     }
     sourceEndIf(s).cr();

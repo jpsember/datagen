@@ -47,6 +47,8 @@ public abstract class FieldDef extends BaseObject {
   }
 
   public FieldDef() {
+    loadTools();
+
   }
 
   public final int index() {
@@ -58,21 +60,9 @@ public abstract class FieldDef extends BaseObject {
     mIndex = index;
     mDataType = dataType;
     mOptional = optional;
-    // mNameStringConstant = provideNameStringConstant();
-    // mNameStringConstantQualified = provideNameStringConstantQualified();
-    //
-    //    if (Utils.python()) {
-    //      // If we add a '_' prefix, the Python inspection reports a warning about a 'protected member';
-    //      // but that is ok for our code; we need to have underscore prefixes for the instance fields anyways
-    //      mNameStringConstant = "_key_" + sourceName();
-    //      mNameStringConstantQualified = Context.generatedTypeDef.name() + "." + mNameStringConstant;
-    //    } else {
-    //      mNameStringConstant = name.toUpperCase();
-    //      mNameStringConstantQualified = mNameStringConstant;
-    //    }
   }
 
-  protected abstract String provideNameStringConstant();
+  protected abstract String provideNameStringConstantUnqualified();
 
   protected abstract String provideNameStringConstantQualified();
 
@@ -84,19 +74,21 @@ public abstract class FieldDef extends BaseObject {
     return mOptional;
   }
 
+  protected abstract String provideSourceName();
+
+  protected abstract String provideSourceNameLowerFirst();
+
   public String sourceName() {
     if (mSourceName == null) {
-      if (Utils.python()) {
-        mSourceNameCapFirst = mSourceName = DataUtil.lowerFirst(name());
-      } else {
-        mSourceNameCapFirst = DataUtil.convertUnderscoresToCamelCase(name());
-        mSourceName = DataUtil.lowerFirst(mSourceNameCapFirst);
-      }
+      mSourceNameCapFirst = provideSourceName();
+      mSourceName = provideSourceNameLowerFirst();
     }
     return mSourceNameCapFirst;
   }
 
+  
   public String sourceNameLowerFirst() {
+    todo("have better names for sourceName, sourceNameLowerFirst, and providers");
     sourceName();
     return mSourceName;
   }
@@ -105,7 +97,7 @@ public abstract class FieldDef extends BaseObject {
    * Returns name assigned to the string constant for the field, e.g.
    * "HORSE_WEIGHT"
    */
-  public final String nameStringConstant() {
+  public final String nameStringConstantQualified() {
     if (mNameStringConstantQualified == null)
       mNameStringConstantQualified = provideNameStringConstantQualified();
     return mNameStringConstantQualified;
@@ -113,23 +105,8 @@ public abstract class FieldDef extends BaseObject {
 
   public final String nameStringConstantUnqualified() {
     if (mNameStringConstant == null)
-      mNameStringConstant = provideNameStringConstant();
+      mNameStringConstant = provideNameStringConstantUnqualified();
     return mNameStringConstant;
-  }
-
-  @Deprecated
-  public final String nameStringConstant(boolean qualified) {
-
-    todo("figure out what these named string constants are, and whether they are needed");
-    if (qualified) {
-      if (mNameStringConstantQualified == null)
-        mNameStringConstantQualified = provideNameStringConstantQualified();
-      return mNameStringConstantQualified;
-    } else {
-      if (mNameStringConstant == null)
-        mNameStringConstant = provideNameStringConstant();
-      return mNameStringConstant;
-    }
   }
 
   public void setDefaultValue(String defValueSource) {

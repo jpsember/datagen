@@ -77,7 +77,7 @@ public class JavaPrimitiveDoubleDataType extends JavaDataType {
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.sourceName(), " = m.optDouble(", f.nameStringConstant(), ");");
+      s.a("m", f.sourceName(), " = m.optDouble(", f.nameStringConstantQualified(), ");");
     }
 
   }

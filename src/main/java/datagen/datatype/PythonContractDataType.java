@@ -65,7 +65,7 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
     // and store that parsed value.
     // Otherwise, if there is no value, leave the current value alone (which may be None, e.g. if value is optional)
     //
-    s.a("x = obj.get(", f.nameStringConstant(), ")", CR);
+    s.a("x = obj.get(", f.nameStringConstantQualified(), ")", CR);
     s.a("if x is not None:", IN);
     s.a("inst._", f.sourceName(), " = ", pythonDeserializeExpr(f, "x"), OUT);
   }
@@ -80,7 +80,7 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a("inst._", f.sourceName(), " = ", ParseTools.PKGPY_DATAUTIL, ".parse_list_of_objects(", typeName(),
-        ".default_instance, obj.get(", f.nameStringConstant(), "), ", f.optional() ? "True" : "False", ")");
+        ".default_instance, obj.get(", f.nameStringConstantQualified(), "), ", f.optional() ? "True" : "False", ")");
   }
 
   @Override

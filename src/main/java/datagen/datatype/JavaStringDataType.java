@@ -52,7 +52,7 @@ public final class JavaStringDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstant(), ", ");
+    s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstantQualified(), ", ");
     if (!f.optional())
       s.a(f.defaultValueOrNull());
     else
@@ -62,7 +62,7 @@ public final class JavaStringDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstant(),
+    s.a("m", f.sourceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstantQualified(),
         "), ", f.optional(), ");", CR);
   }
 

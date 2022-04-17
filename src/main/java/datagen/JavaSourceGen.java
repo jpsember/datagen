@@ -185,7 +185,7 @@ public final class JavaSourceGen extends SourceGen {
     SourceBuilder s = s().in(0);
     for (FieldDef f : def.fields()) {
       s.br();
-      s.a("public static final String ", f.nameStringConstant(), " = \"", f.name(), "\";");
+      s.a("public static final String ", f.nameStringConstantQualified(), " = \"", f.name(), "\";");
     }
     s.out();
     return content();

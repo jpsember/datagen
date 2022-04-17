@@ -10,7 +10,7 @@ public class PythonDataType extends DataType {
    */
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstant(), ", ", f.defaultValueOrNull(), ")");
+    s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(), ")");
   }
 
   /**
@@ -46,11 +46,11 @@ public class PythonDataType extends DataType {
     todo("!we should have some symbolic constants for things like t, inst");
     todo("!we should optimize later by having a utility class to reduce volume of boilerplate");
     if (f.optional()) {
-      s.a("t = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"), ")", CR, //
+      s.a("t = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR, //
           "if t is not None:", OPEN, //
           "inst._", f.sourceName(), " = t.copy()", CLOSE);
     } else {
-      s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"),
+      s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"),
           ").copy()", CR);
     }
   }

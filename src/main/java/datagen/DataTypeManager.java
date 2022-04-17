@@ -157,7 +157,7 @@ public final class DataTypeManager extends BaseObject {
       scanner.read(COMMA);
       int y = scanner.readInt(NUMBER);
       scanner.read(SQCL);
-      String constName = "DEF_" + fieldDef.nameStringConstant();
+      String constName = "DEF_" + fieldDef.nameStringConstantQualified();
       classSpecificSource.a("  private static final ", fieldDef.dataType().typeName(), " ", constName,
           "  = new ", typeName, "(", x, ", ", y, ");", CR);
       return constName;

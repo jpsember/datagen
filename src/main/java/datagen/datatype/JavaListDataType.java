@@ -88,7 +88,7 @@ public class JavaListDataType extends JavaDataType {
         ParseTools.PKG_JSLIST, " j = new ", ParseTools.PKG_JSLIST, "();", CR, //
         "for (", wrappedType().typeName(), " x : m", f.sourceName(), ")", IN, //
         "j.add(", wrappedType().sourceGenerateSerializeToObjectExpression("x"), ");", OUT, //
-        "m.put(", f.nameStringConstant(), ", j);", //
+        "m.put(", f.nameStringConstantQualified(), ", j);", //
         CLOSE, CR);
     sourceEndIf(s);
   }
@@ -133,7 +133,7 @@ public class JavaListDataType extends JavaDataType {
     }
 
     SourceBuilder sb = classSpecificSource;
-    String constName = "DEF_" + fieldDef.nameStringConstant();
+    String constName = "DEF_" + fieldDef.nameStringConstantQualified();
     sb.a("  private static final ", typeName(), " ", constName, " = ", ParseTools.PKG_TOOLS, ".arrayList(");
     int index = INIT_INDEX;
     for (String expr : parsedExpressions) {

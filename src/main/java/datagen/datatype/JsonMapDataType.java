@@ -59,7 +59,7 @@ public final class JsonMapDataType extends JavaDataType {
       FieldDef fieldDef) {
     if (Utils.python())
       throw notSupported("Default values for Python dicts not supported yet");
-    String constName = "DEF_" + fieldDef.nameStringConstant();
+    String constName = "DEF_" + fieldDef.nameStringConstantQualified();
     classSpecificSource.a("  private static final ", typeName(), " ", constName, " = new ", typeName(), "(",
         scanner.read(STRING).text(), ");", CR);
     return constName;
@@ -68,7 +68,7 @@ public final class JsonMapDataType extends JavaDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     if (Utils.python()) {
-      s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstant(), ", ",
+      s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
          f.defaultValueOrNull(), ")", CR);
       return;
     }
@@ -76,7 +76,7 @@ public final class JsonMapDataType extends JavaDataType {
     s.open();
     if (!f.optional())
       s.a("m", f.sourceName(), " = ", f.defaultValueOrNull(), ";", CR);
-    s.a(typeName(), " x = m.optJSMap(", f.nameStringConstant(), ");", CR, //
+    s.a(typeName(), " x = m.optJSMap(", f.nameStringConstantQualified(), ");", CR, //
         "if (x != null)", OPEN, //
         "m", f.sourceName(), " = x.lock();", //
         CLOSE //
@@ -86,7 +86,7 @@ public final class JsonMapDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstant(),
+    s.a("m", f.sourceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstantQualified(),
         "), ", f.optional(), ");", CR);
   }
 

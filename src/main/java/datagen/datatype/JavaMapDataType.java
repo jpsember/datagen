@@ -91,7 +91,7 @@ public class JavaMapDataType extends JavaDataType {
         f.sourceName(), ".entrySet())", IN, //
         "j.put(", wrappedKeyType().sourceGenerateSerializeToObjectExpression("e.getKey()"), ", ",
         wrappedValueType().sourceGenerateSerializeToObjectExpression("e.getValue()"), ");", OUT, //
-        "m.put(", f.nameStringConstant(), ", j);", //
+        "m.put(", f.nameStringConstantQualified(), ", j);", //
         CLOSE, CR);
     sourceEndIf(s);
   }

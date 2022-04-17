@@ -67,7 +67,7 @@ public class JavaDoubleArrayDataType extends JavaContractDataType {
     }
 
     SourceBuilder sb = classSpecificSource;
-    String constName = "DEF_" + fieldDef.nameStringConstant();
+    String constName = "DEF_" + fieldDef.nameStringConstantQualified();
     sb.a("  private static final ", typeName(), " ", constName, " = ");
     sb.a("{");
     int index = INIT_INDEX;
