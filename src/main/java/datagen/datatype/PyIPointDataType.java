@@ -34,7 +34,7 @@ import js.parsing.Scanner;
 public class PyIPointDataType extends DataContractDataType {
 
   protected String provideQualifiedClassNameExpr() {
-    return "pycore.IPoint";
+    return "pycore.ipoint.IPoint";
   }
 
   public String getConstructFromX() {

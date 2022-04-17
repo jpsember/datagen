@@ -33,6 +33,7 @@ import js.file.Files;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
+import static datagen.Utils.*;
 
 public class PythonSourceGen extends SourceGen {
 
@@ -118,7 +119,33 @@ public class PythonSourceGen extends SourceGen {
 
   @Override
   protected String generateImports(List<String> qualifiedClassNames) {
+    // 
+    // Python package names differ from Java ones.
+    //
+    // Java classes have this structure:
+    //
+    //
+    //  File path:         <path> . <filename> 
+    //  Import statement:  <package> . <ClassName>
+    //
+    // Python have this:
+    //
+    //  File path:        <path> . <filename>
+    //  Import statement: <package> . <filename> . <ClassName>
+    //
+    // We refer to external types within .dat files in the same way as Java import statements:
+    //
+    // External ref:      <package> . <ClassName>
+    //
+    // With the special rule that if no package is specified, it assumes the same package as the current
+    // datatype being generated.
+    //
+    // When referring to such classes within generated Python code, we will derive and insert a filename
+    // if the package includes 'gen'.
+    //
+    
     for (String cn : qualifiedClassNames) {
+      verifyPythonGenPath(cn);
       int cursor = cn.lastIndexOf('.');
       if (cursor < 1 || cursor >= cn.length() - 1)
         throw badArg("can't parse class name:", quote(cn));

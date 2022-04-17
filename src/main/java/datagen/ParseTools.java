@@ -96,29 +96,36 @@ public final class ParseTools {
     }
   }
 
-  @Deprecated // pass null for defaultPackage if necessary
-  public static QualifiedName parseQualifiedName(String expr) {
-    return parseQualifiedName(expr, null);
-  }
-
   public static QualifiedName parseQualifiedName(String expr, String defaultPackage) {
     int nameStartPos = expr.lastIndexOf('.');
     String pkg = expr.substring(0, Math.max(0, nameStartPos));
     pkg = ifNullOrEmpty(pkg, nullToEmpty(defaultPackage));
     String className = expr.substring(1 + nameStartPos);
-    return buildQualifiedName(pkg, className);
+    return assignCombined(QualifiedName.newBuilder()//
+        .packagePath(pkg)//
+        .className(className)).build();
   }
 
-  public static QualifiedName buildQualifiedName(String packagePath, String typeName) {
-    String combined = typeName;
+  public static QualifiedName.Builder assignCombined(QualifiedName.Builder q) {
+    String packagePath = q.packagePath();
+    String combined = q.className();
     if (!packagePath.isEmpty())
-      combined = packagePath + "." + typeName;
-    return QualifiedName.newBuilder()//
-        .packagePath(packagePath)//
-        .className(typeName)//
-        .combined(combined)//
-        .build();
+      combined = packagePath + "." + q.className();
+    q.combined(combined);
+    return q;
   }
+
+//  @Deprecated
+//  public static QualifiedName buildQualifiedName(String packagePath, String typeName) {
+//    String combined = typeName;
+//    if (!packagePath.isEmpty())
+//      combined = packagePath + "." + typeName;
+//    return QualifiedName.newBuilder()//
+//        .packagePath(packagePath)//
+//        .className(typeName)//
+//        .combined(combined)//
+//        .build();
+//  }
 
   public static String escapeJavaString(String s) {
     StringBuilder b = new StringBuilder();
@@ -230,7 +237,6 @@ public final class ParseTools {
     return "{{" + qualifiedClassName + "|" + sourceCode + "}}";
   }
 
-  
   private static String javaClassExpr(String qualifiedClassName) {
     return importedClassExpr(Language.JAVA, qualifiedClassName);
   }
@@ -246,6 +252,9 @@ public final class ParseTools {
   public static String importedClassExpr(Language language, String qualifiedClassName) {
     if (language == null)
       language = Context.config.language();
+
+    verifyPythonGenPath(qualifiedClassName);
+
     try {
       int cursor = qualifiedClassName.lastIndexOf('.');
       checkState(cursor > 0 && cursor < qualifiedClassName.length() - 1);
@@ -253,19 +262,33 @@ public final class ParseTools {
       String packageName = qualifiedClassName.substring(0, cursor);
       String className = qualifiedClassName.substring(cursor + 1);
 
+      //      if (!alert("this is no longer necessary?")) {
+
       if (language == Language.PYTHON) {
-        // By convention, we must convert the class name to lowercase and append it to the package path,
-        // e.g.   pycore.DataUtil ->  pycore.datautil.DataUtil
-        String packageSuffix = className.toLowerCase();
-        checkArgument(!className.equals(packageSuffix));
-        String dottedSuffix = "." + packageSuffix;
-        checkArgument(!packageName.endsWith(dottedSuffix));
-        qualifiedClassName = packageName + dottedSuffix + "." + className;
+        String pexpr = "." + packageName + ".";
+        String cexpr = "." + convertCamelToUnderscore(className) + ".";
+        boolean ct = pexpr.contains(cexpr);
+        boolean gen = pexpr.contains(".dev.");
+        if (gen && gen != ct) {
+          die("unexpected Python qualified class name:", INDENT, qualifiedClassName);
+        }
+
+        if (!alert("this is no longer necessary?")) {
+          // By convention, we must convert the class name to lowercase and append it to the package path,
+          // e.g.   pycore.DataUtil ->  pycore.datautil.DataUtil
+          String packageSuffix = className.toLowerCase();
+          checkArgument(!className.equals(packageSuffix));
+          String dottedSuffix = "." + packageSuffix;
+          checkArgument(!packageName.endsWith(dottedSuffix));
+          qualifiedClassName = packageName + dottedSuffix + "." + className;
+        }
       }
+      //      }
 
       return importCodeExpr(qualifiedClassName, className);
     } catch (Throwable t) {
-      throw badArg("Failed to parse imported class expression:", quote(qualifiedClassName),"for language",language);
+      throw badArg("Failed to parse imported class expression:", quote(qualifiedClassName), "for language",
+          language);
     }
   }
 
@@ -278,8 +301,7 @@ public final class ParseTools {
   public static final String PKG_FILES = javaClassExpr("js.file.Files");
   public static final String PKG_LIST = javaClassExpr("java.util.List");
   public static final String PKG_MAP = javaClassExpr("java.util.Map");
-  public static final String PKG_CONCURRENT_MAP = javaClassExpr(
-      "java.util.concurrent.ConcurrentHashMap");
+  public static final String PKG_CONCURRENT_MAP = javaClassExpr("java.util.concurrent.ConcurrentHashMap");
   public static final String PKG_STRING = javaClassExpr("java.lang.String");
   public static final String PKG_ARRAYS = javaClassExpr("java.util.Arrays");
   public static final String PKG_ARRAYLIST = javaClassExpr("java.util.ArrayList");

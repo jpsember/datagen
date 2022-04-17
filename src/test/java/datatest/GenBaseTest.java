@@ -89,7 +89,7 @@ public abstract class GenBaseTest extends MyTestCase {
 
   private void generateDirs() {
     if (dr().mDatSubdirRelPath == null)
-      setDatSubdir("gen");
+      setDatSubdir(Utils.GEN_SUBDIR_NAME);
     if (dr().mDatSubdirRelPath.isEmpty())
       dr().mDatSubdir = datFilesDir();
     else

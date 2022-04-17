@@ -30,6 +30,7 @@ import js.data.DataUtil;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
+
 import static datagen.Utils.*;
 
 /**
@@ -59,6 +60,7 @@ public abstract class DataType implements DefaultValueParser {
     if (mClassWithPackage == null) {
       String expression = provideQualifiedClassNameExpr();
       QualifiedName qualifiedName = ParseTools.parseQualifiedName(expression, null);
+      qualifiedName = updateForPython(qualifiedName);
       setQualifiedClassName(qualifiedName);
     }
     return mClassWithPackage;
@@ -311,7 +313,8 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   /**
-   * Generate source code to deserialize a JSON value to a value to be stored in a map
+   * Generate source code to deserialize a JSON value to a value to be stored in
+   * a map
    * 
    * @param jsonValue
    *          representation of a JSMap value (from a key/value pair), or a

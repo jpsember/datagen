@@ -129,7 +129,7 @@ public abstract class SourceGen extends BaseObject {
     //         the neighboring (non-blank) lines
     //
     content = ParseTools.adjustLinefeeds(content, Context.config.language());
-    
+
     File target = sourceFile();
     Context.files.mkdirs(Files.parent(target));
     boolean wrote = Context.files.writeIfChanged(target, content);
@@ -180,7 +180,7 @@ public abstract class SourceGen extends BaseObject {
    * We will look for expressions of the form "{{xxxx|yyyy}}" and then:
    * 
    * 1) replace that expression with "yyyy" within the source
-   * 2) generate an import statement for (fully qualified class name) "xxxx" 
+   * 2) generate an import statement for (fully qualified class name) "xxxx"
    * 
    * </pre>
    */
