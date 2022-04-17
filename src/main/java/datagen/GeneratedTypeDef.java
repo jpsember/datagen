@@ -34,7 +34,6 @@ import static datagen.Utils.*;
 import datagen.datatype.JavaListDataType;
 import datagen.datatype.JavaMapDataType;
 import datagen.datatype.PythonListDataType;
-import datagen.datatype.PythonMapDataType;
 import datagen.datatype.ContractDataType;
 import datagen.datatype.EnumDataType;
 import datagen.gen.QualifiedName;
@@ -112,9 +111,15 @@ public final class GeneratedTypeDef extends BaseObject {
       if (complexType == null)
         complexType = python() ? new PythonListDataType(dataType) : new JavaListDataType(dataType);
       break;
-    case KEY_VALUE_MAP:
-      complexType = python() ? new PythonMapDataType(dataType, dataType2)
-          : new JavaMapDataType(dataType, dataType2);
+    case KEY_VALUE_MAP: {
+      switch (language()) {
+      default:
+        throw languageNotSupported();
+      case JAVA:
+        complexType = new JavaMapDataType(dataType, dataType2);
+        break;
+      }
+    }
       break;
     default:
       throw notSupported("datatype structure", structure);
@@ -149,7 +154,8 @@ public final class GeneratedTypeDef extends BaseObject {
     DataTypeManager dataTypes = Context.dataTypeManager;
     DataType dataType = dataTypes.get(typeName);
     if (dataType == null) {
-      QualifiedName className = ParseTools.parseQualifiedName(typeName, Context.generatedTypeDef.packageName());  
+      QualifiedName className = ParseTools.parseQualifiedName(typeName,
+          Context.generatedTypeDef.packageName());
       dataType = dataTypes.get(className.className());
       if (dataType == null) {
         {
