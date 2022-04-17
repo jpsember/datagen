@@ -8,6 +8,15 @@ import js.data.DataUtil;
 public class JavaDataType extends DataType {
 
   @Override
+  public final boolean isPrimitive() {
+    // If the class name starts with a lower case letter, assume it's a primitive;
+    // e.g. int, double, boolean
+    // vs File, Integer, Double, Boolean
+    //
+    return qualifiedClassName().className().charAt(0) >= 'a';
+  }
+
+  @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     if (f.optional() || isPrimitive()) {
       s.a(targetExpr, " = ", //
@@ -24,8 +33,7 @@ public class JavaDataType extends DataType {
    */
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a(f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(),
-        ");");
+    s.a(f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(), ");");
   }
 
   /**

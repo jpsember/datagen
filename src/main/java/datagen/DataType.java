@@ -109,21 +109,8 @@ public abstract class DataType implements DefaultValueParser {
   /**
    * Determine if the type is a primitive type, e.g. int, short, etc
    */
-  public final boolean isPrimitive() {
-
-    if (python()) {
-      // If there is no package component to its qualified class name, it is primitive
-      //
-      return qualifiedClassName().packagePath().isEmpty();
-    }
-
-    // If the class name starts with a lower case letter, assume it's a primitive;
-    // e.g. int, double, boolean
-    // vs File, Integer, Double, Boolean
-    //
-    return qualifiedClassName().className().charAt(0) >= 'a';
-  }
-
+  public abstract boolean isPrimitive();
+  
   // ------------------------------------------------------------------
   // Default values
   // ------------------------------------------------------------------

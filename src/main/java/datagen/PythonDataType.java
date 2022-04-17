@@ -5,6 +5,10 @@ import static js.base.Tools.*;
 
 public class PythonDataType extends DataType {
 
+  public final boolean isPrimitive() {
+    return qualifiedClassName().packagePath().isEmpty();
+  }
+
   /**
    * Generate source code for deserializing a value from a dict
    */
