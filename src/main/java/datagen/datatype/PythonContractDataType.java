@@ -106,11 +106,6 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
   }
 
   @Override
-  public String deserializeJsonToMapValue(String jsonValue) {
-    return provideSourceDefaultValue() + ".parse((JSMap) " + jsonValue + ")";
-  }
-
-  @Override
   public String parseDefaultValue(Scanner scanner, SourceBuilder sb, FieldDef fieldDef) {
 
     // Attempt to infer from the tokens how to parse a default value

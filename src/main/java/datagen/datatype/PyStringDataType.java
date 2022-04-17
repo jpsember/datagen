@@ -65,12 +65,6 @@ public final class PyStringDataType extends PythonDataType {
   }
 
   @Override
-  public String deserializeJsonToMapValue(String jsonValue) {
-    notFinished();
-    return "(String) " + jsonValue;
-  }
-
-  @Override
   public String deserializeStringToMapKey(String jsonStringValue) {
     return jsonStringValue;
   }

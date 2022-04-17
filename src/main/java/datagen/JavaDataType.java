@@ -1,14 +1,11 @@
 package datagen;
 
-import datagen.gen.Language;
+import static js.base.Tools.*;
 
 public class JavaDataType extends DataType {
 
-  @Deprecated
-  public Language language() {
-    return Utils.language();
-  }
 
+  @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     if (f.optional() || isPrimitive()) {
       s.a(targetExpr, " = ", //
@@ -19,4 +16,20 @@ public class JavaDataType extends DataType {
     }
     s.a(";");
   }
+  
+
+  /**
+   * Generate source code to deserialize a JSON value to a value to be stored in
+   * a map
+   * 
+   * @param jsonValue
+   *          representation of a JSMap value (from a key/value pair), or a
+   *          JSList value
+   */
+  public String deserializeJsonToMapValue(String jsonValue) {
+    if (isPrimitive())
+      return jsonValue;
+    throw notSupported("deserializeJsonToJavaValue for dataType:" + getClass());
+  }
+
 }

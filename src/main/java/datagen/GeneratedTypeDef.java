@@ -116,7 +116,7 @@ public final class GeneratedTypeDef extends BaseObject {
       default:
         throw languageNotSupported();
       case JAVA:
-        complexType = new JavaMapDataType(dataType, dataType2);
+        complexType = new JavaMapDataType((JavaDataType) dataType, (JavaDataType) dataType2);
         break;
       }
     }

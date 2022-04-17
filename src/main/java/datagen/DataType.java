@@ -295,20 +295,6 @@ public abstract class DataType implements DefaultValueParser {
     throw notSupported("deserializeStringToMapKey for dataType:", getClass());
   }
 
-  /**
-   * Generate source code to deserialize a JSON value to a value to be stored in
-   * a map
-   * 
-   * @param jsonValue
-   *          representation of a JSMap value (from a key/value pair), or a
-   *          JSList value
-   */
-  public String deserializeJsonToMapValue(String jsonValue) {
-    if (isPrimitive())
-      return jsonValue;
-    throw notSupported("deserializeJsonToJavaValue for dataType:" + getClass());
-  }
-
   // ------------------------------------------------------------------
   // Hashcode and Equals methods
   // ------------------------------------------------------------------

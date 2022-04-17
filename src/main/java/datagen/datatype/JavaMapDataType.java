@@ -35,7 +35,7 @@ import datagen.SourceBuilder;
 
 public class JavaMapDataType extends JavaDataType {
 
-  public JavaMapDataType(DataType wrappedKeyType, DataType wrappedValueType) {
+  public JavaMapDataType(JavaDataType wrappedKeyType, JavaDataType wrappedValueType) {
     mWrappedKeyType = wrappedKeyType;
     mWrappedValueType = wrappedValueType;
     setQualifiedClassName(
@@ -47,7 +47,7 @@ public class JavaMapDataType extends JavaDataType {
     return mWrappedKeyType;
   }
 
-  public DataType wrappedValueType() {
+  public JavaDataType wrappedValueType() {
     return mWrappedValueType;
   }
 
@@ -128,5 +128,5 @@ public class JavaMapDataType extends JavaDataType {
   }
 
   private final DataType mWrappedKeyType;
-  private final DataType mWrappedValueType;
+  private final JavaDataType mWrappedValueType;
 }
