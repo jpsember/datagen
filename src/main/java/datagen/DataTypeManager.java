@@ -141,8 +141,7 @@ public final class DataTypeManager extends BaseObject {
    * interface, and register it
    */
   private void add(AbstractData defaultInstance, DefaultValueParser parser) {
-    todo("Have utility method");
-    DataType dataType = python() ? new PythonContractDataType() : new JavaContractDataType();
+    DataType dataType = ContractDataType.construct();
     dataType.setQualifiedClassName(ParseTools.parseQualifiedName(defaultInstance.getClass().getName(), null));
     add(dataType.qualifiedClassName().className(), dataType, parser);
   }

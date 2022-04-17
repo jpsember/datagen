@@ -31,10 +31,9 @@ import static datagen.Utils.*;
 import java.io.File;
 import java.util.Map;
 
+import datagen.datatype.ContractDataType;
 import datagen.datatype.EnumDataType;
-import datagen.datatype.JavaContractDataType;
 import datagen.datatype.JavaEnumDataType;
-import datagen.datatype.PythonContractDataType;
 import datagen.datatype.PythonEnumDataType;
 import datagen.gen.QualifiedName;
 import datagen.gen.TypeStructure;
@@ -88,8 +87,7 @@ final class DataDefinitionParser extends BaseObject {
   private void prepareHandlers() {
     mHandlers = hashMap();
     todo("populate map in language-specific way");
-    mHandlers.put(EXTERN, () -> processExternalReference(
-        python() ? new PythonContractDataType() : new JavaContractDataType()));
+    mHandlers.put(EXTERN, () -> processExternalReference(ContractDataType.construct()));
     mHandlers.put(FIELDS, () -> procDataType());
     mHandlers.put(ENUM, () -> procEnum());
   }

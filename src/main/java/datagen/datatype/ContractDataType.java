@@ -24,6 +24,10 @@
  **/
 package datagen.datatype;
 
+import static datagen.Utils.*;
+
+import datagen.DataType;
+
 /**
  * Interface for datatypes implementing the DataType interface
  */
@@ -35,6 +39,17 @@ public interface ContractDataType {
 
   String getSerializeToJSONValue(String value);
 
+  @Deprecated // clunky casting
   void parseQualifiedName(String typeName);
 
+  static DataType construct() {
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      return new JavaContractDataType();
+    case PYTHON:
+      return new PythonContractDataType();
+    }
+  }
 }

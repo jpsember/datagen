@@ -33,12 +33,10 @@ import static datagen.Utils.*;
 
 import datagen.datatype.JavaListDataType;
 import datagen.datatype.JavaMapDataType;
-import datagen.datatype.PythonContractDataType;
 import datagen.datatype.PythonListDataType;
 import datagen.datatype.PythonMapDataType;
 import datagen.datatype.ContractDataType;
 import datagen.datatype.EnumDataType;
-import datagen.datatype.JavaContractDataType;
 import datagen.gen.QualifiedName;
 import datagen.gen.TypeStructure;
 import js.base.BaseObject;
@@ -49,10 +47,10 @@ import js.json.JSMap;
  */
 public final class GeneratedTypeDef extends BaseObject {
 
-  public GeneratedTypeDef(String name, String packageName,  DataType enumTypeOrNull) {
+  public GeneratedTypeDef(String name, String packageName, DataType enumTypeOrNull) {
     setName(name);
     mPackageName = nullToEmpty(packageName);
-    mEnumDataType = (EnumDataType)enumTypeOrNull;
+    mEnumDataType = (EnumDataType) enumTypeOrNull;
   }
 
   public String packageName() {
@@ -115,7 +113,8 @@ public final class GeneratedTypeDef extends BaseObject {
         complexType = python() ? new PythonListDataType(dataType) : new JavaListDataType(dataType);
       break;
     case KEY_VALUE_MAP:
-      complexType = python() ? new PythonMapDataType(dataType,dataType2) : new JavaMapDataType(dataType, dataType2);
+      complexType = python() ? new PythonMapDataType(dataType, dataType2)
+          : new JavaMapDataType(dataType, dataType2);
       break;
     default:
       throw notSupported("datatype structure", structure);
@@ -163,9 +162,8 @@ public final class GeneratedTypeDef extends BaseObject {
         }
 
         todo("Have utility method");
-        ContractDataType contractType = python() ? new PythonContractDataType()
-            : new JavaContractDataType();
-        contractType.parseQualifiedName(typeName);
+        DataType contractType = ContractDataType.construct();
+        ((ContractDataType) contractType).parseQualifiedName(typeName);
         dataType = (DataType) contractType;
         dataTypes.add(dataType.qualifiedClassName().className(), dataType);
       }
