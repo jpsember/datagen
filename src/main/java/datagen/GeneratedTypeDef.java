@@ -161,9 +161,8 @@ public final class GeneratedTypeDef extends BaseObject {
             badArg("No definition file found at", datFile, INDENT, "...use 'extern' to declare its location");
         }
 
-        todo("Have utility method");
         DataType contractType = ContractDataType.construct();
-        ((ContractDataType) contractType).parseQualifiedName(typeName);
+        ParseTools.parseQualifiedName(contractType,  typeName);
         dataType = (DataType) contractType;
         dataTypes.add(dataType.qualifiedClassName().className(), dataType);
       }

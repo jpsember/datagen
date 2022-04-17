@@ -39,9 +39,6 @@ public interface ContractDataType {
 
   String getSerializeToJSONValue(String value);
 
-  @Deprecated // clunky casting
-  void parseQualifiedName(String typeName);
-
   static DataType construct() {
     switch (language()) {
     default:

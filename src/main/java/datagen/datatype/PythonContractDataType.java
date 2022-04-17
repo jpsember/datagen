@@ -31,12 +31,10 @@ import static datagen.Utils.*;
 
 import java.util.List;
 
-import datagen.Context;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
-import datagen.gen.QualifiedName;
 import js.parsing.Scanner;
 import js.parsing.Token;
 
@@ -112,7 +110,7 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
   /**
    * Get Python expression to deserialize a (json/dict) value
    */
-  public String pythonDeserializeExpr(FieldDef f, String expr) {
+  private String pythonDeserializeExpr(FieldDef f, String expr) {
     return f.defaultValueSource() + ".parse(" + expr + ")";
   }
 
@@ -160,11 +158,6 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
   @Override
   public String deserializeJsonToMapValue(String jsonValue) {
     return provideSourceDefaultValue() + ".parse((JSMap) " + jsonValue + ")";
-  }
-
-  public void parseQualifiedName(String typeName) {
-    QualifiedName qn = ParseTools.parseQualifiedName(typeName, Context.generatedTypeDef.packageName());
-    setQualifiedClassName(qn);
   }
 
   @Override

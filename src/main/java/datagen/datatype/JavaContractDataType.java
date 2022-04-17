@@ -31,12 +31,10 @@ import static datagen.Utils.*;
 
 import java.util.List;
 
-import datagen.Context;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import datagen.gen.QualifiedName;
 import js.parsing.Scanner;
 import js.parsing.Token;
 
@@ -160,11 +158,6 @@ public class JavaContractDataType extends JavaDataType implements ContractDataTy
   @Override
   public String deserializeJsonToMapValue(String jsonValue) {
     return provideSourceDefaultValue() + ".parse((JSMap) " + jsonValue + ")";
-  }
-
-  public void parseQualifiedName(String typeName) {
-    QualifiedName qn = ParseTools.parseQualifiedName(typeName, Context.generatedTypeDef.packageName());
-    setQualifiedClassName(qn);
   }
 
   @Override

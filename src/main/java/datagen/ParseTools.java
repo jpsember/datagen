@@ -325,4 +325,11 @@ public final class ParseTools {
     return result.build();
   }
 
+  
+@Deprecated // Why is there no existing DataType method that is suitable?
+  public static void parseQualifiedName(DataType datatype, String typeName) {
+    QualifiedName qn = ParseTools.parseQualifiedName(typeName, Context.generatedTypeDef.packageName());
+    datatype.setQualifiedClassName(qn);
+  }
+
 }

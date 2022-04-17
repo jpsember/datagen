@@ -26,15 +26,12 @@ package datagen;
 
 import static js.base.Tools.*;
 import static datagen.ParseTools.*;
-import static datagen.Utils.*;
 
 import java.io.File;
 import java.util.Map;
 
 import datagen.datatype.ContractDataType;
 import datagen.datatype.EnumDataType;
-import datagen.datatype.JavaEnumDataType;
-import datagen.datatype.PythonEnumDataType;
 import datagen.gen.QualifiedName;
 import datagen.gen.TypeStructure;
 import js.file.Files;
@@ -86,7 +83,6 @@ final class DataDefinitionParser extends BaseObject {
 
   private void prepareHandlers() {
     mHandlers = hashMap();
-    todo("populate map in language-specific way");
     mHandlers.put(EXTERN, () -> processExternalReference(ContractDataType.construct()));
     mHandlers.put(FIELDS, () -> procDataType());
     mHandlers.put(ENUM, () -> procEnum());
@@ -209,9 +205,7 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void procEnum() {
-    todo("Have utility method to construct appropriate subtype");
-     DataType enumDataType = python() ? new PythonEnumDataType() : new JavaEnumDataType();
-
+    DataType enumDataType = EnumDataType.construct();
     // If this is a declaration, an id followed by ;
     if (scanner().peek().id(ID)) {
       processExternalReference(enumDataType);

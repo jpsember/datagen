@@ -24,11 +24,26 @@
  **/
 package datagen.datatype;
 
+import static datagen.Utils.*;
+
 import java.util.List;
+
+import datagen.DataType;
 
 public interface EnumDataType {
 
   void addLabel(String label);
 
   List<String> labels();
+  
+  static DataType construct() {
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      return new JavaEnumDataType();
+    case PYTHON:
+      return new PythonEnumDataType();
+    }
+  }
 }
