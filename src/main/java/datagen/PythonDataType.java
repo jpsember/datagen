@@ -10,7 +10,7 @@ public class PythonDataType extends DataType {
    */
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
+    s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
         f.defaultValueOrNull(), ")");
   }
 
@@ -19,7 +19,7 @@ public class PythonDataType extends DataType {
    */
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + hash(self._", f.sourceName(), ")");
+    s.a("r = r * 37 + hash(self.", f.instanceName(), ")");
   }
 
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
@@ -34,7 +34,7 @@ public class PythonDataType extends DataType {
 
   @Override
   public void sourceIfNotNull(SourceBuilder s, FieldDef f) {
-    s.doIf(f.optional(), "if self._", f.sourceName(), " is not None:", OPEN);
+    s.doIf(f.optional(), "if self.", f.instanceName(), " is not None:", OPEN);
   }
 
   @Override
@@ -49,9 +49,9 @@ public class PythonDataType extends DataType {
     if (f.optional()) {
       s.a("t = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR, //
           "if t is not None:", OPEN, //
-          "inst._", f.sourceName(), " = t.copy()", CLOSE);
+          "inst.", f.instanceName(), " = t.copy()", CLOSE);
     } else {
-      s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
+      s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
           f.nullIfOptional("[]"), ").copy()", CR);
     }
   }
@@ -60,7 +60,7 @@ public class PythonDataType extends DataType {
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     sourceIfNotNull(s, f);
     s.a("m[", f.nameStringConstantQualified(), "] = ",
-        sourceGenerateSerializeToObjectExpression("self._" + f.sourceName()));
+        sourceGenerateSerializeToObjectExpression("self." + f.instanceName()));
     sourceEndIf(s).cr();
   }
 }

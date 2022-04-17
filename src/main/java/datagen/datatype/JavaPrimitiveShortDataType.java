@@ -56,7 +56,7 @@ public class JavaPrimitiveShortDataType extends JavaDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + m", f.sourceName(), ";");
+    s.a("r = r * 37 + ", f.instanceName(), ";");
   }
 
   @Override

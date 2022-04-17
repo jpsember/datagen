@@ -54,9 +54,9 @@ public class JavaPrimitiveFloatDataType extends JavaDataType {
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
     if (f.optional())
-      s.a("r = r * 37 + m", f.sourceName(), ".hashCode();");
+      s.a("r = r * 37 + ", f.instanceName(), ".hashCode();");
     else
-      s.a("r = r * 37 + (int)m", f.sourceName(), ";");
+      s.a("r = r * 37 + (int)", f.instanceName(), ";");
   }
 
   @Override

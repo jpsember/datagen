@@ -67,7 +67,7 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
     //
     s.a("x = obj.get(", f.nameStringConstantQualified(), ")", CR);
     s.a("if x is not None:", IN);
-    s.a("inst._", f.sourceName(), " = ", pythonDeserializeExpr(f, "x"), OUT);
+    s.a("inst.", f.instanceName(), " = ", pythonDeserializeExpr(f, "x"), OUT);
   }
 
   /**
@@ -79,7 +79,7 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("inst._", f.sourceName(), " = ", ParseTools.PKGPY_DATAUTIL, ".parse_list_of_objects(", typeName(),
+    s.a("inst.", f.instanceName(), " = ", ParseTools.PKGPY_DATAUTIL, ".parse_list_of_objects(", typeName(),
         ".default_instance, obj.get(", f.nameStringConstantQualified(), "), ", f.optional() ? "True" : "False", ")");
   }
 

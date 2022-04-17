@@ -36,12 +36,12 @@ public class JavaDataType extends DataType {
    */
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + m", f.sourceName(), ".hashCode();");
+    s.a("r = r * 37 + ", f.instanceName(), ".hashCode();");
   }
 
   @Override
   public final void sourceIfNotNull(SourceBuilder s, FieldDef f) {
-    s.doIf(f.optional(), "if (m", f.sourceName(), " != null)", OPEN);
+    s.doIf(f.optional(), "if (", f.instanceName(), " != null)", OPEN);
   }
 
   @Override
@@ -86,7 +86,7 @@ public class JavaDataType extends DataType {
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     sourceIfNotNull(s, f);
     s.a("m.put(", f.nameStringConstantQualified(), ", ",
-        sourceGenerateSerializeToObjectExpression("m" + f.sourceName()), ");");
+        sourceGenerateSerializeToObjectExpression("" + f.instanceName()), ");");
     sourceEndIf(s).cr();
   }
 

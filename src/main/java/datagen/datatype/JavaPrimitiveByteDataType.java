@@ -56,9 +56,9 @@ public class JavaPrimitiveByteDataType extends JavaDataType {
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
     if (f.optional())
-      s.a("r = r * 37 + m", f.sourceName(), ".byteValue();");
+      s.a("r = r * 37 + ", f.instanceName(), ".byteValue();");
     else
-      s.a("r = r * 37 + m", f.sourceName(), ";");
+      s.a("r = r * 37 + ", f.instanceName(), ";");
   }
 
   @Override

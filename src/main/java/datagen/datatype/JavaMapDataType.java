@@ -87,8 +87,8 @@ public class JavaMapDataType extends JavaDataType {
     sourceIfNotNull(s, f);
     s.a(OPEN, //
         ParseTools.PKG_JSMAP, " j = new ", ParseTools.PKG_JSMAP, "();", CR, //
-        "for (Map.Entry<", wrappedKeyType().typeName(), ", ", wrappedValueType().typeName(), "> e : m",
-        f.sourceName(), ".entrySet())", IN, //
+        "for (Map.Entry<", wrappedKeyType().typeName(), ", ", wrappedValueType().typeName(), "> e : ",
+        f.instanceName(), ".entrySet())", IN, //
         "j.put(", wrappedKeyType().sourceGenerateSerializeToObjectExpression("e.getKey()"), ", ",
         wrappedValueType().sourceGenerateSerializeToObjectExpression("e.getValue()"), ");", OUT, //
         "m.put(", f.nameStringConstantQualified(), ", j);", //
@@ -123,7 +123,7 @@ public class JavaMapDataType extends JavaDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + m", f.sourceName(), ".hashCode();");
+    s.a("r = r * 37 + ", f.instanceName(), ".hashCode();");
   }
 
   private final JavaDataType mWrappedKeyType;

@@ -53,9 +53,9 @@ public class JavaPrimitiveDoubleDataType extends JavaDataType {
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
     if (f.optional()) {
-      s.a("r = r * 37 + m", f.sourceName(), ".intValue();");
+      s.a("r = r * 37 + ", f.instanceName(), ".intValue();");
     } else
-      s.a("r = r * 37 + (int) m", f.sourceName(), ";");
+      s.a("r = r * 37 + (int) ", f.instanceName(), ";");
   }
 
   @Override

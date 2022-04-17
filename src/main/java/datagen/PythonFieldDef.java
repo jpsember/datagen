@@ -6,7 +6,7 @@ public class PythonFieldDef extends FieldDef {
 
   @Override
   protected String provideNameStringConstantUnqualified() {
-    return "_key_" + sourceName();
+    return "_key_" + DataUtil.lowerFirst(name());
   }
 
   @Override

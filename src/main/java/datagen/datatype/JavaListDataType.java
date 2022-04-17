@@ -86,7 +86,7 @@ public class JavaListDataType extends JavaDataType {
     sourceIfNotNull(s, f);
     s.a(OPEN, //
         ParseTools.PKG_JSLIST, " j = new ", ParseTools.PKG_JSLIST, "();", CR, //
-        "for (", wrappedType().typeName(), " x : m", f.sourceName(), ")", IN, //
+        "for (", wrappedType().typeName(), " x : ", f.instanceName(), ")", IN, //
         "j.add(", wrappedType().sourceGenerateSerializeToObjectExpression("x"), ");", OUT, //
         "m.put(", f.nameStringConstantQualified(), ", j);", //
         CLOSE, CR);
@@ -105,7 +105,7 @@ public class JavaListDataType extends JavaDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("for (", wrappedType().typeName(), " x : m", f.sourceName(), ")", IN);
+    s.a("for (", wrappedType().typeName(), " x : ", f.instanceName(), ")", IN);
     s.a("if (x != null)", IN);
     s.a("r = r * 37 + x.hashCode();", OUT);
     s.a(OUT);

@@ -72,7 +72,7 @@ public class PythonSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     SourceBuilder s = s().in(2);
     for (FieldDef f : def.fields()) {
-      s.a(CR, "self._", f.sourceName(), " = ", f.defaultValueOrNull());
+      s.a(CR, "self.", f.instanceName(), " = ", f.defaultValueOrNull());
     }
     s.out();
     return content();
@@ -84,7 +84,7 @@ public class PythonSourceGen extends SourceGen {
     s().in(2);
     for (FieldDef f : def.fields()) {
       s().cr();
-      f.dataType().sourceExpressionToImmutable(s(), f, "v._" + f.sourceName(), "self._" + f.sourceName());
+      f.dataType().sourceExpressionToImmutable(s(), f, "v." + f.instanceName(), "self." + f.instanceName());
     }
     s().out();
     return content();
@@ -98,7 +98,7 @@ public class PythonSourceGen extends SourceGen {
       s.a("\\\\", CR);
       DataType d = f.dataType();
       s.a("def set_", setExpr(def, f), "(self, x):", OPEN);
-      String targetExpr = "self._" + f.sourceName();
+      String targetExpr = "self." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "return self", CLOSE);
     }
@@ -172,8 +172,8 @@ public class PythonSourceGen extends SourceGen {
     SourceBuilder s = s().in(0);
     for (FieldDef f : def.fields()) {
       s.a("\\\\").cr();
-      s.a("def ", f.sourceName(), "(self):", OPEN, //
-          "return self._", f.sourceName(), CLOSE);
+      s.a("def ", DataUtil.lowerFirst(f.name()) , "(self):", OPEN, //
+          "return self.", f.instanceName(), CLOSE);
     }
     s.out();
     return content();
@@ -186,7 +186,7 @@ public class PythonSourceGen extends SourceGen {
     s.a("x = ", def.name(), "Builder()", CR);
     for (FieldDef f : def.fields()) {
       f.dataType().sourceIfNotNull(s, f);
-      s.a("x._", f.sourceName(), " = ", f.dataType().sourceExpressionToMutable("self._" + f.sourceName()),
+      s.a("x.", f.instanceName(), " = ", f.dataType().sourceExpressionToMutable("self." + f.instanceName()),
           CR);
       f.dataType().sourceEndIf(s).cr();
     }

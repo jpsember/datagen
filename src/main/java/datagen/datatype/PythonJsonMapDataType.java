@@ -68,7 +68,7 @@ public final class PythonJsonMapDataType extends PythonDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     if (Utils.python()) {
-      s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
+      s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
          f.defaultValueOrNull(), ")", CR);
       return;
     }
