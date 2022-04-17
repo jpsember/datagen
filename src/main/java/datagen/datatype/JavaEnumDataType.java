@@ -57,7 +57,7 @@ public class JavaEnumDataType extends JavaDataType implements EnumDataType {
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.a(OPEN, //
         "String x = m.opt(", f.nameStringConstantQualified(), ", \"\");", CR, //
-        "m", f.sourceName(), " = x.isEmpty() ? ", typeName(), ".DEFAULT_INSTANCE : ", typeName(),
+        f.instanceName(), " = x.isEmpty() ? ", typeName(), ".DEFAULT_INSTANCE : ", typeName(),
         ".valueOf(x.toUpperCase());", CLOSE);
   }
 

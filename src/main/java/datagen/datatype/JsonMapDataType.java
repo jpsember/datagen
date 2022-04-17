@@ -75,10 +75,10 @@ public final class JsonMapDataType extends JavaDataType {
 
     s.open();
     if (!f.optional())
-      s.a("m", f.sourceName(), " = ", f.defaultValueOrNull(), ";", CR);
+      s.a(f.instanceName(), " = ", f.defaultValueOrNull(), ";", CR);
     s.a(typeName(), " x = m.optJSMap(", f.nameStringConstantQualified(), ");", CR, //
         "if (x != null)", OPEN, //
-        "m", f.sourceName(), " = x.lock();", //
+        f.instanceName(), " = x.lock();", //
         CLOSE //
     );
     s.close();
@@ -86,7 +86,7 @@ public final class JsonMapDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstantQualified(),
+    s.a(f.instanceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstantQualified(),
         "), ", f.optional(), ");", CR);
   }
 

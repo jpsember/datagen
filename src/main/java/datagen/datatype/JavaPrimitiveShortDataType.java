@@ -78,7 +78,7 @@ public class JavaPrimitiveShortDataType extends JavaDataType {
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.sourceName(), " = m.optShort(", f.nameStringConstantQualified(), ");");
+      s.a(f.instanceName(), " = m.optShort(", f.nameStringConstantQualified(), ");");
     }
 
   }

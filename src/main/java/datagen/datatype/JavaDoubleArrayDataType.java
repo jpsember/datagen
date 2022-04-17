@@ -126,7 +126,7 @@ public class JavaDoubleArrayDataType extends JavaContractDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
+    s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", f.instanceName(), ");");
   }
 
 }

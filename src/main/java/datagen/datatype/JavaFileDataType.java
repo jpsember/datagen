@@ -87,7 +87,7 @@ public final class JavaFileDataType extends JavaDataType {
         "y = ", getConstructFromX(), ";", CLOSE, //
         "result.add(y);", CLOSE, //
         CLOSE, //
-        "m", f.sourceName(), " = ", ParseTools.immutableCopyOfList("result"), ";", //
+        f.instanceName(), " = ", ParseTools.immutableCopyOfList("result"), ";", //
         CLOSE);
   }
 

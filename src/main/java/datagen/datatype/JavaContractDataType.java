@@ -62,7 +62,7 @@ public class JavaContractDataType extends JavaDataType implements ContractDataTy
   public final void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.open();
     if (!f.optional())
-      s.a("m", f.sourceName(), " = ", f.defaultValueOrNull(), ";", CR);
+      s.a(f.instanceName(), " = ", f.defaultValueOrNull(), ";", CR);
 
     String typeExpr = getSerializeDataType();
     if (typeExpr.equals(ParseTools.PKG_JSMAP)) {
@@ -76,7 +76,7 @@ public class JavaContractDataType extends JavaDataType implements ContractDataTy
       s.a(getSerializeDataType(), " x = ", castExpr, "(", f.nameStringConstantQualified(), ");", CR);
     }
     s.a("if (x != null)", OPEN, //
-        "m", f.sourceName(), " = ", getConstructFromX(), ";", CLOSE //
+        f.instanceName(), " = ", getConstructFromX(), ";", CLOSE //
     );
     s.close();
   }
@@ -90,7 +90,7 @@ public class JavaContractDataType extends JavaDataType implements ContractDataTy
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = ", ParseTools.PKG_DATAUTIL, ".parseListOfObjects(", typeName(),
+    s.a(f.instanceName(), " = ", ParseTools.PKG_DATAUTIL, ".parseListOfObjects(", typeName(),
         ".DEFAULT_INSTANCE, m.optJSList(", f.nameStringConstantQualified(), "), ", f.optional(), ");");
   }
 

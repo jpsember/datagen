@@ -24,7 +24,7 @@ public class JavaDataType extends DataType {
    */
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(),
+    s.a(f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(),
         ");");
   }
 
@@ -51,7 +51,7 @@ public class JavaDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = js.data.DataUtil.parse", typeName(), "List(m, ",
+    s.a(f.instanceName(), " = js.data.DataUtil.parse", typeName(), "List(m, ",
         f.nameStringConstantQualified(), ", ", f.optional(), ");");
   }
 

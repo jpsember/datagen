@@ -59,10 +59,10 @@ public class JavaJsonListDataType extends JavaDataType {
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.open();
     if (!f.optional())
-      s.a("m", f.sourceName(), " = ", f.defaultValueOrNull(), ";", CR);
+      s.a(f.instanceName(), " = ", f.defaultValueOrNull(), ";", CR);
     s.a(typeName(), " x = m.optJSList(", f.nameStringConstantQualified(), ");", CR, //
         "if (x != null)", OPEN, //
-        "m", f.sourceName(), " = x.lock();", //
+        f.instanceName(), " = x.lock();", //
         CLOSE //
     );
     s.close();
@@ -70,7 +70,7 @@ public class JavaJsonListDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstantQualified(),
+    s.a(f.instanceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstantQualified(),
         "), ", f.optional(), ");", CR);
   }
 

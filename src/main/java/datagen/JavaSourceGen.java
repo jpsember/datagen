@@ -62,7 +62,7 @@ public final class JavaSourceGen extends SourceGen {
       String initialValue = f.defaultValueOrNull();
       if (initialValue.equals(f.dataType().compilerInitialValue()))
         continue;
-      s.a(CR, "m", f.sourceName(), " = ", initialValue, ";");
+      s.a(CR, f.instanceName(), " = ", initialValue, ";");
     }
     s.out();
     return content();
@@ -173,7 +173,7 @@ public final class JavaSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     SourceBuilder s = s().in(4);
     for (FieldDef f : def.fields()) {
-      s.a("m", f.sourceName(), " = ", f.dataType().sourceExpressionToMutable("m.m" + f.sourceName()), ";", CR);
+      s.a(f.instanceName(), " = ", f.dataType().sourceExpressionToMutable("m.m" + f.sourceName()), ";", CR);
     }
     s.out();
     return content();

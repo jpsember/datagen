@@ -78,7 +78,7 @@ public class JavaPrimitiveFloatDataType extends JavaDataType {
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.sourceName(), " = m.optFloat(", f.nameStringConstantQualified(), ");");
+      s.a(f.instanceName(), " = m.optFloat(", f.nameStringConstantQualified(), ");");
     }
 
   }

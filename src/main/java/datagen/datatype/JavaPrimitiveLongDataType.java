@@ -80,7 +80,7 @@ public class JavaPrimitiveLongDataType extends JavaDataType {
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.sourceName(), " = m.optLong(", f.nameStringConstantQualified(), ");");
+      s.a(f.instanceName(), " = m.optLong(", f.nameStringConstantQualified(), ");");
     }
 
   }

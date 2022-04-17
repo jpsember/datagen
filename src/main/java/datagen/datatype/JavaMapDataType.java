@@ -105,7 +105,7 @@ public class JavaMapDataType extends JavaDataType {
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.open();
     if (!f.optional())
-      s.a("m", f.sourceName(), " = ", f.defaultValueOrNull(), ";", CR);
+      s.a(f.instanceName(), " = ", f.defaultValueOrNull(), ";", CR);
 
     s.a(OPEN, //
         "JSMap m2 = m.optJSMap(", QUOTE, f.name(), ");", CR, //
@@ -115,7 +115,7 @@ public class JavaMapDataType extends JavaDataType {
         "for (Map.Entry<String, Object> e : m2.wrappedMap().entrySet())", IN, //
         "mp.put(", wrappedKeyType().deserializeStringToMapKey("e.getKey()"), ", ",
         wrappedValueType().deserializeJsonToMapValue("e.getValue()"), ");", OUT, //
-        "m", f.sourceName(), " = ", "mp", ";", CLOSE, //
+        f.instanceName(), " = ", "mp", ";", CLOSE, //
         CLOSE);
 
     s.close();
