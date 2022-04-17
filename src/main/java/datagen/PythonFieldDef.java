@@ -6,37 +6,27 @@ public class PythonFieldDef extends FieldDef {
 
   @Override
   public String provideSetterName() {
-    return "set_" + provideSourceName();
+    return "set_" + provideGetterName();
   }
 
   @Override
   public String provideGetterName() {
-    return provideSourceName();
+    return DataUtil.lowerFirst(name());
   }
 
   @Override
-  protected String provideNameStringConstantUnqualified() {
+  public String provideNameStringConstantUnqualified() {
     return "_key_" + DataUtil.lowerFirst(name());
   }
 
   @Override
-  protected String provideNameStringConstantQualified() {
+  public String provideNameStringConstantQualified() {
     return Context.generatedTypeDef.name() + "." + nameStringConstantUnqualified();
   }
 
   @Override
-  protected String provideInstanceName() {
+  public String provideInstanceName() {
     return "_" + DataUtil.lowerFirst(name());
-  }
-
-  @Override
-  protected String provideSourceNameLowerFirst() {
-    return DataUtil.lowerFirst(name());
-  }
-
-  @Override
-  protected String provideSourceName() {
-    return DataUtil.lowerFirst(name());
   }
 
 }

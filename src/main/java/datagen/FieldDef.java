@@ -61,9 +61,9 @@ public abstract class FieldDef extends BaseObject {
     mOptional = optional;
   }
 
-  protected abstract String provideNameStringConstantUnqualified();
+  public abstract String provideNameStringConstantUnqualified();
 
-  protected abstract String provideNameStringConstantQualified();
+  public abstract String provideNameStringConstantQualified();
 
   public final DataType dataType() {
     return mDataType;
@@ -77,18 +77,12 @@ public abstract class FieldDef extends BaseObject {
   // Names to appear in source
   // ------------------------------------------------------------------
 
-  protected abstract String provideInstanceName();
-
-  @Deprecated
-  protected abstract String provideSourceName();
-
-  @Deprecated
-  protected abstract String provideSourceNameLowerFirst();
+  public abstract String provideInstanceName();
 
   public String instanceName() {
-    if (mInstanceName == null)
-      mInstanceName = provideInstanceName();
-    return mInstanceName;
+    if (mCachedInstanceName == null)
+      mCachedInstanceName = provideInstanceName();
+    return mCachedInstanceName;
   }
 
   public abstract String provideSetterName();
@@ -107,45 +101,26 @@ public abstract class FieldDef extends BaseObject {
     return mCachedGetterName;
   }
 
-  private String mCachedGetterName;
-  private String mCachedSetterName;
-
-  @Deprecated
-  public final String sourceName() {
-    if (mSourceName == null) {
-      mSourceNameCapFirst = provideSourceName();
-      mSourceName = provideSourceNameLowerFirst();
-    }
-    return mSourceNameCapFirst;
-  }
-
-  @Deprecated
-  public final String sourceNameLowerFirst() {
-    todo("have better names for sourceName, sourceNameLowerFirst, and providers");
-    sourceName();
-    return mSourceName;
-  }
-
   /**
    * Returns name assigned to the string constant for the field, e.g.
    * "HORSE_WEIGHT"
    */
   public final String nameStringConstantQualified() {
-    if (mNameStringConstantQualified == null)
-      mNameStringConstantQualified = provideNameStringConstantQualified();
-    return mNameStringConstantQualified;
+    if (mCachedNameStringQualified == null)
+      mCachedNameStringQualified = provideNameStringConstantQualified();
+    return mCachedNameStringQualified;
   }
 
   public final String nameStringConstantUnqualified() {
-    if (mNameStringConstant == null)
-      mNameStringConstant = provideNameStringConstantUnqualified();
-    return mNameStringConstant;
+    if (mCachedNameString == null)
+      mCachedNameString = provideNameStringConstantUnqualified();
+    return mCachedNameString;
   }
-  
+
   // ------------------------------------------------------------------
 
   public void setDefaultValue(String defValueSource) {
-    mDefaultValueSource = defValueSource;
+    mCachedDefaultValueSource = defValueSource;
   }
 
   /**
@@ -168,19 +143,19 @@ public abstract class FieldDef extends BaseObject {
 
   // final for the time being
   public final String defaultValueSource() {
-    if (mDefaultValueSource == null)
+    if (mCachedDefaultValueSource == null)
       setDefaultValue(dataType().sourceDefaultValue());
-    return mDefaultValueSource;
+    return mCachedDefaultValueSource;
   }
 
-  private String mNameStringConstant;
-  private String mNameStringConstantQualified;
+  private String mCachedNameString;
+  private String mCachedNameStringQualified;
   private int mIndex;
   private DataType mDataType;
   private boolean mOptional;
-  private String mSourceName;
-  private String mSourceNameCapFirst;
-  private String mDefaultValueSource;
-  private String mInstanceName;
+  private String mCachedDefaultValueSource;
+  private String mCachedInstanceName;
+  private String mCachedGetterName;
+  private String mCachedSetterName;
 
 }
