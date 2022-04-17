@@ -98,6 +98,8 @@ public final class ParseTools {
 
   public static QualifiedName parseQualifiedName(String expr, String defaultPackage) {
     int nameStartPos = expr.lastIndexOf('.');
+    if (nameStartPos == 0 || nameStartPos == expr.length() - 1)
+      throw badArg("parseQualifiedName from:", expr);
     String pkg = expr.substring(0, Math.max(0, nameStartPos));
     pkg = ifNullOrEmpty(pkg, nullToEmpty(defaultPackage));
     String className = expr.substring(1 + nameStartPos);
@@ -114,18 +116,6 @@ public final class ParseTools {
     q.combined(combined);
     return q;
   }
-
-//  @Deprecated
-//  public static QualifiedName buildQualifiedName(String packagePath, String typeName) {
-//    String combined = typeName;
-//    if (!packagePath.isEmpty())
-//      combined = packagePath + "." + typeName;
-//    return QualifiedName.newBuilder()//
-//        .packagePath(packagePath)//
-//        .className(typeName)//
-//        .combined(combined)//
-//        .build();
-//  }
 
   public static String escapeJavaString(String s) {
     StringBuilder b = new StringBuilder();
@@ -251,40 +241,11 @@ public final class ParseTools {
    */
   public static String importedClassExpr(Language language, String qualifiedClassName) {
     if (language == null)
-      language = Context.config.language();
-
-    verifyPythonGenPath(qualifiedClassName);
-
+      language = language();
     try {
-      int cursor = qualifiedClassName.lastIndexOf('.');
-      checkState(cursor > 0 && cursor < qualifiedClassName.length() - 1);
-
-      String packageName = qualifiedClassName.substring(0, cursor);
-      String className = qualifiedClassName.substring(cursor + 1);
-
-      //      if (!alert("this is no longer necessary?")) {
-
-      if (language == Language.PYTHON) {
-        String pexpr = "." + packageName + ".";
-        String cexpr = "." + convertCamelToUnderscore(className) + ".";
-        boolean ct = pexpr.contains(cexpr);
-        boolean gen = pexpr.contains(".dev.");
-        if (gen && gen != ct) {
-          die("unexpected Python qualified class name:", INDENT, qualifiedClassName);
-        }
-
-        if (!alert("this is no longer necessary?")) {
-          // By convention, we must convert the class name to lowercase and append it to the package path,
-          // e.g.   pycore.DataUtil ->  pycore.datautil.DataUtil
-          String packageSuffix = className.toLowerCase();
-          checkArgument(!className.equals(packageSuffix));
-          String dottedSuffix = "." + packageSuffix;
-          checkArgument(!packageName.endsWith(dottedSuffix));
-          qualifiedClassName = packageName + dottedSuffix + "." + className;
-        }
-      }
-      //      }
-
+      QualifiedName qn = parseQualifiedName(qualifiedClassName, null);
+      checkState(nonEmpty(qn.packagePath()));
+      String className = qn.className();
       return importCodeExpr(qualifiedClassName, className);
     } catch (Throwable t) {
       throw badArg("Failed to parse imported class expression:", quote(qualifiedClassName), "for language",
@@ -329,6 +290,12 @@ public final class ParseTools {
 
   public static final String immutableCopyOfMap(String expr) {
     return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
+  }
+
+  public static QualifiedName assertHasPackage(QualifiedName q) {
+    if (q.packagePath().isEmpty())
+      throw badArg("Package is empty:", q);
+    return q;
   }
 
 }

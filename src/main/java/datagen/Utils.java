@@ -32,7 +32,7 @@ import datagen.gen.QualifiedName;
 public final class Utils {
 
   public static final String GEN_SUBDIR_NAME = "gen";
-  
+
   /**
    * Throw UnsupportedOperationException due to an unsupported target language
    */
@@ -82,17 +82,18 @@ public final class Utils {
   }
 
   public static boolean packageContainsGen(String packagePath) {
-    return packageContainsElement(packagePath,GEN_SUBDIR_NAME);
+    return packageContainsElement(packagePath, GEN_SUBDIR_NAME);
   }
 
+  /**
+   * Append filename to package if appropriate (Python only); see
+   * PythonSourceGen.generateImports() for a discussion.
+   */
   public static QualifiedName updateForPython(QualifiedName qualifiedName) {
-    QualifiedName ret = qualifiedName;
+    QualifiedName result = qualifiedName;
     do {
       if (!python())
         break;
-
-      // Append filename to package if appropriate; see PythonSourceGen.generateImports()
-      // for a discussion.
 
       if (!packageContainsGen(qualifiedName.packagePath()))
         break;
@@ -103,42 +104,11 @@ public final class Utils {
             qualifiedName);
         break;
       }
-
-      ret = qualifiedName.toBuilder().packagePath(qualifiedName.packagePath() + pkgElement);
-      pr("modified qualifiedClassName from:", CR, qualifiedName, CR, "to:", CR, ret);
+      result = ParseTools
+          .assignCombined(qualifiedName.toBuilder().packagePath(qualifiedName.packagePath() + pkgElement));
     } while (false);
-    return ret.build();
-  }
 
-  @Deprecated
-  public static void verifyPythonGenPath(String q) {
-    alert("temporary(?) verification code");
-    if (!python())
-      return;
-if (true) return;
-
-    QualifiedName qn = ParseTools.parseQualifiedName(q, null);
-    //  pr("...verifying for Python:", INDENT, qn);
-
-    String packageName = qn.packagePath();
-    String className = qn.className();
-
-    todo("have special symbol and utilities for 'gen' package element");
-    String pathExpr = "." + packageName + ".";
-    String classExpr = "." + convertCamelToUnderscore(className) + ".";
-    boolean pathContainsClassFile = packageContainsElement(pathExpr,classExpr); //pathExpr.contains(classExpr);
-    boolean pathContainsGen = packageContainsGen(packageName);
-
-    //    if (false) {
-    //      pr("pathExpr:", pathExpr);
-    //      pr("classExp:", classExpr);
-    //      pr("pathCtCf:", pathContainsClassFile);
-    //      pr("pathCtGn:", pathContainsGen);
-    //    }
-
-    if (pathContainsGen && !pathContainsClassFile) {
-      die("unexpected Python qualified class name:", INDENT, qn);
-    }
+    return result.build();
   }
 
 }

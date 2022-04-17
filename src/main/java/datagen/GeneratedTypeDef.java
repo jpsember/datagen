@@ -28,6 +28,9 @@ import java.io.File;
 import java.util.List;
 import java.util.Set;
 
+import static js.base.Tools.*;
+import static datagen.Utils.*;
+
 import datagen.datatype.ListDataType;
 import datagen.datatype.MapDataType;
 import datagen.datatype.DataContractDataType;
@@ -36,8 +39,6 @@ import datagen.gen.QualifiedName;
 import datagen.gen.TypeStructure;
 import js.base.BaseObject;
 import js.json.JSMap;
-
-import static js.base.Tools.*;
 
 /**
  * Encapsulates a generated data type or enum
@@ -128,7 +129,7 @@ public final class GeneratedTypeDef extends BaseObject {
   public SourceBuilder classSpecificSourceBuilder() {
     checkState(mClassSpecificSource == null, "source already retrieved");
     if (mClassSpecificSourceBuilder == null)
-      mClassSpecificSourceBuilder = new SourceBuilder(Context.config.language());
+      mClassSpecificSourceBuilder = new SourceBuilder(language());
     return mClassSpecificSourceBuilder;
   }
 

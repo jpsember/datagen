@@ -30,7 +30,6 @@ import js.data.DataUtil;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
-
 import static datagen.Utils.*;
 
 /**
@@ -40,10 +39,6 @@ public abstract class DataType implements DefaultValueParser {
 
   public final boolean python() {
     return language() == Language.PYTHON;
-  }
-
-  public final Language language() {
-    return Context.config.language();
   }
 
   // ------------------------------------------------------------------

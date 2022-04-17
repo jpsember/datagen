@@ -24,20 +24,18 @@
  **/
 package datagen;
 
-import js.base.BaseObject;
-import js.file.Files;
-import js.json.JSMap;
-import js.parsing.MacroParser;
-
-import static js.base.Tools.*;
-
 import java.io.File;
 import java.util.List;
 import java.util.Set;
 
-import datagen.datatype.EnumDataType;
-
+import static js.base.Tools.*;
 import static datagen.Utils.*;
+
+import js.base.BaseObject;
+import js.file.Files;
+import js.json.JSMap;
+import js.parsing.MacroParser;
+import datagen.datatype.EnumDataType;
 
 /**
  * Generate source code from previously parsed data fields and source templates
@@ -45,7 +43,7 @@ import static datagen.Utils.*;
 public abstract class SourceGen extends BaseObject {
 
   public static SourceGen construct() {
-    switch (Context.config.language()) {
+    switch (language()) {
     default:
       throw languageNotSupported();
     case JAVA:
@@ -56,7 +54,7 @@ public abstract class SourceGen extends BaseObject {
   }
 
   protected SourceGen() {
-    mSourceBuilder = new SourceBuilder(Context.config.language());
+    mSourceBuilder = new SourceBuilder(language());
   }
 
   public final void generate() {
@@ -128,8 +126,7 @@ public abstract class SourceGen extends BaseObject {
     //         For Python, lines starting with "\\[n]" indicate that n blank lines are to be placed between 
     //         the neighboring (non-blank) lines
     //
-    content = ParseTools.adjustLinefeeds(content, Context.config.language());
-
+    content = ParseTools.adjustLinefeeds(content, language());
     File target = sourceFile();
     Context.files.mkdirs(Files.parent(target));
     boolean wrote = Context.files.writeIfChanged(target, content);

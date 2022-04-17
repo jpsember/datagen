@@ -28,12 +28,13 @@ import java.io.File;
 import java.util.List;
 
 import datagen.datatype.EnumDataType;
+import datagen.gen.QualifiedName;
 import js.data.DataUtil;
 import js.file.Files;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
-import static datagen.Utils.*;
+//import static datagen.Utils.*;
 
 public class PythonSourceGen extends SourceGen {
 
@@ -143,14 +144,10 @@ public class PythonSourceGen extends SourceGen {
     // When referring to such classes within generated Python code, we will derive and insert a filename
     // if the package includes 'gen'.
     //
-    
+
     for (String cn : qualifiedClassNames) {
-      verifyPythonGenPath(cn);
-      int cursor = cn.lastIndexOf('.');
-      if (cursor < 1 || cursor >= cn.length() - 1)
-        throw badArg("can't parse class name:", quote(cn));
-      s().a("from ", cn.substring(0, cursor), " import ",
-          cn.substring(cursor + 1)).cr();
+      QualifiedName q = ParseTools.assertHasPackage(ParseTools.parseQualifiedName(cn, null));
+      s().a("from ", q.packagePath(), " import ", q.className()).cr();
     }
     return content();
   }
@@ -245,7 +242,7 @@ public class PythonSourceGen extends SourceGen {
       File parent = Files.parent(sourceFile());
       File sentinelFile = new File(parent, "__init__.py");
       Context.generatedFilesSet.add(sentinelFile);
-      if (!sentinelFile.exists())  
+      if (!sentinelFile.exists())
         files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
     }
   }

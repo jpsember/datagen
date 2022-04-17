@@ -141,8 +141,6 @@ final class DataDefinitionParser extends BaseObject {
     read(SEMI);
     QualifiedName qualifiedClassName = parseQualifiedName(nameExpression, packageName());
     qualifiedClassName = updateForPython(qualifiedClassName);
-    pr("updated for python:",nameExpression,INDENT,qualifiedClassName);
-    todo("for python code, the import statement and whatnot must include the name of the class tacked on to the package path");
     dataType.setQualifiedClassName(qualifiedClassName);
     dataType.setDeclaredFlag();
     Context.dataTypeManager.add(qualifiedClassName.className(), dataType);
