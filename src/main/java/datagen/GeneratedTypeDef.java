@@ -149,7 +149,7 @@ public final class GeneratedTypeDef extends BaseObject {
     DataTypeManager dataTypes = Context.dataTypeManager;
     DataType dataType = dataTypes.get(typeName);
     if (dataType == null) {
-      QualifiedName className = ParseTools.parseQualifiedName(typeName, null);
+      QualifiedName className = ParseTools.parseQualifiedName(typeName, Context.generatedTypeDef.packageName());  
       dataType = dataTypes.get(className.className());
       if (dataType == null) {
         {
@@ -160,10 +160,8 @@ public final class GeneratedTypeDef extends BaseObject {
           if (!datFile.exists())
             badArg("No definition file found at", datFile, INDENT, "...use 'extern' to declare its location");
         }
-
         DataType contractType = ContractDataType.construct();
-        QualifiedName qn = ParseTools.parseQualifiedName(typeName, Context.generatedTypeDef.packageName());
-        contractType.setQualifiedClassName(qn);
+        contractType.setQualifiedClassName(className);
         dataType = (DataType) contractType;
         dataTypes.add(dataType.qualifiedClassName().className(), dataType);
       }

@@ -298,7 +298,6 @@ public final class ParseTools {
     return q;
   }
 
-
   /**
    * Append filename to package if appropriate (Python only); see
    * PythonSourceGen.generateImports() for a discussion.
@@ -323,13 +322,6 @@ public final class ParseTools {
     } while (false);
 
     return result.build();
-  }
-
-  
-@Deprecated // Why is there no existing DataType method that is suitable?
-  public static void parseQualifiedName(DataType datatype, String typeName) {
-    QualifiedName qn = ParseTools.parseQualifiedName(typeName, Context.generatedTypeDef.packageName());
-    datatype.setQualifiedClassName(qn);
   }
 
 }
