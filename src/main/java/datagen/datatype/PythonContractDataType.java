@@ -131,7 +131,7 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
       }
 
       String constName;
-      constName = "DEF" + fieldDef.nameStringConstant(false);
+      constName = "DEF" + fieldDef.nameStringConstantUnqualified();
       sb.a(constName, "  = ", typeName(), "(");
       int i = INIT_INDEX;
       for (String expr : exprs) {

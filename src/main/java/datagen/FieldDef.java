@@ -27,34 +27,60 @@ package datagen;
 import js.base.BaseObject;
 import js.data.DataUtil;
 
+import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 /**
  * Represents a field within a generated data type
  */
-public final class FieldDef extends BaseObject {
+public abstract class FieldDef extends BaseObject {
 
-  public FieldDef(String name, DataType dataType, boolean optional) {
-    loadTools();
-    setName(name);
-    mDataType = dataType;
-    mOptional = optional;
-    if (Utils.python()) {
-      // If we add a '_' prefix, the Python inspection reports a warning about a 'protected member';
-      // but that is ok for our code; we need to have underscore prefixes for the instance fields anyways
-      mNameStringConstant = "_key_" + sourceName();
-      mNameStringConstantQualified = Context.generatedTypeDef.name() + "." + mNameStringConstant;
-    } else {
-      mNameStringConstant = name.toUpperCase();
-      mNameStringConstantQualified = mNameStringConstant;
+  public static FieldDef construct() {
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      return new JavaFieldDef();
+    case PYTHON:
+      return new PythonFieldDef();
     }
   }
 
-  public DataType dataType() {
+  public FieldDef() {
+  }
+
+  public final int index() {
+    return mIndex;
+  }
+
+  public final void init(String name, DataType dataType, boolean optional, int index) {
+    setName(name);
+    mIndex = index;
+    mDataType = dataType;
+    mOptional = optional;
+    // mNameStringConstant = provideNameStringConstant();
+    // mNameStringConstantQualified = provideNameStringConstantQualified();
+    //
+    //    if (Utils.python()) {
+    //      // If we add a '_' prefix, the Python inspection reports a warning about a 'protected member';
+    //      // but that is ok for our code; we need to have underscore prefixes for the instance fields anyways
+    //      mNameStringConstant = "_key_" + sourceName();
+    //      mNameStringConstantQualified = Context.generatedTypeDef.name() + "." + mNameStringConstant;
+    //    } else {
+    //      mNameStringConstant = name.toUpperCase();
+    //      mNameStringConstantQualified = mNameStringConstant;
+    //    }
+  }
+
+  protected abstract String provideNameStringConstant();
+
+  protected abstract String provideNameStringConstantQualified();
+
+  public final DataType dataType() {
     return mDataType;
   }
 
-  public boolean optional() {
+  public final boolean optional() {
     return mOptional;
   }
 
@@ -80,12 +106,30 @@ public final class FieldDef extends BaseObject {
    * "HORSE_WEIGHT"
    */
   public final String nameStringConstant() {
-    return nameStringConstant(true);
+    if (mNameStringConstantQualified == null)
+      mNameStringConstantQualified = provideNameStringConstantQualified();
+    return mNameStringConstantQualified;
   }
 
+  public final String nameStringConstantUnqualified() {
+    if (mNameStringConstant == null)
+      mNameStringConstant = provideNameStringConstant();
+    return mNameStringConstant;
+  }
+
+  @Deprecated
   public final String nameStringConstant(boolean qualified) {
+
     todo("figure out what these named string constants are, and whether they are needed");
-    return qualified ? mNameStringConstantQualified : mNameStringConstant;
+    if (qualified) {
+      if (mNameStringConstantQualified == null)
+        mNameStringConstantQualified = provideNameStringConstantQualified();
+      return mNameStringConstantQualified;
+    } else {
+      if (mNameStringConstant == null)
+        mNameStringConstant = provideNameStringConstant();
+      return mNameStringConstant;
+    }
   }
 
   public void setDefaultValue(String defValueSource) {
@@ -117,10 +161,11 @@ public final class FieldDef extends BaseObject {
     return mDefaultValueSource;
   }
 
-  private final String mNameStringConstant;
-  private final String mNameStringConstantQualified;
-  private final DataType mDataType;
-  private final boolean mOptional;
+  private String mNameStringConstant;
+  private String mNameStringConstantQualified;
+  private int mIndex;
+  private DataType mDataType;
+  private boolean mOptional;
   private String mSourceName;
   private String mSourceNameCapFirst;
   private String mDefaultValueSource;

@@ -48,7 +48,8 @@ public class PyIPointDataType extends PythonContractDataType {
     scanner.read(COMMA);
     int y = scanner.readInt(NUMBER);
     scanner.read(SQCL);
-    String constName = "DEF" + fieldDef.nameStringConstant(false);
+    String constName = "DEF" + fieldDef.nameStringConstantUnqualified()
+    ;
     sb.a(constName, "  = ", typeName(), ".with_x_y(", x, ", ", y, ")", CR);
     return constName;
   }

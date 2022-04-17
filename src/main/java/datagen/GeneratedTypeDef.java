@@ -125,8 +125,8 @@ public final class GeneratedTypeDef extends BaseObject {
       throw notSupported("datatype structure", structure);
     }
     complexType.setUsedFlag();
-
-    FieldDef f = new FieldDef(fieldName, complexType, optional);
+    FieldDef f = FieldDef.construct();
+    f.init(fieldName, complexType, optional, mFields.size());
     mFields.add(f);
     return f;
   }
