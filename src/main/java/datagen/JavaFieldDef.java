@@ -5,6 +5,15 @@ import js.data.DataUtil;
 public class JavaFieldDef extends FieldDef {
 
   @Override
+  public String provideSetterName() {
+    return sourceNameLowerFirst();
+  }
+  @Override
+  public String provideGetterName() {
+    return sourceNameLowerFirst();
+  }
+
+  @Override
   protected String provideNameStringConstantUnqualified() {
     return name().toUpperCase();
   }

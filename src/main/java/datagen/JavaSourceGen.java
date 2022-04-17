@@ -88,7 +88,7 @@ public final class JavaSourceGen extends SourceGen {
     for (FieldDef f : def.fields()) {
       s.br();
       DataType d = f.dataType();
-      s.a("public ", "Builder ", f.sourceNameLowerFirst(), "(", d.typeName(), " x)", OPEN);
+      s.a("public ", "Builder ", f.setterName(), "(", d.typeName(), " x)", OPEN);
       String targetExpr = "" + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "return this;", CLOSE);

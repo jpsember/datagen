@@ -73,6 +73,10 @@ public abstract class FieldDef extends BaseObject {
     return mOptional;
   }
 
+  // ------------------------------------------------------------------
+  // Names to appear in source
+  // ------------------------------------------------------------------
+
   protected abstract String provideInstanceName();
 
   protected abstract String provideSourceName();
@@ -85,6 +89,25 @@ public abstract class FieldDef extends BaseObject {
     return mInstanceName;
   }
 
+  public abstract String provideSetterName();
+
+  public final String setterName() {
+    if (mCachedSetterName == null)
+      mCachedSetterName = provideSetterName();
+    return mCachedSetterName;
+  }
+
+  public abstract String provideGetterName();
+
+  public final String getterName() {
+    if (mCachedGetterName == null)
+      mCachedGetterName = provideGetterName();
+    return mCachedGetterName;
+  }
+
+  private String mCachedGetterName;
+  private String mCachedSetterName;
+
   @Deprecated
   public String sourceName() {
     if (mSourceName == null) {
@@ -94,6 +117,7 @@ public abstract class FieldDef extends BaseObject {
     return mSourceNameCapFirst;
   }
 
+  @Deprecated
   public String sourceNameLowerFirst() {
     todo("have better names for sourceName, sourceNameLowerFirst, and providers");
     sourceName();
@@ -115,6 +139,8 @@ public abstract class FieldDef extends BaseObject {
       mNameStringConstant = provideNameStringConstantUnqualified();
     return mNameStringConstant;
   }
+  
+  // ------------------------------------------------------------------
 
   public void setDefaultValue(String defValueSource) {
     mDefaultValueSource = defValueSource;
