@@ -26,13 +26,13 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
-import datagen.DataType;
 import datagen.FieldDef;
+import datagen.PythonDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
 
-public class PyIntDataType extends DataType {
+public class PyIntDataType extends PythonDataType {
 
   @Override
   public final String compilerInitialValue() {

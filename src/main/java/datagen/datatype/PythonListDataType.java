@@ -34,12 +34,13 @@ import java.util.List;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
+import datagen.PythonDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public class ListDataType extends DataType {
+public class PythonListDataType extends PythonDataType {
 
-  public ListDataType(DataType wrappedType) {
+  public PythonListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
     setQualifiedClassName(ParseTools
         .parseQualifiedName("java.util.List<" + wrappedType.qualifiedClassName().className() + ">",null));
@@ -118,7 +119,7 @@ public class ListDataType extends DataType {
       todo("!for Python, we may want to convert individual items for other types, as we are doing for enums");
       if (wrappedType() instanceof EnumDataType) {
         s.a("m[", f.nameStringConstant(true), "] = [x.value for x in self._", f.sourceName(), "]", CR);
-      } else if (wrappedType() instanceof DataContractDataType) {
+      } else if (wrappedType() instanceof PythonDataContractDataType) {
         s.a("m[", f.nameStringConstant(true), "] = [x.to_json() for x in self._", f.sourceName(), "]", CR);
       } else
         s.a("m[", f.nameStringConstant(true), "] = self._", f.sourceName(), ".copy()", CR);

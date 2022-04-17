@@ -26,6 +26,7 @@ package datagen.datatype;
 
 import datagen.DataType;
 import datagen.FieldDef;
+import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
@@ -33,7 +34,7 @@ import static datagen.ParseTools.*;
 /**
  * Datatype for longs (and boxed version)
  */
-public class PrimitiveLongDataType extends DataType {
+public class PrimitiveLongDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {

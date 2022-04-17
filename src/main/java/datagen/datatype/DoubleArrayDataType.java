@@ -34,7 +34,7 @@ import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public class DoubleArrayDataType extends DataContractDataType {
+public class DoubleArrayDataType extends JavaDataContractDataType {
 
   @Override
   public String provideSourceDefaultValue() {

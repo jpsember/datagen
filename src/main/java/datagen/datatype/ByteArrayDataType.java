@@ -31,7 +31,7 @@ import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
 
-public class ByteArrayDataType extends DataContractDataType {
+public class ByteArrayDataType extends JavaDataContractDataType {
 
   @Override
   public String provideSourceDefaultValue() {

@@ -27,12 +27,12 @@ package datagen.datatype;
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
-import datagen.DataType;
 import datagen.FieldDef;
+import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public final class StringDataType extends DataType {
+public final class StringDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {

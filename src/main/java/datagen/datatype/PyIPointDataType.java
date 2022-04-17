@@ -31,7 +31,7 @@ import datagen.FieldDef;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public class PyIPointDataType extends DataContractDataType {
+public class PyIPointDataType extends JavaDataContractDataType {
 
   protected String provideQualifiedClassNameExpr() {
     return "pycore.ipoint.IPoint";

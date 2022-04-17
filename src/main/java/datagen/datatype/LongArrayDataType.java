@@ -31,7 +31,7 @@ import datagen.ParseTools;
 import datagen.SourceBuilder;
 import static datagen.Utils.*;
 
-public class LongArrayDataType extends DataContractDataType {
+public class LongArrayDataType extends JavaDataContractDataType {
 
   @Override
   public String provideSourceDefaultValue() {

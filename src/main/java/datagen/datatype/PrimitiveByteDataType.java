@@ -26,6 +26,7 @@ package datagen.datatype;
 
 import datagen.DataType;
 import datagen.FieldDef;
+import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
@@ -33,7 +34,7 @@ import static datagen.ParseTools.*;
 /**
  * Datatype for primitive bytes, i.e. "byte x;"
  */
-public class PrimitiveByteDataType extends DataType {
+public class PrimitiveByteDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {

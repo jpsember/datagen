@@ -36,6 +36,8 @@ import static datagen.Utils.*;
  */
 public abstract class DataType implements DefaultValueParser {
 
+  protected abstract void todoMarker();
+  
   // ------------------------------------------------------------------
   // Naming
   // ------------------------------------------------------------------

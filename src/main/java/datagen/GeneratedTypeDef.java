@@ -31,10 +31,14 @@ import java.util.Set;
 import static js.base.Tools.*;
 import static datagen.Utils.*;
 
-import datagen.datatype.ListDataType;
-import datagen.datatype.MapDataType;
+import datagen.datatype.JavaListDataType;
+import datagen.datatype.JavaMapDataType;
+import datagen.datatype.PythonDataContractDataType;
+import datagen.datatype.PythonListDataType;
+import datagen.datatype.PythonMapDataType;
 import datagen.datatype.DataContractDataType;
 import datagen.datatype.EnumDataType;
+import datagen.datatype.JavaDataContractDataType;
 import datagen.gen.QualifiedName;
 import datagen.gen.TypeStructure;
 import js.base.BaseObject;
@@ -108,10 +112,10 @@ public final class GeneratedTypeDef extends BaseObject {
       // Convert list to particular scalar types in special cases
       complexType = dataType.listVariant();
       if (complexType == null)
-        complexType = new ListDataType(dataType);
+        complexType = python() ? new PythonListDataType(dataType) : new JavaListDataType(dataType);
       break;
     case KEY_VALUE_MAP:
-      complexType = new MapDataType(dataType, dataType2);
+      complexType = python() ? new PythonMapDataType(dataType,dataType2) : new JavaMapDataType(dataType, dataType2);
       break;
     default:
       throw notSupported("datatype structure", structure);
@@ -157,9 +161,11 @@ public final class GeneratedTypeDef extends BaseObject {
           if (!datFile.exists())
             badArg("No definition file found at", datFile, INDENT, "...use 'extern' to declare its location");
         }
-        DataContractDataType contractType = new DataContractDataType();
+
+        DataContractDataType contractType = python() ? new PythonDataContractDataType()
+            : new JavaDataContractDataType();
         contractType.parseQualifiedName(typeName);
-        dataType = contractType;
+        dataType = (DataType) contractType;
         dataTypes.add(dataType.qualifiedClassName().className(), dataType);
       }
     }

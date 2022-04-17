@@ -27,13 +27,13 @@ package datagen.datatype;
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
-import datagen.DataType;
 import datagen.FieldDef;
+import datagen.PythonDataType;
 import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.parsing.Scanner;
 
-public class PyBooleanDataType extends DataType {
+public class PyBooleanDataType extends PythonDataType {
 
   @Override
   public final String compilerInitialValue() {

@@ -28,13 +28,13 @@ import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
-import datagen.DataType;
 import datagen.FieldDef;
+import datagen.JavaDataType;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public class JsonListDataType extends DataType {
+public class JsonListDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {

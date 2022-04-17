@@ -29,10 +29,11 @@ import static js.base.Tools.*;
 
 import datagen.DataType;
 import datagen.FieldDef;
+import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public class BooleanDataType extends DataType {
+public class BooleanDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {

@@ -24,14 +24,18 @@
  **/
 package datagen;
 
-import static datagen.ParseTools.*;
 import static js.base.Tools.*;
+import static datagen.ParseTools.*;
+import static datagen.Utils.*;
 
 import java.io.File;
 import java.util.Map;
 
-import datagen.datatype.DataContractDataType;
 import datagen.datatype.EnumDataType;
+import datagen.datatype.JavaDataContractDataType;
+import datagen.datatype.JavaEnumDataType;
+import datagen.datatype.PythonDataContractDataType;
+import datagen.datatype.PythonEnumDataType;
 import datagen.gen.QualifiedName;
 import datagen.gen.TypeStructure;
 import js.file.Files;
@@ -83,7 +87,8 @@ final class DataDefinitionParser extends BaseObject {
 
   private void prepareHandlers() {
     mHandlers = hashMap();
-    mHandlers.put(EXTERN, () -> processExternalReference(new DataContractDataType()));
+    mHandlers.put(EXTERN, () -> processExternalReference(
+        python() ? new PythonDataContractDataType() : new JavaDataContractDataType()));
     mHandlers.put(FIELDS, () -> procDataType());
     mHandlers.put(ENUM, () -> procEnum());
   }
@@ -133,7 +138,8 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   /**
-   * Process a reference to an externally defined type (either a DataContractDataType or an EnumDataType)
+   * Process a reference to an externally defined type (either a
+   * DataContractDataType or an EnumDataType)
    */
   private void processExternalReference(DataType dataType) {
     String nameExpression = read(ID);
@@ -204,9 +210,11 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void procEnum() {
+    EnumDataType enumDataType = python() ? new PythonEnumDataType() : new JavaEnumDataType();
+
     // If this is a declaration, an id followed by ;
     if (scanner().peek().id(ID)) {
-      processExternalReference(new EnumDataType());
+      processExternalReference(enumDataType);
       return;
     }
 
@@ -217,7 +225,7 @@ final class DataDefinitionParser extends BaseObject {
         DOT_EXT_DATA_DEFINITION);
     enumName = DataUtil.convertUnderscoresToCamelCase(className2);
     QualifiedName className = parseQualifiedName(enumName, packageName());
-    EnumDataType enumDataType = new EnumDataType();
+    //EnumDataType enumDataType = new EnumDataType();
     enumDataType.setQualifiedClassName(className);
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType));
 

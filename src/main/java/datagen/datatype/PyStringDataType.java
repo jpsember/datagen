@@ -28,12 +28,12 @@ import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 import static datagen.SourceBuilder.*;
 
-import datagen.DataType;
 import datagen.FieldDef;
+import datagen.PythonDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public final class PyStringDataType extends DataType {
+public final class PyStringDataType extends PythonDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {

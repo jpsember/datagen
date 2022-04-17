@@ -26,6 +26,7 @@ package datagen.datatype;
 
 import datagen.DataType;
 import datagen.FieldDef;
+import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
@@ -33,7 +34,7 @@ import static datagen.ParseTools.*;
 /**
  * Datatype for primitive short integers, i.e. "short x;"
  */
-public class PrimitiveShortDataType extends DataType {
+public class PrimitiveShortDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {

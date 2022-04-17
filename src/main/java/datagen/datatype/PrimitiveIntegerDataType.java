@@ -28,13 +28,14 @@ import static datagen.ParseTools.*;
 
 import datagen.DataType;
 import datagen.FieldDef;
+import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
 /**
  * Datatype for primitive integers, i.e. "int x;"
  */
-public class PrimitiveIntegerDataType extends DataType {
+public class PrimitiveIntegerDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {

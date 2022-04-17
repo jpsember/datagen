@@ -29,8 +29,8 @@ import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
 import datagen.FieldDef;
-import datagen.JavaDataType;
 import datagen.ParseTools;
+import datagen.PythonDataType;
 import datagen.SourceBuilder;
 import datagen.Utils;
 import js.parsing.Scanner;
@@ -40,7 +40,7 @@ import js.parsing.Scanner;
  * compatible with JSMaps. For example, keys have to be strings (unlike Python
  * dicts, whose keys can be any immutable type)
  */
-public final class JsonMapDataType extends JavaDataType {
+public final class PythonJsonMapDataType extends PythonDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {

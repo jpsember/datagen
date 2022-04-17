@@ -31,11 +31,12 @@ import static js.base.Tools.*;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
+import datagen.PythonDataType;
 import datagen.SourceBuilder;
 
-public class MapDataType extends DataType {
+public class PythonMapDataType extends PythonDataType {
 
-  public MapDataType(DataType wrappedKeyType, DataType wrappedValueType) {
+  public PythonMapDataType(DataType wrappedKeyType, DataType wrappedValueType) {
     mWrappedKeyType = wrappedKeyType;
     mWrappedValueType = wrappedValueType;
     setQualifiedClassName(

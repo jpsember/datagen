@@ -27,11 +27,12 @@ package datagen.datatype;
 
 import datagen.DataType;
 import datagen.FieldDef;
+import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
 
-public class PrimitiveFloatDataType extends DataType {
+public class PrimitiveFloatDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {

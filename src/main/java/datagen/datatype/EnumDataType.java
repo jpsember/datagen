@@ -24,84 +24,17 @@
  **/
 package datagen.datatype;
 
-import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
 import java.util.List;
 
 import datagen.DataType;
-import datagen.FieldDef;
-import datagen.SourceBuilder;
-import static datagen.Utils.*;
 
-public class EnumDataType extends DataType {
-
-  @Override
-  public String provideSourceDefaultValue() {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      return typeName() + ".default_instance";
-    case JAVA:
-      return typeName() + ".DEFAULT_INSTANCE";
-    }
-  }
-
-  @Override
-  public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    todo("we can apparently calculate the hash of None in Python, so we can simplify some things?");
-    if (python()) {
-      s.a("r = r * 37 + hash(self._", f.sourceName(), ")");
-    } else {
-      s.doIf(f.optional(), "if (m", f.sourceName(), " != null)", OPEN);
-      s.a("r = r * 37 + m", f.sourceName(), ".ordinal();");
-      s.endIf(CLOSE);
-    }
-  }
+public abstract class EnumDataType extends DataType {
 
   public void addLabel(String label) {
     checkArgument(!mLabels.contains(label), "duplicate label:", label);
     mLabels.add(label);
-  }
-
-  @Override
-  public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    if (python())
-      return valueExpression;
-    return valueExpression + ".toString().toLowerCase()";
-  }
-
-  @Override
-  public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    if (python()) {
-      s.a("x = obj.get(", f.nameStringConstant(), ", ", f.defaultValueOrNull(), ")", CR);
-      if (f.optional()) {
-        s.a("if x is not None:", IN);
-      }
-      s.a("inst._", f.sourceName(), " = x", CR);
-      if (f.optional()) {
-        s.a(OUT);
-      }
-      return;
-    } else {
-      s.a(OPEN, //
-          "String x = m.opt(", f.nameStringConstant(), ", \"\");", CR, //
-          "m", f.sourceName(), " = x.isEmpty() ? ", typeName(), ".DEFAULT_INSTANCE : ", typeName(),
-          ".valueOf(x.toUpperCase());", CLOSE);
-    }
-  }
-
-  @Override
-  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    if (python()) {
-      s.a("x = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"), ")", CR);
-      s.doIf(f.optional(), "if x is not None:", OPEN);
-      s.a("inst._", f.sourceName(), " = [", typeName(), "(z) for z in x]", CR);
-      s.endIf(CLOSE);
-    } else {
-      throw languageNotSupported("deserializing list of Java enums from list");
-    }
   }
 
   public List<String> labels() {
