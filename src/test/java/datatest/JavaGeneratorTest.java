@@ -250,7 +250,7 @@ public class JavaGeneratorTest extends GenBaseTest {
         "?string gamma;", CR, //
         "*string delta;", CR, //
         "*?string epsilon;", CR, //
-        "*string hotel = [\"abc\",\"123\"];",CR, //
+        "*string hotel = [\"abc\",\"123\"];", CR, //
         OUTDENT, "}");
     compile();
   }

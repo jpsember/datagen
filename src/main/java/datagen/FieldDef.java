@@ -34,6 +34,10 @@ import static js.base.Tools.*;
  */
 public abstract class FieldDef extends BaseObject {
 
+  public final boolean verboseNames() {
+   return Context.config.verboseNames();
+  }
+  
   public static FieldDef construct() {
     switch (language()) {
     default:
@@ -47,7 +51,6 @@ public abstract class FieldDef extends BaseObject {
 
   public FieldDef() {
     loadTools();
-
   }
 
   public final int index() {

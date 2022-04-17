@@ -44,6 +44,10 @@ public class DatagenConfig implements AbstractData {
     return mPythonSourcePath;
   }
 
+  public boolean verboseNames() {
+    return mVerboseNames;
+  }
+
   @Override
   public Builder toBuilder() {
     return new Builder(this);
@@ -58,6 +62,7 @@ public class DatagenConfig implements AbstractData {
   public static final String TREAT_WARNINGS_AS_ERRORS = "treat_warnings_as_errors";
   public static final String COMMENTS = "comments";
   public static final String PYTHON_SOURCE_PATH = "python_source_path";
+  public static final String VERBOSE_NAMES = "verbose_names";
 
   @Override
   public String toString() {
@@ -76,6 +81,7 @@ public class DatagenConfig implements AbstractData {
     m.put(TREAT_WARNINGS_AS_ERRORS, mTreatWarningsAsErrors);
     m.put(COMMENTS, mComments);
     m.put(PYTHON_SOURCE_PATH, mPythonSourcePath.toString());
+    m.put(VERBOSE_NAMES, mVerboseNames);
     return m;
   }
 
@@ -126,6 +132,7 @@ public class DatagenConfig implements AbstractData {
         mPythonSourcePath = new File(x);
       }
     }
+    mVerboseNames = m.opt(VERBOSE_NAMES, false);
   }
 
   public static Builder newBuilder() {
@@ -159,6 +166,8 @@ public class DatagenConfig implements AbstractData {
       return false;
     if (!(mPythonSourcePath.equals(other.mPythonSourcePath)))
       return false;
+    if (!(mVerboseNames == other.mVerboseNames))
+      return false;
     return true;
   }
 
@@ -176,6 +185,7 @@ public class DatagenConfig implements AbstractData {
       r = r * 37 + (mTreatWarningsAsErrors ? 1 : 0);
       r = r * 37 + (mComments ? 1 : 0);
       r = r * 37 + mPythonSourcePath.hashCode();
+      r = r * 37 + (mVerboseNames ? 1 : 0);
       m__hashcode = r;
     }
     return r;
@@ -190,6 +200,7 @@ public class DatagenConfig implements AbstractData {
   protected boolean mTreatWarningsAsErrors;
   protected boolean mComments;
   protected File mPythonSourcePath;
+  protected boolean mVerboseNames;
   protected int m__hashcode;
 
   public static final class Builder extends DatagenConfig {
@@ -204,6 +215,7 @@ public class DatagenConfig implements AbstractData {
       mTreatWarningsAsErrors = m.mTreatWarningsAsErrors;
       mComments = m.mComments;
       mPythonSourcePath = m.mPythonSourcePath;
+      mVerboseNames = m.mVerboseNames;
     }
 
     @Override
@@ -229,6 +241,7 @@ public class DatagenConfig implements AbstractData {
       r.mTreatWarningsAsErrors = mTreatWarningsAsErrors;
       r.mComments = mComments;
       r.mPythonSourcePath = mPythonSourcePath;
+      r.mVerboseNames = mVerboseNames;
       return r;
     }
 
@@ -274,6 +287,11 @@ public class DatagenConfig implements AbstractData {
 
     public Builder pythonSourcePath(File x) {
       mPythonSourcePath = (x == null) ? Files.DEFAULT : x;
+      return this;
+    }
+
+    public Builder verboseNames(boolean x) {
+      mVerboseNames = x;
       return this;
     }
 

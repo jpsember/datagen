@@ -17,4 +17,8 @@ fields {
   // For Python, if nonempty, used instead of source_path
   //
   File python_source_path;
+
+  // Produce verbose internal names in generated source files
+  //
+  bool verbose_names;
 }
