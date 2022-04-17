@@ -24,4 +24,9 @@ public class JavaFieldDef extends FieldDef {
     return DataUtil.lowerFirst(DataUtil.convertUnderscoresToCamelCase(name()));
   }
 
+  @Override
+  protected String provideInstanceName() {
+    return "m" + DataUtil.convertUnderscoresToCamelCase(name());
+  }
+
 }

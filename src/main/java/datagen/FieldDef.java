@@ -73,10 +73,19 @@ public abstract class FieldDef extends BaseObject {
     return mOptional;
   }
 
+  protected abstract String provideInstanceName();
+
   protected abstract String provideSourceName();
 
   protected abstract String provideSourceNameLowerFirst();
 
+  public String instanceName() {
+    if (mInstanceName == null)
+      mInstanceName = provideInstanceName();
+    return mInstanceName;
+  }
+
+  @Deprecated
   public String sourceName() {
     if (mSourceName == null) {
       mSourceNameCapFirst = provideSourceName();
@@ -144,5 +153,6 @@ public abstract class FieldDef extends BaseObject {
   private String mSourceName;
   private String mSourceNameCapFirst;
   private String mDefaultValueSource;
+  private String mInstanceName;
 
 }
