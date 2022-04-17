@@ -10,7 +10,8 @@ public class PythonDataType extends DataType {
    */
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(), ")");
+    s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
+        f.defaultValueOrNull(), ")");
   }
 
   /**
@@ -50,8 +51,16 @@ public class PythonDataType extends DataType {
           "if t is not None:", OPEN, //
           "inst._", f.sourceName(), " = t.copy()", CLOSE);
     } else {
-      s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"),
-          ").copy()", CR);
+      s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
+          f.nullIfOptional("[]"), ").copy()", CR);
     }
+  }
+
+  @Override
+  public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
+    sourceIfNotNull(s, f);
+    s.a("m[", f.nameStringConstantQualified(), "] = ",
+        sourceGenerateSerializeToObjectExpression("self._" + f.sourceName()));
+    sourceEndIf(s).cr();
   }
 }

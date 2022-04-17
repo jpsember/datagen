@@ -25,7 +25,6 @@
 package datagen;
 
 import js.base.BaseObject;
-import js.data.DataUtil;
 
 import static datagen.Utils.*;
 import static js.base.Tools.*;
@@ -86,7 +85,6 @@ public abstract class FieldDef extends BaseObject {
     return mSourceNameCapFirst;
   }
 
-  
   public String sourceNameLowerFirst() {
     todo("have better names for sourceName, sourceNameLowerFirst, and providers");
     sourceName();

@@ -24,7 +24,8 @@ public class JavaDataType extends DataType {
    */
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(), ");");
+    s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(),
+        ");");
   }
 
   /**
@@ -50,8 +51,8 @@ public class JavaDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = js.data.DataUtil.parse", typeName(), "List(m, ", f.nameStringConstantQualified(),
-        ", ", f.optional(), ");");
+    s.a("m", f.sourceName(), " = js.data.DataUtil.parse", typeName(), "List(m, ",
+        f.nameStringConstantQualified(), ", ", f.optional(), ");");
   }
 
   /**
@@ -75,6 +76,18 @@ public class JavaDataType extends DataType {
     if (isPrimitive())
       return jsonValue;
     throw notSupported("deserializeJsonToJavaValue for dataType:" + getClass());
+  }
+
+  /**
+   * Generate source code to serialize an instance field.
+   * 
+   * Used to generate a data type's "toJson()" method (or "to_dict" if Python)
+   */
+  public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
+    sourceIfNotNull(s, f);
+    s.a("m.put(", f.nameStringConstantQualified(), ", ",
+        sourceGenerateSerializeToObjectExpression("m" + f.sourceName()), ");");
+    sourceEndIf(s).cr();
   }
 
 }

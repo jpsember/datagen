@@ -197,22 +197,7 @@ public abstract class DataType implements DefaultValueParser {
   // Serialization
   // ------------------------------------------------------------------
 
-  /**
-   * Generate source code to serialize an instance field.
-   * 
-   * Used to generate a data type's "toJson()" method (or "to_dict" if Python)
-   */
-  public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-    sourceIfNotNull(s, f);
-    if (python()) {
-      s.a("m[", f.nameStringConstantQualified(), "] = ",
-          sourceGenerateSerializeToObjectExpression("self._" + f.sourceName()));
-    } else {
-      s.a("m.put(", f.nameStringConstantQualified(), ", ",
-          sourceGenerateSerializeToObjectExpression("m" + f.sourceName()), ");");
-    }
-    sourceEndIf(s).cr();
-  }
+  public abstract void sourceSerializeToObject(SourceBuilder s, FieldDef f);
 
   /**
    * Generate source code to convert value to one appropriate to be stored
