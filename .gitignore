@@ -30,3 +30,4 @@ target
 .gitdiff_backups
 
 experiment
+src/main/java/datagen/TypeString.java
