@@ -25,9 +25,7 @@
 package datagen;
 
 import datagen.gen.QualifiedName;
-import js.data.DataUtil;
 
-import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 import static datagen.Utils.*;
 
@@ -227,10 +225,10 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   /**
-   * Generate source code for deserializing a value from a JSMap (or dict, if Python)
+   * Generate source code for deserializing a value from a JSMap (or dict, if
+   * Python)
    */
   public abstract void sourceDeserializeFromObject(SourceBuilder s, FieldDef f);
-  
 
   /**
    * Generate source code for deserializing a list of values from a JSList (or
@@ -239,38 +237,7 @@ public abstract class DataType implements DefaultValueParser {
    * If Java, default implementation assumes there's a DataUtil method
    * parseXXXList(...)
    */
-  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON: {
-      todo("!we should have some symbolic constants for things like t, inst");
-      todo("!we should optimize later by having a utility class to reduce volume of boilerplate");
-      if (f.optional()) {
-        s.a("t = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"), ")", CR, //
-            "if t is not None:", OPEN, //
-            "inst._", f.sourceName(), " = t.copy()", CLOSE);
-      } else {
-        s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"),
-            ").copy()", CR);
-      }
-    }
-      break;
-    case JAVA:
-      s.a("m", f.sourceName(), " = js.data.DataUtil.parse", typeName(), "List(m, ", f.nameStringConstant(),
-          ", ", f.optional(), ");");
-      break;
-    }
-  }
-
-  /**
-   * Generate source code to convert a string to a value to be used as a map key
-   */
-  public String deserializeStringToMapKey(String stringValueExpression) {
-    if (isPrimitive())
-      return typeName() + ".parse" + DataUtil.capitalizeFirst(typeName()) + "(" + stringValueExpression + ")";
-    throw notSupported("deserializeStringToMapKey for dataType:", getClass());
-  }
+  public abstract void sourceDeserializeFromList(SourceBuilder s, FieldDef f);
 
   // ------------------------------------------------------------------
   // Hashcode and Equals methods

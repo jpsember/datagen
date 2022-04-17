@@ -1,6 +1,8 @@
 package datagen;
 
 import static datagen.SourceBuilder.*;
+import static datagen.Utils.*;
+import static js.base.Tools.*;
 
 public class PythonDataType extends DataType {
 
@@ -40,4 +42,17 @@ public class PythonDataType extends DataType {
     return s.endIf(CLOSE);
   }
 
+  @Override
+  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+    todo("!we should have some symbolic constants for things like t, inst");
+    todo("!we should optimize later by having a utility class to reduce volume of boilerplate");
+    if (f.optional()) {
+      s.a("t = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"), ")", CR, //
+          "if t is not None:", OPEN, //
+          "inst._", f.sourceName(), " = t.copy()", CLOSE);
+    } else {
+      s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstant(), ", ", f.nullIfOptional("[]"),
+          ").copy()", CR);
+    }
+  }
 }

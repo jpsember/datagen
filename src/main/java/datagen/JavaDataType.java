@@ -1,7 +1,10 @@
 package datagen;
 
 import static datagen.SourceBuilder.*;
+import static datagen.Utils.*;
 import static js.base.Tools.*;
+
+import js.data.DataUtil;
 
 public class JavaDataType extends DataType {
 
@@ -44,6 +47,21 @@ public class JavaDataType extends DataType {
   @Override
   public final SourceBuilder sourceEndIf(SourceBuilder s) {
     return s.endIf(CLOSE);
+  }
+
+  @Override
+  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+    s.a("m", f.sourceName(), " = js.data.DataUtil.parse", typeName(), "List(m, ", f.nameStringConstant(),
+        ", ", f.optional(), ");");
+  }
+
+  /**
+   * Generate source code to convert a string to a value to be used as a map key
+   */
+  public String deserializeStringToMapKey(String stringValueExpression) {
+    if (isPrimitive())
+      return typeName() + ".parse" + DataUtil.capitalizeFirst(typeName()) + "(" + stringValueExpression + ")";
+    throw notSupported("deserializeStringToMapKey for dataType:", getClass());
   }
 
   /**

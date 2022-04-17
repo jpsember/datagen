@@ -27,7 +27,6 @@ package datagen.datatype;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
-import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
@@ -43,7 +42,7 @@ public class JavaMapDataType extends JavaDataType {
             + wrappedValueType.qualifiedClassName().className() + ">", null));
   }
 
-  public DataType wrappedKeyType() {
+  public JavaDataType wrappedKeyType() {
     return mWrappedKeyType;
   }
 
@@ -127,6 +126,6 @@ public class JavaMapDataType extends JavaDataType {
     s.a("r = r * 37 + m", f.sourceName(), ".hashCode();");
   }
 
-  private final DataType mWrappedKeyType;
+  private final JavaDataType mWrappedKeyType;
   private final JavaDataType mWrappedValueType;
 }

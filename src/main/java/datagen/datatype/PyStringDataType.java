@@ -64,9 +64,4 @@ public final class PyStringDataType extends PythonDataType {
     s.endIf(CLOSE);
   }
 
-  @Override
-  public String deserializeStringToMapKey(String jsonStringValue) {
-    return jsonStringValue;
-  }
-
 }
