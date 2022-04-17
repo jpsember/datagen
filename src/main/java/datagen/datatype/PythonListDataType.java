@@ -26,7 +26,6 @@ package datagen.datatype;
 
 import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
-import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 import java.util.List;
@@ -43,7 +42,7 @@ public class PythonListDataType extends PythonDataType {
   public PythonListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
     setQualifiedClassName(ParseTools
-        .parseQualifiedName("java.util.List<" + wrappedType.qualifiedClassName().className() + ">",null));
+        .parseQualifiedName("java.util.List<" + wrappedType.qualifiedClassName().className() + ">", null));
   }
 
   @Override
@@ -57,14 +56,7 @@ public class PythonListDataType extends PythonDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      return "[]";
-    case JAVA:
-      return ParseTools.PKG_DATAUTIL + ".emptyList()";
-    }
+    return "[]";
   }
 
   @Override
@@ -72,7 +64,7 @@ public class PythonListDataType extends PythonDataType {
     // We need special code to handle the case where user supplies None to a setter, and it's an optional list;
     // in that case, we don't want to attempt to construct None.copy()
     //
-    if (python() && f.optional()) {
+    if (f.optional()) {
       s.a(targetExpr, " = x if x is None else ", sourceExpressionToMutable("x"));
       return;
     }
@@ -86,26 +78,21 @@ public class PythonListDataType extends PythonDataType {
    */
   @Override
   public String sourceExpressionToMutable(String valueExpression) {
-    if (python()) {
-      return valueExpression + ".copy()";
-    }
-    todo("revisit whether we want to construct copies of things, and whether we want to enforce immutablility of compound types");
-    return ParseTools.mutableCopyOfList(valueExpression);
+    todo(
+        "revisit whether we want to construct copies of things, and whether we want to enforce immutablility of compound types");
+    return valueExpression + ".copy()";
   }
 
   @Override
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
-    if (python()) {
-      if (fieldDef.optional()) {
-        s.a("x = ", valueExpression, CR);
-        s.a("if x is not None:", IN);
-        s.a(targetExpression, " = ", valueExpression, ".copy()", OUT);
-      } else {
-        s.a(targetExpression, " = ", valueExpression, ".copy()");
-      }
-    } else
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
+    if (fieldDef.optional()) {
+      s.a("x = ", valueExpression, CR);
+      s.a("if x is not None:", IN);
+      s.a(targetExpression, " = ", valueExpression, ".copy()", OUT);
+    } else {
+      s.a(targetExpression, " = ", valueExpression, ".copy()");
+    }
   }
 
   public DataType wrappedType() {
@@ -115,22 +102,13 @@ public class PythonListDataType extends PythonDataType {
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     sourceIfNotNull(s, f);
-    if (python()) {
-      todo("!for Python, we may want to convert individual items for other types, as we are doing for enums");
-      if (wrappedType() instanceof EnumDataType) {
-        s.a("m[", f.nameStringConstant(true), "] = [x.value for x in self._", f.sourceName(), "]", CR);
-      } else if (wrappedType() instanceof ContractDataType) {
-        s.a("m[", f.nameStringConstant(true), "] = [x.to_json() for x in self._", f.sourceName(), "]", CR);
-      } else
-        s.a("m[", f.nameStringConstant(true), "] = self._", f.sourceName(), ".copy()", CR);
-    } else {
-      s.a(OPEN, //
-          ParseTools.PKG_JSLIST, " j = new ", ParseTools.PKG_JSLIST, "();", CR, //
-          "for (", wrappedType().typeName(), " x : m", f.sourceName(), ")", IN, //
-          "j.add(", wrappedType().sourceGenerateSerializeToObjectExpression("x"), ");", OUT, //
-          "m.put(", f.nameStringConstant(), ", j);", //
-          CLOSE, CR);
-    }
+    todo("!for Python, we may want to convert individual items for other types, as we are doing for enums");
+    if (wrappedType() instanceof EnumDataType) {
+      s.a("m[", f.nameStringConstant(true), "] = [x.value for x in self._", f.sourceName(), "]", CR);
+    } else if (wrappedType() instanceof ContractDataType) {
+      s.a("m[", f.nameStringConstant(true), "] = [x.to_json() for x in self._", f.sourceName(), "]", CR);
+    } else
+      s.a("m[", f.nameStringConstant(true), "] = self._", f.sourceName(), ".copy()", CR);
     sourceEndIf(s);
   }
 
@@ -146,17 +124,10 @@ public class PythonListDataType extends PythonDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    if (python()) {
-      s.a("for x in self._", f.sourceName(), ":", IN);
-      s.a("if x is not None:", IN);
-      s.a("r = r * 37 + hash(x)", OUT);
-      s.a(OUT);
-    } else {
-      s.a("for (", wrappedType().typeName(), " x : m", f.sourceName(), ")", IN);
-      s.a("if (x != null)", IN);
-      s.a("r = r * 37 + x.hashCode();", OUT);
-      s.a(OUT);
-    }
+    s.a("for x in self._", f.sourceName(), ":", IN);
+    s.a("if x is not None:", IN);
+    s.a("r = r * 37 + hash(x)", OUT);
+    s.a(OUT);
   }
 
   @Override
@@ -182,23 +153,8 @@ public class PythonListDataType extends PythonDataType {
 
     SourceBuilder sb = classSpecificSource;
 
-    if (python()) {
-      String constName = "DEF" + fieldDef.nameStringConstant(false);
-      sb.a(constName, "  = [");
-      int index = INIT_INDEX;
-      for (String expr : parsedExpressions) {
-        index++;
-        if (index > 0) {
-          sb.a(",");
-        }
-        sb.a(expr);
-      }
-      sb.a("]", CR);
-      return constName;
-    }
-
-    String constName = "DEF_" + fieldDef.nameStringConstant();
-    sb.a("  private static final ", typeName(), " ", constName, " = ", ParseTools.PKG_TOOLS, ".arrayList(");
+    String constName = "DEF" + fieldDef.nameStringConstant(false);
+    sb.a(constName, "  = [");
     int index = INIT_INDEX;
     for (String expr : parsedExpressions) {
       index++;
@@ -207,9 +163,8 @@ public class PythonListDataType extends PythonDataType {
       }
       sb.a(expr);
     }
-    sb.a(");").cr();
-
-    return constName;
+    sb.a("]", CR);
+    return sb.toString();
   }
 
   private final DataType mWrappedType;

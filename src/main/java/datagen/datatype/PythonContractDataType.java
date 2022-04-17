@@ -27,7 +27,6 @@ package datagen.datatype;
 import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
-import static datagen.Utils.*;
 
 import java.util.List;
 
@@ -47,22 +46,12 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
   public String provideSourceDefaultValue() {
     String imptExpr = ParseTools.importCodeExpr(qualifiedClassName().combined(),
         qualifiedClassName().className());
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      return imptExpr + ".default_instance";
-    case JAVA:
-      return imptExpr + ".DEFAULT_INSTANCE";
-    }
+    return imptExpr + ".default_instance";
   }
 
   public String getConstructFromX() {
-    if (python()) {
-      todo("!this won't work for non-primitive data types");
-      return "x.copy()";
-    } else
-      return provideSourceDefaultValue() + ".parse(x)";
+    todo("!this won't work for non-primitive data types");
+    return "x.copy()";
   }
 
   public String getSerializeDataType() {
@@ -72,39 +61,13 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
   // Make this final for now to avoid unintended overriding
   @Override
   public final void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-
-    if (python()) {
-
-      // If there is a value for this key, use the type's default instance to parse that value
-      // and store that parsed value.
-      // Otherwise, if there is no value, leave the current value alone (which may be None, e.g. if value is optional)
-      //
-      s.a("x = obj.get(", f.nameStringConstant(), ")", CR);
-      s.a("if x is not None:", IN);
-      s.a("inst._", f.sourceName(), " = ", pythonDeserializeExpr(f, "x"), OUT);
-      return;
-    }
-
-    s.open();
-    if (!f.optional())
-      s.a("m", f.sourceName(), " = ", f.defaultValueOrNull(), ";", CR);
-
-    String typeExpr = getSerializeDataType();
-    if (typeExpr.equals(ParseTools.PKG_JSMAP)) {
-      s.a(ParseTools.PKG_JSMAP, " x = m.optJSMap(", f.nameStringConstant(), ");", CR);
-    } else if (typeExpr.equals(ParseTools.PKG_JSLIST)) {
-      s.a(ParseTools.PKG_JSLIST, " x = m.optJSList(", f.nameStringConstant(), ");", CR);
-    } else {
-      String castExpr = "m.optUnsafe";
-      if (!typeExpr.equals("Object"))
-        castExpr = "(" + typeExpr + ") " + castExpr;
-      s.a(getSerializeDataType(), " x = ", castExpr, "(", f.nameStringConstant(), ");", CR);
-    }
-    s.a("if (x != null)", OPEN, //
-        "m", f.sourceName(), " = ", getConstructFromX(), ";", CLOSE //
-    );
-
-    s.close();
+    // If there is a value for this key, use the type's default instance to parse that value
+    // and store that parsed value.
+    // Otherwise, if there is no value, leave the current value alone (which may be None, e.g. if value is optional)
+    //
+    s.a("x = obj.get(", f.nameStringConstant(), ")", CR);
+    s.a("if x is not None:", IN);
+    s.a("inst._", f.sourceName(), " = ", pythonDeserializeExpr(f, "x"), OUT);
   }
 
   /**
@@ -116,13 +79,8 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    if (python()) {
-      s.a("inst._", f.sourceName(), " = ", ParseTools.PKGPY_DATAUTIL, ".parse_list_of_objects(", typeName(),
-          ".default_instance, obj.get(", f.nameStringConstant(), "), ", f.optional() ? "True" : "False", ")");
-      return;
-    }
-    s.a("m", f.sourceName(), " = ", ParseTools.PKG_DATAUTIL, ".parseListOfObjects(", typeName(),
-        ".DEFAULT_INSTANCE, m.optJSList(", f.nameStringConstant(), "), ", f.optional(), ");");
+    s.a("inst._", f.sourceName(), " = ", ParseTools.PKGPY_DATAUTIL, ".parse_list_of_objects(", typeName(),
+        ".default_instance, obj.get(", f.nameStringConstant(), "), ", f.optional() ? "True" : "False", ")");
   }
 
   @Override
@@ -131,28 +89,20 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
   }
 
   public String getSerializeToJSONValue(String value) {
-    if (python())
-      return value + ".to_json()";
-    else
-      return value + ".toJson()";
+    return value + ".to_json()";
   }
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    if (python()) {
-      if (!f.optional()) {
-        s.a("if x is None:", OPEN);
-        s.a("x = ", f.defaultValueOrNull(), CLOSE);
-        s.a(targetExpr, " = x.build()");
-      } else {
-        s.a("if x is not None:", OPEN);
-        s.a("x = x.build()", CLOSE);
-        s.a(targetExpr, " = x");
-      }
-      return;
+    if (!f.optional()) {
+      s.a("if x is None:", OPEN);
+      s.a("x = ", f.defaultValueOrNull(), CLOSE);
+      s.a(targetExpr, " = x.build()");
+    } else {
+      s.a("if x is not None:", OPEN);
+      s.a("x = x.build()", CLOSE);
+      s.a(targetExpr, " = x");
     }
-    String defaultValue = f.defaultValueOrNull();
-    s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x.build();");
   }
 
   @Override
@@ -162,8 +112,6 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
 
   @Override
   public String parseDefaultValue(Scanner scanner, SourceBuilder sb, FieldDef fieldDef) {
-    if (!python())
-      return super.parseDefaultValue(scanner, sb, fieldDef);
 
     // Attempt to infer from the tokens how to parse a default value
 
@@ -188,30 +136,17 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
       }
 
       String constName;
-      if (python()) {
-        constName = "DEF" + fieldDef.nameStringConstant(false);
-        sb.a(constName, "  = ", typeName(), "(");
-        int i = INIT_INDEX;
-        for (String expr : exprs) {
-          i++;
-          if (i > 0)
-            sb.a(", ");
-          sb.a(expr);
-        }
-        sb.a(")", CR);
-      } else {
-        constName = "DEF_" + fieldDef.nameStringConstant();
-        sb.a("  private static final ", fieldDef.dataType().typeName(), " ", constName, "  = new ",
-            typeName(), "(");
-        int i = INIT_INDEX;
-        for (String expr : exprs) {
-          i++;
-          if (i > 0)
-            sb.a(", ");
-          sb.a(expr);
-        }
-        sb.a(");", CR);
+      constName = "DEF" + fieldDef.nameStringConstant(false);
+      sb.a(constName, "  = ", typeName(), "(");
+      int i = INIT_INDEX;
+      for (String expr : exprs) {
+        i++;
+        if (i > 0)
+          sb.a(", ");
+        sb.a(expr);
       }
+      sb.a(")", CR);
+
       return constName;
     }
     throw notSupported("can't parse default value for token:", t);

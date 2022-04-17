@@ -37,10 +37,6 @@ import static datagen.Utils.*;
 public class JavaEnumDataType extends JavaDataType implements EnumDataType {
 
   @Override
-  protected void todoMarker() {
-  }
-
-  @Override
   public String provideSourceDefaultValue() {
     switch (language()) {
     default:

@@ -36,8 +36,6 @@ import static datagen.Utils.*;
  */
 public abstract class DataType implements DefaultValueParser {
 
-  protected abstract void todoMarker();
-  
   // ------------------------------------------------------------------
   // Naming
   // ------------------------------------------------------------------
@@ -357,31 +355,7 @@ public abstract class DataType implements DefaultValueParser {
     return null;
   }
 
-  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      if (f.optional() /* || isPrimitive() */) {
-        s.a(targetExpr, " = ", //
-            sourceExpressionToMutable("x"));
-      } else {
-        s.a(targetExpr, " = ", //
-            f.defaultValueOrNull(), " if x is None else ", sourceExpressionToMutable("x"));
-      }
-      break;
-    case JAVA:
-      if (f.optional() || isPrimitive()) {
-        s.a(targetExpr, " = ", //
-            sourceExpressionToMutable("x"));
-      } else {
-        s.a(targetExpr, " = ", //
-            sourceExpressionToMutable("(x == null) ? " + f.defaultValueOrNull() + " : x"));
-      }
-      s.a(";");
-      break;
-    }
-  }
+  public abstract void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr);
 
   // ------------------------------------------------------------------
   // Bookkeeping
