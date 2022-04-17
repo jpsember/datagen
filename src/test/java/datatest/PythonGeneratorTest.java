@@ -152,8 +152,6 @@ public class PythonGeneratorTest extends GenBaseTest {
 
   @Test
   public void ipoints() {
-    if (alert("strange problems, disabled"))
-      return;
     p().pr("fields {", INDENT, //
         "IPoint a;", CR, //
         "?IPoint b;", CR, //

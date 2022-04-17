@@ -1,7 +1,6 @@
 package datagen;
 
 import static datagen.SourceBuilder.*;
-import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 public class PythonDataType extends DataType {
