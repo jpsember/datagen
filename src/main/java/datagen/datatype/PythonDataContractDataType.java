@@ -43,7 +43,7 @@ import js.parsing.Token;
 /**
  * DataType that wraps objects that implement the DataType interface
  */
-public class PythonDataContractDataType extends PythonDataType implements DataContractDataType {
+public class PythonDataContractDataType extends PythonDataType implements ContractDataType {
 
   @Override
   public String provideSourceDefaultValue() {

@@ -27,7 +27,7 @@ package datagen.datatype;
 /**
  * Interface for datatypes implementing the DataType interface
  */
-public interface DataContractDataType {
+public interface ContractDataType {
 
   String getConstructFromX();
 

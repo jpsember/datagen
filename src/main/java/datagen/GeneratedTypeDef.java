@@ -36,7 +36,7 @@ import datagen.datatype.JavaMapDataType;
 import datagen.datatype.PythonDataContractDataType;
 import datagen.datatype.PythonListDataType;
 import datagen.datatype.PythonMapDataType;
-import datagen.datatype.DataContractDataType;
+import datagen.datatype.ContractDataType;
 import datagen.datatype.EnumDataType;
 import datagen.datatype.JavaDataContractDataType;
 import datagen.gen.QualifiedName;
@@ -162,7 +162,7 @@ public final class GeneratedTypeDef extends BaseObject {
             badArg("No definition file found at", datFile, INDENT, "...use 'extern' to declare its location");
         }
 
-        DataContractDataType contractType = python() ? new PythonDataContractDataType()
+        ContractDataType contractType = python() ? new PythonDataContractDataType()
             : new JavaDataContractDataType();
         contractType.parseQualifiedName(typeName);
         dataType = (DataType) contractType;

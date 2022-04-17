@@ -43,7 +43,7 @@ import js.parsing.Token;
 /**
  * DataType that wraps objects that implement the DataType interface
  */
-public class JavaDataContractDataType extends JavaDataType implements DataContractDataType {
+public class JavaDataContractDataType extends JavaDataType implements ContractDataType {
 
   @Override
   public String provideSourceDefaultValue() {
