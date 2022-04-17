@@ -75,17 +75,6 @@ public class JavaMapDataType extends JavaDataType {
     }
   }
 
-  @Override
-  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    // We need special code to handle the case where user supplies None to a setter, and it's an optional map;
-    // in that case, we don't want to attempt to construct None.copy()
-    //
-    if (python()) {
-      throw notSupported("Maps not supported in Python (yet)");
-    }
-    super.sourceSetter(s, f, targetExpr);
-  }
-
   /**
    * Constructs a mutable copy of a map. Note that while it creates a copy of
    * the map, it doesn't create copies of its elements; the references to those
@@ -93,36 +82,26 @@ public class JavaMapDataType extends JavaDataType {
    */
   @Override
   public String sourceExpressionToMutable(String valueExpression) {
-    if (python()) {
-      throw notSupported("Maps not supported in Python (yet)");
-    }
     return ParseTools.mutableCopyOfMap(valueExpression);
   }
 
   @Override
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
-    if (python()) {
-      throw notSupported("Maps not supported in Python (yet)");
-    } else
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
+    s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
   }
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     sourceIfNotNull(s, f);
-    if (python()) {
-      throw notSupported("Maps not supported in Python (yet)");
-    } else {
-      s.a(OPEN, //
-          ParseTools.PKG_JSMAP, " j = new ", ParseTools.PKG_JSMAP, "();", CR, //
-          "for (Map.Entry<", wrappedKeyType().typeName(), ", ", wrappedValueType().typeName(), "> e : m",
-          f.sourceName(), ".entrySet())", IN, //
-          "j.put(", wrappedKeyType().sourceGenerateSerializeToObjectExpression("e.getKey()"), ", ",
-          wrappedValueType().sourceGenerateSerializeToObjectExpression("e.getValue()"), ");", OUT, //
-          "m.put(", f.nameStringConstant(), ", j);", //
-          CLOSE, CR);
-    }
+    s.a(OPEN, //
+        ParseTools.PKG_JSMAP, " j = new ", ParseTools.PKG_JSMAP, "();", CR, //
+        "for (Map.Entry<", wrappedKeyType().typeName(), ", ", wrappedValueType().typeName(), "> e : m",
+        f.sourceName(), ".entrySet())", IN, //
+        "j.put(", wrappedKeyType().sourceGenerateSerializeToObjectExpression("e.getKey()"), ", ",
+        wrappedValueType().sourceGenerateSerializeToObjectExpression("e.getValue()"), ");", OUT, //
+        "m.put(", f.nameStringConstant(), ", j);", //
+        CLOSE, CR);
     sourceEndIf(s);
   }
 
@@ -133,37 +112,27 @@ public class JavaMapDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
+    s.open();
+    if (!f.optional())
+      s.a("m", f.sourceName(), " = ", f.defaultValueOrNull(), ";", CR);
 
-    if (python()) {
-      throw notSupported("Maps not supported in Python (yet)");
-    } else {
+    s.a(OPEN, //
+        "JSMap m2 = m.optJSMap(", QUOTE, f.name(), ");", CR, //
+        "if (m2 != null && !m2.isEmpty())", OPEN, //
+        "Map<", wrappedKeyType().typeName(), ", ", wrappedValueType().typeName(), "> mp = new ",
+        ParseTools.PKG_CONCURRENT_MAP, "<>();", CR, //
+        "for (Map.Entry<String, Object> e : m2.wrappedMap().entrySet())", IN, //
+        "mp.put(", wrappedKeyType().deserializeStringToMapKey("e.getKey()"), ", ",
+        wrappedValueType().deserializeJsonToMapValue("e.getValue()"), ");", OUT, //
+        "m", f.sourceName(), " = ", "mp", ";", CLOSE, //
+        CLOSE);
 
-      s.open();
-      if (!f.optional())
-        s.a("m", f.sourceName(), " = ", f.defaultValueOrNull(), ";", CR);
-
-      s.a(OPEN, //
-          "JSMap m2 = m.optJSMap(", QUOTE, f.name(), ");", CR, //
-          "if (m2 != null && !m2.isEmpty())", OPEN, //
-          "Map<", wrappedKeyType().typeName(), ", ", wrappedValueType().typeName(), "> mp = new ",
-          ParseTools.PKG_CONCURRENT_MAP, "<>();", CR, //
-          "for (Map.Entry<String, Object> e : m2.wrappedMap().entrySet())", IN, //
-          "mp.put(", wrappedKeyType().deserializeStringToMapKey("e.getKey()"), ", ",
-          wrappedValueType().deserializeJsonToMapValue("e.getValue()"), ");", OUT, //
-          "m", f.sourceName(), " = ", "mp", ";", CLOSE, //
-          CLOSE);
-
-      s.close();
-    }
+    s.close();
   }
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    if (python()) {
-      throw notSupported("Maps not supported in Python (yet)");
-    } else {
-      s.a("r = r * 37 + m", f.sourceName(), ".hashCode();");
-    }
+    s.a("r = r * 37 + m", f.sourceName(), ".hashCode();");
   }
 
   private final DataType mWrappedKeyType;
