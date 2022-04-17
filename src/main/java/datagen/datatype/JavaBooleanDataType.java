@@ -52,7 +52,7 @@ public class JavaBooleanDataType extends JavaDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + (m", f.sourceName(), " ? 1 : 0);");
+    s.a("r = r * 37 + (", f.instanceName(), " ? 1 : 0);");
   }
 
   @Override
@@ -63,7 +63,7 @@ public class JavaBooleanDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstantQualified(), ", ");
+    s.a(f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ", ");
     if (!f.optional())
       s.a(f.defaultValueOrNull());
     else
@@ -73,8 +73,8 @@ public class JavaBooleanDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("m", f.sourceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstantQualified(),
-        "), ", f.optional(), ");", CR);
+    s.a(f.instanceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(",
+        f.nameStringConstantQualified(), "), ", f.optional(), ");", CR);
   }
 
   private static class Boxed extends JavaBooleanDataType {
@@ -86,7 +86,7 @@ public class JavaBooleanDataType extends JavaDataType {
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstantQualified(), ", ");
+      s.a(f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ", ");
       if (!f.optional())
         s.a(f.defaultValueOrNull());
       else

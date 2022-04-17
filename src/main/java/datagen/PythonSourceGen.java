@@ -209,7 +209,7 @@ public class PythonSourceGen extends SourceGen {
           first = false;
         } else
           s.a(CR);
-        s.a("and self._", f.sourceName(), " == other._", f.sourceName());
+        s.a("and self.",f.instanceName(), " == other.", f.instanceName() );
       }
       if (!first)
         s.out();
