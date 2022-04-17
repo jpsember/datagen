@@ -29,7 +29,6 @@ import static js.base.Tools.*;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import static datagen.Utils.*;
 
 public class JavaFloatArrayDataType extends JavaContractDataType {
 
@@ -48,12 +47,7 @@ public class JavaFloatArrayDataType extends JavaContractDataType {
   }
 
   public String getSerializeToJSONValue(String value) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      return ParseTools.PKG_FLOAT_ARRAY + ".with(" + value + ").toJson()";
-    }
+    return ParseTools.PKG_FLOAT_ARRAY + ".with(" + value + ").toJson()";
   }
 
   @Override
@@ -63,27 +57,16 @@ public class JavaFloatArrayDataType extends JavaContractDataType {
 
   @Override
   public String getConstructFromX() {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      return ParseTools.PKG_FLOAT_ARRAY + ".DEFAULT_INSTANCE.parse(x).array()";
-    }
+    return ParseTools.PKG_FLOAT_ARRAY + ".DEFAULT_INSTANCE.parse(x).array()";
   }
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      String defaultValue = f.defaultValueOrNull();
-      if (defaultValue.equals("null"))
-        s.a(targetExpr, " = x;");
-      else
-        s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
-      break;
-    }
+    String defaultValue = f.defaultValueOrNull();
+    if (defaultValue.equals("null"))
+      s.a(targetExpr, " = x;");
+    else
+      s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
   }
 
   //------------------------------------------------------------------
@@ -97,13 +80,7 @@ public class JavaFloatArrayDataType extends JavaContractDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
-      break;
-    }
+    s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
   }
 
 }

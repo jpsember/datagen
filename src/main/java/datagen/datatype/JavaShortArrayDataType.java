@@ -29,18 +29,12 @@ import static js.base.Tools.*;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import static datagen.Utils.*;
 
 public class JavaShortArrayDataType extends JavaContractDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      return ParseTools.PKG_DATAUTIL + ".EMPTY_SHORT_ARRAY";
-    }
+    return ParseTools.PKG_DATAUTIL + ".EMPTY_SHORT_ARRAY";
   }
 
   @Override
@@ -53,12 +47,7 @@ public class JavaShortArrayDataType extends JavaContractDataType {
   }
 
   public String getSerializeToJSONValue(String value) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      return ParseTools.PKG_DATAUTIL + ".encodeBase64(" + value + ")";
-    }
+    return ParseTools.PKG_DATAUTIL + ".encodeBase64(" + value + ")";
   }
 
   @Override
@@ -68,24 +57,13 @@ public class JavaShortArrayDataType extends JavaContractDataType {
 
   @Override
   public String getConstructFromX() {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      return ParseTools.PKG_DATAUTIL + ".parseBase64Shorts(x)";
-    }
+    return ParseTools.PKG_DATAUTIL + ".parseBase64Shorts(x)";
   }
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      String defaultValue = f.defaultValueOrNull();
-      s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
-      break;
-    }
+    String defaultValue = f.defaultValueOrNull();
+    s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
   }
 
   //------------------------------------------------------------------
@@ -99,13 +77,7 @@ public class JavaShortArrayDataType extends JavaContractDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
-      break;
-    }
+    s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", "m", f.sourceName(), ");");
   }
 
 }

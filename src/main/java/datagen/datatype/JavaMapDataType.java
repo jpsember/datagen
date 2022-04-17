@@ -25,7 +25,6 @@
 package datagen.datatype;
 
 import static datagen.SourceBuilder.*;
-import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 import datagen.DataType;
@@ -65,14 +64,7 @@ public class JavaMapDataType extends JavaDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      return "[]";
-    case JAVA:
-      return ParseTools.PKG_DATAUTIL + ".emptyMap()";
-    }
+    return ParseTools.PKG_DATAUTIL + ".emptyMap()";
   }
 
   /**

@@ -26,7 +26,6 @@ package datagen.datatype;
 
 import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
-import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 import java.util.List;
@@ -57,14 +56,7 @@ public class JavaListDataType extends JavaDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      return "[]";
-    case JAVA:
-      return ParseTools.PKG_DATAUTIL + ".emptyList()";
-    }
+    return ParseTools.PKG_DATAUTIL + ".emptyList()";
   }
 
   /**

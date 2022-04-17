@@ -38,14 +38,7 @@ public class JavaEnumDataType extends JavaDataType implements EnumDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      return typeName() + ".default_instance";
-    case JAVA:
-      return typeName() + ".DEFAULT_INSTANCE";
-    }
+    return typeName() + ".DEFAULT_INSTANCE";
   }
 
   @Override

@@ -27,7 +27,6 @@ package datagen.datatype;
 import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
-import static datagen.Utils.*;
 
 import java.util.List;
 
@@ -47,14 +46,7 @@ public class JavaContractDataType extends JavaDataType implements ContractDataTy
   public String provideSourceDefaultValue() {
     String imptExpr = ParseTools.importCodeExpr(qualifiedClassName().combined(),
         qualifiedClassName().className());
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      return imptExpr + ".default_instance";
-    case JAVA:
-      return imptExpr + ".DEFAULT_INSTANCE";
-    }
+    return imptExpr + ".DEFAULT_INSTANCE";
   }
 
   public String getConstructFromX() {
