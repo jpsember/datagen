@@ -188,25 +188,12 @@ public abstract class DataType implements DefaultValueParser {
    * If field is optional, generate an 'if' statement that checks if the field
    * is non-null
    */
-  public final void sourceIfNotNull(SourceBuilder s, FieldDef f) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      s.doIf(f.optional(), "if self._", f.sourceName(), " is not None:", OPEN);
-      break;
-    case JAVA:
-      s.doIf(f.optional(), "if (m", f.sourceName(), " != null)", OPEN);
-      break;
-    }
-  }
+  public abstract void sourceIfNotNull(SourceBuilder s, FieldDef f);
 
   /**
    * Close previous sourceIfNotNull() call
    */
-  public final SourceBuilder sourceEndIf(SourceBuilder s) {
-    return s.endIf(CLOSE);
-  }
+  public abstract SourceBuilder sourceEndIf(SourceBuilder s);
 
   // ------------------------------------------------------------------
   // Serialization
@@ -240,20 +227,10 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   /**
-   * Generate source code for deserializing a value from a JSMap
+   * Generate source code for deserializing a value from a JSMap (or dict, if Python)
    */
-  public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      s.a("inst._", f.sourceName(), " = obj.get(", f.nameStringConstant(), ", ", f.defaultValueOrNull(), ")");
-      break;
-    case JAVA:
-      s.a("m", f.sourceName(), " = m.opt(", f.nameStringConstant(), ", ", f.defaultValueOrNull(), ");");
-      break;
-    }
-  }
+  public abstract void sourceDeserializeFromObject(SourceBuilder s, FieldDef f);
+  
 
   /**
    * Generate source code for deserializing a list of values from a JSList (or
@@ -308,22 +285,8 @@ public abstract class DataType implements DefaultValueParser {
 
   /**
    * Generate source code to continue the calculation of a value for hashCode().
-   *
-   * Default implementation assumes value is a non-null Object reference, and
-   * calls its hashCode() method
    */
-  public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    switch (language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      s.a("r = r * 37 + hash(self._", f.sourceName(), ")");
-      break;
-    case JAVA:
-      s.a("r = r * 37 + m", f.sourceName(), ".hashCode();");
-      break;
-    }
-  }
+  public abstract void sourceHashCalculationCode(SourceBuilder s, FieldDef f);
 
   /**
    * If this DataType has an alternate suitable for optional types, return it;
