@@ -35,6 +35,7 @@ import datagen.SourceBuilder;
 public class JavaMapDataType extends JavaDataType {
 
   public JavaMapDataType(JavaDataType wrappedKeyType, JavaDataType wrappedValueType) {
+    todo("Are maps actually used anywhere? If not, consider removing for simplicity?");
     mWrappedKeyType = wrappedKeyType;
     mWrappedValueType = wrappedValueType;
     setQualifiedClassName(
