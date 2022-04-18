@@ -87,6 +87,8 @@ public class PythonListDataType extends PythonDataType {
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
     if (fieldDef.optional()) {
+      s.a("# optimize: x is not used when copying arrays",CR);
+      todo("x doesn't seem to be used");
       s.a("x = ", valueExpression, CR);
       s.a("if x is not None:", IN);
       s.a(targetExpression, " = ", valueExpression, ".copy()", OUT);
