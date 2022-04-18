@@ -249,17 +249,20 @@ public class PythonSourceGen extends SourceGen {
     String hashVarName = "self." + hashFieldName();
     s.a("if ", hashVarName, " is None:", IN);
     s.a("r = 1", CR);
-    todo("process non-optional fields first");
-    for (FieldDef f : def.fields()) {
-      f.dataType().sourceHashCalculationCode(s, f);
-      s.cr();
+    for (int pass = 0; pass < 2; pass++) {
+      for (FieldDef f : def.fields()) {
+        if ((pass == 1) ^ f.optional())
+          continue;
+        f.dataType().sourceHashCalculationCode(s, f);
+        s.cr();
+      }
     }
     s.a(hashVarName, " = r").out();
     s.a("return ", hashVarName).out();
 
     String c = content();
     Matcher m = PATTERN_HASH_INITIAL_VALUE.matcher(c);
-    if (m.find())  
+    if (m.find())
       c = c.substring(0, m.start()) + "r = " + c.substring(m.end());
     return c;
   }

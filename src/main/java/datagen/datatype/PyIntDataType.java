@@ -24,8 +24,6 @@
  **/
 package datagen.datatype;
 
-import static js.base.Tools.*;
-
 import datagen.FieldDef;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
