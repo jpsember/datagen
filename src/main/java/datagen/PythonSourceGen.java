@@ -32,9 +32,9 @@ import datagen.gen.QualifiedName;
 import js.data.DataUtil;
 import js.file.Files;
 
-import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
-//import static datagen.Utils.*;
+import static datagen.SourceBuilder.*;
+import static datagen.Utils.*;
 
 public class PythonSourceGen extends SourceGen {
 
@@ -71,6 +71,7 @@ public class PythonSourceGen extends SourceGen {
   protected String generateInitInstanceFields() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     SourceBuilder s = s().in(2);
+    s.a("self.", hashFieldName(), " = None", CR);
     for (FieldDef f : def.fields()) {
       s.a(CR, "self.", f.instanceName(), " = ", f.defaultValueOrNull());
     }
@@ -221,14 +222,17 @@ public class PythonSourceGen extends SourceGen {
   @Override
   protected String generateHashCode() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(4);
+    SourceBuilder s = s().in(2);
+    String hashVarName = "self." + hashFieldName();
+    s.a("if ", hashVarName, " is None:", IN);
     s.a("r = 1", CR);
     for (FieldDef f : def.fields()) {
       f.dataType().sourceIfNotNull(s, f);
       f.dataType().sourceHashCalculationCode(s, f);
       f.dataType().sourceEndIf(s).cr();
     }
-    s.a("self._hash_value = r").out();
+    s.a(hashVarName, " = r").out();
+    s.a("return ", hashVarName).out();
     return content();
   }
 
@@ -245,6 +249,12 @@ public class PythonSourceGen extends SourceGen {
       if (!sentinelFile.exists())
         files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
     }
+  }
+
+  private String hashFieldName() {
+    if (verboseNames())
+      return "_hash_value";
+    return "_h";
   }
 
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template_py.txt");

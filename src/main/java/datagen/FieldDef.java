@@ -33,10 +33,6 @@ import static js.base.Tools.*;
  * Represents a field within a generated data type
  */
 public abstract class FieldDef extends BaseObject {
-
-  public final boolean verboseNames() {
-   return Context.config.verboseNames();
-  }
   
   public static FieldDef construct() {
     switch (language()) {

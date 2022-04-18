@@ -1,6 +1,7 @@
 package datagen;
 
 import js.data.DataUtil;
+import static datagen.Utils.*;
 
 public class JavaFieldDef extends FieldDef {
 

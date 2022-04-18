@@ -1,6 +1,7 @@
 package datagen;
 
 import js.data.DataUtil;
+import static datagen.Utils.*;
 
 public class PythonFieldDef extends FieldDef {
 
@@ -30,7 +31,7 @@ public class PythonFieldDef extends FieldDef {
   public String provideInstanceName() {
     if (!verboseNames())
       return "_" + index();
-    return DataUtil.lowerFirst(name());
+    return "_" + DataUtil.lowerFirst(name());
   }
 
 }

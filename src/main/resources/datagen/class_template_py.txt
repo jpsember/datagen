@@ -19,19 +19,9 @@ class [!class]({{pycore.base.AbstractData|AbstractData}}):
 
 
   \\
-  @@# We can't seem to initialize this by calling the constructor immediately;
-  @@# so it is done later, outside the class definition
+  @@# The private constructor.  To create new instances, use newBuilder()
   @@#
-  default_instance = None
-
-
-
-  \\
-  @@/**
-  @@ * The private constructor.  To create new instances, use newBuilder()
-  @@ */
   def __init__(self):
-    self._hash_value = None
 [!init_instance_fields]
 
 \\
@@ -82,9 +72,7 @@ class [!class]({{pycore.base.AbstractData|AbstractData}}):
 
   \\
   def __hash__(self):
-    if self._hash_value is None:
 [!hashcode]
-    return self._hash_value
 
 
 
@@ -110,8 +98,10 @@ class [!class]({{pycore.base.AbstractData|AbstractData}}):
 [!class_specific]
 
 
+
+
 \\2
-@@# Initialize the default instance now, outside the class definition
+@@# Define a class variable for the default instance
 @@#
 [!class].default_instance = [!class]()
 \\2

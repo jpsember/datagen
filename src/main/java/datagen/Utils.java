@@ -84,4 +84,8 @@ public final class Utils {
     return packageContainsElement(packagePath, GEN_SUBDIR_NAME);
   }
 
+  public static final boolean verboseNames() {
+    return Context.config.verboseNames();
+  }
+
 }
