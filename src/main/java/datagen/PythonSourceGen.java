@@ -243,12 +243,11 @@ public class PythonSourceGen extends SourceGen {
     SourceBuilder s = s().in(2);
     String hashVarName = "self." + hashFieldName();
     s.a("if ", hashVarName, " is None:", IN);
-    s.a("r = 1"," # optimize away?", CR);
+    s.a("r = 1", " # optimize away?", CR);
     todo("we could eliminate the 'r = 1' by folding into first statement");
     for (FieldDef f : def.fields()) {
-      f.dataType().sourceIfNotNull(s, f);
       f.dataType().sourceHashCalculationCode(s, f);
-      f.dataType().sourceEndIf(s).cr();
+      s.cr();
     }
     s.a(hashVarName, " = r").out();
     s.a("return ", hashVarName).out();

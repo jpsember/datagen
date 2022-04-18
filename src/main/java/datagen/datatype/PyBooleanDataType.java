@@ -46,12 +46,6 @@ public class PyBooleanDataType extends PythonDataType {
   }
 
   @Override
-  public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    todo("in setter, if not optional, change None to default value?  Can we have type hints?");
-    s.a("r = r * 37 + int(self.", f.instanceName(), ")", CR);
-  }
-
-  @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
     return DataUtil.capitalizeFirst(scanner.read(BOOL).text());

@@ -18,11 +18,9 @@ public class PythonDataType extends DataType {
         f.defaultValueOrNull(), ")");
   }
 
-  /**
-   * Generate source code to continue the calculation of a value for hashCode().
-   */
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
+    todo("in setter, if not optional, change None to default value?  Can we have type hints?");
     s.a("r = r * 37 + hash(self.", f.instanceName(), ")");
   }
 

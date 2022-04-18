@@ -49,9 +49,4 @@ public class PyFloatDataType extends PythonDataType {
     return Double.toString(value);
   }
 
-  @Override
-  public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + int(self.", f.instanceName(), ")");
-  }
-
 }

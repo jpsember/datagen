@@ -78,8 +78,6 @@ public class PythonListDataType extends PythonDataType {
    */
   @Override
   public String sourceExpressionToMutable(String valueExpression) {
-    todo(
-        "revisit whether we want to construct copies of things, and whether we want to enforce immutablility of compound types");
     return valueExpression + ".copy()";
   }
 
@@ -88,7 +86,7 @@ public class PythonListDataType extends PythonDataType {
       String valueExpression) {
     if (fieldDef.optional()) {
       s.a("x = ", valueExpression, CR);
-      s.a(targetExpression, " = x.copy() if x is not None",CR);
+      s.a(targetExpression, " = x.copy() if x is not None", CR);
     } else {
       s.a(targetExpression, " = ", valueExpression, ".copy()");
     }
@@ -124,10 +122,11 @@ public class PythonListDataType extends PythonDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
+    sourceIfNotNull(s, f);
     s.a("for x in self.", f.instanceName(), ":", IN);
-    s.a("if x is not None:", IN);
-    s.a("r = r * 37 + hash(x)", OUT);
+    s.a("r = r * 37 + hash(x)", CR);
     s.a(OUT);
+    sourceEndIf(s);
   }
 
   @Override

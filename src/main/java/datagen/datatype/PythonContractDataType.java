@@ -80,7 +80,8 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a("inst.", f.instanceName(), " = ", ParseTools.PKGPY_DATAUTIL, ".parse_list_of_objects(", typeName(),
-        ".default_instance, obj.get(", f.nameStringConstantQualified(), "), ", f.optional() ? "True" : "False", ")");
+        ".default_instance, obj.get(", f.nameStringConstantQualified(), "), ",
+        f.optional() ? "True" : "False", ")");
   }
 
   @Override
@@ -147,4 +148,9 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
     throw notSupported("can't parse default value for token:", t);
   }
 
+  @Override
+  public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
+    super.sourceHashCalculationCode(s, f);
+    todo("may need special hash calculation code for:", f.dataType().qualifiedClassName().className());
+  }
 }

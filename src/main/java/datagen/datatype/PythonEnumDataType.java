@@ -41,12 +41,6 @@ public class PythonEnumDataType extends PythonDataType implements EnumDataType {
   }
 
   @Override
-  public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    todo("we can apparently calculate the hash of None in Python, so we can simplify some things?");
-    s.a("r = r * 37 + hash(self.", f.instanceName(), ")");
-  }
-
-  @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(), ")", CR);
     if (f.optional()) {

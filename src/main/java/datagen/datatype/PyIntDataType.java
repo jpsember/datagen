@@ -36,7 +36,6 @@ public class PyIntDataType extends PythonDataType {
 
   @Override
   public final String compilerInitialValue() {
-    todo("do we really need to make defensive copies of lists in the build() method?");
     return "0";
   }
 
