@@ -198,8 +198,6 @@ public class PythonSourceGen extends SourceGen {
     SourceBuilder s = s().in(2);
     s.a("x = ", def.name(), "Builder()", CR);
     for (FieldDef f : def.fields()) {
-      todo(
-          "if we're copying a value that could be None, and if it doesn't need conversion to mutable otherwise, just copy");
       String arg = "self." + f.instanceName();
       String expr = f.dataType().sourceExpressionToMutable(arg);
       boolean cvtRequired = !arg.equals(expr);
