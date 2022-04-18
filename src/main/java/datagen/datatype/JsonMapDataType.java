@@ -49,30 +49,19 @@ public final class JsonMapDataType extends JavaDataType {
 
   @Override
   public final String provideSourceDefaultValue() {
-    if (Utils.python())
-      return "[]";
     return ParseTools.PKG_JSMAP + ".DEFAULT_INSTANCE";
   }
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    if (Utils.python())
-      throw notSupported("Default values for Python dicts not supported yet");
-    String constName = "DEF_" + fieldDef.nameStringConstantQualified();
-    classSpecificSource.a("  private static final ", typeName(), " ", constName, " = new ", typeName(), "(",
-        scanner.read(STRING).text(), ");", CR);
-    return constName;
+    classSpecificSource.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = new ",
+        typeName(), "(", scanner.read(STRING).text(), ");", CR);
+    return fieldDef.constantName();
   }
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    if (Utils.python()) {
-      s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
-         f.defaultValueOrNull(), ")", CR);
-      return;
-    }
-
     s.open();
     if (!f.optional())
       s.a(f.instanceName(), " = ", f.defaultValueOrNull(), ";", CR);
@@ -86,8 +75,8 @@ public final class JsonMapDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a(f.instanceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstantQualified(),
-        "), ", f.optional(), ");", CR);
+    s.a(f.instanceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(",
+        f.nameStringConstantQualified(), "), ", f.optional(), ");", CR);
   }
 
 }

@@ -138,8 +138,7 @@ public class JavaContractDataType extends JavaDataType implements ContractDataTy
         commaExp = true;
       }
 
-      String constName = "DEF_" + fieldDef.nameStringConstantQualified();
-      sb.a("  private static final ", fieldDef.dataType().typeName(), " ", constName, "  = new ", typeName(),
+      sb.a("  private static final ", fieldDef.dataType().typeName(), " ", fieldDef.constantName(), "  = new ", typeName(),
           "(");
       int i = INIT_INDEX;
       for (String expr : exprs) {
@@ -149,7 +148,7 @@ public class JavaContractDataType extends JavaDataType implements ContractDataTy
         sb.a(expr);
       }
       sb.a(");", CR);
-      return constName;
+      return fieldDef.constantName();
     }
     throw notSupported("can't parse default value for token:", t);
   }

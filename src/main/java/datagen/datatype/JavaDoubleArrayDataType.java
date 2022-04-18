@@ -67,8 +67,7 @@ public class JavaDoubleArrayDataType extends JavaContractDataType {
     }
 
     SourceBuilder sb = classSpecificSource;
-    String constName = "DEF_" + fieldDef.nameStringConstantQualified();
-    sb.a("  private static final ", typeName(), " ", constName, " = ");
+    sb.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = ");
     sb.a("{");
     int index = INIT_INDEX;
     for (String numberText : parsedNumbers) {
@@ -80,7 +79,7 @@ public class JavaDoubleArrayDataType extends JavaContractDataType {
     }
     sb.a("};").cr();
 
-    return constName;
+    return fieldDef.constantName();
   }
 
   public String getSerializeDataType() {

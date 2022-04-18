@@ -49,10 +49,9 @@ public final class JavaFileDataType extends JavaDataType {
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    String constName = "DEF_" + fieldDef.nameStringConstantQualified();
-    classSpecificSource.a("  private static final ", typeName(), " ", constName, " = new File(",
+    classSpecificSource.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = new File(",
         scanner.read(STRING).text(), ");", CR);
-    return constName;
+    return fieldDef.constantName();
   }
 
   @Override

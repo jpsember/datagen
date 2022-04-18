@@ -49,10 +49,9 @@ public class JavaJsonListDataType extends JavaDataType {
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    String constName = "DEF_" + fieldDef.nameStringConstantQualified();
-    classSpecificSource.a("  private static final ", typeName(), " ", constName, " = new ", typeName(), "(",
+    classSpecificSource.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = new ", typeName(), "(",
         scanner.read(STRING).text(), ");", CR);
-    return constName;
+    return fieldDef.constantName();
   }
 
   @Override
