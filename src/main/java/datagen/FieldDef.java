@@ -148,9 +148,7 @@ public abstract class FieldDef extends BaseObject {
     return nullIfOptional(defaultValueSource());
   }
 
-  // final for the time being
   public final String defaultValueSource() {
-    todo("dataType is already caching this value");
     if (mCachedDefaultValueSource == null)
       setDefaultValue(dataType().sourceDefaultValue());
     return mCachedDefaultValueSource;

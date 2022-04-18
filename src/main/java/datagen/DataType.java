@@ -110,7 +110,7 @@ public abstract class DataType implements DefaultValueParser {
    * Determine if the type is a primitive type, e.g. int, short, etc
    */
   public abstract boolean isPrimitive();
-  
+
   // ------------------------------------------------------------------
   // Default values
   // ------------------------------------------------------------------
@@ -136,9 +136,8 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   public final String sourceDefaultValue() {
-    if (mCachedSourceDefaultValue == null) {
+    if (mCachedSourceDefaultValue == null)
       mCachedSourceDefaultValue = provideSourceDefaultValue();
-    }
     return mCachedSourceDefaultValue;
   }
 

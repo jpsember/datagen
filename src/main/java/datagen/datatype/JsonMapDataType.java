@@ -32,7 +32,6 @@ import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import datagen.Utils;
 import js.parsing.Scanner;
 
 /**

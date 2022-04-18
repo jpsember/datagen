@@ -25,7 +25,6 @@
 package datagen.datatype;
 
 import static datagen.ParseTools.*;
-import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
 import datagen.FieldDef;
