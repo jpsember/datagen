@@ -84,8 +84,8 @@ public final class Utils {
     return packageContainsElement(packagePath, GEN_SUBDIR_NAME);
   }
 
-  public static final boolean verboseNames() {
-    return Context.config.verboseNames();
+  public static final String verboseVariant(String succinctOption, String verboseOption) {
+    return Context.config.verboseNames() ? verboseOption : succinctOption;
   }
 
 }

@@ -17,9 +17,7 @@ public class PythonFieldDef extends FieldDef {
 
   @Override
   public String provideNameStringConstantUnqualified() {
-    if (!verboseNames())
-      return "_k_" + index();
-    return "_key_" + DataUtil.lowerFirst(name());
+    return verboseVariant("_k_" + index(), "_key_" + DataUtil.lowerFirst(name()));
   }
 
   @Override
@@ -29,9 +27,7 @@ public class PythonFieldDef extends FieldDef {
 
   @Override
   public String provideInstanceName() {
-    if (!verboseNames())
-      return "_" + index();
-    return "_" + DataUtil.lowerFirst(name());
+    return verboseVariant("_" + index(), "_" + DataUtil.lowerFirst(name()));
   }
 
 }

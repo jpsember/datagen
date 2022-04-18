@@ -5,7 +5,6 @@ import static datagen.Utils.*;
 
 public class JavaFieldDef extends FieldDef {
 
-
   @Override
   public String provideSetterName() {
     return DataUtil.lowerFirst(DataUtil.convertUnderscoresToCamelCase(name()));
@@ -18,9 +17,7 @@ public class JavaFieldDef extends FieldDef {
 
   @Override
   public String provideNameStringConstantUnqualified() {
-    if (!verboseNames())
-      return "_" + index();
-    return name().toUpperCase();
+    return verboseVariant("_" + index(), name().toUpperCase());
   }
 
   @Override
@@ -30,9 +27,7 @@ public class JavaFieldDef extends FieldDef {
 
   @Override
   public String provideInstanceName() {
-    if (!verboseNames())
-      return "m" + index();
-    return "m" + DataUtil.convertUnderscoresToCamelCase(name());
+    return verboseVariant("m" + index(), "m" + DataUtil.convertUnderscoresToCamelCase(name()));
   }
 
 }

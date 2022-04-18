@@ -110,10 +110,7 @@ public class PythonSourceGen extends SourceGen {
     //  label = property(Circle._get_label, set_label)
     s.a("\\\\", CR);
     for (FieldDef f : def.fields()) {
-      s.a(f.name(), " = property(", 
-          def.name(),
-            "._get_", f.name(),
-          ", set_", f.name(), ")", CR);
+      s.a(f.name(), " = property(", def.name(), "._get_", f.name(), ", set_", f.name(), ")", CR);
     }
 
     s.out();
@@ -303,9 +300,7 @@ public class PythonSourceGen extends SourceGen {
   }
 
   private String hashFieldName() {
-    if (verboseNames())
-      return "_hash_value";
-    return "_h";
+    return verboseVariant("_h", "_hash_value");
   }
 
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template_py.txt");
