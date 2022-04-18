@@ -33,7 +33,7 @@ import datagen.gen.Language;
 /**
  * Formats source code to a buffer
  */
-public class SourceBuilder {
+public final class SourceBuilder {
 
   public static final Object IN = new Object();
   public static final Object OUT = new Object();
@@ -45,6 +45,10 @@ public class SourceBuilder {
     mLanguage = language;
   }
 
+  public String toString() {
+    throw die("unexpected! Did you mean to call content()?");
+  }
+  
   public void reset() {
     mStringBuilder.setLength(0);
   }

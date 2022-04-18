@@ -33,7 +33,7 @@ import static js.base.Tools.*;
  * Represents a field within a generated data type
  */
 public abstract class FieldDef extends BaseObject {
-  
+
   public static FieldDef construct() {
     switch (language()) {
     default:
@@ -100,6 +100,14 @@ public abstract class FieldDef extends BaseObject {
     return mCachedGetterName;
   }
 
+  public abstract String provideConstantName();
+
+  public final String constantName() {
+    if (mCachedConstantName == null)
+      mCachedConstantName = provideConstantName();
+    return mCachedConstantName;
+  }
+
   /**
    * Returns name assigned to the string constant for the field, e.g.
    * "HORSE_WEIGHT"
@@ -156,5 +164,6 @@ public abstract class FieldDef extends BaseObject {
   private String mCachedInstanceName;
   private String mCachedGetterName;
   private String mCachedSetterName;
+  private String mCachedConstantName;
 
 }

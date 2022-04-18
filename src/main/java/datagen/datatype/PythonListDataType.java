@@ -106,7 +106,8 @@ public class PythonListDataType extends PythonDataType {
     if (wrappedType() instanceof EnumDataType) {
       s.a("m[", f.nameStringConstantQualified(), "] = [x.value for x in self.", f.instanceName(), "]", CR);
     } else if (wrappedType() instanceof ContractDataType) {
-      s.a("m[", f.nameStringConstantQualified(), "] = [x.to_json() for x in self.", f.instanceName(), "]", CR);
+      s.a("m[", f.nameStringConstantQualified(), "] = [x.to_json() for x in self.", f.instanceName(), "]",
+          CR);
     } else
       s.a("m[", f.nameStringConstantQualified(), "] = self.", f.instanceName(), ".copy()", CR);
     sourceEndIf(s);
@@ -152,9 +153,7 @@ public class PythonListDataType extends PythonDataType {
     }
 
     SourceBuilder sb = classSpecificSource;
-
-    String constName = "DEF" + fieldDef.nameStringConstantUnqualified();
-    sb.a(constName, "  = [");
+    sb.a(fieldDef.constantName(), "  = [");
     int index = INIT_INDEX;
     for (String expr : parsedExpressions) {
       index++;
@@ -163,8 +162,8 @@ public class PythonListDataType extends PythonDataType {
       }
       sb.a(expr);
     }
-    sb.a("]", CR);
-    return sb.toString();
+    sb.a("]").cr();
+    return fieldDef.constantName();
   }
 
   private final DataType mWrappedType;

@@ -95,7 +95,6 @@ public class PythonGeneratorTest extends GenBaseTest {
   @Test
   public void strings() { 
     verboseNames();
-//    rv();
     p().pr("fields {", INDENT, //
         "string alpha;", CR, //
         "string beta = \"hello\";", CR, //

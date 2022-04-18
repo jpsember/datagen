@@ -73,11 +73,7 @@ public class PythonSourceGen extends SourceGen {
     SourceBuilder s = s().in(2);
     s.a("self.", hashFieldName(), " = None", CR);
     for (FieldDef f : def.fields()) {
-      if (alert("investigating")) {
-        String x = f.defaultValueOrNull();
-        checkArgument(!x.contains("@"), "field:",f.name(),"type:",f.dataType(),"def value:",x);
-      }
-      s.a(CR, "self.", f.instanceName(), " = ", f.defaultValueOrNull());
+      s.a("self.", f.instanceName(), " = ", f.defaultValueOrNull(), CR);
     }
     s.out();
     return content();

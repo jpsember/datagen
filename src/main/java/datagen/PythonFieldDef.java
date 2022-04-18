@@ -11,12 +11,12 @@ public class PythonFieldDef extends FieldDef {
 
   @Override
   public String provideGetterName() {
-     return name();
+    return name();
   }
 
   @Override
   public String provideNameStringConstantUnqualified() {
-    return verboseVariant("_k_" + index(), "_key_" +name());  
+    return verboseVariant("_k_" + index(), "_key_" + name());
   }
 
   @Override
@@ -26,7 +26,11 @@ public class PythonFieldDef extends FieldDef {
 
   @Override
   public String provideInstanceName() {
-    return verboseVariant("_" + index(), "_" +name());
+    return verboseVariant("_" + index(), "_" + name());
   }
 
+  @Override
+  public String provideConstantName() {
+    return verboseVariant("_D" + index(), "DEF_" + name().toUpperCase());
+  }
 }

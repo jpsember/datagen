@@ -133,19 +133,19 @@ public class JavaListDataType extends JavaDataType {
     }
 
     SourceBuilder sb = classSpecificSource;
-    String constName = "DEF_" + fieldDef.nameStringConstantQualified();
-    sb.a("  private static final ", typeName(), " ", constName, " = ", ParseTools.PKG_TOOLS, ".arrayList(");
+    sb.a("  private static final ", typeName(), " ",
+        fieldDef.constantName()
+       , " = ", ParseTools.PKG_TOOLS, ".arrayList(");
     int index = INIT_INDEX;
     for (String expr : parsedExpressions) {
       index++;
-      if (index > 0) {
+      if (index > 0)
         sb.a(",");
-      }
       sb.a(expr);
     }
     sb.a(");").cr();
 
-    return constName;
+    return fieldDef.constantName();
   }
 
   private final DataType mWrappedType;

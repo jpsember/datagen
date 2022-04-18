@@ -30,4 +30,8 @@ public class JavaFieldDef extends FieldDef {
     return verboseVariant("m" + index(), "m" + DataUtil.convertUnderscoresToCamelCase(name()));
   }
 
+  @Override
+  public String provideConstantName() {
+    return verboseVariant("_D" + index(), "DEF_" + name().toUpperCase());
+  }
 }
