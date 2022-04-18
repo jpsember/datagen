@@ -48,6 +48,8 @@ public abstract class GenBaseTest extends MyTestCase {
     for (DatRecord ty : mDatRecords)
       writeDat(ty);
     addArg("language", mLanguage.toString().toLowerCase());
+    if (mVerboseNames)
+      addArg("verbose_names");
     addArg(DatagenConfig.DAT_PATH, datFilesDir(), DatagenConfig.SOURCE_PATH, sourceDir());
     if (verbose())
       addArg("--verbose");
@@ -154,6 +156,10 @@ public abstract class GenBaseTest extends MyTestCase {
     mLanguage = x;
   }
 
+  protected final void verboseNames() {
+    mVerboseNames = true;
+  }
+
   protected final void generateDummyDatFile(String name) {
     File datFile = new File(mDatRecord.mDatSubdir,
         convertCamelToUnderscore(name) + ParseTools.DOT_EXT_DATA_DEFINITION);
@@ -162,6 +168,7 @@ public abstract class GenBaseTest extends MyTestCase {
   }
 
   private Language mLanguage = Language.JAVA;
+  private boolean mVerboseNames;
 
   private File mSourceDir;
   private File mDatFilesDir;
