@@ -1,6 +1,5 @@
 package datagen;
 
-import js.data.DataUtil;
 import static datagen.Utils.*;
 
 public class PythonFieldDef extends FieldDef {
@@ -12,12 +11,12 @@ public class PythonFieldDef extends FieldDef {
 
   @Override
   public String provideGetterName() {
-    return DataUtil.lowerFirst(name());
+     return name();
   }
 
   @Override
   public String provideNameStringConstantUnqualified() {
-    return verboseVariant("_k_" + index(), "_key_" + DataUtil.lowerFirst(name()));
+    return verboseVariant("_k_" + index(), "_key_" +name());  
   }
 
   @Override
@@ -27,7 +26,7 @@ public class PythonFieldDef extends FieldDef {
 
   @Override
   public String provideInstanceName() {
-    return verboseVariant("_" + index(), "_" + DataUtil.lowerFirst(name()));
+    return verboseVariant("_" + index(), "_" +name());
   }
 
 }
