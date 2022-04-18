@@ -151,6 +151,6 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
     super.sourceHashCalculationCode(s, f);
-    todo("may need special hash calculation code for:", f.dataType().qualifiedClassName().className());
+    todo("may need special hash calculation code for:", getClass().getName());
   }
 }

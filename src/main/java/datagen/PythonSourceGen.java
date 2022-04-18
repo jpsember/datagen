@@ -26,11 +26,14 @@ package datagen;
 
 import java.io.File;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import datagen.datatype.EnumDataType;
 import datagen.gen.QualifiedName;
 import js.data.DataUtil;
 import js.file.Files;
+import js.parsing.RegExp;
 
 import static js.base.Tools.*;
 import static datagen.SourceBuilder.*;
@@ -237,21 +240,34 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
+  private static final Pattern hashOpt = RegExp.pattern("r = 1\\s*r = r \\* 37 \\+\\s*");
+
   @Override
   protected String generateHashCode() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     SourceBuilder s = s().in(2);
     String hashVarName = "self." + hashFieldName();
     s.a("if ", hashVarName, " is None:", IN);
-    s.a("r = 1", " # optimize away?", CR);
-    todo("we could eliminate the 'r = 1' by folding into first statement");
+    s.a("r = 1", CR);
+    todo("process non-optional fields first");
     for (FieldDef f : def.fields()) {
       f.dataType().sourceHashCalculationCode(s, f);
       s.cr();
     }
     s.a(hashVarName, " = r").out();
     s.a("return ", hashVarName).out();
-    return content();
+
+    String c = content();
+    Matcher m = hashOpt.matcher(c);
+    if (m.find()) {
+      pr("=== optimizing:", INDENT, insertLeftMargin(c));
+      c = c.substring(0, m.start()) + "r = " + c.substring(m.end());
+      pr("=== result:", INDENT, insertLeftMargin(c));
+    } else {
+      pr("couldn't find in:", INDENT, insertLeftMargin(c));
+    }
+
+    return c;
   }
 
   @Override
