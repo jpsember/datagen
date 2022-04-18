@@ -93,6 +93,7 @@ public class PythonSourceGen extends SourceGen {
 
   @Override
   protected String generateSetters() {
+    todo("Internal getters and setters still have verbose names");
     GeneratedTypeDef def = Context.generatedTypeDef;
     SourceBuilder s = s().in(0);
     for (FieldDef f : def.fields()) {
@@ -103,6 +104,18 @@ public class PythonSourceGen extends SourceGen {
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "return self", CLOSE);
     }
+
+    //  # Override the property for the builder subclass
+    //  radius = property(Circle._get_radius, set_radius)
+    //  label = property(Circle._get_label, set_label)
+    s.a("\\\\", CR);
+    for (FieldDef f : def.fields()) {
+      s.a(f.name(), " = property(", 
+          def.name(),
+            "._get_", f.name(),
+          ", set_", f.name(), ")", CR);
+    }
+
     s.out();
     return content();
   }
@@ -169,13 +182,51 @@ public class PythonSourceGen extends SourceGen {
 
   @Override
   protected String generateGetters() {
+
     GeneratedTypeDef def = Context.generatedTypeDef;
     SourceBuilder s = s().in(0);
+
+    /**
+     * <pre>
+     *   # ---------------------------------------------------------------------------------------
+    # Properties
+    # ---------------------------------------------------------------------------------------
+    
+    
+    # Define the (hidden) methods associated with the instance fields' properties
+    #
+    # TODO: these names could be compressed by using the field names, e.g. _g4(self):
+    #
+    def _get_radius(self):
+    return self._radius
+    
+    
+    def _get_label(self):
+    return self._label
+    
+    
+    # Define the properties representing the instance fields.  Only the builder subclass has setters
+    #
+    radius = property(_get_radius)
+    label = property(_get_label)
+     * 
+     * 
+     * 
+     * </pre>
+     */
+
     for (FieldDef f : def.fields()) {
       s.a("\\\\").cr();
-      s.a("def ", DataUtil.lowerFirst(f.name()), "(self):", OPEN, //
+      s.a("def _get_", DataUtil.lowerFirst(f.name()), "(self):", OPEN, //
           "return self.", f.instanceName(), CLOSE);
     }
+
+    todo("DataUtil.lowerFirst(f.name()) is just f.name()");
+    s.a("\\\\").cr();
+    for (FieldDef f : def.fields()) {
+      s.a(DataUtil.lowerFirst(f.name()), " = property(_get_", DataUtil.lowerFirst(f.name()), ")", CR);
+    }
+
     s.out();
     return content();
   }
