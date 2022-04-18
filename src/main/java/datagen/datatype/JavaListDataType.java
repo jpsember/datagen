@@ -66,8 +66,6 @@ public class JavaListDataType extends JavaDataType {
    */
   @Override
   public String sourceExpressionToMutable(String valueExpression) {
-    todo(
-        "revisit whether we want to construct copies of things, and whether we want to enforce immutablility of compound types");
     return ParseTools.mutableCopyOfList(valueExpression);
   }
 
@@ -133,9 +131,8 @@ public class JavaListDataType extends JavaDataType {
     }
 
     SourceBuilder sb = classSpecificSource;
-    sb.a("  private static final ", typeName(), " ",
-        fieldDef.constantName()
-       , " = ", ParseTools.PKG_TOOLS, ".arrayList(");
+    sb.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = ", ParseTools.PKG_TOOLS,
+        ".arrayList(");
     int index = INIT_INDEX;
     for (String expr : parsedExpressions) {
       index++;
