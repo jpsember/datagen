@@ -240,7 +240,7 @@ public class PythonSourceGen extends SourceGen {
     return content();
   }
 
-  private static final Pattern hashOpt = RegExp.pattern("r = 1\\s*r = r \\* 37 \\+\\s*");
+  private static final Pattern PATTERN_HASH_INITIAL_VALUE = RegExp.pattern("r = 1\\s*r = r \\* 37 \\+\\s*");
 
   @Override
   protected String generateHashCode() {
@@ -258,15 +258,9 @@ public class PythonSourceGen extends SourceGen {
     s.a("return ", hashVarName).out();
 
     String c = content();
-    Matcher m = hashOpt.matcher(c);
-    if (m.find()) {
-      pr("=== optimizing:", INDENT, insertLeftMargin(c));
+    Matcher m = PATTERN_HASH_INITIAL_VALUE.matcher(c);
+    if (m.find())  
       c = c.substring(0, m.start()) + "r = " + c.substring(m.end());
-      pr("=== result:", INDENT, insertLeftMargin(c));
-    } else {
-      pr("couldn't find in:", INDENT, insertLeftMargin(c));
-    }
-
     return c;
   }
 
