@@ -66,10 +66,22 @@ public class JavaDataType extends DataType {
   }
 
   @Override
+  public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
+    sourceIfNotNull(s, f);
+    s.a("m.put(", f.nameStringConstantQualified(), ", ",
+        sourceGenerateSerializeToObjectExpression("" + f.instanceName()), ");");
+    sourceEndIf(s).cr();
+  }
+
+  @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a(f.instanceName(), " = js.data.DataUtil.parse", typeName(), "List(m, ",
         f.nameStringConstantQualified(), ", ", f.optional(), ");");
   }
+
+  // ------------------------------------------------------------------
+  // For supporting JavaMapDataType
+  // ------------------------------------------------------------------
 
   /**
    * Generate source code to convert a string to a value to be used as a map key
@@ -92,18 +104,6 @@ public class JavaDataType extends DataType {
     if (isPrimitive())
       return jsonValue;
     throw notSupported("deserializeJsonToJavaValue for dataType:" + getClass());
-  }
-
-  /**
-   * Generate source code to serialize an instance field.
-   * 
-   * Used to generate a data type's "toJson()" method (or "to_dict" if Python)
-   */
-  public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-    sourceIfNotNull(s, f);
-    s.a("m.put(", f.nameStringConstantQualified(), ", ",
-        sourceGenerateSerializeToObjectExpression("" + f.instanceName()), ");");
-    sourceEndIf(s).cr();
   }
 
 }
