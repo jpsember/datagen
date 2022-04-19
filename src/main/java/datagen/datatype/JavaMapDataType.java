@@ -31,11 +31,11 @@ import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
+import datagen.gen.QualifiedName;
 
 public class JavaMapDataType extends JavaDataType {
 
   public JavaMapDataType(JavaDataType wrappedKeyType, JavaDataType wrappedValueType) {
-    todo("Are maps actually used anywhere? If not, consider removing for simplicity?");
     mWrappedKeyType = wrappedKeyType;
     mWrappedValueType = wrappedValueType;
     setQualifiedClassName(
@@ -53,13 +53,10 @@ public class JavaMapDataType extends JavaDataType {
 
   @Override
   protected String provideTypeName() {
-    // We need to generate import statements for the wrapped types as well as the wrapper; but we don't want 
-    // to confuse the macro substitution process 
-    String wrappedImport1 = ParseTools.importCodeExpr(wrappedKeyType().qualifiedClassName().combined(), "");
-    String wrappedImport2 = ParseTools.importCodeExpr(wrappedValueType().qualifiedClassName().combined(), "");
-    String wrapperImport = ParseTools.PKG_MAP + "<" + wrappedKeyType().qualifiedClassName().className() + ","
-        + wrappedValueType().qualifiedClassName().className() + ">";
-    return wrappedImport1 + wrappedImport2 + wrapperImport;
+    QualifiedName keyName = wrappedKeyType().qualifiedClassName();
+    QualifiedName valName = wrappedValueType().qualifiedClassName();
+    return ParseTools.PKG_MAP + "<" + ParseTools.importExprWithClassName(keyName) + ","
+        + ParseTools.importExprWithClassName(valName) + ">";
   }
 
   @Override

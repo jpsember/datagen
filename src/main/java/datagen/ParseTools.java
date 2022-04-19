@@ -221,10 +221,18 @@ public final class ParseTools {
 
   /**
    * Wrap a class name and some source code in delimeters to the class name is
-   * imported, and the source code is generated
+   * imported, and the source code is generated (which can be an empty string)
    */
-  public static String importCodeExpr(String qualifiedClassName, String sourceCode) {
+  public static String importExprWithCode(String qualifiedClassName, String sourceCode) {
     return "{{" + qualifiedClassName + "|" + sourceCode + "}}";
+  }
+
+  public static String importExprWithoutCode(QualifiedName qualifiedName) {
+    return importExprWithCode(qualifiedName.combined(), "");
+  }
+
+  public static String importExprWithClassName(QualifiedName qualifiedName) {
+    return importExprWithCode(qualifiedName.combined(), qualifiedName.className());
   }
 
   private static String javaClassExpr(String qualifiedClassName) {
@@ -246,7 +254,7 @@ public final class ParseTools {
       QualifiedName qn = parseQualifiedName(qualifiedClassName, null);
       checkState(nonEmpty(qn.packagePath()));
       String className = qn.className();
-      return importCodeExpr(qualifiedClassName, className);
+      return importExprWithCode(qualifiedClassName, className);
     } catch (Throwable t) {
       throw badArg("Failed to parse imported class expression:", quote(qualifiedClassName), "for language",
           language);

@@ -47,11 +47,8 @@ public class PythonListDataType extends PythonDataType {
 
   @Override
   protected String provideTypeName() {
-    // We need to generate import statements for the wrapped type as well as the wrapper; but we don't want 
-    // to confuse the macro substitution process 
-    String wrappedImport = ParseTools.importCodeExpr(wrappedType().qualifiedClassName().combined(), "");
-    String wrapperImport = ParseTools.PKG_LIST + "<" + wrappedType().qualifiedClassName().className() + ">";
-    return wrappedImport + wrapperImport;
+    return ParseTools.PKG_LIST + "<" + ParseTools.importExprWithClassName(wrappedType().qualifiedClassName())
+        + ">";
   }
 
   @Override

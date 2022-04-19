@@ -44,9 +44,7 @@ public class JavaContractDataType extends JavaDataType implements ContractDataTy
 
   @Override
   public String provideSourceDefaultValue() {
-    String imptExpr = ParseTools.importCodeExpr(qualifiedClassName().combined(),
-        qualifiedClassName().className());
-    return imptExpr + ".DEFAULT_INSTANCE";
+    return ParseTools.importExprWithClassName(qualifiedClassName()) + ".DEFAULT_INSTANCE";
   }
 
   public String getConstructFromX() {
@@ -138,8 +136,8 @@ public class JavaContractDataType extends JavaDataType implements ContractDataTy
         commaExp = true;
       }
 
-      sb.a("  private static final ", fieldDef.dataType().typeName(), " ", fieldDef.constantName(), "  = new ", typeName(),
-          "(");
+      sb.a("  private static final ", fieldDef.dataType().typeName(), " ", fieldDef.constantName(),
+          "  = new ", typeName(), "(");
       int i = INIT_INDEX;
       for (String expr : exprs) {
         i++;

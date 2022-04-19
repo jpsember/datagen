@@ -20,7 +20,7 @@ public class PythonDataType extends DataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    todo("in setter, if not optional, change None to default value?  Can we have type hints?");
+    todo("should we add Python type hints?");
     s.a("r = r * 37 + hash(self.", f.instanceName(), ")");
   }
 

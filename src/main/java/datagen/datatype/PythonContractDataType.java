@@ -44,9 +44,7 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
 
   @Override
   public String provideSourceDefaultValue() {
-    String imptExpr = ParseTools.importCodeExpr(qualifiedClassName().combined(),
-        qualifiedClassName().className());
-    return imptExpr + ".default_instance";
+    return ParseTools.importExprWithClassName(qualifiedClassName()) + ".default_instance";
   }
 
   public String getConstructFromX() {

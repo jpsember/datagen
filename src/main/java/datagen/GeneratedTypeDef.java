@@ -116,7 +116,8 @@ public final class GeneratedTypeDef extends BaseObject {
       default:
         throw languageNotSupported();
       case JAVA:
-        if (!testMode())
+        todo("investigate weight of Map types");
+        if (false && !testMode())
           notSupported("Disabled to see if it is actually used");
         complexType = new JavaMapDataType((JavaDataType) dataType, (JavaDataType) dataType2);
         break;
