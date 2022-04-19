@@ -71,6 +71,7 @@ public final class PythonJsonMapDataType extends PythonDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+    die("I think this is calling a misnamed python method");
     s.a(f.instanceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstantQualified(),
         "), ", f.optional(), ");", CR);
   }

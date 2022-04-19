@@ -36,6 +36,14 @@ public class JavaDataType extends DataType {
     s.a(f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(), ");");
   }
 
+  @Override
+  public void sourceGenerateEquals(SourceBuilder s, String a, String b) {
+    if (isPrimitive())
+      s.a(a, " == ", b);
+    else
+      s.a(a, ".equals(", b, ")");
+  }
+
   /**
    * Generate source code to continue the calculation of a value for hashCode().
    *

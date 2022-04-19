@@ -60,6 +60,7 @@ public final class PyStringDataType extends PythonDataType {
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a("t = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR);
+    todo("this can probably be optimized");
     s.doIf(f.optional(), "if t is not None:", OPEN);
     s.a("inst.", f.instanceName(), " = t.copy()", CR);
     s.endIf(CLOSE);

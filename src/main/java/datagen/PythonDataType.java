@@ -19,6 +19,17 @@ public class PythonDataType extends DataType {
   }
 
   @Override
+  public void sourceGenerateEquals(SourceBuilder s, String a, String b) {
+    todo("apparently if classes implement an __eq__ method, we can just use '==', and this holds for arrays");
+    if (isPrimitive())
+      s.a(a, " == ", b);
+    else {
+      todo("deprecate this");
+      s.a(a, ".equals(", b, ")");
+    }
+  }
+
+  @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
     todo("should we add Python type hints?");
     s.a("r = r * 37 + hash(self.", f.instanceName(), ")");
