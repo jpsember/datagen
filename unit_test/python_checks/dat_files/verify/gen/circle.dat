@@ -1,6 +1,0 @@
-fields {
-   int radius;
-   ? string label;
-   * string strs;
-   ?* string strs2;
-}
