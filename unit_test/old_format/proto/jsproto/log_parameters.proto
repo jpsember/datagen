@@ -1,6 +1,0 @@
-message {
-  long zip_file_inactive_interval;
-  int max_records_per_zip_file;
-  long max_zip_file_length;
-  int background_task_period_ms;
-}

@@ -1,6 +1,0 @@
-// Configuration for the API Manager
-
-message {
-  File stream_input;
-  File stream_output;
-}

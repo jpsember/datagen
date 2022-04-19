@@ -1,0 +1,14 @@
+{
+  "comments" : true,
+  "clean" : true,
+ "verbose_names" : true,
+                  "dat_path" : "dat_files",
+                "delete_old" : true,
+                  "language" : "python",
+                "proto_path" : "",
+            "python_package" : "",
+        "python_source_path" : "",
+               "source_path" : "",
+                 "start_dir" : "",
+  "treat_warnings_as_errors" : true
+}

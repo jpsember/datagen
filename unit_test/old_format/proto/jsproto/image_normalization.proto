@@ -1,4 +1,0 @@
-message {
-  int low_value;
-  int high_value;
-}

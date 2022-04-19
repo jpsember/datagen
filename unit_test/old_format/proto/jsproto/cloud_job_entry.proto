@@ -1,8 +1,0 @@
-// Cloud manager's information about a particular file within a job
-
-enum jsproto.CloudState;
-
-message {
-  File file;
-  CloudState status;
-}

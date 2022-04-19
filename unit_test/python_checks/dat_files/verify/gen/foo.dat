@@ -1,0 +1,12 @@
+extern ralph.gen.frank.Sausage;
+
+fields {
+    *double foo;
+    ?double golf;
+    float hotel;
+    *float india;
+    ?*float juliet;
+    IPoint pt;
+    Bar bar;
+    Sausage s;
+}
