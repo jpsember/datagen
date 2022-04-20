@@ -98,6 +98,7 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
       s.a("x = ", f.defaultValueOrNull(), CLOSE);
       s.a(targetExpr, " = x.build()");
     } else {
+      todo("this idiom should be in a convenience method?");
       s.a("if x is not None:", OPEN);
       s.a("x = x.build()", CLOSE);
       s.a(targetExpr, " = x");

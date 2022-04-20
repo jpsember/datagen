@@ -28,9 +28,6 @@ class [!class]({{pycore.base.AbstractData|AbstractData}}):
   @classmethod
   def new_builder(cls):
     return [!class]Builder()
-    @@"""
-    @@This is not really required; we can just call [!class]Builder() directly
-    @@"""
 
   \\
   def parse(self, obj):

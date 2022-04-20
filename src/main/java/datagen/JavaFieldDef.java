@@ -27,6 +27,10 @@ public class JavaFieldDef extends FieldDef {
 
   @Override
   public String provideInstanceName() {
+    if (true) {
+      // Our tooling uses reflection to find the instance field, so avoid mangling it...
+      return "m" + DataUtil.convertUnderscoresToCamelCase(name());
+    }
     return verboseVariant("m" + index(), "m" + DataUtil.convertUnderscoresToCamelCase(name()));
   }
 

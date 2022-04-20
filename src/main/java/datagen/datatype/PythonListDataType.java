@@ -83,7 +83,8 @@ public class PythonListDataType extends PythonDataType {
       String valueExpression) {
     if (fieldDef.optional()) {
       s.a("x = ", valueExpression, CR);
-      s.a(targetExpression, " = x.copy() if x is not None", CR);
+      todo("this idiom should be in a convenience method");
+      s.a(targetExpression, " = x if x is None else x.copy()", CR);
     } else {
       s.a(targetExpression, " = ", valueExpression, ".copy()");
     }

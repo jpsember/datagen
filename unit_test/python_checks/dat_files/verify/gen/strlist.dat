@@ -1,8 +1,4 @@
 fields {
-   *int ints;
-  ?*int intsopt;
-   *int ints_def = [42,100];
-
 
    *string strs;
    *string strs_def = ["default_string_list"];
