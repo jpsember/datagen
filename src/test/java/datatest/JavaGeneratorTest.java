@@ -194,6 +194,7 @@ public class JavaGeneratorTest extends GenBaseTest {
         "float beta = " + Float.MAX_VALUE + ";", CR, //
         "?float gamma;", CR, //
         "?*float epsilon;", CR, //
+        "*float hotel;", CR, //
         OUTDENT, "}");
     compile();
   }

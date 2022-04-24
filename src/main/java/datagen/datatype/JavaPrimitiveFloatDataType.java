@@ -66,7 +66,7 @@ public class JavaPrimitiveFloatDataType extends JavaDataType {
 
   @Override
   public DataType listVariant() {
-    return new Boxed();
+    return new JavaFloatArrayDataType();
   }
 
   private static class Boxed extends JavaPrimitiveFloatDataType {
