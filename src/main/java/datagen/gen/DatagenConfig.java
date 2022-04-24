@@ -1,6 +1,5 @@
 package datagen.gen;
 
-import datagen.gen.Language;
 import java.io.File;
 import js.data.AbstractData;
 import js.file.Files;
@@ -53,16 +52,16 @@ public class DatagenConfig implements AbstractData {
     return new Builder(this);
   }
 
-  public static final String START_DIR = "start_dir";
-  public static final String DAT_PATH = "dat_path";
-  public static final String LANGUAGE = "language";
-  public static final String SOURCE_PATH = "source_path";
-  public static final String CLEAN = "clean";
-  public static final String DELETE_OLD = "delete_old";
-  public static final String TREAT_WARNINGS_AS_ERRORS = "treat_warnings_as_errors";
-  public static final String COMMENTS = "comments";
-  public static final String PYTHON_SOURCE_PATH = "python_source_path";
-  public static final String VERBOSE_NAMES = "verbose_names";
+  protected static final String START_DIR = "start_dir";
+  protected static final String DAT_PATH = "dat_path";
+  protected static final String LANGUAGE = "language";
+  protected static final String SOURCE_PATH = "source_path";
+  protected static final String CLEAN = "clean";
+  protected static final String DELETE_OLD = "delete_old";
+  protected static final String TREAT_WARNINGS_AS_ERRORS = "treat_warnings_as_errors";
+  protected static final String COMMENTS = "comments";
+  protected static final String PYTHON_SOURCE_PATH = "python_source_path";
+  protected static final String VERBOSE_NAMES = "verbose_names";
 
   @Override
   public String toString() {

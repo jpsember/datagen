@@ -8,17 +8,7 @@ import js.data.FloatArray;
 import js.json.JSList;
 import js.json.JSMap;
 
-/**
- * Generated Java data class (do not edit!)
- *
- * Instances of this class should be considered immutable.  A mutable copy of an instance
- * can be constructed by calling the toBuilder() method.  When clients pass instances to other
- * code, if mutation of those instances is not desired, then the client should ensure that the
- * instance is not actually a Builder (e.g. by calling build() if necessary).
- */
 public class SampleDataType implements AbstractData {
-
-  // Field 'getters'
 
   public byte b1() {
     return mB1;
@@ -116,50 +106,41 @@ public class SampleDataType implements AbstractData {
     return mD4;
   }
 
-  /**
-   * Construct a builder from this data class object.
-   * Where appropriate, this object's values are defensively copied to mutable versions
-   */
   @Override
   public Builder toBuilder() {
     return new Builder(this);
   }
 
-  // Constants used to refer to the fields, e.g., as they appear in json maps
-
-  public static final String B1 = "b1";
-  public static final String B2 = "b2";
-  public static final String B3 = "b3";
-  public static final String B4 = "b4";
-  public static final String S1 = "s1";
-  public static final String S2 = "s2";
-  public static final String S3 = "s3";
-  public static final String S4 = "s4";
-  public static final String I1 = "i1";
-  public static final String I2 = "i2";
-  public static final String I3 = "i3";
-  public static final String I4 = "i4";
-  public static final String L1 = "l1";
-  public static final String L2 = "l2";
-  public static final String L3 = "l3";
-  public static final String L4 = "l4";
-  public static final String F1 = "f1";
-  public static final String F2 = "f2";
-  public static final String F3 = "f3";
-  public static final String F4 = "f4";
-  public static final String D1 = "d1";
-  public static final String D2 = "d2";
-  public static final String D3 = "d3";
-  public static final String D4 = "d4";
+  protected static final String B1 = "b1";
+  protected static final String B2 = "b2";
+  protected static final String B3 = "b3";
+  protected static final String B4 = "b4";
+  protected static final String S1 = "s1";
+  protected static final String S2 = "s2";
+  protected static final String S3 = "s3";
+  protected static final String S4 = "s4";
+  protected static final String I1 = "i1";
+  protected static final String I2 = "i2";
+  protected static final String I3 = "i3";
+  protected static final String I4 = "i4";
+  protected static final String L1 = "l1";
+  protected static final String L2 = "l2";
+  protected static final String L3 = "l3";
+  protected static final String L4 = "l4";
+  protected static final String F1 = "f1";
+  protected static final String F2 = "f2";
+  protected static final String F3 = "f3";
+  protected static final String F4 = "f4";
+  protected static final String D1 = "d1";
+  protected static final String D2 = "d2";
+  protected static final String D3 = "d3";
+  protected static final String D4 = "d4";
 
   @Override
   public String toString() {
     return toJson().prettyPrint();
   }
 
-  /**
-   * Serialize this object to a json map
-   */
   @Override
   public JSMap toJson() {
     JSMap m = new JSMap();
@@ -214,9 +195,6 @@ public class SampleDataType implements AbstractData {
     return m;
   }
 
-  /**
-   * The instance is already immutable, so return unchanged
-   */
   @Override
   public SampleDataType build() {
     return this;
@@ -320,9 +298,6 @@ public class SampleDataType implements AbstractData {
     }
   }
 
-  /**
-   * Construct a new builder for objects of this data class
-   */
   public static Builder newBuilder() {
     return new Builder(DEFAULT_INSTANCE);
   }
@@ -559,10 +534,6 @@ public class SampleDataType implements AbstractData {
       return super.hashCode();
     }
 
-    /**
-     * Create an immutable version of this builder.  Where appropriate, defensive, immutable copies
-     * are made of the builder fields.
-     */
     @Override
     public SampleDataType build() {
       SampleDataType r = new SampleDataType();
@@ -592,8 +563,6 @@ public class SampleDataType implements AbstractData {
       r.mD4 = mD4;
       return r;
     }
-
-    // Field 'setters'.  Where appropriate, if an argument is immutable, a mutable copy is stored instead
 
     public Builder b1(byte x) {
       mB1 = x;
@@ -717,14 +686,8 @@ public class SampleDataType implements AbstractData {
 
   }
 
-  /**
-   * The default (immutable) instance of this data object
-   */
   public static final SampleDataType DEFAULT_INSTANCE = new SampleDataType();
 
-  /**
-   * The private constructor.  To create new instances, use newBuilder()
-   */
   private SampleDataType() {
     mB3 = DataUtil.EMPTY_BYTE_ARRAY;
     mS3 = DataUtil.EMPTY_SHORT_ARRAY;

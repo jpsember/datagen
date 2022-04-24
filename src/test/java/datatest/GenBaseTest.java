@@ -32,7 +32,6 @@ import java.util.List;
 import datagen.Datagen;
 import datagen.ParseTools;
 import datagen.Utils;
-import datagen.gen.DatagenConfig;
 import datagen.gen.Language;
 import js.file.Files;
 import js.app.App;
@@ -50,7 +49,7 @@ public abstract class GenBaseTest extends MyTestCase {
     addArg("language", mLanguage.toString().toLowerCase());
     if (mVerboseNames)
       addArg("verbose_names");
-    addArg(DatagenConfig.DAT_PATH, datFilesDir(), DatagenConfig.SOURCE_PATH, sourceDir());
+    addArg("dat_path", datFilesDir(), "source_path", sourceDir());
     if (verbose())
       addArg("--verbose");
     App app = new Datagen();

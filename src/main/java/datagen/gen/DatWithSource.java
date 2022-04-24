@@ -3,17 +3,7 @@ package datagen.gen;
 import js.data.AbstractData;
 import js.json.JSMap;
 
-/**
- * Generated Java data class (do not edit!)
- *
- * Instances of this class should be considered immutable.  A mutable copy of an instance
- * can be constructed by calling the toBuilder() method.  When clients pass instances to other
- * code, if mutation of those instances is not desired, then the client should ensure that the
- * instance is not actually a Builder (e.g. by calling build() if necessary).
- */
 public class DatWithSource implements AbstractData {
-
-  // Field 'getters'
 
   public String datRelPath() {
     return mDatRelPath;
@@ -23,28 +13,19 @@ public class DatWithSource implements AbstractData {
     return mSourceRelPath;
   }
 
-  /**
-   * Construct a builder from this data class object.
-   * Where appropriate, this object's values are defensively copied to mutable versions
-   */
   @Override
   public Builder toBuilder() {
     return new Builder(this);
   }
 
-  // Constants used to refer to the fields, e.g., as they appear in json maps
-
-  public static final String DAT_REL_PATH = "dat_rel_path";
-  public static final String SOURCE_REL_PATH = "source_rel_path";
+  protected static final String DAT_REL_PATH = "dat_rel_path";
+  protected static final String SOURCE_REL_PATH = "source_rel_path";
 
   @Override
   public String toString() {
     return toJson().prettyPrint();
   }
 
-  /**
-   * Serialize this object to a json map
-   */
   @Override
   public JSMap toJson() {
     JSMap m = new JSMap();
@@ -53,9 +34,6 @@ public class DatWithSource implements AbstractData {
     return m;
   }
 
-  /**
-   * The instance is already immutable, so return unchanged
-   */
   @Override
   public DatWithSource build() {
     return this;
@@ -71,9 +49,6 @@ public class DatWithSource implements AbstractData {
     mSourceRelPath = m.opt(SOURCE_REL_PATH, "");
   }
 
-  /**
-   * Construct a new builder for objects of this data class
-   */
   public static Builder newBuilder() {
     return new Builder(DEFAULT_INSTANCE);
   }
@@ -128,10 +103,6 @@ public class DatWithSource implements AbstractData {
       return super.hashCode();
     }
 
-    /**
-     * Create an immutable version of this builder.  Where appropriate, defensive, immutable copies
-     * are made of the builder fields.
-     */
     @Override
     public DatWithSource build() {
       DatWithSource r = new DatWithSource();
@@ -139,8 +110,6 @@ public class DatWithSource implements AbstractData {
       r.mSourceRelPath = mSourceRelPath;
       return r;
     }
-
-    // Field 'setters'.  Where appropriate, if an argument is immutable, a mutable copy is stored instead
 
     public Builder datRelPath(String x) {
       mDatRelPath = (x == null) ? "" : x;
@@ -154,14 +123,8 @@ public class DatWithSource implements AbstractData {
 
   }
 
-  /**
-   * The default (immutable) instance of this data object
-   */
   public static final DatWithSource DEFAULT_INSTANCE = new DatWithSource();
 
-  /**
-   * The private constructor.  To create new instances, use newBuilder()
-   */
   private DatWithSource() {
     mDatRelPath = "";
     mSourceRelPath = "";
