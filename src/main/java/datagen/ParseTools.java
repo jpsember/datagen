@@ -272,6 +272,7 @@ public final class ParseTools {
   public static final String PKG_MAP = javaClassExpr("java.util.Map");
   public static final String PKG_CONCURRENT_MAP = javaClassExpr("java.util.concurrent.ConcurrentHashMap");
   public static final String PKG_STRING = javaClassExpr("java.lang.String");
+  public static final String PKG_OBJECT = javaClassExpr("java.lang.Object");
   public static final String PKG_ARRAYS = javaClassExpr("java.util.Arrays");
   public static final String PKG_ARRAYLIST = javaClassExpr("java.util.ArrayList");
   public static final String PKG_JSOBJECT = javaClassExpr("js.json.JSObject");

@@ -69,7 +69,8 @@ public class JavaContractDataType extends JavaDataType implements ContractDataTy
       s.a(ParseTools.PKG_JSLIST, " x = m.optJSList(", f.nameStringConstantQualified(), ");", CR);
     } else {
       String castExpr = "m.optUnsafe";
-      if (!typeExpr.equals("Object"))
+      // No cast is necessary if the type is Object
+      if (!typeExpr.equals(ParseTools.PKG_OBJECT)) 
         castExpr = "(" + typeExpr + ") " + castExpr;
       s.a(getSerializeDataType(), " x = ", castExpr, "(", f.nameStringConstantQualified(), ");", CR);
     }

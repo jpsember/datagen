@@ -43,7 +43,7 @@ public class JavaLongArrayDataType extends JavaContractDataType {
   }
 
   public String getSerializeDataType() {
-    return ParseTools.PKG_STRING;
+    return ParseTools.PKG_OBJECT;  
   }
 
   public String getSerializeToJSONValue(String value) {
@@ -57,7 +57,7 @@ public class JavaLongArrayDataType extends JavaContractDataType {
 
   @Override
   public String getConstructFromX() {
-    return ParseTools.PKG_DATAUTIL + ".parseBase64Longs(x)";
+    return ParseTools.PKG_DATAUTIL + ".parseLongsFromArrayOrBase64(x)";
   }
 
   @Override
