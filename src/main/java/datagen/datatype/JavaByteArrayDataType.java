@@ -57,7 +57,7 @@ public class JavaByteArrayDataType extends JavaContractDataType {
 
   @Override
   public String getConstructFromX() {
-    return ParseTools.PKG_DATAUTIL + ".parseBase64(x)";
+    return ParseTools.PKG_DATAUTIL + ".parseBytesFromArrayOrBase64(x)";
   }
 
   @Override
