@@ -43,7 +43,7 @@ public class JavaByteArrayDataType extends JavaContractDataType {
   }
 
   public String getSerializeDataType() {
-    return ParseTools.PKG_STRING;
+    return ParseTools.PKG_OBJECT;
   }
 
   public String getSerializeToJSONValue(String value) {
@@ -77,7 +77,7 @@ public class JavaByteArrayDataType extends JavaContractDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", f.instanceName() , ");");
+    s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", f.instanceName(), ");");
   }
 
 }

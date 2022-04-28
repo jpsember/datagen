@@ -24,37 +24,14 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
-import static js.base.Tools.*;
+public class PyMatrixDataType extends PythonContractDataType {
 
-import datagen.FieldDef;
-import datagen.ParseTools;
-import datagen.PythonDataType;
-import datagen.SourceBuilder;
-import datagen.Utils;
-import js.parsing.Scanner;
-
-/**
- * For Python, this will generate python dicts, to the extent that they are
- * compatible with JSMaps. For example, keys have to be strings (unlike Python
- * dicts, whose keys can be any immutable type)
- */
-public final class PythonJsonMapDataType extends PythonDataType {
-
-  @Override
   protected String provideQualifiedClassNameExpr() {
-    return "dict";
+    return "pycore.matrix.Matrix";
   }
 
-  @Override
-  public final String provideSourceDefaultValue() {
-    return "{}";
-  }
-
-  @Override
-  public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
-        f.defaultValueOrNull(), ")", CR);
+  public String getConstructFromX() {
+    return "x.build()";
   }
 
 }

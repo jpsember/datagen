@@ -69,6 +69,8 @@ public final class DataTypeManager extends BaseObject {
       add("IPoint", new PyIPointDataType());
       add("bool", new PyBooleanDataType());
       add("string", new PyStringDataType());
+      add("JSMap", new PythonJsonMapDataType());
+      add("Matrix", new PyMatrixDataType());
       break;
     case JAVA:
       add("byte", new JavaPrimitiveByteDataType());
@@ -81,7 +83,7 @@ public final class DataTypeManager extends BaseObject {
       add(IPoint.DEFAULT_INSTANCE, IPOINT_PARSER);
       add("bool", new JavaBooleanDataType());
       add("string", new JavaStringDataType());
-      add("JSMap", new JsonMapDataType());
+      add("JSMap", new JavaJsonMapDataType());
       add("JSList", new JavaJsonListDataType());
       add(IRect.DEFAULT_INSTANCE);
       add(FPoint.DEFAULT_INSTANCE);
