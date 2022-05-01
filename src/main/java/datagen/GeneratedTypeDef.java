@@ -160,20 +160,22 @@ public final class GeneratedTypeDef extends BaseObject {
           Context.generatedTypeDef.packageName());
       dataType = dataTypes.get(className.className());
       if (dataType == null) {
+       
         // If a package was specified, treat as if it was defined using 'extern'
+        //
         if (!className.combined().equals(typeName)) {
+          //
           // Verify that a .dat file exists matching this type, in the same directory as the one we're compiling
+          //
           String datFilename = convertCamelToUnderscore(typeName) + ParseTools.DOT_EXT_DATA_DEFINITION;
           File currentDatFile = new File(Context.config.datPath(), Context.datWithSource.datRelPath());
           File datFile = new File(currentDatFile.getParentFile(), datFilename);
           if (!datFile.exists())
             badArg("No definition file found at", datFile, INDENT, "...use 'extern' to declare its location");
         }
-        DataType contractType = ContractDataType.construct();
-        todo("do we want to do this in both cases?");
+        dataType = ContractDataType.construct();
         className = updateForPython(className);
-        contractType.setQualifiedClassName(className);
-        dataType = (DataType) contractType;
+        dataType.setQualifiedClassName(className);
         dataTypes.add(dataType.qualifiedClassName().className(), dataType);
       }
     }
