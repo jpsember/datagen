@@ -9,8 +9,7 @@ class [!class]:
 \\
 [!enum_values]
 
-
-\\2
-default_instance = [!default_value]
+\\
+  default_instance = [!default_value]
 
 @@# https://stackoverflow.com/questions/36003273/

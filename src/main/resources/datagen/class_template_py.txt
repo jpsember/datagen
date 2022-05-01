@@ -1,4 +1,5 @@
 \\2
+from __future__ import annotations
 [!imports]
 
 \\2
@@ -12,6 +13,10 @@ class [!class]({{pycore.base.AbstractData|AbstractData}}):
 @@  instance is not actually a Builder (e.g. by calling build() if necessary).
 @@  """
 
+  \\
+  @@# Declare a class variable for the default instance
+  default_instance: [!class]
+ 
 
   \\
   @@# Constants used to refer to the fields, e.g., as they appear in json maps
@@ -98,7 +103,7 @@ class [!class]({{pycore.base.AbstractData|AbstractData}}):
 
 
 \\2
-@@# Define a class variable for the default instance
+@@# Initialize the default instance variable
 @@#
 [!class].default_instance = [!class]()
 \\2
