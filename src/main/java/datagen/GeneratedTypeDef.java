@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Set;
 
 import static js.base.Tools.*;
+import static datagen.ParseTools.*;
 import static datagen.Utils.*;
 
 import datagen.datatype.JavaListDataType;
@@ -157,7 +158,19 @@ public final class GeneratedTypeDef extends BaseObject {
     if (dataType == null) {
       QualifiedName className = ParseTools.parseQualifiedName(typeName,
           Context.generatedTypeDef.packageName());
+      pr("parsed qual class name:", className);
       dataType = dataTypes.get(className.className());
+      if (dataType == null) {
+        // If a package was specified, treat as if it was defined using 'extern'
+        if (className.combined().equals(typeName)) {
+          dataType = ContractDataType.construct();
+          className = updateForPython(className);
+          dataType.setQualifiedClassName(className);
+          dataType.setDeclaredFlag();
+          dataTypes.add(className.className(), dataType);
+          todo("refactor to merge with some code below");
+        }
+      }
       if (dataType == null) {
         {
           // Verify that a .dat file exists matching this type, in the same directory as the one we're compiling
