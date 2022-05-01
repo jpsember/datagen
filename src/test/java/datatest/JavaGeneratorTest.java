@@ -451,6 +451,14 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
+  public void qualifiedReference() {
+    p().pr("fields {", INDENT, //
+        "foo.gen.MongoParams mongo_params;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
   public void ipoints() {
     p().pr("fields {", INDENT, //
         "IPoint a;", CR, //

@@ -24,15 +24,11 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
 import datagen.FieldDef;
-import datagen.ParseTools;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
-import datagen.Utils;
-import js.parsing.Scanner;
 
 /**
  * For Python, this will generate python dicts, to the extent that they are
