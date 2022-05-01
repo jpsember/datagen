@@ -11,6 +11,6 @@ class [!class]:
 
 
 \\2
-[!class].default_instance = [!class].[!default_value]
+default_instance = [!default_value]
 
 @@# https://stackoverflow.com/questions/36003273/
