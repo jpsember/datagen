@@ -195,4 +195,11 @@ public class PythonGeneratorTest extends GenBaseTest {
     compile();
   }
 
+  @Test
+  public void externType() {
+    p().pr("fields {", INDENT, //
+        "*foo.gen.Layer layers;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
 }

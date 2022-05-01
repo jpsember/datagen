@@ -281,7 +281,7 @@ public final class ParseTools {
   public static final String PKG_FLOAT_ARRAY = javaClassExpr("js.data.FloatArray");
   public static final String PKG_DOUBLE_ARRAY = javaClassExpr("js.data.DoubleArray");
 
-  public static final String PKGPY_DATAUTIL = pythonClassExpr("pycore.DataUtil");
+  public static final String PKGPY_DATAUTIL = pythonClassExpr("pycore.datautil.DataUtil");
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 
