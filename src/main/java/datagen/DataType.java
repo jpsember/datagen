@@ -247,6 +247,31 @@ public abstract class DataType implements DefaultValueParser {
     return null;
   }
 
+  public final DataType getOptionalVariant() {
+    if (!mPreparedVariantOptional) {
+      mPreparedVariantOptional = true;
+      mOptionalVariant = optionalVariant();
+      if (mOptionalVariant != null)
+        mOptionalVariant.setSourceBuilder();
+    }
+    return mOptionalVariant;
+  }
+
+  public final DataType getListVariant() {
+    if (!mPreparedVariantList) {
+      mPreparedVariantList = true;
+      mListVariant = optionalVariant();
+      if (mListVariant != null)
+        mListVariant.setSourceBuilder();
+    }
+    return mListVariant;
+  }
+ 
+  private boolean mPreparedVariantOptional;
+  private boolean mPreparedVariantList;
+  private DataType mOptionalVariant;
+  private DataType mListVariant;
+
   public abstract void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr);
 
   // ------------------------------------------------------------------
@@ -277,14 +302,7 @@ public abstract class DataType implements DefaultValueParser {
 
   @Deprecated // Rename to something like 'prepare'
   public final void setSourceBuilder() {
-    todo("have 'provide' methods to build optional, list variants only once");
     s = Context.sourceBuilder;
-    if (false && optionalVariant() != null && optionalVariant() != this) {
-      optionalVariant().setSourceBuilder();
-    }
-    if (false && listVariant() != null && listVariant() != this) {
-      listVariant().setSourceBuilder();
-    }
   }
 
   private boolean mDeclared;

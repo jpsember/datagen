@@ -99,7 +99,7 @@ public final class GeneratedTypeDef extends BaseObject {
       dataType2 = registerType(type2Name);
 
     if (optional)
-      dataType = dataType.optionalVariant();
+      dataType = dataType.getOptionalVariant();
     DataType complexType;
 
     switch (structure) {
@@ -108,7 +108,7 @@ public final class GeneratedTypeDef extends BaseObject {
       break;
     case LIST:
       // Convert list to particular scalar types in special cases
-      complexType = dataType.listVariant();
+      complexType = dataType.getListVariant();
       if (complexType == null) {
         complexType = python() ? new PythonListDataType(dataType) : new JavaListDataType(dataType);
         complexType.setSourceBuilder();
