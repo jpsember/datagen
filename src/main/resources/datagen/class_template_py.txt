@@ -31,11 +31,11 @@ class [!class]({{pycore.base.AbstractData|AbstractData}}):
 
 \\
   @classmethod
-  def new_builder(cls):
+  def new_builder(cls) -> [!class]Builder:
     return [!class]Builder()
 
   \\
-  def parse(self, obj):
+  def parse(self, obj: dict) -> [!class]:
     @@"""
     @@Parse immutable instance from an object (which is probably a dict, or a tuple)
     @@
@@ -53,7 +53,7 @@ class [!class]({{pycore.base.AbstractData|AbstractData}}):
 
 
   \\
-  def to_builder(self):
+  def to_builder(self) -> [!class]Builder:
     @@"""
     @@Construct a builder from this object; or return self if it's already a builder
     @@"""
@@ -64,7 +64,7 @@ class [!class]({{pycore.base.AbstractData|AbstractData}}):
 
 
   \\
-  def to_json(self):
+  def to_json(self) -> dict:
 [!to_json]
 
 
@@ -73,7 +73,7 @@ class [!class]({{pycore.base.AbstractData|AbstractData}}):
 
 
   \\
-  def __hash__(self):
+  def __hash__(self) -> int:
 [!hashcode]
 
 
@@ -84,7 +84,7 @@ class [!class]({{pycore.base.AbstractData|AbstractData}}):
 
 
   \\
-  def __eq__(self, other):
+  def __eq__(self, other) -> bool:
     if isinstance(other, [!class]):
 [!equals]
     else:
@@ -120,12 +120,12 @@ class [!class]Builder([!class]):
 
 
 \\
-  def to_builder(self):
+  def to_builder(self) -> [!class]Builder:
     return self
 
 
 \\
-  def build(self):
+  def build(self) -> [!class]:
     v = [!class]()
 [!copyfield_from_builder]
     return v
