@@ -1,4 +1,5 @@
 \\2
+from __future__ import annotations
 [!imports]
 
 \\2
@@ -13,9 +14,8 @@ class [!class]({{pycore.base.AbstractData|AbstractData}}):
 @@  """
 
   \\
-  @@# Declare a class variable for the default instance;
-  @@# we can't refer to the class yet, as it hasn't been defined; so set to None
-  default_instance = None
+  @@# Declare a class variable for the default instance
+  default_instance: [!class]
  
 
   \\
