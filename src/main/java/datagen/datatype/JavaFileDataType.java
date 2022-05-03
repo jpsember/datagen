@@ -59,11 +59,10 @@ public final class JavaFileDataType extends JavaDataType {
     s.open();
     if (!f.optional())
       s.a(f.instanceName(), " = ", f.defaultValueOrNull(), ";", CR);
-    s.a("String x = m.opt(", f.nameStringConstantQualified(), ", (String) null);", CR, //
-        "if (x != null)", OPEN, //
-        f.instanceName(), " = new ", typeName(), "(x);", //
-        CLOSE //
-    );
+    s.a("String x = m.opt(", f.nameStringConstantQualified(), ", (String) null);", CR);
+    sourceIfNotNull(s, "x");
+    s.a(f.instanceName(), " = new ", typeName(), "(x);");
+    sourceEndIf(s);
     s.close();
   }
 
@@ -76,18 +75,18 @@ public final class JavaFileDataType extends JavaDataType {
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a(OPEN, //
         PKG_LIST, "<", typeName(), "> result = ", f.nullIfOptional(PKG_MUTABLELIST), ";", CR, //
-        ParseTools.PKG_JSLIST, " j = m.optJSList(", f.nameStringConstantQualified(), ");", CR, //
-        "if (j != null)", OPEN, //
-        "result = new ", ParseTools.PKG_ARRAYLIST, "<>(j.size());", CR, //
+        ParseTools.PKG_JSLIST, " j = m.optJSList(", f.nameStringConstantQualified(), ");", CR);
+    sourceIfNotNull(s, "j");
+    s.a("result = new ", ParseTools.PKG_ARRAYLIST, "<>(j.size());", CR, //
         "for (Object z : j.wrappedList())", OPEN, //
-        typeName(), " y = ", provideSourceDefaultValue(), ";", CR, //
-        "if (z != null)", OPEN, //
-        getSerializeDataType(), " x = (", getSerializeDataType(), ") z;", CR, //
+        typeName(), " y = ", provideSourceDefaultValue(), ";", CR);
+    sourceIfNotNull(s, "z");
+    s.a(getSerializeDataType(), " x = (", getSerializeDataType(), ") z;", CR, //
         "y = ", getConstructFromX(), ";", CLOSE, //
-        "result.add(y);", CLOSE, //
-        CLOSE, //
-        f.instanceName(), " = ", ParseTools.immutableCopyOfList("result"), ";", //
-        CLOSE);
+        "result.add(y);");
+    sourceEndIf(s);
+    s.a(CLOSE, f.instanceName(), " = ", ParseTools.immutableCopyOfList("result"), ";");
+    sourceEndIf(s);
   }
 
   private String getSerializeDataType() {

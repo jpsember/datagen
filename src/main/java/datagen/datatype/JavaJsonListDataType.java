@@ -49,8 +49,8 @@ public class JavaJsonListDataType extends JavaDataType {
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    classSpecificSource.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = new ", typeName(), "(",
-        scanner.read(STRING).text(), ");", CR);
+    classSpecificSource.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = new ",
+        typeName(), "(", scanner.read(STRING).text(), ");", CR);
     return fieldDef.constantName();
   }
 
@@ -59,18 +59,17 @@ public class JavaJsonListDataType extends JavaDataType {
     s.open();
     if (!f.optional())
       s.a(f.instanceName(), " = ", f.defaultValueOrNull(), ";", CR);
-    s.a(typeName(), " x = m.optJSList(", f.nameStringConstantQualified(), ");", CR, //
-        "if (x != null)", OPEN, //
-        f.instanceName(), " = x.lock();", //
-        CLOSE //
-    );
+    s.a(typeName(), " x = m.optJSList(", f.nameStringConstantQualified(), ");", CR);
+    sourceIfNotNull(s, "x");
+    s.a(f.instanceName(), " = x.lock();");
+    sourceEndIf(s);
     s.close();
   }
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a(f.instanceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstantQualified(),
-        "), ", f.optional(), ");", CR);
+    s.a(f.instanceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(",
+        f.nameStringConstantQualified(), "), ", f.optional(), ");", CR);
   }
 
 }

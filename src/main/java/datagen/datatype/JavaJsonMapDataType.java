@@ -64,11 +64,10 @@ public final class JavaJsonMapDataType extends JavaDataType {
     s.open();
     if (!f.optional())
       s.a(f.instanceName(), " = ", f.defaultValueOrNull(), ";", CR);
-    s.a(typeName(), " x = m.optJSMap(", f.nameStringConstantQualified(), ");", CR, //
-        "if (x != null)", OPEN, //
-        f.instanceName(), " = x.lock();", //
-        CLOSE //
-    );
+    s.a(typeName(), " x = m.optJSMap(", f.nameStringConstantQualified(), ");", CR);
+    sourceIfNotNull(s, "x");
+    s.a(f.instanceName(), " = x.lock();");
+    sourceEndIf(s);
     s.close();
   }
 
