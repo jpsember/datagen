@@ -114,7 +114,6 @@ public class PythonListDataType extends PythonDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    todo("is it actually a list, or ?");
     wrappedType().sourceDeserializeFromList(s, f);
   }
 
