@@ -28,6 +28,7 @@ import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
 import java.util.List;
+import java.util.function.DoubleToIntFunction;
 
 import datagen.FieldDef;
 import datagen.PythonDataType;
@@ -54,7 +55,6 @@ public class PythonEnumDataType extends PythonDataType implements EnumDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    todo("optimize this?");
     s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR);
     s.doIf(f.optional(), "if x is not None:", OPEN);
     s.a("inst.", f.instanceName(), " = [", typeName(), "(z) for z in x]", CR);

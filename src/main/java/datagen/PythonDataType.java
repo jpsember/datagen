@@ -61,12 +61,10 @@ public class PythonDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    todo("!we should have some symbolic constants for things like t, inst");
-    todo("!we should optimize later by having a utility class to reduce volume of boilerplate");
     if (f.optional()) {
-      s.a("t = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR, //
-          "if t is not None:", OPEN, //
-          "inst.", f.instanceName(), " = t.copy()", CLOSE);
+      s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR, //
+          "if x is not None:", OPEN, //
+          "inst.", f.instanceName(), " = x.copy()", CLOSE);
     } else {
       s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
           f.nullIfOptional("[]"), ").copy()", CR);

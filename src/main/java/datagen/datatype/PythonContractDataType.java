@@ -148,9 +148,4 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
     throw notSupported("can't parse default value for token:", t);
   }
 
-  @Override
-  public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    super.sourceHashCalculationCode(s, f);
-    todo("may need special hash calculation code for:", getClass().getName());
-  }
 }
