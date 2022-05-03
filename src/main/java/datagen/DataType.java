@@ -179,6 +179,11 @@ public abstract class DataType implements DefaultValueParser {
    */
   public abstract SourceBuilder sourceEndIf(SourceBuilder s);
 
+  /**
+   * Generate an 'if' statement that checks if an expression is non-null
+   */
+  public abstract void sourceIfNotNull(SourceBuilder s, String expr);
+  
   // ------------------------------------------------------------------
   // Serialization
   // ------------------------------------------------------------------

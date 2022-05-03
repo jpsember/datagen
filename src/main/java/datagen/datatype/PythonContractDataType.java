@@ -64,8 +64,9 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
     // Otherwise, if there is no value, leave the current value alone (which may be None, e.g. if value is optional)
     //
     s.a("x = obj.get(", f.nameStringConstantQualified(), ")", CR);
-    s.a("if x is not None:", IN);
-    s.a("inst.", f.instanceName(), " = ", pythonDeserializeExpr(f, "x"), OUT);
+    sourceIfNotNull(s, "x");
+    s.a("inst.", f.instanceName(), " = ", pythonDeserializeExpr(f, "x"));
+    sourceEndIf(s);
   }
 
   /**
@@ -99,8 +100,9 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
       s.a(targetExpr, " = x.build()");
     } else {
       todo("this idiom should be in a convenience method?");
-      s.a("if x is not None:", OPEN);
-      s.a("x = x.build()", CLOSE);
+      sourceIfNotNull(s, "x");
+      s.a("x = x.build()");
+      sourceEndIf(s);
       s.a(targetExpr, " = x");
     }
   }

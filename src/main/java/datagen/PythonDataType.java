@@ -31,7 +31,6 @@ public class PythonDataType extends DataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    todo("should we add Python type hints?");
     s.a("r = r * 37 + hash(self.", f.instanceName(), ")");
   }
 
@@ -43,6 +42,11 @@ public class PythonDataType extends DataType {
       s.a(targetExpr, " = ", //
           f.defaultValueOrNull(), " if x is None else ", sourceExpressionToMutable("x"));
     }
+  }
+
+  @Override
+  public void sourceIfNotNull(SourceBuilder s, String expr) {
+    s.doIf(true, "if ", expr, " is not None:", OPEN);
   }
 
   @Override

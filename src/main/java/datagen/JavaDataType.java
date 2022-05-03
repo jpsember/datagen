@@ -56,6 +56,11 @@ public class JavaDataType extends DataType {
   }
 
   @Override
+  public void sourceIfNotNull(SourceBuilder s, String expr) {
+    s.doIf(true, "if (", expr, " != null)", OPEN);
+  }
+
+  @Override
   public final void sourceIfNotNull(SourceBuilder s, FieldDef f) {
     s.doIf(f.optional(), "if (", f.instanceName(), " != null)", OPEN);
   }
