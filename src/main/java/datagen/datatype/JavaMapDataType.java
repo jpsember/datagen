@@ -75,7 +75,7 @@ public class JavaMapDataType extends JavaDataType {
   }
 
   @Override
-  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
+  public void sourceExpressionToImmutable( FieldDef fieldDef, String targetExpression,
       String valueExpression) {
     s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
   }

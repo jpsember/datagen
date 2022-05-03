@@ -51,17 +51,17 @@ public class PythonSourceGen extends SourceGen {
 
   @Override
   protected void generateEnumValues(EnumDataType dt) {
-    s().in();
+    s.in();
     for (String label : dt.labels()) {
-      s().a(label, " = ", quote(label.toLowerCase())).cr();
+      s.a(label, " = ", quote(label.toLowerCase())).cr();
     }
-    s().out();
+    s.out();
   }
 
   @Override
   protected String generateStringConstants() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(0);
+    s.in(0);
     for (FieldDef f : def.fields()) {
       s.br();
       s.a(f.nameStringConstantUnqualified(), " = ", quote(f.name()));
@@ -73,7 +73,7 @@ public class PythonSourceGen extends SourceGen {
   @Override
   protected String generateInitInstanceFields() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(2);
+    s.in(2);
     s.a("self.", hashFieldName(), " = None", CR);
     for (FieldDef f : def.fields()) {
       s.a("self.", f.instanceName(), " = ", f.defaultValueOrNull(), CR);
@@ -85,19 +85,19 @@ public class PythonSourceGen extends SourceGen {
   @Override
   protected String generateCopyFromBuilderToImmutable() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s().in(2);
+    s.in(2);
     for (FieldDef f : def.fields()) {
-      s().cr();
-      f.dataType().sourceExpressionToImmutable(s(), f, "v." + f.instanceName(), "self." + f.instanceName());
+      s.cr();
+      f.dataType().sourceExpressionToImmutable(  f, "v." + f.instanceName(), "self." + f.instanceName());
     }
-    s().out();
+    s.out();
     return content();
   }
 
   @Override
   protected String generateSetters() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(0);
+    s.in(0);
     for (FieldDef f : def.fields()) {
       s.a("\\\\", CR);
       DataType d = f.dataType();
@@ -118,7 +118,7 @@ public class PythonSourceGen extends SourceGen {
   @Override
   protected String generateToJson() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(2);
+    s.in(2);
     s.a("m = {}", CR);
     for (FieldDef fieldDef : def.fields())
       fieldDef.dataType().sourceSerializeToObject(s, fieldDef);
@@ -156,7 +156,7 @@ public class PythonSourceGen extends SourceGen {
 
     for (String cn : qualifiedClassNames) {
       QualifiedName q = ParseTools.assertHasPackage(ParseTools.parseQualifiedName(cn, null));
-      s().a("from ", q.packagePath(), " import ", q.className()).cr();
+      s.a("from ", q.packagePath(), " import ", q.className()).cr();
     }
     return content();
   }
@@ -164,9 +164,8 @@ public class PythonSourceGen extends SourceGen {
   @Override
   protected String generateParse() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s();
     s.br();
-    s().in(2);
+    s.in(2);
     for (FieldDef f : def.fields()) {
       f.dataType().sourceDeserializeFromObject(s, f);
       s.cr();
@@ -179,7 +178,7 @@ public class PythonSourceGen extends SourceGen {
   protected String generateGetters() {
 
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(0);
+    s.in(0);
 
     for (FieldDef f : def.fields()) {
       s.a("\\\\").cr();
@@ -198,7 +197,7 @@ public class PythonSourceGen extends SourceGen {
   @Override
   protected String generateImmutableToBuilder() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(2);
+    s.in(2);
     s.a("x = ", def.name(), "Builder()", CR);
     for (FieldDef f : def.fields()) {
       String arg = "self." + f.instanceName();
@@ -220,7 +219,7 @@ public class PythonSourceGen extends SourceGen {
   @Override
   protected String generateEquals() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(4);
+    s.in(4);
     s.a("return hash(self) == hash(other)");
     if (!def.fields().isEmpty()) {
       boolean first = true;
@@ -245,7 +244,7 @@ public class PythonSourceGen extends SourceGen {
   @Override
   protected String generateHashCode() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(2);
+    s.in(2);
     String hashVarName = "self." + hashFieldName();
     s.a("if ", hashVarName, " is None:", IN);
     s.a("r = 1", CR);

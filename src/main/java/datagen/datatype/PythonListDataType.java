@@ -79,7 +79,7 @@ public class PythonListDataType extends PythonDataType {
   }
 
   @Override
-  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
+  public void sourceExpressionToImmutable(FieldDef fieldDef, String targetExpression,
       String valueExpression) {
     if (fieldDef.optional()) {
       s.a("x = ", valueExpression, CR);

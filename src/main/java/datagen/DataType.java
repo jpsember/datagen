@@ -163,8 +163,10 @@ public abstract class DataType implements DefaultValueParser {
    *
    * Default returns the expression unchanged
    */
-  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
+  public void sourceExpressionToImmutable(FieldDef fieldDef, String targetExpression,
       String valueExpression) {
+    if (s == null)
+      throw die("null:", getClass());
     s.a(targetExpression, " = ", valueExpression);
   }
 
@@ -183,7 +185,7 @@ public abstract class DataType implements DefaultValueParser {
    * Generate an 'if' statement that checks if an expression is non-null
    */
   public abstract void sourceIfNotNull(SourceBuilder s, String expr);
-  
+
   // ------------------------------------------------------------------
   // Serialization
   // ------------------------------------------------------------------
@@ -273,7 +275,20 @@ public abstract class DataType implements DefaultValueParser {
     return mDeclared;
   }
 
+  @Deprecated // Rename to something like 'prepare'
+  public final void setSourceBuilder() {
+    todo("have 'provide' methods to build optional, list variants only once");
+    s = Context.sourceBuilder;
+    if (false && optionalVariant() != null && optionalVariant() != this) {
+      optionalVariant().setSourceBuilder();
+    }
+    if (false && listVariant() != null && listVariant() != this) {
+      listVariant().setSourceBuilder();
+    }
+  }
+
   private boolean mDeclared;
   private boolean mUsedFlag;
+  protected SourceBuilder s;
 
 }

@@ -53,7 +53,7 @@ public final class JavaSourceGen extends SourceGen {
   @Override
   protected String generateInitInstanceFields() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(2);
+    s.in(2);
     for (FieldDef f : def.fields()) {
       if (f.optional())
         continue;
@@ -71,20 +71,20 @@ public final class JavaSourceGen extends SourceGen {
   @Override
   protected String generateCopyFromBuilderToImmutable() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s().in(4);
+    s.in(4);
     for (FieldDef f : def.fields()) {
-      s().a(CR);
-      f.dataType().sourceExpressionToImmutable(s(), f, "r." + f.instanceName(), "" + f.instanceName());
-      s().a(";");
+      s.a(CR);
+      f.dataType().sourceExpressionToImmutable(  f, "r." + f.instanceName(), "" + f.instanceName());
+      s.a(";");
     }
-    s().out();
+    s.out();
     return content();
   }
 
   @Override
   protected String generateSetters() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(2);
+    s.in(2);
     for (FieldDef f : def.fields()) {
       s.br();
       DataType d = f.dataType();
@@ -99,7 +99,7 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected String generateToString() {
-    SourceBuilder s = s().in(0);
+    s.in(0);
     s.a("@Override", CR, //
         "public String toString()", OPEN, //
         "return toJson().prettyPrint();", CLOSE, //
@@ -110,7 +110,7 @@ public final class JavaSourceGen extends SourceGen {
   @Override
   protected String generateToJson() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(0);
+    s.in(0);
 
     s.a("@Override", CR, //
         "public JSMap toJson()", OPEN);
@@ -121,7 +121,7 @@ public final class JavaSourceGen extends SourceGen {
       fieldDef.dataType().sourceSerializeToObject(s, fieldDef);
 
     s.a("return m;");
-    s().a(CLOSE, OUT);
+    s.a(CLOSE, OUT);
     return content();
   }
 
@@ -138,7 +138,7 @@ public final class JavaSourceGen extends SourceGen {
       if (packageName.equals(Context.generatedTypeDef.packageName()))
         continue;
 
-      s().a("import ", cn, ";").cr();
+      s.a("import ", cn, ";").cr();
     }
     return content();
   }
@@ -146,7 +146,6 @@ public final class JavaSourceGen extends SourceGen {
   @Override
   protected String generateParse() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s();
     s.br();
     s.in(0);
     s.a("@Override", CR, //
@@ -165,7 +164,7 @@ public final class JavaSourceGen extends SourceGen {
   @Override
   protected String generateGetters() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(0);
+    s.in(0);
     for (FieldDef f : def.fields()) {
       s.br();
       s.a("public ", f.dataType().typeName(), " ", f.getterName(), "()", OPEN, //
@@ -178,7 +177,7 @@ public final class JavaSourceGen extends SourceGen {
   @Override
   protected String generateImmutableToBuilder() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(4);
+    s.in(4);
     for (FieldDef f : def.fields()) {
       s.a(f.instanceName(), " = ", f.dataType().sourceExpressionToMutable("m." + f.instanceName()), ";", CR);
     }
@@ -189,7 +188,7 @@ public final class JavaSourceGen extends SourceGen {
   @Override
   protected String generateStringConstants() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(0);
+    s.in(0);
     for (FieldDef f : def.fields()) {
       s.br();
       s.a("protected static final String ", f.nameStringConstantQualified(), " = \"", f.name(), "\";");
@@ -201,7 +200,7 @@ public final class JavaSourceGen extends SourceGen {
   @Override
   protected String generateInstanceFields() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(0);
+    s.in(0);
     for (FieldDef f : def.fields())
       s.a("protected ", f.dataType().typeName(), " ", f.instanceName(), ";", CR);
     s.a("protected int m__hashcode;");
@@ -213,7 +212,7 @@ public final class JavaSourceGen extends SourceGen {
   protected String generateEquals() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     String c = def.name();
-    SourceBuilder s = s().in(0);
+    s.in(0);
     s.a("@Override").cr();
     s.a("public boolean equals(Object object)", OPEN);
     {
@@ -262,7 +261,7 @@ public final class JavaSourceGen extends SourceGen {
   @Override
   protected String generateHashCode() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    SourceBuilder s = s().in(0);
+    s.in(0);
     s.a("@Override", CR, //
         "public int hashCode()", OPEN, //
         "int r = m__hashcode;", CR, //
@@ -281,16 +280,16 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected void generateEnumValues(EnumDataType dt) {
-    s().in();
+    s.in();
     int i = INIT_INDEX;
     for (String label : dt.labels()) {
       i++;
       if (i > 0)
-        s().a(", ");
-      s().a(label);
+        s.a(", ");
+      s.a(label);
     }
-    s().a(";");
-    s().out();
+    s.a(";");
+    s.out();
   }
 
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template.txt");

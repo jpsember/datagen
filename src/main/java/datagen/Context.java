@@ -30,6 +30,8 @@ import java.util.Set;
 import datagen.gen.DatWithSource;
 import datagen.gen.DatagenConfig;
 import js.file.Files;
+
+import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 /**
@@ -54,6 +56,7 @@ public final class Context {
 
   public static void prepare(DatWithSource entry) {
     discard();
+    Context.sourceBuilder = new SourceBuilder(language());
     Context.datWithSource = entry;
     Context.dataTypeManager = new DataTypeManager();
   }

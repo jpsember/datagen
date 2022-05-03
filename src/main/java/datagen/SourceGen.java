@@ -54,13 +54,12 @@ public abstract class SourceGen extends BaseObject {
   }
 
   protected SourceGen() {
-    Context.sourceBuilder = new SourceBuilder(language());
     s = Context.sourceBuilder;
   }
 
   public final void generate() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s().reset();
+    s.reset();
 
     JSMap m = map();
     m.put("package_decl", generatePackageDecl());
@@ -74,7 +73,7 @@ public abstract class SourceGen extends BaseObject {
       m.put("default_value", def.enumDataType().labels().get(0));
       m.put("enum_values", content());
     } else {
-      s().setDefaultIndent(2);
+      s.setDefaultIndent(2);
       m.put("class_getter_implementation", generateGetters());
       m.put("copy_to_builder", generateImmutableToBuilder());
       m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable());
@@ -87,7 +86,7 @@ public abstract class SourceGen extends BaseObject {
       m.put("string_constants", generateStringConstants());
       m.put("to_json", generateToJson());
       m.put("to_string", generateToString());
-      s().setDefaultIndent(0);
+      s.setDefaultIndent(0);
     }
 
     // Get any source that DataTypes may have needed to add;
@@ -170,7 +169,7 @@ public abstract class SourceGen extends BaseObject {
    * Get content of SourceBuilder, and reset the SourceBuilder
    */
   protected final String content() {
-    return s().content();
+    return s.content();
   }
 
   /**

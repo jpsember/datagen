@@ -70,6 +70,7 @@ public class DatagenOper extends AppOper {
       log("...processing file:", entry.datRelPath());
 
       // Reset context for a new file
+      pr(VERT_SP,"preparing context for:",entry.datRelPath());
       Context.prepare(entry);
 
       try {

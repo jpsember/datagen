@@ -111,6 +111,9 @@ public final class DataTypeManager extends BaseObject {
     checkState(previousMapping == null, "duplicate data type for key:", key);
     if (defaultValueParser != null)
       mDefaultValueParserMap.put(dataType.typeName(), defaultValueParser);
+    dataType.setSourceBuilder();
+    pr(
+       "adding data type:",key);
   }
 
   public String unusedReferencesSummary() {
