@@ -55,6 +55,7 @@ public abstract class SourceGen extends BaseObject {
 
   protected SourceGen() {
     Context.sourceBuilder = new SourceBuilder(language());
+    s = Context.sourceBuilder;
   }
 
   public final void generate() {
@@ -159,11 +160,12 @@ public abstract class SourceGen extends BaseObject {
   /**
    * Get SourceBuilder
    */
+  @Deprecated
   protected final SourceBuilder s() {
-    todo("this method is unnecessary");
-    return Context.sourceBuilder;
+    return s;
   }
 
+  protected final SourceBuilder s;
   /**
    * Get content of SourceBuilder, and reset the SourceBuilder
    */
