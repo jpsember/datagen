@@ -88,7 +88,7 @@ public class PythonSourceGen extends SourceGen {
     s.in(2);
     for (FieldDef f : def.fields()) {
       s.cr();
-      f.dataType().sourceExpressionToImmutable(  f, "v." + f.instanceName(), "self." + f.instanceName());
+      f.dataType().sourceExpressionToImmutable(s, f, "v." + f.instanceName(), "self." + f.instanceName());
     }
     s.out();
     return content();

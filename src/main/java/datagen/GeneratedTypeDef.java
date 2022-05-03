@@ -111,8 +111,6 @@ public final class GeneratedTypeDef extends BaseObject {
       complexType = dataType.getListVariant();
       if (complexType == null) {
         complexType = python() ? new PythonListDataType(dataType) : new JavaListDataType(dataType);
-        complexType.setSourceBuilder();
-        ;
       }
       break;
     case KEY_VALUE_MAP: {
@@ -120,9 +118,7 @@ public final class GeneratedTypeDef extends BaseObject {
       default:
         throw languageNotSupported();
       case JAVA:
-        todo("investigate weight of Map types");
         complexType = new JavaMapDataType((JavaDataType) dataType, (JavaDataType) dataType2);
-        complexType.setSourceBuilder();
         break;
       }
     }

@@ -74,7 +74,7 @@ public final class JavaSourceGen extends SourceGen {
     s.in(4);
     for (FieldDef f : def.fields()) {
       s.a(CR);
-      f.dataType().sourceExpressionToImmutable(  f, "r." + f.instanceName(), "" + f.instanceName());
+      f.dataType().sourceExpressionToImmutable(s, f, "r." + f.instanceName(), "" + f.instanceName());
       s.a(";");
     }
     s.out();

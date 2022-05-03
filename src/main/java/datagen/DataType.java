@@ -163,10 +163,8 @@ public abstract class DataType implements DefaultValueParser {
    *
    * Default returns the expression unchanged
    */
-  public void sourceExpressionToImmutable(FieldDef fieldDef, String targetExpression,
+  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
-    if (s == null)
-      throw die("null:", getClass());
     s.a(targetExpression, " = ", valueExpression);
   }
 
@@ -251,8 +249,6 @@ public abstract class DataType implements DefaultValueParser {
     if (!mPreparedVariantOptional) {
       mPreparedVariantOptional = true;
       mOptionalVariant = optionalVariant();
-      if (mOptionalVariant != null)
-        mOptionalVariant.setSourceBuilder();
     }
     return mOptionalVariant;
   }
@@ -260,9 +256,7 @@ public abstract class DataType implements DefaultValueParser {
   public final DataType getListVariant() {
     if (!mPreparedVariantList) {
       mPreparedVariantList = true;
-      mListVariant = optionalVariant();
-      if (mListVariant != null)
-        mListVariant.setSourceBuilder();
+      mListVariant = listVariant();
     }
     return mListVariant;
   }
@@ -300,13 +294,7 @@ public abstract class DataType implements DefaultValueParser {
     return mDeclared;
   }
 
-  @Deprecated // Rename to something like 'prepare'
-  public final void setSourceBuilder() {
-    s = Context.sourceBuilder;
-  }
-
   private boolean mDeclared;
   private boolean mUsedFlag;
-  protected SourceBuilder s;
 
 }

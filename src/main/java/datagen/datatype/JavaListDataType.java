@@ -67,9 +67,8 @@ public class JavaListDataType extends JavaDataType {
   }
 
   @Override
-  public void sourceExpressionToImmutable(  FieldDef fieldDef, String targetExpression,
+  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
-    if (s == null) die("type doesn't have s set:",this.getClass());
     s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
   }
 
