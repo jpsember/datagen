@@ -109,9 +109,8 @@ public final class GeneratedTypeDef extends BaseObject {
     case LIST:
       // Convert list to particular scalar types in special cases
       complexType = dataType.getListVariant();
-      if (complexType == null) {
+      if (complexType == null)
         complexType = python() ? new PythonListDataType(dataType) : new JavaListDataType(dataType);
-      }
       break;
     case KEY_VALUE_MAP: {
       switch (language()) {
@@ -160,7 +159,6 @@ public final class GeneratedTypeDef extends BaseObject {
           Context.generatedTypeDef.packageName());
       dataType = dataTypes.get(className.className());
       if (dataType == null) {
-
         // If a package was specified, treat as if it was defined using 'extern'
         //
         if (!className.combined().equals(typeName)) {

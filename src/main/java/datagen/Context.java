@@ -31,7 +31,6 @@ import datagen.gen.DatWithSource;
 import datagen.gen.DatagenConfig;
 import js.file.Files;
 
-import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 /**
@@ -45,7 +44,6 @@ public final class Context {
   public static DataTypeManager dataTypeManager;
   public static DatWithSource datWithSource;
   public static Set<File> generatedFilesSet;
-  public static SourceBuilder sourceBuilder;
   
   public static void prepare(Files files, DatagenConfig config) {
     discard();
@@ -56,7 +54,6 @@ public final class Context {
 
   public static void prepare(DatWithSource entry) {
     discard();
-    Context.sourceBuilder = new SourceBuilder(language());
     Context.datWithSource = entry;
     Context.dataTypeManager = new DataTypeManager();
   }
@@ -68,7 +65,6 @@ public final class Context {
     generatedTypeDef = null;
     dataTypeManager = null;
     datWithSource = null;
-    sourceBuilder = null;
   }
 
   private Context() {

@@ -53,14 +53,8 @@ public abstract class SourceGen extends BaseObject {
     }
   }
 
-  protected SourceGen() {
-    s = Context.sourceBuilder;
-  }
-
   public final void generate() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.reset();
-
     JSMap m = map();
     m.put("package_decl", generatePackageDecl());
     // In this first pass, leave the imports macro unchanged
@@ -156,15 +150,8 @@ public abstract class SourceGen extends BaseObject {
     return Context.datWithSource.sourceRelPath();
   }
 
-  /**
-   * Get SourceBuilder
-   */
-  @Deprecated
-  protected final SourceBuilder s() {
-    return s;
-  }
+  protected final SourceBuilder s = new SourceBuilder(language());
 
-  protected final SourceBuilder s;
   /**
    * Get content of SourceBuilder, and reset the SourceBuilder
    */
