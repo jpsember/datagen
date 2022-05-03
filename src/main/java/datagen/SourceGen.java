@@ -54,7 +54,7 @@ public abstract class SourceGen extends BaseObject {
   }
 
   protected SourceGen() {
-    mSourceBuilder = new SourceBuilder(language());
+    Context.sourceBuilder = new SourceBuilder(language());
   }
 
   public final void generate() {
@@ -160,7 +160,8 @@ public abstract class SourceGen extends BaseObject {
    * Get SourceBuilder
    */
   protected final SourceBuilder s() {
-    return mSourceBuilder;
+    todo("this method is unnecessary");
+    return Context.sourceBuilder;
   }
 
   /**
@@ -217,7 +218,6 @@ public abstract class SourceGen extends BaseObject {
     return result;
   }
 
-  private SourceBuilder mSourceBuilder;
   private List<String> mImportedClassNames;
 
   private static final String NOT_SUPPORTED = "<<not supported>>";

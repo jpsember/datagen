@@ -43,7 +43,8 @@ public final class Context {
   public static DataTypeManager dataTypeManager;
   public static DatWithSource datWithSource;
   public static Set<File> generatedFilesSet;
-
+  public static SourceBuilder sourceBuilder;
+  
   public static void prepare(Files files, DatagenConfig config) {
     discard();
     Context.files = files;
@@ -64,6 +65,7 @@ public final class Context {
     generatedTypeDef = null;
     dataTypeManager = null;
     datWithSource = null;
+    sourceBuilder = null;
   }
 
   private Context() {
