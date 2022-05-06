@@ -28,7 +28,6 @@ import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
 import java.util.List;
-import java.util.function.DoubleToIntFunction;
 
 import datagen.FieldDef;
 import datagen.PythonDataType;
