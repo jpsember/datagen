@@ -41,14 +41,11 @@ public class PythonListDataType extends PythonDataType {
 
   public PythonListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
-    setQualifiedClassName(ParseTools
-        .parseQualifiedName("java.util.List<" + wrappedType.qualifiedClassName().className() + ">", null));
   }
 
   @Override
   protected String provideTypeName() {
-    return ParseTools.PKG_LIST + "<" + ParseTools.importExprWithClassName(wrappedType().qualifiedClassName())
-        + ">";
+    return ParseTools.importExprWithClassName(wrappedType().qualifiedClassName());
   }
 
   @Override
@@ -96,7 +93,7 @@ public class PythonListDataType extends PythonDataType {
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     sourceIfNotNull(s, f);
-    todo("!for Python, we may want to convert individual items for other types, as we are doing for enums");
+    // TODO: for Python, we may want to convert individual items for other types, as we are doing for enums
     if (wrappedType() instanceof EnumDataType) {
       s.a("m[", f.nameStringConstantQualified(), "] = [x.value for x in self.", f.instanceName(), "]", CR);
     } else if (wrappedType() instanceof ContractDataType) {

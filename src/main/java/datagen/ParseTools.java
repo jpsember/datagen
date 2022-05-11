@@ -232,6 +232,9 @@ public final class ParseTools {
   }
 
   public static String importExprWithClassName(QualifiedName qualifiedName) {
+    // Python primitive types (e.g. int) won't have packages, so don't wrap them in import expressions
+    if (qualifiedName.packagePath().isEmpty())
+      return qualifiedName.className();
     return importExprWithCode(qualifiedName.combined(), qualifiedName.className());
   }
 

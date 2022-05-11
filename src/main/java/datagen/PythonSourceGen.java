@@ -101,7 +101,7 @@ public class PythonSourceGen extends SourceGen {
     for (FieldDef f : def.fields()) {
       s.a("\\\\", CR);
       DataType d = f.dataType();
-      s.a("def ", f.setterName(), "(self, x):", OPEN);
+      s.a("def ", f.setterName(), "(self, x: ",f.dataType().typeName(),") -> ",def.name(), "Builder:", OPEN);
       String targetExpr = "self." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "return self", CLOSE);
@@ -182,7 +182,7 @@ public class PythonSourceGen extends SourceGen {
 
     for (FieldDef f : def.fields()) {
       s.a("\\\\").cr();
-      s.a("def ", propertyGetName(f), "(self):", OPEN, //
+      s.a("def ", propertyGetName(f), "(self) -> ", f.dataType().typeName(), ":", OPEN, //
           "return self.", f.instanceName(), CLOSE);
     }
 
