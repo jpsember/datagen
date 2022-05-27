@@ -180,17 +180,17 @@ public class SampleDataType implements AbstractData {
     if (mF2 != null) {
       m.put(F2, mF2);
     }
-    m.put(F3, FloatArray.with(mF3).toJson());
+    m.put(F3, JSList.with(mF3));
     if (mF4 != null) {
-      m.put(F4, FloatArray.with(mF4).toJson());
+      m.put(F4, JSList.with(mF4));
     }
     m.put(D1, mD1);
     if (mD2 != null) {
       m.put(D2, mD2);
     }
-    m.put(D3, DoubleArray.with(mD3).toJson());
+    m.put(D3, JSList.with(mD3));
     if (mD4 != null) {
-      m.put(D4, DoubleArray.with(mD4).toJson());
+      m.put(D4, JSList.with(mD4));
     }
     return m;
   }
@@ -439,7 +439,7 @@ public class SampleDataType implements AbstractData {
       if (mI4 != null) {
         r = r * 37 + Arrays.hashCode(mI4);
       }
-      r = r * 37 + (int)mL1;
+      r = r * 37 + (int) mL1;
       if (mL2 != null) {
         r = r * 37 + mL2.intValue();
       }
@@ -447,7 +447,7 @@ public class SampleDataType implements AbstractData {
       if (mL4 != null) {
         r = r * 37 + Arrays.hashCode(mL4);
       }
-      r = r * 37 + (int)mF1;
+      r = r * 37 + (int) mF1;
       if (mF2 != null) {
         r = r * 37 + mF2.hashCode();
       }

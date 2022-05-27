@@ -285,6 +285,7 @@ public final class ParseTools {
   public static final String PKG_DOUBLE_ARRAY = javaClassExpr("js.data.DoubleArray");
 
   public static final String PKGPY_DATAUTIL = pythonClassExpr("pycore.datautil.DataUtil");
+  public static final String PKGPY_LIST = pythonClassExpr("typing.List");
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 

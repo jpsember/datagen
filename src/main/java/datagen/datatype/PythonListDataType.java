@@ -45,7 +45,7 @@ public class PythonListDataType extends PythonDataType {
 
   @Override
   protected String provideTypeName() {
-    return ParseTools.importExprWithClassName(wrappedType().qualifiedClassName());
+    return PKGPY_LIST + "[" + ParseTools.importExprWithClassName(wrappedType().qualifiedClassName()) + "]";
   }
 
   @Override
