@@ -42,10 +42,12 @@ public class JavaShortArrayDataType extends JavaContractDataType {
     return "java.lang.short[]";
   }
 
+  @Override
   public String getSerializeDataType() {
-    return ParseTools.PKG_STRING;
+    return ParseTools.PKG_OBJECT;
   }
 
+  @Override
   public String getSerializeToJSONValue(String value) {
     return ParseTools.PKG_DATAUTIL + ".encodeBase64Maybe(" + value + ")";
   }

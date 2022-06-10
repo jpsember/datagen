@@ -56,14 +56,6 @@ public class JavaIntArrayDataType extends JavaContractDataType {
   }
 
   @Override
-  public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-    sourceIfNotNull(s, f);
-    s.a("m.putUnsafe(", f.nameStringConstantQualified(), ", ",
-        sourceGenerateSerializeToObjectExpression("" + f.instanceName()), ");");
-    sourceEndIf(s).cr();
-  }
-
-  @Override
   public String getConstructFromX() {
     return ParseTools.PKG_DATAUTIL + ".parseIntsFromArrayOrBase64(x)";
   }

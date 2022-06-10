@@ -42,10 +42,12 @@ public class JavaByteArrayDataType extends JavaContractDataType {
     return "java.lang.byte[]";
   }
 
+  @Override
   public String getSerializeDataType() {
     return ParseTools.PKG_OBJECT;
   }
 
+  @Override
   public String getSerializeToJSONValue(String value) {
     return ParseTools.PKG_DATAUTIL + ".encodeBase64Maybe(" + value + ")";
   }
@@ -64,14 +66,6 @@ public class JavaByteArrayDataType extends JavaContractDataType {
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String defaultValue = f.defaultValueOrNull();
     s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
-  }
-
-  @Override
-  public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-    sourceIfNotNull(s, f);
-    s.a("m.putUnsafe(", f.nameStringConstantQualified(), ", ",
-        sourceGenerateSerializeToObjectExpression("" + f.instanceName()), ");");
-    sourceEndIf(s).cr();
   }
 
   //------------------------------------------------------------------
