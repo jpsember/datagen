@@ -47,7 +47,7 @@ public class JavaShortArrayDataType extends JavaContractDataType {
   }
 
   public String getSerializeToJSONValue(String value) {
-    return ParseTools.PKG_DATAUTIL + ".encodeBase64(" + value + ")";
+    return ParseTools.PKG_DATAUTIL + ".encodeBase64Maybe(" + value + ")";
   }
 
   @Override

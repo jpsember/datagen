@@ -43,11 +43,11 @@ public class JavaIntArrayDataType extends JavaContractDataType {
   }
 
   public String getSerializeDataType() {
-    return ParseTools.PKG_STRING;
+    return ParseTools.PKG_OBJECT;
   }
 
   public String getSerializeToJSONValue(String value) {
-    return ParseTools.PKG_DATAUTIL + ".encodeBase64(" + value + ")";
+    return ParseTools.PKG_DATAUTIL + ".encodeBase64Maybe(" + value + ")";
   }
 
   @Override
@@ -57,7 +57,7 @@ public class JavaIntArrayDataType extends JavaContractDataType {
 
   @Override
   public String getConstructFromX() {
-    return ParseTools.PKG_DATAUTIL + ".parseBase64Ints(x)";
+    return ParseTools.PKG_DATAUTIL + ".parseIntsFromArrayOrBase64(x)";
   }
 
   @Override
