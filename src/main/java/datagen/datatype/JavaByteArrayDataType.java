@@ -66,6 +66,14 @@ public class JavaByteArrayDataType extends JavaContractDataType {
     s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
   }
 
+  @Override
+  public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
+    sourceIfNotNull(s, f);
+    s.a("m.putUnsafe(", f.nameStringConstantQualified(), ", ",
+        sourceGenerateSerializeToObjectExpression("" + f.instanceName()), ");");
+    sourceEndIf(s).cr();
+  }
+
   //------------------------------------------------------------------
   // Hashcode and Equals methods
   // ------------------------------------------------------------------
