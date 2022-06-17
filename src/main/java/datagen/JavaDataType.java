@@ -70,10 +70,14 @@ public class JavaDataType extends DataType {
     return s.endIf(CLOSE);
   }
 
+  public String getStoreInJsonMapMethodName() {
+    return "putUnsafe";
+  }
+
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     sourceIfNotNull(s, f);
-    s.a("m.put(", f.nameStringConstantQualified(), ", ",
+    s.a("m.", getStoreInJsonMapMethodName(), "(", f.nameStringConstantQualified(), ", ",
         sourceGenerateSerializeToObjectExpression("" + f.instanceName()), ");");
     sourceEndIf(s).cr();
   }

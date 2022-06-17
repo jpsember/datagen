@@ -39,7 +39,16 @@ import js.parsing.Token;
 /**
  * DataType that wraps objects that implement the DataType interface
  */
-public class JavaContractDataType extends JavaDataType implements ContractDataType {
+public   class JavaContractDataType extends JavaDataType implements ContractDataType {
+
+ 
+  @Override
+  public  void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
+    sourceIfNotNull(s, f);
+    s.a("m.",getStoreInJsonMapMethodName(),"(", f.nameStringConstantQualified(), ", ",
+        sourceGenerateSerializeToObjectExpression("" + f.instanceName()), ");");
+    sourceEndIf(s).cr();
+  }
 
   @Override
   public String provideSourceDefaultValue() {
