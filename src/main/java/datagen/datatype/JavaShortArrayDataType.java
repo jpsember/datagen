@@ -59,7 +59,7 @@ public class JavaShortArrayDataType extends JavaContractDataType {
 
   @Override
   public String getConstructFromX() {
-    return ParseTools.PKG_DATAUTIL + ".parseBase64Shorts(x)";
+    return ParseTools.PKG_DATAUTIL + ".parseShortsFromArrayOrBase64(x)";
   }
 
   @Override
