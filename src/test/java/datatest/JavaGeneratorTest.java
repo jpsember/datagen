@@ -31,6 +31,7 @@ import org.junit.Test;
 import datagen.gen.SampleDataType;
 import js.data.ByteArray;
 import js.data.DataUtil;
+import js.data.FloatArray;
 import js.data.IntArray;
 import js.data.LongArray;
 import js.data.ShortArray;
@@ -215,15 +216,13 @@ public class JavaGeneratorTest extends GenBaseTest {
     assertEquals(v, w);
   }
 
-  
-
   @Test
   public void typeFloatListSerialization2() {
     SampleDataType.Builder u = SampleDataType.newBuilder();
-    float[] SAMPLE_FLOATS = new float[20];
-    for (int i = 0; i<SAMPLE_FLOATS.length; i++)
-      SAMPLE_FLOATS[i] = i*37f - 8.2f;
-    u.f3(SAMPLE_FLOATS);
+    FloatArray.Builder f = FloatArray.newBuilder();
+    for (int i = 0; i < 20; i++)
+      f.add(i * 37f - 8.2f);
+    u.f3(f.array());
     SampleDataType v = u.build();
     String s = DataUtil.toString(v);
     log(s);
@@ -234,8 +233,7 @@ public class JavaGeneratorTest extends GenBaseTest {
     log("Parsed:", INDENT, w);
     assertEquals(v, w);
   }
-  
-  
+
   @Test
   public void typeDoubleListSerialization() {
     SampleDataType.Builder u = SampleDataType.newBuilder();
