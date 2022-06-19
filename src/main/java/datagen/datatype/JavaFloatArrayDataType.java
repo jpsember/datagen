@@ -43,11 +43,11 @@ public class JavaFloatArrayDataType extends JavaContractDataType {
   }
 
   public String getSerializeDataType() {
-    return ParseTools.PKG_JSLIST;
+    return ParseTools.PKG_OBJECT;
   }
 
   public String getSerializeToJSONValue(String value) {
-    return ParseTools.PKG_FLOAT_ARRAY + ".with(" + value + ").toJson()";
+    return ParseTools.PKG_DATAUTIL + ".encodeBase64Maybe(" + value + ")";
   }
 
   @Override
@@ -55,10 +55,12 @@ public class JavaFloatArrayDataType extends JavaContractDataType {
     throw notSupported();
   }
 
+
   @Override
   public String getConstructFromX() {
-    return ParseTools.PKG_FLOAT_ARRAY + ".DEFAULT_INSTANCE.parse(x).array()";
+    return ParseTools.PKG_DATAUTIL + ".parseFloatsFromArrayOrBase64(x)";
   }
+ 
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {

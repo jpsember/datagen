@@ -4,7 +4,6 @@ import java.util.Arrays;
 import js.data.AbstractData;
 import js.data.DataUtil;
 import js.data.DoubleArray;
-import js.data.FloatArray;
 import js.json.JSList;
 import js.json.JSMap;
 
@@ -144,53 +143,53 @@ public class SampleDataType implements AbstractData {
   @Override
   public JSMap toJson() {
     JSMap m = new JSMap();
-    m.put(B1, mB1);
+    m.putUnsafe(B1, mB1);
     if (mB2 != null) {
-      m.put(B2, mB2);
+      m.putUnsafe(B2, mB2);
     }
-    m.put(B3, DataUtil.encodeBase64(mB3));
+    m.putUnsafe(B3, DataUtil.encodeBase64Maybe(mB3));
     if (mB4 != null) {
-      m.put(B4, DataUtil.encodeBase64(mB4));
+      m.putUnsafe(B4, DataUtil.encodeBase64Maybe(mB4));
     }
-    m.put(S1, mS1);
+    m.putUnsafe(S1, mS1);
     if (mS2 != null) {
-      m.put(S2, mS2);
+      m.putUnsafe(S2, mS2);
     }
-    m.put(S3, DataUtil.encodeBase64(mS3));
+    m.putUnsafe(S3, DataUtil.encodeBase64Maybe(mS3));
     if (mS4 != null) {
-      m.put(S4, DataUtil.encodeBase64(mS4));
+      m.putUnsafe(S4, DataUtil.encodeBase64Maybe(mS4));
     }
-    m.put(I1, mI1);
+    m.putUnsafe(I1, mI1);
     if (mI2 != null) {
-      m.put(I2, mI2);
+      m.putUnsafe(I2, mI2);
     }
-    m.put(I3, DataUtil.encodeBase64(mI3));
+    m.putUnsafe(I3, DataUtil.encodeBase64Maybe(mI3));
     if (mI4 != null) {
-      m.put(I4, DataUtil.encodeBase64(mI4));
+      m.putUnsafe(I4, DataUtil.encodeBase64Maybe(mI4));
     }
-    m.put(L1, mL1);
+    m.putUnsafe(L1, mL1);
     if (mL2 != null) {
-      m.put(L2, mL2);
+      m.putUnsafe(L2, mL2);
     }
-    m.put(L3, DataUtil.encodeBase64(mL3));
+    m.putUnsafe(L3, DataUtil.encodeBase64Maybe(mL3));
     if (mL4 != null) {
-      m.put(L4, DataUtil.encodeBase64(mL4));
+      m.putUnsafe(L4, DataUtil.encodeBase64Maybe(mL4));
     }
-    m.put(F1, mF1);
+    m.putUnsafe(F1, mF1);
     if (mF2 != null) {
-      m.put(F2, mF2);
+      m.putUnsafe(F2, mF2);
     }
-    m.put(F3, JSList.with(mF3));
+    m.putUnsafe(F3, DataUtil.encodeBase64Maybe(mF3));
     if (mF4 != null) {
-      m.put(F4, JSList.with(mF4));
+      m.putUnsafe(F4, DataUtil.encodeBase64Maybe(mF4));
     }
-    m.put(D1, mD1);
+    m.putUnsafe(D1, mD1);
     if (mD2 != null) {
-      m.put(D2, mD2);
+      m.putUnsafe(D2, mD2);
     }
-    m.put(D3, JSList.with(mD3));
+    m.putUnsafe(D3, DoubleArray.with(mD3).toJson());
     if (mD4 != null) {
-      m.put(D4, JSList.with(mD4));
+      m.putUnsafe(D4, DoubleArray.with(mD4).toJson());
     }
     return m;
   }
@@ -210,75 +209,75 @@ public class SampleDataType implements AbstractData {
     mB2 = m.optByte(B2);
     {
       mB3 = DataUtil.EMPTY_BYTE_ARRAY;
-      String x = (String) m.optUnsafe(B3);
+      Object x = m.optUnsafe(B3);
       if (x != null) {
-        mB3 = DataUtil.parseBase64(x);
+        mB3 = DataUtil.parseBytesFromArrayOrBase64(x);
       }
     }
     {
-      String x = (String) m.optUnsafe(B4);
+      Object x = m.optUnsafe(B4);
       if (x != null) {
-        mB4 = DataUtil.parseBase64(x);
+        mB4 = DataUtil.parseBytesFromArrayOrBase64(x);
       }
     }
     mS1 = m.opt(S1, (short) 0);
     mS2 = m.optShort(S2);
     {
       mS3 = DataUtil.EMPTY_SHORT_ARRAY;
-      String x = (String) m.optUnsafe(S3);
+      Object x = m.optUnsafe(S3);
       if (x != null) {
-        mS3 = DataUtil.parseBase64Shorts(x);
+        mS3 = DataUtil.parseShortsFromArrayOrBase64(x);
       }
     }
     {
-      String x = (String) m.optUnsafe(S4);
+      Object x = m.optUnsafe(S4);
       if (x != null) {
-        mS4 = DataUtil.parseBase64Shorts(x);
+        mS4 = DataUtil.parseShortsFromArrayOrBase64(x);
       }
     }
     mI1 = m.opt(I1, 0);
     mI2 = m.optInt(I2);
     {
       mI3 = DataUtil.EMPTY_INT_ARRAY;
-      String x = (String) m.optUnsafe(I3);
+      Object x = m.optUnsafe(I3);
       if (x != null) {
-        mI3 = DataUtil.parseBase64Ints(x);
+        mI3 = DataUtil.parseIntsFromArrayOrBase64(x);
       }
     }
     {
-      String x = (String) m.optUnsafe(I4);
+      Object x = m.optUnsafe(I4);
       if (x != null) {
-        mI4 = DataUtil.parseBase64Ints(x);
+        mI4 = DataUtil.parseIntsFromArrayOrBase64(x);
       }
     }
     mL1 = m.opt(L1, 0L);
     mL2 = m.optLong(L2);
     {
       mL3 = DataUtil.EMPTY_LONG_ARRAY;
-      String x = (String) m.optUnsafe(L3);
+      Object x = m.optUnsafe(L3);
       if (x != null) {
-        mL3 = DataUtil.parseBase64Longs(x);
+        mL3 = DataUtil.parseLongsFromArrayOrBase64(x);
       }
     }
     {
-      String x = (String) m.optUnsafe(L4);
+      Object x = m.optUnsafe(L4);
       if (x != null) {
-        mL4 = DataUtil.parseBase64Longs(x);
+        mL4 = DataUtil.parseLongsFromArrayOrBase64(x);
       }
     }
     mF1 = m.opt(F1, 0f);
     mF2 = m.optFloat(F2);
     {
       mF3 = DataUtil.EMPTY_FLOAT_ARRAY;
-      JSList x = m.optJSList(F3);
+      Object x = m.optUnsafe(F3);
       if (x != null) {
-        mF3 = FloatArray.DEFAULT_INSTANCE.parse(x).array();
+        mF3 = DataUtil.parseFloatsFromArrayOrBase64(x);
       }
     }
     {
-      JSList x = m.optJSList(F4);
+      Object x = m.optUnsafe(F4);
       if (x != null) {
-        mF4 = FloatArray.DEFAULT_INSTANCE.parse(x).array();
+        mF4 = DataUtil.parseFloatsFromArrayOrBase64(x);
       }
     }
     mD1 = m.opt(D1, 0.0);
@@ -439,7 +438,7 @@ public class SampleDataType implements AbstractData {
       if (mI4 != null) {
         r = r * 37 + Arrays.hashCode(mI4);
       }
-      r = r * 37 + (int) mL1;
+      r = r * 37 + (int)mL1;
       if (mL2 != null) {
         r = r * 37 + mL2.intValue();
       }
@@ -447,7 +446,7 @@ public class SampleDataType implements AbstractData {
       if (mL4 != null) {
         r = r * 37 + Arrays.hashCode(mL4);
       }
-      r = r * 37 + (int) mF1;
+      r = r * 37 + (int)mF1;
       if (mF2 != null) {
         r = r * 37 + mF2.hashCode();
       }

@@ -34,9 +34,9 @@ public class QualifiedName implements AbstractData {
   @Override
   public JSMap toJson() {
     JSMap m = new JSMap();
-    m.put(PACKAGE_PATH, mPackagePath);
-    m.put(CLASS_NAME, mClassName);
-    m.put(COMBINED, mCombined);
+    m.putUnsafe(PACKAGE_PATH, mPackagePath);
+    m.putUnsafe(CLASS_NAME, mClassName);
+    m.putUnsafe(COMBINED, mCombined);
     return m;
   }
 

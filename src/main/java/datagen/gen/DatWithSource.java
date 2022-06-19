@@ -29,8 +29,8 @@ public class DatWithSource implements AbstractData {
   @Override
   public JSMap toJson() {
     JSMap m = new JSMap();
-    m.put(DAT_REL_PATH, mDatRelPath);
-    m.put(SOURCE_REL_PATH, mSourceRelPath);
+    m.putUnsafe(DAT_REL_PATH, mDatRelPath);
+    m.putUnsafe(SOURCE_REL_PATH, mSourceRelPath);
     return m;
   }
 

@@ -71,16 +71,16 @@ public class DatagenConfig implements AbstractData {
   @Override
   public JSMap toJson() {
     JSMap m = new JSMap();
-    m.put(START_DIR, mStartDir.toString());
-    m.put(DAT_PATH, mDatPath.toString());
-    m.put(LANGUAGE, mLanguage.toString().toLowerCase());
-    m.put(SOURCE_PATH, mSourcePath.toString());
-    m.put(CLEAN, mClean);
-    m.put(DELETE_OLD, mDeleteOld);
-    m.put(TREAT_WARNINGS_AS_ERRORS, mTreatWarningsAsErrors);
-    m.put(COMMENTS, mComments);
-    m.put(PYTHON_SOURCE_PATH, mPythonSourcePath.toString());
-    m.put(VERBOSE_NAMES, mVerboseNames);
+    m.putUnsafe(START_DIR, mStartDir.toString());
+    m.putUnsafe(DAT_PATH, mDatPath.toString());
+    m.putUnsafe(LANGUAGE, mLanguage.toString().toLowerCase());
+    m.putUnsafe(SOURCE_PATH, mSourcePath.toString());
+    m.putUnsafe(CLEAN, mClean);
+    m.putUnsafe(DELETE_OLD, mDeleteOld);
+    m.putUnsafe(TREAT_WARNINGS_AS_ERRORS, mTreatWarningsAsErrors);
+    m.putUnsafe(COMMENTS, mComments);
+    m.putUnsafe(PYTHON_SOURCE_PATH, mPythonSourcePath.toString());
+    m.putUnsafe(VERBOSE_NAMES, mVerboseNames);
     return m;
   }
 

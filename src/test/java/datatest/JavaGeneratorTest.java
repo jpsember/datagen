@@ -215,6 +215,27 @@ public class JavaGeneratorTest extends GenBaseTest {
     assertEquals(v, w);
   }
 
+  
+
+  @Test
+  public void typeFloatListSerialization2() {
+    SampleDataType.Builder u = SampleDataType.newBuilder();
+    float[] SAMPLE_FLOATS = new float[20];
+    for (int i = 0; i<SAMPLE_FLOATS.length; i++)
+      SAMPLE_FLOATS[i] = i*37f - 8.2f;
+    u.f3(SAMPLE_FLOATS);
+    SampleDataType v = u.build();
+    String s = DataUtil.toString(v);
+    log(s);
+
+    JSMap m = new JSMap(s);
+    SampleDataType w = SampleDataType.DEFAULT_INSTANCE.parse(m);
+    log("Original:", INDENT, v);
+    log("Parsed:", INDENT, w);
+    assertEquals(v, w);
+  }
+  
+  
   @Test
   public void typeDoubleListSerialization() {
     SampleDataType.Builder u = SampleDataType.newBuilder();
