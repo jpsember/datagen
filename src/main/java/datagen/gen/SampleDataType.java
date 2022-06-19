@@ -3,8 +3,6 @@ package datagen.gen;
 import java.util.Arrays;
 import js.data.AbstractData;
 import js.data.DataUtil;
-import js.data.DoubleArray;
-import js.json.JSList;
 import js.json.JSMap;
 
 public class SampleDataType implements AbstractData {
@@ -187,9 +185,9 @@ public class SampleDataType implements AbstractData {
     if (mD2 != null) {
       m.putUnsafe(D2, mD2);
     }
-    m.putUnsafe(D3, DoubleArray.with(mD3).toJson());
+    m.putUnsafe(D3, DataUtil.encodeBase64Maybe(mD3));
     if (mD4 != null) {
-      m.putUnsafe(D4, DoubleArray.with(mD4).toJson());
+      m.putUnsafe(D4, DataUtil.encodeBase64Maybe(mD4));
     }
     return m;
   }
@@ -284,15 +282,15 @@ public class SampleDataType implements AbstractData {
     mD2 = m.optDouble(D2);
     {
       mD3 = DataUtil.EMPTY_DOUBLE_ARRAY;
-      JSList x = m.optJSList(D3);
+      Object x = m.optUnsafe(D3);
       if (x != null) {
-        mD3 = DoubleArray.DEFAULT_INSTANCE.parse(x).array();
+        mD3 = DataUtil.parseDoublesFromArrayOrBase64(x);
       }
     }
     {
-      JSList x = m.optJSList(D4);
+      Object x = m.optUnsafe(D4);
       if (x != null) {
-        mD4 = DoubleArray.DEFAULT_INSTANCE.parse(x).array();
+        mD4 = DataUtil.parseDoublesFromArrayOrBase64(x);
       }
     }
   }

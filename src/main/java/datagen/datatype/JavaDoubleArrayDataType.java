@@ -47,6 +47,16 @@ public class JavaDoubleArrayDataType extends JavaContractDataType {
   }
 
   @Override
+  public String getSerializeToJSONValue(String value) {
+    return ParseTools.PKG_DATAUTIL + ".encodeBase64Maybe(" + value + ")";
+  }
+
+  @Override
+  public String getSerializeDataType() {
+    return ParseTools.PKG_OBJECT;
+  }
+
+  @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
     List<String> parsedNumbers = arrayList();
@@ -82,14 +92,6 @@ public class JavaDoubleArrayDataType extends JavaContractDataType {
     return fieldDef.constantName();
   }
 
-  public String getSerializeDataType() {
-    return ParseTools.PKG_JSLIST;
-  }
-
-  public String getSerializeToJSONValue(String value) {
-    return ParseTools.PKG_DOUBLE_ARRAY + ".with(" + value + ").toJson()";
-  }
-
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     throw notSupported();
@@ -97,7 +99,7 @@ public class JavaDoubleArrayDataType extends JavaContractDataType {
 
   @Override
   public String getConstructFromX() {
-    return ParseTools.PKG_DOUBLE_ARRAY + ".DEFAULT_INSTANCE.parse(x).array()";
+    return ParseTools.PKG_DATAUTIL + ".parseDoublesFromArrayOrBase64(x)";
   }
 
   @Override

@@ -42,10 +42,12 @@ public class JavaFloatArrayDataType extends JavaContractDataType {
     return "java.lang.float[]";
   }
 
+  @Override
   public String getSerializeDataType() {
     return ParseTools.PKG_OBJECT;
   }
 
+  @Override
   public String getSerializeToJSONValue(String value) {
     return ParseTools.PKG_DATAUTIL + ".encodeBase64Maybe(" + value + ")";
   }
@@ -55,12 +57,10 @@ public class JavaFloatArrayDataType extends JavaContractDataType {
     throw notSupported();
   }
 
-
   @Override
   public String getConstructFromX() {
     return ParseTools.PKG_DATAUTIL + ".parseFloatsFromArrayOrBase64(x)";
   }
- 
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
