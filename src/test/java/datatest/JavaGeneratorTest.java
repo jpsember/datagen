@@ -505,12 +505,55 @@ public class JavaGeneratorTest extends GenBaseTest {
   public void base64Encoding() {
     redirectSystemOut();
 
-    byte[] bytes = { 1, 2, 3, 4, -1, -2, -3, -4, 127, -128 };
+    byte[] bytes = { 1, 2, -1, -2, 127, -128 };
     double[] doubles = { 1.234, 1.234e4, 1.234e8 };
     float[] floats = { 1.234f, 1.234e4f, 1.234e8f };
     short[] shorts = { 1, 2, 3, 4 };
     int[] ints = { 1, 2, 3, 4 };
     long[] longs = { 1, 2, 3, 4 };
+
+    SampleDataType.Builder b = SampleDataType.newBuilder();
+    b.b3(bytes);
+    b.d3(doubles);
+    b.f3(floats);
+    b.s3(shorts);
+    b.i3(ints);
+    b.l3(longs);
+
+    SampleDataType ba = b.build();
+    JSMap json = ba.toJson();
+
+    pr(DASHES);
+
+    pr("Serialized data type:");
+    pr(json);
+    pr(DASHES);
+
+    pr("Printing primitive arrays:");
+
+    pr(IntArray.with(ba.i3()));
+    pr(ShortArray.with(ba.s3()));
+    pr(ByteArray.with(ba.b3()));
+    pr(DASHES);
+
+    SampleDataType bb = Files.parseAbstractDataOpt(SampleDataType.DEFAULT_INSTANCE, json);
+    checkState(ba.equals(bb));
+    pr("Verifying objects are equal after serialization/deserialization:");
+    pr(bb);
+    pr(DASHES);
+    assertSystemOut();
+  }
+
+  @Test
+  public void base64Encoding2() {
+    redirectSystemOut();
+
+    byte[] bytes = { 1, 2, 3, 4, -1, -2, -3, -4, 127, -128, 55, 66, 77, 88 };
+    double[] doubles = { 1.234, 1.234e4, 1.234e8, 2., 3., 4., 5.2, 6.2, 8., 10. };
+    float[] floats = { 1.234f, 1.234e4f, 1.234e8f, 2f, 3f, 4f, 5.2f, 6.2f, 8f, 10f };
+    short[] shorts = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    int[] ints = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    long[] longs = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
     SampleDataType.Builder b = SampleDataType.newBuilder();
     b.b3(bytes);
