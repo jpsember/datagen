@@ -37,7 +37,7 @@ public final class PyStringDataType extends PythonDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
-    return "string";
+    return "str";
   }
 
   @Override
