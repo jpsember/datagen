@@ -87,7 +87,7 @@ public class DatagenOper extends AppOper {
         g.generate();
 
       } catch (Throwable t) {
-        if (!app().catchingErrors() || SHOW_STACK_TRACES)
+        if (app().showExceptions() || SHOW_STACK_TRACES)
           throw t;
         setError("Processing", entry.datRelPath(), INDENT, t.getMessage());
       } finally {
