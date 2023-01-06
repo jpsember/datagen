@@ -587,4 +587,14 @@ public class JavaGeneratorTest extends GenBaseTest {
     assertSystemOut();
   }
 
+  @Test
+  public void deprecations() {
+    p().pr("fields {", INDENT, //
+        "-int alpha;", CR, //
+        "int beta = " + Integer.MAX_VALUE + ";", CR, //
+        "?-int gamma;", CR, //
+        "-?*int epsilon;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
 }
