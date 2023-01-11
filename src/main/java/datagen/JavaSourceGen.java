@@ -82,12 +82,14 @@ public final class JavaSourceGen extends SourceGen {
   }
 
   @Override
-  protected String generateSetters() {
+  protected final String generateSetters() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.in(2);
     for (FieldDef f : def.fields()) {
       s.br();
       DataType d = f.dataType();
+      if (f.deprecated())
+        s.a("@Deprecated", CR);
       s.a("public ", "Builder ", f.setterName(), "(", d.typeName(), " x)", OPEN);
       String targetExpr = "" + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
@@ -162,11 +164,13 @@ public final class JavaSourceGen extends SourceGen {
   }
 
   @Override
-  protected String generateGetters() {
+  protected final String generateGetters() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.in(0);
     for (FieldDef f : def.fields()) {
       s.br();
+      if (f.deprecated())
+        s.a("@Deprecated", CR);
       s.a("public ", f.dataType().typeName(), " ", f.getterName(), "()", OPEN, //
           "return ", f.instanceName(), ";", CLOSE);
     }
