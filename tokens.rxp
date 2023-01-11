@@ -5,17 +5,13 @@
 
 # Whitespace includes space, linefeed, tab, cr, and comments
 #
-WS:  ( [\0x00-\0x20]+ \
-     | \/\/[^\0x0a\0x0d]*   \
-     | ( \0x2f\0x2a  (\0x2a* [^\0x2a\0x2f] \0x2f*)*  \0x2a*\0x2f  ))
+WS:  $_WHITESPACE | $_JAVACOMMENT
 
-STRING: (  '  ([^\0x0a\0x0d\0x09'] | \\')* ' \
-        |  "  ([^\0x0a\0x0d\0x09"] | \\")* " \
-        )
+STRING: (  $_STRING | $_SINGLESTRING )
 
 EQUALS: =
 
-IDENTIFIER: [a-zA-Z_][a-zA-Z_0-9]*(\.([a-zA-Z_][a-zA-Z_0-9]*))*
+ID: [a-zA-Z_][a-zA-Z_0-9]*(\.([a-zA-Z_][a-zA-Z_0-9]*))*
 
 NUMBER: [-+]?[0-9]*\.?[0-9]+([eE][-+]?[0-9]+)?
 
@@ -36,3 +32,5 @@ REPEATED: \*
 MAP: map
 SET: set
 EXTERN: extern
+#DEPRECATION: \-
+
