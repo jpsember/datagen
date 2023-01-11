@@ -53,11 +53,12 @@ public abstract class FieldDef extends BaseObject {
     return mIndex;
   }
 
-  public final void init(String name, DataType dataType, boolean optional, int index) {
+  public final void init(String name, DataType dataType, boolean optional, boolean deprecated, int index) {
     setName(name);
     mIndex = index;
     mDataType = dataType;
     mOptional = optional;
+    mDeprecated = deprecated;
   }
 
   public abstract String provideNameStringConstantUnqualified();
@@ -70,6 +71,10 @@ public abstract class FieldDef extends BaseObject {
 
   public final boolean optional() {
     return mOptional;
+  }
+
+  public final boolean deprecated() {
+    return mDeprecated;
   }
 
   // ------------------------------------------------------------------
@@ -159,6 +164,7 @@ public abstract class FieldDef extends BaseObject {
   private int mIndex;
   private DataType mDataType;
   private boolean mOptional;
+  private boolean mDeprecated;
   private String mCachedDefaultValueSource;
   private String mCachedInstanceName;
   private String mCachedGetterName;

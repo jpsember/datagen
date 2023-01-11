@@ -160,6 +160,7 @@ final class DataDefinitionParser extends BaseObject {
 
       TypeStructure structure = null;
       boolean optional = false;
+      boolean deprecated = false;
 
       while (true) {
         if (readIf(OPTIONAL) != null) {
@@ -171,6 +172,9 @@ final class DataDefinitionParser extends BaseObject {
         } else if (readIf(MAP) != null) {
           checkState(structure == null);
           structure = TypeStructure.KEY_VALUE_MAP;
+        } else if (readIf(DEPRECATION) != null) {
+          checkState(!deprecated);
+          deprecated = true;
         } else
           break;
       }
@@ -185,7 +189,7 @@ final class DataDefinitionParser extends BaseObject {
 
       String name = read(ID);
 
-      FieldDef fieldDef = msg.addField(structure, name, type, auxType, optional);
+      FieldDef fieldDef = msg.addField(structure, name, type, auxType, optional, deprecated);
 
       if (readIf(EQUALS) != null) {
         checkState(!optional, "cannot mix optional and default values");
