@@ -274,6 +274,7 @@ public final class ParseTools {
   public static final String PKG_LIST = javaClassExpr("java.util.List");
   public static final String PKG_MAP = javaClassExpr("java.util.Map");
   public static final String PKG_SET = javaClassExpr("java.util.Set");
+  public static final String PKG_HASH_SET = javaClassExpr("java.util.HashSet");
   public static final String PKG_CONCURRENT_MAP = javaClassExpr("java.util.concurrent.ConcurrentHashMap");
   public static final String PKG_STRING = javaClassExpr("java.lang.String");
   public static final String PKG_OBJECT = javaClassExpr("java.lang.Object");

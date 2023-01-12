@@ -26,6 +26,9 @@ package datatest;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.util.Set;
+
 import org.junit.Test;
 
 import datagen.gen.SampleDataType;
@@ -501,7 +504,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
-
   @Test
   public void typeSetVarious() {
     p().pr("extern abc.xyz.Beaver;", CR, //
@@ -513,7 +515,7 @@ public class JavaGeneratorTest extends GenBaseTest {
         OUTDENT, "}");
     compile();
   }
-  
+
   @Test
   public void base64Encoding() {
     redirectSystemOut();
@@ -610,4 +612,27 @@ public class JavaGeneratorTest extends GenBaseTest {
         OUTDENT, "}");
     compile();
   }
+
+  @Test
+  public void setStuff() {
+    SampleDataType.Builder t = SampleDataType.newBuilder();
+    checkState(t.s().isEmpty());
+
+    Set<File> st = treeSet();
+    st.add(new File("alpha.txt"));
+    st.add(new File("beta.txt"));
+    t.s(st);
+
+    SampleDataType u = t.build();
+    JSMap m = u.toJson();
+    SampleDataType v = SampleDataType.DEFAULT_INSTANCE.parse(m);
+    checkState(u.equals(v));
+
+    // Note: though we are dealing with an immutable data object,
+    // its fields (the set) are mutable
+    //
+    v.s().add(new File("gamma.txt"));
+    checkState(!u.equals(v));
+  }
+
 }

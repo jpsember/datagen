@@ -100,7 +100,7 @@ public class JavaSetDataType extends JavaDataType {
         "JSList m2 = m.optJSList(", QUOTE, f.name(), ");", CR, //
         "if (m2 != null && !m2.isEmpty())", OPEN, //
         "Set<",   wrappedValueType().typeName(), "> mp = new ",
-        ParseTools.PKG_SET, "<>();", CR, //
+        ParseTools.PKG_HASH_SET, "<>();", CR, //
         "for (Object e : m2.wrappedList())", IN, //
         "mp.add(", wrappedValueType().deserializeJsonToMapValue("e"), ");", OUT, //
         f.instanceName(), " = ", "mp", ";", CLOSE, //

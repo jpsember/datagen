@@ -35,6 +35,8 @@ Values can be null *if and only if* they are optional.
 
 + map:  has two associated types, one for keys, one for labels
 
++ set:  `set string names;`
+
 Structured types can also be optional, e.g. `? *string names`, `? map string integer freq`
 
 

@@ -1,8 +1,12 @@
 package datagen.gen;
 
+import java.io.File;
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import js.data.AbstractData;
 import js.data.DataUtil;
+import js.json.JSList;
 import js.json.JSMap;
 
 public class SampleDataType implements AbstractData {
@@ -103,6 +107,10 @@ public class SampleDataType implements AbstractData {
     return mD4;
   }
 
+  public Set<File> s() {
+    return mS;
+  }
+
   @Override
   public Builder toBuilder() {
     return new Builder(this);
@@ -132,6 +140,7 @@ public class SampleDataType implements AbstractData {
   protected static final String D2 = "d2";
   protected static final String D3 = "d3";
   protected static final String D4 = "d4";
+  protected static final String S = "s";
 
   @Override
   public String toString() {
@@ -188,6 +197,12 @@ public class SampleDataType implements AbstractData {
     m.putUnsafe(D3, DataUtil.encodeBase64Maybe(mD3));
     if (mD4 != null) {
       m.putUnsafe(D4, DataUtil.encodeBase64Maybe(mD4));
+    }
+    {
+      JSList j = new JSList();
+      for (File e : mS)
+        j.add(e.toString());
+      m.put(S, j);
     }
     return m;
   }
@@ -291,6 +306,18 @@ public class SampleDataType implements AbstractData {
       Object x = m.optUnsafe(D4);
       if (x != null) {
         mD4 = DataUtil.parseDoublesFromArrayOrBase64(x);
+      }
+    }
+    {
+      mS = DataUtil.emptySet();
+      {
+        JSList m2 = m.optJSList("s");
+        if (m2 != null && !m2.isEmpty()) {
+          Set<File> mp = new HashSet<>();
+          for (Object e : m2.wrappedList())
+            mp.add(new File((String) e));
+          mS = mp;
+        }
       }
     }
   }
@@ -404,6 +431,8 @@ public class SampleDataType implements AbstractData {
       if (!(Arrays.equals(mD4, other.mD4)))
         return false;
     }
+    if (!(mS.equals(other.mS)))
+      return false;
     return true;
   }
 
@@ -460,6 +489,7 @@ public class SampleDataType implements AbstractData {
       if (mD4 != null) {
         r = r * 37 + Arrays.hashCode(mD4);
       }
+      r = r * 37 + mS.hashCode();
       m__hashcode = r;
     }
     return r;
@@ -489,6 +519,7 @@ public class SampleDataType implements AbstractData {
   protected Double mD2;
   protected double[] mD3;
   protected double[] mD4;
+  protected Set<File> mS;
   protected int m__hashcode;
 
   public static final class Builder extends SampleDataType {
@@ -518,6 +549,7 @@ public class SampleDataType implements AbstractData {
       mD2 = m.mD2;
       mD3 = m.mD3;
       mD4 = m.mD4;
+      mS = DataUtil.mutableCopyOf(m.mS);
     }
 
     @Override
@@ -558,6 +590,7 @@ public class SampleDataType implements AbstractData {
       r.mD2 = mD2;
       r.mD3 = mD3;
       r.mD4 = mD4;
+      r.mS = DataUtil.mutableCopyOf(mS);
       return r;
     }
 
@@ -681,6 +714,11 @@ public class SampleDataType implements AbstractData {
       return this;
     }
 
+    public Builder s(Set<File> x) {
+      mS = DataUtil.mutableCopyOf((x == null) ? DataUtil.emptySet() : x);
+      return this;
+    }
+
   }
 
   public static final SampleDataType DEFAULT_INSTANCE = new SampleDataType();
@@ -692,6 +730,7 @@ public class SampleDataType implements AbstractData {
     mL3 = DataUtil.EMPTY_LONG_ARRAY;
     mF3 = DataUtil.EMPTY_FLOAT_ARRAY;
     mD3 = DataUtil.EMPTY_DOUBLE_ARRAY;
+    mS = DataUtil.emptySet();
   }
 
 }

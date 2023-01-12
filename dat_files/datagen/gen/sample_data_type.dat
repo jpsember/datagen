@@ -34,4 +34,5 @@ fields {
   *double d3;
   ?*double d4;
 
+  set File s;
 }
