@@ -34,6 +34,7 @@ import static datagen.Utils.*;
 
 import datagen.datatype.JavaListDataType;
 import datagen.datatype.JavaMapDataType;
+import datagen.datatype.JavaSetDataType;
 import datagen.datatype.PythonListDataType;
 import datagen.datatype.ContractDataType;
 import datagen.datatype.EnumDataType;
@@ -118,6 +119,16 @@ public final class GeneratedTypeDef extends BaseObject {
         throw languageNotSupported();
       case JAVA:
         complexType = new JavaMapDataType((JavaDataType) dataType, (JavaDataType) dataType2);
+        break;
+      }
+    }
+      break;
+    case VALUE_SET: {
+      switch (language()) {
+      default:
+        throw languageNotSupported();
+      case JAVA:
+        complexType = new JavaSetDataType((JavaDataType) dataType);
         break;
       }
     }

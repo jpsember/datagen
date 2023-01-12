@@ -501,6 +501,19 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
+
+  @Test
+  public void typeSetVarious() {
+    p().pr("extern abc.xyz.Beaver;", CR, //
+        "fields {", INDENT, //
+        "set File alpha;", CR, //
+        "?set File beta;", CR, //
+        "set Beaver gamma;", CR, //
+        "set string delta;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+  
   @Test
   public void base64Encoding() {
     redirectSystemOut();

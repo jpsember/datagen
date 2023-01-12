@@ -31,7 +31,7 @@ import java.util.regex.Pattern;
 
 import datagen.gen.Language;
 import datagen.gen.QualifiedName;
-import js.file.Files;
+import js.json.JSMap;
 import js.parsing.DFA;
 import js.parsing.MacroParser;
 import js.parsing.RegExp;
@@ -73,7 +73,7 @@ public final class ParseTools {
 
   public static DFA dfa() {
     if (sDFA == null) {
-      sDFA = new DFA(Files.readString(Datagen.class, "tokens.dfa"));
+      sDFA = new DFA(JSMap.fromResource(Datagen.class, "tokens.dfa"));
     }
     return sDFA;
   }
@@ -273,6 +273,7 @@ public final class ParseTools {
   public static final String PKG_FILES = javaClassExpr("js.file.Files");
   public static final String PKG_LIST = javaClassExpr("java.util.List");
   public static final String PKG_MAP = javaClassExpr("java.util.Map");
+  public static final String PKG_SET = javaClassExpr("java.util.Set");
   public static final String PKG_CONCURRENT_MAP = javaClassExpr("java.util.concurrent.ConcurrentHashMap");
   public static final String PKG_STRING = javaClassExpr("java.lang.String");
   public static final String PKG_OBJECT = javaClassExpr("java.lang.Object");
@@ -302,6 +303,10 @@ public final class ParseTools {
   }
 
   public static final String immutableCopyOfMap(String expr) {
+    return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
+  }
+
+  public static final String mutableCopyOfSet(String expr) {
     return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
   }
 

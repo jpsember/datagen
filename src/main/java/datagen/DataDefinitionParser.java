@@ -172,6 +172,9 @@ final class DataDefinitionParser extends BaseObject {
         } else if (readIf(MAP) != null) {
           checkState(structure == null);
           structure = TypeStructure.KEY_VALUE_MAP;
+        } else if (readIf(SET) != null) {
+          checkState(structure == null);
+          structure = TypeStructure.VALUE_SET;
         } else if (readIf(DEPRECATION) != null) {
           checkState(!deprecated);
           deprecated = true;
