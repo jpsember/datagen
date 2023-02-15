@@ -58,8 +58,6 @@ if [ "$NOTEST" != "" ]; then
   echo "...skipping tests"
 fi
 
-dev dfa tokens.rxp src/main/resources/datagen/tokens.dfa ids src/main/java/datagen/ParseTools.java
-
 mvn install $NOTEST
 
 if [ ! -f $LINK ]; then
