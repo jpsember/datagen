@@ -89,15 +89,15 @@ public final class GeneratedTypeDef extends BaseObject {
    * Add a field to this data type
    */
   public FieldDef addField(TypeStructure structure, String fieldName, String typeName, String type2Name,
-      boolean optional, boolean deprecated) {
+      boolean optional, boolean deprecated, boolean isEnum) {
     log(structure, typeName, type2Name, fieldName, optional);
     boolean added = mFieldNames.add(fieldName);
     checkState(added, "duplicate field name: " + fieldName);
 
-    DataType dataType = registerType(typeName);
+    DataType dataType = registerType(typeName, isEnum);
     DataType dataType2 = null;
     if (!nullOrEmpty(type2Name))
-      dataType2 = registerType(type2Name);
+      dataType2 = registerType(type2Name, false);
 
     if (optional)
       dataType = dataType.getOptionalVariant();
@@ -162,7 +162,7 @@ public final class GeneratedTypeDef extends BaseObject {
     return mClassSpecificSource;
   }
 
-  private DataType registerType(String typeName) {
+  private DataType registerType(String typeName, boolean enumFlag) {
     DataTypeManager dataTypes = Context.dataTypeManager;
     DataType dataType = dataTypes.get(typeName);
     if (dataType == null) {
@@ -182,11 +182,19 @@ public final class GeneratedTypeDef extends BaseObject {
           if (!datFile.exists())
             badArg("No definition file found at", datFile, INDENT, "...use 'extern' to declare its location");
         }
-        dataType = ContractDataType.construct();
+
+        if (enumFlag) {
+          dataType = EnumDataType.construct();
+        } else
+          dataType = ContractDataType.construct();
+
         className = updateForPython(className);
         dataType.setQualifiedClassName(className);
         dataTypes.add(dataType.qualifiedClassName().className(), dataType);
       }
+
+      if (enumFlag)
+        checkState(dataType instanceof EnumDataType, "enum used with non-enum type");
     }
     dataType.setUsedFlag();
     return dataType;

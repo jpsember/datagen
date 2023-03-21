@@ -161,9 +161,13 @@ final class DataDefinitionParser extends BaseObject {
       TypeStructure structure = null;
       boolean optional = false;
       boolean deprecated = false;
+      boolean enumFlag = false;
 
       while (true) {
-        if (readIf(OPTIONAL) != null) {
+        if (readIf(ENUM) != null) {
+          checkState(structure == null && !enumFlag);
+          enumFlag = true;
+        } else if (readIf(OPTIONAL) != null) {
           checkState(!optional);
           optional = true;
         } else if (readIf(REPEATED) != null) {
@@ -192,7 +196,7 @@ final class DataDefinitionParser extends BaseObject {
 
       String name = read(ID);
 
-      FieldDef fieldDef = msg.addField(structure, name, type, auxType, optional, deprecated);
+      FieldDef fieldDef = msg.addField(structure, name, type, auxType, optional, deprecated,enumFlag);
 
       if (readIf(EQUALS) != null) {
         checkState(!optional, "cannot mix optional and default values");

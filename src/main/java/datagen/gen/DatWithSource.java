@@ -18,8 +18,8 @@ public class DatWithSource implements AbstractData {
     return new Builder(this);
   }
 
-  protected static final String DAT_REL_PATH = "dat_rel_path";
-  protected static final String SOURCE_REL_PATH = "source_rel_path";
+  protected static final String _0 = "dat_rel_path";
+  protected static final String _1 = "source_rel_path";
 
   @Override
   public String toString() {
@@ -29,8 +29,8 @@ public class DatWithSource implements AbstractData {
   @Override
   public JSMap toJson() {
     JSMap m = new JSMap();
-    m.putUnsafe(DAT_REL_PATH, mDatRelPath);
-    m.putUnsafe(SOURCE_REL_PATH, mSourceRelPath);
+    m.putUnsafe(_0, mDatRelPath);
+    m.putUnsafe(_1, mSourceRelPath);
     return m;
   }
 
@@ -45,8 +45,8 @@ public class DatWithSource implements AbstractData {
   }
 
   private DatWithSource(JSMap m) {
-    mDatRelPath = m.opt(DAT_REL_PATH, "");
-    mSourceRelPath = m.opt(SOURCE_REL_PATH, "");
+    mDatRelPath = m.opt(_0, "");
+    mSourceRelPath = m.opt(_1, "");
   }
 
   public static Builder newBuilder() {

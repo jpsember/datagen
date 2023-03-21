@@ -481,6 +481,14 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
+  public void implicitEnumReference() {
+    p().pr("fields {", INDENT, //
+        "enum foo.gen.MongoEnum val;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
   public void ipoints() {
     p().pr("fields {", INDENT, //
         "IPoint a;", CR, //

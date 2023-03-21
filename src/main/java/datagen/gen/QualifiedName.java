@@ -22,9 +22,9 @@ public class QualifiedName implements AbstractData {
     return new Builder(this);
   }
 
-  protected static final String PACKAGE_PATH = "package_path";
-  protected static final String CLASS_NAME = "class_name";
-  protected static final String COMBINED = "combined";
+  protected static final String _0 = "package_path";
+  protected static final String _1 = "class_name";
+  protected static final String _2 = "combined";
 
   @Override
   public String toString() {
@@ -34,9 +34,9 @@ public class QualifiedName implements AbstractData {
   @Override
   public JSMap toJson() {
     JSMap m = new JSMap();
-    m.putUnsafe(PACKAGE_PATH, mPackagePath);
-    m.putUnsafe(CLASS_NAME, mClassName);
-    m.putUnsafe(COMBINED, mCombined);
+    m.putUnsafe(_0, mPackagePath);
+    m.putUnsafe(_1, mClassName);
+    m.putUnsafe(_2, mCombined);
     return m;
   }
 
@@ -51,9 +51,9 @@ public class QualifiedName implements AbstractData {
   }
 
   private QualifiedName(JSMap m) {
-    mPackagePath = m.opt(PACKAGE_PATH, "");
-    mClassName = m.opt(CLASS_NAME, "");
-    mCombined = m.opt(COMBINED, "");
+    mPackagePath = m.opt(_0, "");
+    mClassName = m.opt(_1, "");
+    mCombined = m.opt(_2, "");
   }
 
   public static Builder newBuilder() {

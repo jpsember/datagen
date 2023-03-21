@@ -52,16 +52,16 @@ public class DatagenConfig implements AbstractData {
     return new Builder(this);
   }
 
-  protected static final String START_DIR = "start_dir";
-  protected static final String DAT_PATH = "dat_path";
-  protected static final String LANGUAGE = "language";
-  protected static final String SOURCE_PATH = "source_path";
-  protected static final String CLEAN = "clean";
-  protected static final String DELETE_OLD = "delete_old";
-  protected static final String TREAT_WARNINGS_AS_ERRORS = "treat_warnings_as_errors";
-  protected static final String COMMENTS = "comments";
-  protected static final String PYTHON_SOURCE_PATH = "python_source_path";
-  protected static final String VERBOSE_NAMES = "verbose_names";
+  protected static final String _0 = "start_dir";
+  protected static final String _1 = "dat_path";
+  protected static final String _2 = "language";
+  protected static final String _3 = "source_path";
+  protected static final String _4 = "clean";
+  protected static final String _5 = "delete_old";
+  protected static final String _6 = "treat_warnings_as_errors";
+  protected static final String _7 = "comments";
+  protected static final String _8 = "python_source_path";
+  protected static final String _9 = "verbose_names";
 
   @Override
   public String toString() {
@@ -71,16 +71,16 @@ public class DatagenConfig implements AbstractData {
   @Override
   public JSMap toJson() {
     JSMap m = new JSMap();
-    m.putUnsafe(START_DIR, mStartDir.toString());
-    m.putUnsafe(DAT_PATH, mDatPath.toString());
-    m.putUnsafe(LANGUAGE, mLanguage.toString().toLowerCase());
-    m.putUnsafe(SOURCE_PATH, mSourcePath.toString());
-    m.putUnsafe(CLEAN, mClean);
-    m.putUnsafe(DELETE_OLD, mDeleteOld);
-    m.putUnsafe(TREAT_WARNINGS_AS_ERRORS, mTreatWarningsAsErrors);
-    m.putUnsafe(COMMENTS, mComments);
-    m.putUnsafe(PYTHON_SOURCE_PATH, mPythonSourcePath.toString());
-    m.putUnsafe(VERBOSE_NAMES, mVerboseNames);
+    m.putUnsafe(_0, mStartDir.toString());
+    m.putUnsafe(_1, mDatPath.toString());
+    m.putUnsafe(_2, mLanguage.toString().toLowerCase());
+    m.putUnsafe(_3, mSourcePath.toString());
+    m.putUnsafe(_4, mClean);
+    m.putUnsafe(_5, mDeleteOld);
+    m.putUnsafe(_6, mTreatWarningsAsErrors);
+    m.putUnsafe(_7, mComments);
+    m.putUnsafe(_8, mPythonSourcePath.toString());
+    m.putUnsafe(_9, mVerboseNames);
     return m;
   }
 
@@ -97,41 +97,41 @@ public class DatagenConfig implements AbstractData {
   private DatagenConfig(JSMap m) {
     {
       mStartDir = Files.DEFAULT;
-      String x = m.opt(START_DIR, (String) null);
+      String x = m.opt(_0, (String) null);
       if (x != null) {
         mStartDir = new File(x);
       }
     }
     {
-      mDatPath = DEF_DAT_PATH;
-      String x = m.opt(DAT_PATH, (String) null);
+      mDatPath = _D1;
+      String x = m.opt(_1, (String) null);
       if (x != null) {
         mDatPath = new File(x);
       }
     }
     {
-      String x = m.opt(LANGUAGE, "");
+      String x = m.opt(_2, "");
       mLanguage = x.isEmpty() ? Language.DEFAULT_INSTANCE : Language.valueOf(x.toUpperCase());
     }
     {
       mSourcePath = Files.DEFAULT;
-      String x = m.opt(SOURCE_PATH, (String) null);
+      String x = m.opt(_3, (String) null);
       if (x != null) {
         mSourcePath = new File(x);
       }
     }
-    mClean = m.opt(CLEAN, false);
-    mDeleteOld = m.opt(DELETE_OLD, false);
-    mTreatWarningsAsErrors = m.opt(TREAT_WARNINGS_AS_ERRORS, false);
-    mComments = m.opt(COMMENTS, false);
+    mClean = m.opt(_4, false);
+    mDeleteOld = m.opt(_5, false);
+    mTreatWarningsAsErrors = m.opt(_6, false);
+    mComments = m.opt(_7, false);
     {
       mPythonSourcePath = Files.DEFAULT;
-      String x = m.opt(PYTHON_SOURCE_PATH, (String) null);
+      String x = m.opt(_8, (String) null);
       if (x != null) {
         mPythonSourcePath = new File(x);
       }
     }
-    mVerboseNames = m.opt(VERBOSE_NAMES, false);
+    mVerboseNames = m.opt(_9, false);
   }
 
   public static Builder newBuilder() {
@@ -250,7 +250,7 @@ public class DatagenConfig implements AbstractData {
     }
 
     public Builder datPath(File x) {
-      mDatPath = (x == null) ? DEF_DAT_PATH : x;
+      mDatPath = (x == null) ? _D1 : x;
       return this;
     }
 
@@ -296,13 +296,13 @@ public class DatagenConfig implements AbstractData {
 
   }
 
-  private static final File DEF_DAT_PATH = new File("dat_files");
+  private static final File _D1 = new File("dat_files");
 
   public static final DatagenConfig DEFAULT_INSTANCE = new DatagenConfig();
 
   private DatagenConfig() {
     mStartDir = Files.DEFAULT;
-    mDatPath = DEF_DAT_PATH;
+    mDatPath = _D1;
     mLanguage = Language.DEFAULT_INSTANCE;
     mSourcePath = Files.DEFAULT;
     mPythonSourcePath = Files.DEFAULT;
