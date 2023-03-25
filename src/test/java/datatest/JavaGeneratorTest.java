@@ -488,6 +488,24 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
+  @Test(expected = RuntimeException.class)
+  public void conflictEnumReference() {
+    p().pr("fields {", INDENT, //
+        "foo.gen.MongoEnum first;", CR, //
+        "enum foo.gen.MongoEnum second;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void secondEnumReference() {
+    p().pr("fields {", INDENT, //
+        "enum foo.gen.MongoEnum first;", CR, //
+        "MongoEnum second;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
   @Test
   public void ipoints() {
     p().pr("fields {", INDENT, //

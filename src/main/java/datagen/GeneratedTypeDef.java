@@ -174,8 +174,7 @@ public final class GeneratedTypeDef extends BaseObject {
     return mClassSpecificSource;
   }
 
-  private DataType registerType(PartialType partialType) { //String typeName, boolean enumFlag) {
-    todo("add unit test for 'enum' used with non-enum type");
+  private DataType registerType(PartialType partialType) {
     DataTypeManager dataTypes = Context.dataTypeManager;
     DataType dataType = dataTypes.get(partialType.name());
     if (dataType == null) {
