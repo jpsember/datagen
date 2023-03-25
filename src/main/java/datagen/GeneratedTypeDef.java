@@ -38,6 +38,7 @@ import datagen.datatype.JavaSetDataType;
 import datagen.datatype.PythonListDataType;
 import datagen.datatype.ContractDataType;
 import datagen.datatype.EnumDataType;
+import datagen.gen.PartialType;
 import datagen.gen.QualifiedName;
 import datagen.gen.TypeStructure;
 import js.base.BaseObject;
@@ -89,16 +90,17 @@ public final class GeneratedTypeDef extends BaseObject {
    * Add a field to this data type
    */
   @Deprecated // too many arguments?
-  public FieldDef addField(TypeStructure structure, String fieldName, String typeName, String type2Name,
-      boolean optional, boolean deprecated, boolean isEnum) {
-    log(structure, typeName, type2Name, fieldName, optional);
+  public FieldDef addField(TypeStructure structure, String fieldName, PartialType primaryType,
+      PartialType auxType, boolean optional, boolean deprecated) {
+    if (verbose())
+      log(structure, fieldName, logStr(primaryType), logStr(auxType), optional);
     boolean added = mFieldNames.add(fieldName);
     checkState(added, "duplicate field name: " + fieldName);
 
-    DataType dataType = registerType(typeName, isEnum);
+    DataType dataType = registerType(primaryType);
     DataType dataType2 = null;
-    if (!nullOrEmpty(type2Name))
-      dataType2 = registerType(type2Name, false);
+    if (auxType != null)
+      dataType2 = registerType(auxType);
 
     if (optional)
       dataType = dataType.getOptionalVariant();
@@ -145,6 +147,16 @@ public final class GeneratedTypeDef extends BaseObject {
   }
 
   /**
+   * Helper method for logging
+   */
+  private static String logStr(PartialType p) {
+    if (p == null)
+      return "";
+    String suffix = (p.enumFlag()) ? "(enum)" : "";
+    return p.name() + suffix;
+  }
+
+  /**
    * Get buffer for writing class-specific source
    */
   public SourceBuilder classSpecificSourceBuilder() {
@@ -163,29 +175,30 @@ public final class GeneratedTypeDef extends BaseObject {
     return mClassSpecificSource;
   }
 
-  private DataType registerType(String typeName, boolean enumFlag) {
+  private DataType registerType(PartialType partialType) { //String typeName, boolean enumFlag) {
     todo("add unit test for 'enum' used with non-enum type");
     DataTypeManager dataTypes = Context.dataTypeManager;
-    DataType dataType = dataTypes.get(typeName);
+    DataType dataType = dataTypes.get(partialType.name());
     if (dataType == null) {
-      QualifiedName className = ParseTools.parseQualifiedName(typeName,
+      QualifiedName className = ParseTools.parseQualifiedName(partialType.name(),
           Context.generatedTypeDef.packageName());
       dataType = dataTypes.get(className.className());
       if (dataType == null) {
         // If a package was specified, treat as if it was defined using 'extern'
         //
-        if (!className.combined().equals(typeName)) {
+        if (!className.combined().equals(partialType.name())) {
           //
           // Verify that a .dat file exists matching this type, in the same directory as the one we're compiling
           //
-          String datFilename = convertCamelToUnderscore(typeName) + ParseTools.DOT_EXT_DATA_DEFINITION;
+          String datFilename = convertCamelToUnderscore(partialType.name())
+              + ParseTools.DOT_EXT_DATA_DEFINITION;
           File currentDatFile = new File(Context.config.datPath(), Context.datWithSource.datRelPath());
           File datFile = new File(currentDatFile.getParentFile(), datFilename);
           if (!datFile.exists())
             badArg("No definition file found at", datFile, INDENT, "...use 'extern' to declare its location");
         }
 
-        if (enumFlag) {
+        if (partialType.enumFlag()) {
           dataType = EnumDataType.construct();
         } else
           dataType = ContractDataType.construct();
@@ -195,7 +208,7 @@ public final class GeneratedTypeDef extends BaseObject {
         dataTypes.add(dataType.qualifiedClassName().className(), dataType);
       }
 
-      if (enumFlag)
+      if (partialType.enumFlag())
         checkState(dataType instanceof EnumDataType, "enum used with non-enum type");
     }
     dataType.setUsedFlag();

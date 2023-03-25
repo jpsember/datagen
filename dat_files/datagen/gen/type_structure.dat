@@ -1,4 +1,4 @@
 enum {
-  // There seems to be some sort of conflict if I use the names 'map' or 'set', so I'm using longer names
+  // 'map' and 'set' are reserved words, so use different names
   scalar, list, key_value_map, value_set;
 }

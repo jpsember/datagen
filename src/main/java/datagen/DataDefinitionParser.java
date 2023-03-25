@@ -32,6 +32,7 @@ import java.util.Map;
 
 import datagen.datatype.ContractDataType;
 import datagen.datatype.EnumDataType;
+import datagen.gen.PartialType;
 import datagen.gen.QualifiedName;
 import datagen.gen.TypeStructure;
 import js.file.Files;
@@ -161,7 +162,6 @@ final class DataDefinitionParser extends BaseObject {
       TypeStructure structure;
       boolean optional = false;
       boolean deprecated = false;
-      boolean enumFlag = false;
 
       // A field specification has this syntax:
       //
@@ -181,22 +181,19 @@ final class DataDefinitionParser extends BaseObject {
       else
         structure = TypeStructure.SCALAR;
 
-      if (readIf(ENUM))
-        enumFlag = true;
-      String type = read(ID);
+      PartialType primaryType = parsePartialType();
 
-      String auxType = null;
-      if (structure == TypeStructure.KEY_VALUE_MAP) {
-        auxType = read(ID);
-      }
+      PartialType auxType = null;
+      if (structure == TypeStructure.KEY_VALUE_MAP)
+        auxType = parsePartialType();
 
-      String name = read(ID);
+      String fieldName = read(ID);
 
-      FieldDef fieldDef = Context.generatedTypeDef.addField(structure, name, type, auxType, optional,
-          deprecated, enumFlag);
+      FieldDef fieldDef = Context.generatedTypeDef.addField(structure, fieldName, primaryType, auxType,
+          optional, deprecated);
 
       if (readIf(EQUALS)) {
-        checkState(!optional, "cannot mix optional and default values");
+        checkState(!fieldDef.optional(), "cannot mix optional and default values");
 
         // See if there is a parser for default values for this field.  This can either be the data type's parseDefaultValue() method,
         // or one mapped to the type's class (in case it is outside of the datagen project)
@@ -211,6 +208,14 @@ final class DataDefinitionParser extends BaseObject {
 
       read(SEMI);
     }
+  }
+
+  private PartialType parsePartialType() {
+    PartialType.Builder t = PartialType.newBuilder();
+    if (readIf(ENUM))
+      t.enumFlag(true);
+    t.name(read(ID));
+    return t.build();
   }
 
   private void procEnum() {

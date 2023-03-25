@@ -1,0 +1,4 @@
+fields {
+  string name;
+  bool enum_flag;
+}

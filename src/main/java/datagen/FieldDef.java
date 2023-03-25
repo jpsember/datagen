@@ -53,6 +53,7 @@ public abstract class FieldDef extends BaseObject {
     return mIndex;
   }
 
+  @Deprecated // simplify by moving boolean flags to setters?
   public final void init(String name, DataType dataType, boolean optional, boolean deprecated, int index) {
     setName(name);
     mIndex = index;
