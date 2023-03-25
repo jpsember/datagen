@@ -88,6 +88,7 @@ public final class GeneratedTypeDef extends BaseObject {
   /**
    * Add a field to this data type
    */
+  @Deprecated // too many arguments?
   public FieldDef addField(TypeStructure structure, String fieldName, String typeName, String type2Name,
       boolean optional, boolean deprecated, boolean isEnum) {
     log(structure, typeName, type2Name, fieldName, optional);
@@ -163,6 +164,7 @@ public final class GeneratedTypeDef extends BaseObject {
   }
 
   private DataType registerType(String typeName, boolean enumFlag) {
+    todo("add unit test for 'enum' used with non-enum type");
     DataTypeManager dataTypes = Context.dataTypeManager;
     DataType dataType = dataTypes.get(typeName);
     if (dataType == null) {

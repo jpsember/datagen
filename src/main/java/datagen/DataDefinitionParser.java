@@ -149,8 +149,7 @@ final class DataDefinitionParser extends BaseObject {
   private void procDataType() {
     String typeName = DataUtil.convertUnderscoresToCamelCase(
         Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
-    GeneratedTypeDef msg = new GeneratedTypeDef(typeName, packageName(), null);
-    setGeneratedTypeDef(msg);
+    setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null));
 
     read(BROP);
 
@@ -196,7 +195,8 @@ final class DataDefinitionParser extends BaseObject {
 
       String name = read(ID);
 
-      FieldDef fieldDef = msg.addField(structure, name, type, auxType, optional, deprecated,enumFlag);
+      FieldDef fieldDef = Context.generatedTypeDef.addField(structure, name, type, auxType, optional,
+          deprecated, enumFlag);
 
       if (readIf(EQUALS) != null) {
         checkState(!optional, "cannot mix optional and default values");
@@ -207,7 +207,8 @@ final class DataDefinitionParser extends BaseObject {
         DefaultValueParser parser = Context.dataTypeManager.parser(key);
         if (parser == null)
           parser = fieldDef.dataType();
-        String defValue = parser.parseDefaultValue(scanner(), msg.classSpecificSourceBuilder(), fieldDef);
+        String defValue = parser.parseDefaultValue(scanner(),
+            Context.generatedTypeDef.classSpecificSourceBuilder(), fieldDef);
         fieldDef.setDefaultValue(defValue);
       }
 
