@@ -2,15 +2,15 @@
                 "bools" : 6403,
               "doubles" : 8843,
              "enumDefn" : 8099,
-             "enumMisc" : 7961,
+             "enumMisc" : 3496,
               "enumRef" : 3081,
   "externDefaultPrefix" : 2407,
            "externType" : 5071,
-                 "ints" : 3322,
+                 "ints" : 5164,
               "ipoints" : 1726,
                 "jsmap" : 8018,
                "matrix" : 2373,
                "simple" : 9458,
-              "strings" : 1814,
+              "strings" : 8598,
              "typeFile" : 9181
 }

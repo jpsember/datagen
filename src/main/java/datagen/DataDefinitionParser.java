@@ -109,6 +109,7 @@ final class DataDefinitionParser extends BaseObject {
     mPackageName = null;
   }
 
+  @Deprecated // Have it return 'true'; we don't need the token
   private Token readIf(int type) {
     Token t = scanner().peek();
     if (t != null && t.id(type))
@@ -157,35 +158,56 @@ final class DataDefinitionParser extends BaseObject {
       if (readIf(BRCL) != null)
         break;
 
-      TypeStructure structure = null;
+      TypeStructure structure ;
       boolean optional = false;
       boolean deprecated = false;
       boolean enumFlag = false;
 
-      while (true) {
-        if (readIf(ENUM) != null) {
-          checkState(structure == null && !enumFlag);
-          enumFlag = true;
-        } else if (readIf(OPTIONAL) != null) {
-          checkState(!optional);
-          optional = true;
-        } else if (readIf(REPEATED) != null) {
-          checkState(structure == null);
-          structure = TypeStructure.LIST;
-        } else if (readIf(MAP) != null) {
-          checkState(structure == null);
-          structure = TypeStructure.KEY_VALUE_MAP;
-        } else if (readIf(SET) != null) {
-          checkState(structure == null);
-          structure = TypeStructure.VALUE_SET;
-        } else if (readIf(DEPRECATION) != null) {
-          checkState(!deprecated);
-          deprecated = true;
-        } else
-          break;
-      }
-      if (structure == null)
+      // A field specification has this syntax:
+      //
+      //  [-] [?] [* | map | set] [enum] <type> [<type>] [= <default value>]
+      //
+      
+      todo("replace <type> with <typespec> which may include an 'enum'");
+      if (readIf(DEPRECATION) != null)  
+        deprecated = true;
+      if (readIf(OPTIONAL) != null) 
+        optional = true;
+      if (readIf(REPEATED) != null)  
+        structure = TypeStructure.LIST;
+      else if ( readIf(MAP) != null) 
+        structure = TypeStructure.KEY_VALUE_MAP;
+      else if ( readIf(SET) != null) 
+        structure = TypeStructure.VALUE_SET;
+      else
         structure = TypeStructure.SCALAR;
+      
+//     while (true) {
+//        if (readIf(ENUM) != null) {
+//          checkState(structure == null && !enumFlag);
+//          enumFlag = true;
+//        } else if (readIf(OPTIONAL) != null) {
+//          checkState(!optional);
+//          optional = true;
+//        } else if (readIf(REPEATED) != null) {
+//          checkState(structure == null);
+//          structure = TypeStructure.LIST;
+//        } else if (readIf(MAP) != null) {
+//          checkState(structure == null);
+//          structure = TypeStructure.KEY_VALUE_MAP;
+//        } else if (readIf(SET) != null) {
+//          checkState(structure == null);
+//          structure = TypeStructure.VALUE_SET;
+//        } else if (readIf(DEPRECATION) != null) {
+//          checkState(!deprecated);
+//          deprecated = true;
+//        } else
+//          break;
+//      }
+//      if (structure == null)
+//        structure = TypeStructure.SCALAR;
+      if (readIf(ENUM) != null)
+        enumFlag = true;
       String type = read(ID);
 
       String auxType = null;

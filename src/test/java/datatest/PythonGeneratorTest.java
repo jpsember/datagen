@@ -64,7 +64,7 @@ public class PythonGeneratorTest extends GenBaseTest {
         "int beta = 42;", CR, //
         "?int gamma;", CR, //
         "*int delta;", CR, //
-        "*?int epsilon;", CR, //
+        "?*int epsilon;", CR, //
         "long omega;", CR, //
         OUTDENT, "}");
     compile();
@@ -100,7 +100,7 @@ public class PythonGeneratorTest extends GenBaseTest {
         "string beta = \"hello\";", CR, //
         "?string gamma;", CR, //
         "*string delta;", CR, //
-        "*?string epsilon;", CR, //
+        "?*string epsilon;", CR, //
         "*string fox = [\"a\", \"b\"];", CR, //
         OUTDENT, "}");
     compile();
@@ -134,7 +134,7 @@ public class PythonGeneratorTest extends GenBaseTest {
         "Zebra alpha;", CR, //
         "?Zebra gamma;", CR, //
         "*Zebra delta;", CR, //
-        "*?Zebra epsilon;", CR, //
+        "?*Zebra epsilon;", CR, //
         OUTDENT, //
         "}");
     compile();

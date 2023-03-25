@@ -273,7 +273,7 @@ public class JavaGeneratorTest extends GenBaseTest {
         "string beta = \"hello\";", CR, //
         "?string gamma;", CR, //
         "*string delta;", CR, //
-        "*?string epsilon;", CR, //
+        "?*string epsilon;", CR, //
         "*string hotel = [\"abc\",\"123\"];", CR, //
         OUTDENT, "}");
     compile();
@@ -376,7 +376,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   public void listOpt() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "fields {", INDENT, //
-        "*?Beaver busy;", OUTDENT, //
+        "?*Beaver busy;", OUTDENT, //
         "}");
     compile();
   }
@@ -615,7 +615,7 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("fields {", INDENT, //
         "-int alpha;", CR, //
         "int beta = " + Integer.MAX_VALUE + ";", CR, //
-        "?-int gamma;", CR, //
+        "-?int gamma;", CR, //
         "-?*int epsilon;", CR, //
         OUTDENT, "}");
     compile();
