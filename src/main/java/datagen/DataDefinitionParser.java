@@ -109,12 +109,12 @@ final class DataDefinitionParser extends BaseObject {
     mPackageName = null;
   }
 
-  @Deprecated // Have it return 'true'; we don't need the token
-  private Token readIf(int type) {
+  private boolean readIf(int type) {
     Token t = scanner().peek();
-    if (t != null && t.id(type))
-      return read();
-    return null;
+    boolean result = (t != null && t.id(type));
+    if (result)
+      read();
+    return result;
   }
 
   private Token read() {
@@ -155,10 +155,10 @@ final class DataDefinitionParser extends BaseObject {
     read(BROP);
 
     while (true) {
-      if (readIf(BRCL) != null)
+      if (readIf(BRCL))
         break;
 
-      TypeStructure structure ;
+      TypeStructure structure;
       boolean optional = false;
       boolean deprecated = false;
       boolean enumFlag = false;
@@ -167,46 +167,21 @@ final class DataDefinitionParser extends BaseObject {
       //
       //  [-] [?] [* | map | set] [enum] <type> [<type>] [= <default value>]
       //
-      
       todo("replace <type> with <typespec> which may include an 'enum'");
-      if (readIf(DEPRECATION) != null)  
+      if (readIf(DEPRECATION))
         deprecated = true;
-      if (readIf(OPTIONAL) != null) 
+      if (readIf(OPTIONAL))
         optional = true;
-      if (readIf(REPEATED) != null)  
+      if (readIf(REPEATED))
         structure = TypeStructure.LIST;
-      else if ( readIf(MAP) != null) 
+      else if (readIf(MAP))
         structure = TypeStructure.KEY_VALUE_MAP;
-      else if ( readIf(SET) != null) 
+      else if (readIf(SET))
         structure = TypeStructure.VALUE_SET;
       else
         structure = TypeStructure.SCALAR;
-      
-//     while (true) {
-//        if (readIf(ENUM) != null) {
-//          checkState(structure == null && !enumFlag);
-//          enumFlag = true;
-//        } else if (readIf(OPTIONAL) != null) {
-//          checkState(!optional);
-//          optional = true;
-//        } else if (readIf(REPEATED) != null) {
-//          checkState(structure == null);
-//          structure = TypeStructure.LIST;
-//        } else if (readIf(MAP) != null) {
-//          checkState(structure == null);
-//          structure = TypeStructure.KEY_VALUE_MAP;
-//        } else if (readIf(SET) != null) {
-//          checkState(structure == null);
-//          structure = TypeStructure.VALUE_SET;
-//        } else if (readIf(DEPRECATION) != null) {
-//          checkState(!deprecated);
-//          deprecated = true;
-//        } else
-//          break;
-//      }
-//      if (structure == null)
-//        structure = TypeStructure.SCALAR;
-      if (readIf(ENUM) != null)
+
+      if (readIf(ENUM))
         enumFlag = true;
       String type = read(ID);
 
@@ -220,7 +195,7 @@ final class DataDefinitionParser extends BaseObject {
       FieldDef fieldDef = Context.generatedTypeDef.addField(structure, name, type, auxType, optional,
           deprecated, enumFlag);
 
-      if (readIf(EQUALS) != null) {
+      if (readIf(EQUALS)) {
         checkState(!optional, "cannot mix optional and default values");
 
         // See if there is a parser for default values for this field.  This can either be the data type's parseDefaultValue() method,
@@ -260,11 +235,11 @@ final class DataDefinitionParser extends BaseObject {
     read(BROP);
 
     while (true) {
-      if (readIf(BRCL) != null)
+      if (readIf(BRCL))
         break;
       String name = read(ID);
       ((EnumDataType) enumDataType).addLabel(name.toUpperCase());
-      while (readIf(COMMA) != null || readIf(SEMI) != null)
+      while (readIf(COMMA) || readIf(SEMI))
         continue;
     }
   }
