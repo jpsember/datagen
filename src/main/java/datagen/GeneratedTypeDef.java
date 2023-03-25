@@ -89,9 +89,8 @@ public final class GeneratedTypeDef extends BaseObject {
   /**
    * Add a field to this data type
    */
-  @Deprecated // too many arguments?
-  public FieldDef addField(TypeStructure structure, String fieldName, PartialType primaryType,
-      PartialType auxType, boolean optional, boolean deprecated) {
+  public FieldDef addField(boolean deprecated, boolean optional, TypeStructure structure,
+      PartialType primaryType, PartialType auxType, String fieldName) {
     if (verbose())
       log(structure, fieldName, logStr(primaryType), logStr(auxType), optional);
     boolean added = mFieldNames.add(fieldName);

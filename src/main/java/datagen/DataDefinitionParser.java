@@ -189,8 +189,8 @@ final class DataDefinitionParser extends BaseObject {
 
       String fieldName = read(ID);
 
-      FieldDef fieldDef = Context.generatedTypeDef.addField(structure, fieldName, primaryType, auxType,
-          optional, deprecated);
+      FieldDef fieldDef = Context.generatedTypeDef.addField(deprecated, optional, structure, primaryType,
+          auxType, fieldName);
 
       if (readIf(EQUALS)) {
         checkState(!fieldDef.optional(), "cannot mix optional and default values");
