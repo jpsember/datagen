@@ -165,9 +165,12 @@ final class DataDefinitionParser extends BaseObject {
 
       // A field specification has this syntax:
       //
-      //  [-] [?] [* | map | set] [enum] <type> [<type>] [= <default value>]
+      //  [-] [?] [* | map | set] <typespec> [<typespec>] [= <default value>]
       //
-      todo("replace <type> with <typespec> which may include an 'enum'");
+      // A <typespec> has this syntax:
+      //
+      //  <typespec> ::=  [enum] <type>
+      //
       if (readIf(DEPRECATION))
         deprecated = true;
       if (readIf(OPTIONAL))
