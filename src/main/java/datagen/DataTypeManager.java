@@ -81,7 +81,7 @@ public final class DataTypeManager extends BaseObject {
       add("double", new JavaPrimitiveDoubleDataType());
       add("File", new JavaFileDataType());
       add(IPoint.DEFAULT_INSTANCE, IPOINT_PARSER);
-      add("bool", new JavaBooleanDataType());
+      add("bool", new JavaPrimitiveBooleanDataType());
       add("string", new JavaStringDataType());
       add("JSMap", new JavaJsonMapDataType());
       add("JSList", new JavaJsonListDataType());

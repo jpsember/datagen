@@ -33,7 +33,7 @@ import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public class JavaBooleanDataType extends JavaDataType {
+public class JavaPrimitiveBooleanDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
@@ -77,7 +77,7 @@ public class JavaBooleanDataType extends JavaDataType {
         f.nameStringConstantQualified(), "), ", f.optional(), ");", CR);
   }
 
-  private static class Boxed extends JavaBooleanDataType {
+  private static class Boxed extends JavaPrimitiveBooleanDataType {
 
     @Override
     protected String provideQualifiedClassNameExpr() {
@@ -94,6 +94,11 @@ public class JavaBooleanDataType extends JavaDataType {
       s.a(");");
     }
 
+
+    @Override
+    public String deserializeJsonToMapValue(String jsonValue) {
+      return "(Boolean) " + jsonValue;
+    }
   }
 
 }
