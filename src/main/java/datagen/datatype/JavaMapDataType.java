@@ -39,7 +39,7 @@ public class JavaMapDataType extends JavaDataType {
     mWrappedKeyType = wrappedKeyType;
     mWrappedValueType = wrappedValueType;
     setQualifiedClassName(
-        ParseTools.parseQualifiedName("java.util.Map<" + wrappedKeyType.qualifiedClassName().className() + ","
+        ParseTools.parseQualifiedName("java.util.Map<" + wrappedKeyType.qualifiedClassName().className() + ", "
             + wrappedValueType.qualifiedClassName().className() + ">", null));
   }
 
@@ -55,7 +55,7 @@ public class JavaMapDataType extends JavaDataType {
   protected String provideTypeName() {
     QualifiedName keyName = wrappedKeyType().qualifiedClassName();
     QualifiedName valName = wrappedValueType().qualifiedClassName();
-    return ParseTools.PKG_MAP + "<" + ParseTools.importExprWithClassName(keyName) + ","
+    return ParseTools.PKG_MAP + "<" + ParseTools.importExprWithClassName(keyName) + ", "
         + ParseTools.importExprWithClassName(valName) + ">";
   }
 

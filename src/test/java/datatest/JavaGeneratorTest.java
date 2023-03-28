@@ -529,6 +529,16 @@ public class JavaGeneratorTest extends GenBaseTest {
         OUTDENT, "}");
     compile();
   }
+  
+  @Test
+  public void typeBoxedValues() {
+    p().pr("extern abc.xyz.Beaver;", CR, //
+        "fields {", INDENT, //
+        "map string long name_map;", CR, //
+        "set long ages_set;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
 
   @Test
   public void typeSetVarious() {

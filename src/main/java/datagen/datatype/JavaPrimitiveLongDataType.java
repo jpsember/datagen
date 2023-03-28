@@ -83,6 +83,10 @@ public class JavaPrimitiveLongDataType extends JavaDataType {
       s.a(f.instanceName(), " = m.optLong(", f.nameStringConstantQualified(), ");");
     }
 
+    @Override
+    public String deserializeJsonToMapValue(String jsonValue) {
+      return "(Long) " + jsonValue;
+    }
   }
 
 }

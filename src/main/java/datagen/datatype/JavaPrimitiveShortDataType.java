@@ -81,6 +81,10 @@ public class JavaPrimitiveShortDataType extends JavaDataType {
       s.a(f.instanceName(), " = m.optShort(", f.nameStringConstantQualified(), ");");
     }
 
+    @Override
+    public String deserializeJsonToMapValue(String jsonValue) {
+      return "(Short) " + jsonValue;
+    }
   }
 
 }

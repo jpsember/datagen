@@ -81,6 +81,10 @@ public class JavaPrimitiveIntegerDataType extends JavaDataType {
       s.a(f.instanceName(), " = m.optInt(", f.nameStringConstantQualified(), ");");
     }
 
+    @Override
+    public String deserializeJsonToMapValue(String jsonValue) {
+      return "(Integer) " + jsonValue;
+    }
   }
 
 }

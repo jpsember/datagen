@@ -101,6 +101,12 @@ public final class GeneratedTypeDef extends BaseObject {
     if (auxType != null)
       dataType2 = registerType(auxType);
 
+    if (structure == TypeStructure.KEY_VALUE_MAP || structure == TypeStructure.VALUE_SET) {
+      dataType = dataType.getOptionalVariant();
+      if (dataType2 != null)
+        dataType2 = dataType2.getOptionalVariant();
+    }
+
     if (optional)
       dataType = dataType.getOptionalVariant();
     DataType complexType;

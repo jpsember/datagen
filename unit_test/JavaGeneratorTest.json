@@ -18,6 +18,7 @@
       "singleLineComment" : 2776,
                     "tmp" : 2335,
                "typeBool" : 5674,
+        "typeBoxedValues" : 5786,
         "typeByteVarious" : 9102,
       "typeDoubleVarious" : 5652,
         "typeFileVarious" : 4197,
@@ -26,7 +27,7 @@
     "typeJsonListVarious" : 2045,
      "typeJsonMapVarious" : 7758,
         "typeLongVarious" : 2707,
-         "typeMapVarious" : 4579,
+         "typeMapVarious" : 7611,
          "typeSetVarious" : 3431,
        "typeShortVarious" : 9045,
              "typeString" : 7752

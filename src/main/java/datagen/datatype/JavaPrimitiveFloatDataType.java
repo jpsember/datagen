@@ -81,6 +81,10 @@ public class JavaPrimitiveFloatDataType extends JavaDataType {
       s.a(f.instanceName(), " = m.optFloat(", f.nameStringConstantQualified(), ");");
     }
 
+    @Override
+    public String deserializeJsonToMapValue(String jsonValue) {
+      return "(Float) " + jsonValue;
+    }
   }
 
 }

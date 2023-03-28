@@ -83,6 +83,10 @@ public class JavaPrimitiveByteDataType extends JavaDataType {
       s.a(f.instanceName(), " = m.optByte(", f.nameStringConstantQualified(), ");");
     }
 
+    @Override
+    public String deserializeJsonToMapValue(String jsonValue) {
+      return "(Byte) " + jsonValue;
+    }
   }
 
 }
