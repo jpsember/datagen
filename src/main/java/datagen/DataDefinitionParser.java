@@ -153,6 +153,8 @@ final class DataDefinitionParser extends BaseObject {
         Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
     setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null));
 
+    Context.generatedTypeDef.setDeprecated(readIf(DEPRECATION));
+    
     read(BROP);
 
     while (true) {
@@ -240,6 +242,8 @@ final class DataDefinitionParser extends BaseObject {
     enumDataType.setQualifiedClassName(className);
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType));
 
+    Context.generatedTypeDef.setDeprecated(readIf(DEPRECATION));
+    
     read(BROP);
 
     while (true) {

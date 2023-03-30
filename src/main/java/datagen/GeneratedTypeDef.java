@@ -55,6 +55,17 @@ public final class GeneratedTypeDef extends BaseObject {
     mEnumDataType = (EnumDataType) enumTypeOrNull;
   }
 
+  public void setDeprecated(boolean f) {
+    checkState(mDeprecated == null);
+    mDeprecated = f;
+  }
+
+  public boolean isDeprecated() {
+    return mDeprecated == Boolean.TRUE;
+  }
+
+  private Boolean mDeprecated;
+
   public String packageName() {
     return mPackageName;
   }

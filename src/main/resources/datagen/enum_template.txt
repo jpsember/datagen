@@ -3,7 +3,7 @@
 @@/**
 @@ * Generated Java source (do not edit!)
 @@ */
-public enum [!class] {
+[!deprecated]public enum [!class] {
 
 [!enum_values]
 

@@ -10,7 +10,7 @@
 @@ * code, if mutation of those instances is not desired, then the client should ensure that the
 @@ * instance is not actually a Builder (e.g. by calling build() if necessary).
 @@ */
-public class [!class] implements {{js.data.AbstractData|AbstractData}} {
+[!deprecated]public class [!class] implements {{js.data.AbstractData|AbstractData}} {
 
   @@// Field 'getters'
 

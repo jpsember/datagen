@@ -62,6 +62,7 @@ public abstract class SourceGen extends BaseObject {
     m.put("class", def.name());
 
     String content = getTemplate();
+    m.put("deprecated", def.isDeprecated() ? "@Deprecated\n" : "");
     if (def.isEnum()) {
       generateEnumValues(def.enumDataType());
       m.put("default_value", def.enumDataType().labels().get(0));
