@@ -46,14 +46,14 @@ import static js.base.Tools.*;
 public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
-  public void singleLineComment() {
+  public void singleLineCommentOld() {
     p().pr("// A single-line comment", CR);
     p().pr("fields {}");
     compile();
   }
 
   @Test
-  public void multiLineComment() {
+  public void multiLineCommentOld() {
     p().pr("/* A multiline", CR);
     p().pr("     comment", CR);
     p().pr("  */   ");
@@ -62,7 +62,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeIntVarious() {
+  public void typeIntVariousOld() {
     p().pr("fields {", INDENT, //
         "int alpha;", CR, //
         "int beta = " + Integer.MAX_VALUE + ";", CR, //
@@ -73,7 +73,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeIntListSerialization() {
+  public void typeIntListSerializationOld() {
     SampleDataType.Builder b = SampleDataType.newBuilder();
     b.i3(SAMPLE_INTS);
     SampleDataType x = b.build();
@@ -86,7 +86,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeByteVarious() {
+  public void typeByteVariousOld() {
     p().pr("fields {", INDENT, //
         "byte alpha;", CR, //
         "byte beta = " + Byte.MAX_VALUE + ";", CR, //
@@ -135,7 +135,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeShortVarious() {
+  public void typeShortVariousOld() {
     p().pr("fields {", INDENT, //
         "short alpha;", CR, //
         "short beta = " + Byte.MAX_VALUE + ";", CR, //
@@ -159,7 +159,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeLongVarious() {
+  public void typeLongVariousOld() {
     p().pr("fields {", INDENT, //
         "long alpha;", CR, //
         "long beta = " + Long.MAX_VALUE + ";", CR, //
@@ -192,7 +192,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeFloatVarious() {
+  public void typeFloatVariousOld() {
     p().pr("fields {", INDENT, //
         "float alpha;", CR, //
         "float beta = " + Float.MAX_VALUE + ";", CR, //
@@ -254,7 +254,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeDoubleVarious() {
+  public void typeDoubleVariousOld() {
     p().pr("fields {", INDENT, //
         "double alpha;", CR, //
         "double beta = " + Double.MAX_VALUE + ";", CR, //
@@ -266,7 +266,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeString() {
+  public void typeStringOld() {
     verboseNames();
     p().pr("fields {", INDENT, //
         "string alpha;", CR, //
@@ -279,16 +279,9 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
+ 
   @Test
-  public void tmp() {
-    p().pr("fields {", INDENT, //
-        "string beta = \"hello\";", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
-  public void typeBool() {
+  public void typeBoolOld() {
     p().pr("fields {", INDENT, //
         "bool alpha;", CR, //
         "bool beta = true;", CR, //
@@ -298,7 +291,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void external() {
+  public void externalOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "fields {", INDENT, //
         "Beaver busy;", CR, //
@@ -344,7 +337,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void externalList() {
+  public void externalListOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "fields {", INDENT, //
         "*Beaver mult;", CR, //
@@ -353,7 +346,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void external2() {
+  public void external2Old() {
     p().pr( // This one omits the 'extern' line, so it assumes the same package
         "fields {", INDENT, //
         "Beaver busy;", CR, //
@@ -364,7 +357,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void externalRepeated() {
+  public void externalRepeatedOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "fields {", INDENT, //
         "*Beaver busy;", OUTDENT, //
@@ -373,7 +366,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void listOpt() {
+  public void listOptOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "fields {", INDENT, //
         "?*Beaver busy;", OUTDENT, //
@@ -390,7 +383,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeFileVarious() {
+  public void typeFileVariousOld() {
     p().pr("fields {", INDENT, //
         "File alpha;", CR, //
         "?File beta;", CR, //
@@ -402,7 +395,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void optComments() {
+  public void optCommentsOld() {
     addArg("comments");
     p().pr("fields {", INDENT, //
         "File alpha;", CR, //
@@ -412,7 +405,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void builtIn() {
+  public void builtInOld() {
     p().pr("fields {", INDENT, //
         "IPoint location;", CR, //
         "IRect x;", CR, //
@@ -424,7 +417,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeJsonMapVarious() {
+  public void typeJsonMapVariousOld() {
     p().pr("fields {", INDENT, //
         "JSMap alpha;", CR, //
         "?JSMap beta;", CR, //
@@ -435,7 +428,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeJsonListVarious() {
+  public void typeJsonListVariousOld() {
     p().pr("fields {", INDENT, //
         "JSList alpha;", CR, //
         "?JSList beta;", CR, //
@@ -473,7 +466,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void qualifiedReference() {
+  public void qualifiedReferenceOld() {
     p().pr("fields {", INDENT, //
         "foo.gen.MongoParams mongo_params;", CR, //
         OUTDENT, "}");
@@ -481,7 +474,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void implicitEnumReference() {
+  public void implicitEnumReferenceOld() {
     p().pr("fields {", INDENT, //
         "enum foo.gen.MongoEnum val;", CR, //
         OUTDENT, "}");
@@ -507,7 +500,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void ipoints() {
+  public void ipointsOld() {
     p().pr("fields {", INDENT, //
         "IPoint a;", CR, //
         "?IPoint b;", CR, //
@@ -519,7 +512,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeMapVarious() {
+  public void typeMapVariousOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "fields {", INDENT, //
         "map string File alpha;", CR, //
@@ -531,7 +524,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
   
   @Test
-  public void typeBoxedValues() {
+  public void typeBoxedValuesOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "fields {", INDENT, //
         "map string long name_map;", CR, //
@@ -541,7 +534,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeSetVarious() {
+  public void typeSetVariousOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "fields {", INDENT, //
         "set File alpha;", CR, //
@@ -639,7 +632,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void deprecations() {
+  public void deprecationsOld() {
     p().pr("fields {", INDENT, //
         "-int alpha;", CR, //
         "int beta = " + Integer.MAX_VALUE + ";", CR, //
