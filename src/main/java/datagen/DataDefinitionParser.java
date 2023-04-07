@@ -149,13 +149,22 @@ final class DataDefinitionParser extends BaseObject {
     Context.dataTypeManager.add(qualifiedClassName.className(), dataType);
   }
 
+  private static boolean sOldStyleWarningIssued;
+
   private void procDataType(boolean oldStyle) {
+    if (oldStyle) {
+      if (!sOldStyleWarningIssued && !testMode()) {
+        sOldStyleWarningIssued = true;
+        pr("Generating older version of source code; recommend using 'class' keyword instead of 'fields'...");
+      }
+    }
+
     String typeName = DataUtil.convertUnderscoresToCamelCase(
         Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
     setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null, oldStyle));
 
     Context.generatedTypeDef.setDeprecated(readIf(DEPRECATION));
-    
+
     read(BROP);
 
     while (true) {
@@ -244,7 +253,7 @@ final class DataDefinitionParser extends BaseObject {
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType, false));
 
     Context.generatedTypeDef.setDeprecated(readIf(DEPRECATION));
-    
+
     read(BROP);
 
     while (true) {

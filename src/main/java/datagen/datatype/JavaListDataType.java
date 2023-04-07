@@ -65,20 +65,20 @@ public class JavaListDataType extends JavaDataType {
    * This does not apply unless 'old style' is in effect
    */
   @Override
-  public String sourceExpressionToMutable2(String valueExpression) {
+  public String sourceExpressionToMutable(String valueExpression) {
     if (Context.generatedTypeDef.isOldStyle())
       return ParseTools.mutableCopyOfList(valueExpression);
     else
-      return super.sourceExpressionToMutable2(valueExpression);
+      return super.sourceExpressionToMutable(valueExpression);
   }
 
   @Override
-  public void sourceExpressionToImmutable2(SourceBuilder s, FieldDef fieldDef, String targetExpression,
+  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
     if (Context.generatedTypeDef.isOldStyle())
-    s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
+      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
     else
-      super.sourceExpressionToImmutable2(s, fieldDef, targetExpression, valueExpression);
+      super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
   }
 
   public DataType wrappedType() {

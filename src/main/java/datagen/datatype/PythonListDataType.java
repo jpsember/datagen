@@ -60,7 +60,7 @@ public class PythonListDataType extends PythonDataType {
     // in that case, we don't want to attempt to construct None.copy()
     //
     if (f.optional()) {
-      s.a(targetExpr, " = x if x is None else ", sourceExpressionToMutable2("x"));
+      s.a(targetExpr, " = x if x is None else ", sourceExpressionToMutable("x"));
       return;
     }
     super.sourceSetter(s, f, targetExpr);
@@ -74,27 +74,26 @@ public class PythonListDataType extends PythonDataType {
    * Only has this effect if 'old style'
    */
   @Override
-  public String sourceExpressionToMutable2(String valueExpression) {
+  public String sourceExpressionToMutable(String valueExpression) {
     if (Context.generatedTypeDef.isOldStyle())
-    return valueExpression + ".copy()";
-    else return valueExpression;
-  }  
+      return valueExpression + ".copy()";
+    else
+      return valueExpression;
+  }
 
   @Override
-  public void sourceExpressionToImmutable2(SourceBuilder s, FieldDef fieldDef, String targetExpression,
+  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
-    if (Context.generatedTypeDef.isOldStyle())
-    { 
-    if (fieldDef.optional()) {
-      s.a("x = ", valueExpression, CR);
-      s.a(targetExpression, " = x if x is None else x.copy()", CR);
+    if (Context.generatedTypeDef.isOldStyle()) {
+      if (fieldDef.optional()) {
+        s.a("x = ", valueExpression, CR);
+        s.a(targetExpression, " = x if x is None else x.copy()", CR);
+      } else {
+        s.a(targetExpression, " = ", valueExpression, ".copy()");
+      }
     } else {
-      s.a(targetExpression, " = ", valueExpression, ".copy()");
+      super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
     }
-    } else {
-        super.sourceExpressionToImmutable2(s, fieldDef, targetExpression, valueExpression);
-    }
-    
   }
 
   public DataType wrappedType() {
