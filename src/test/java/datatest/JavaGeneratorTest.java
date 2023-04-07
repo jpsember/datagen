@@ -279,7 +279,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
- 
   @Test
   public void typeBoolOld() {
     p().pr("fields {", INDENT, //
@@ -522,7 +521,7 @@ public class JavaGeneratorTest extends GenBaseTest {
         OUTDENT, "}");
     compile();
   }
-  
+
   @Test
   public void typeBoxedValuesOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
@@ -662,6 +661,304 @@ public class JavaGeneratorTest extends GenBaseTest {
     //
     v.s().add(new File("gamma.txt"));
     checkState(!u.equals(v));
+  }
+
+  @Test
+  public void singleLineComment() {
+    p().pr("// A single-line comment", CR);
+    p().pr("class {}");
+    compile();
+  }
+
+  @Test
+  public void multiLineComment() {
+    p().pr("/* A multiline", CR);
+    p().pr("     comment", CR);
+    p().pr("  */   ");
+    p().pr("class {}");
+    compile();
+  }
+
+  @Test
+  public void typeIntVarious() {
+    p().pr("class {", INDENT, //
+        "int alpha;", CR, //
+        "int beta = " + Integer.MAX_VALUE + ";", CR, //
+        "?int gamma;", CR, //
+        "?*int epsilon;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void typeIntListSerialization() {
+    SampleDataType.Builder b = SampleDataType.newBuilder();
+    b.i3(SAMPLE_INTS);
+    SampleDataType x = b.build();
+    String s = DataUtil.toString(x);
+    JSMap m = new JSMap(s);
+    SampleDataType u2 = SampleDataType.DEFAULT_INSTANCE.parse(m);
+    log("Original:", INDENT, x);
+    log("Parsed:", INDENT, u2);
+    assertEquals(x, u2);
+  }
+
+  @Test
+  public void typeByteVarious() {
+    p().pr("class {", INDENT, //
+        "byte alpha;", CR, //
+        "byte beta = " + Byte.MAX_VALUE + ";", CR, //
+        "?byte gamma;", CR, //
+        "?*byte epsilon;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void typeShortVarious() {
+    p().pr("class {", INDENT, //
+        "short alpha;", CR, //
+        "short beta = " + Byte.MAX_VALUE + ";", CR, //
+        "?short gamma;", CR, //
+        "?*short epsilon;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void typeLongVarious() {
+    p().pr("class {", INDENT, //
+        "long alpha;", CR, //
+        "long beta = " + Long.MAX_VALUE + ";", CR, //
+        "?long gamma;", CR, //
+        "?*long epsilon;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void typeFloatVarious() {
+    p().pr("class {", INDENT, //
+        "float alpha;", CR, //
+        "float beta = " + Float.MAX_VALUE + ";", CR, //
+        "?float gamma;", CR, //
+        "?*float epsilon;", CR, //
+        "*float hotel;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void typeDoubleVarious() {
+    p().pr("class {", INDENT, //
+        "double alpha;", CR, //
+        "double beta = " + Double.MAX_VALUE + ";", CR, //
+        "?double gamma;", CR, //
+        "?*double epsilon;", CR, //
+        "*double hotel = [3, 1e-3];", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void typeString() {
+    verboseNames();
+    p().pr("class {", INDENT, //
+        "string alpha;", CR, //
+        "string beta = \"hello\";", CR, //
+        "?string gamma;", CR, //
+        "*string delta;", CR, //
+        "?*string epsilon;", CR, //
+        "*string hotel = [\"abc\",\"123\"];", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void typeBool() {
+    p().pr("class {", INDENT, //
+        "bool alpha;", CR, //
+        "bool beta = true;", CR, //
+        "?bool gamma;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void external() {
+    p().pr("extern abc.xyz.Beaver;", CR, //
+        "class {", INDENT, //
+        "Beaver busy;", CR, //
+        "?Beaver opt;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void externalList() {
+    p().pr("extern abc.xyz.Beaver;", CR, //
+        "class {", INDENT, //
+        "*Beaver mult;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void external2() {
+    p().pr( // This one omits the 'extern' line, so it assumes the same package
+        "class {", INDENT, //
+        "Beaver busy;", CR, //
+        "?Beaver opt;", CR, //
+        OUTDENT, "}");
+    generateDummyDatFile("Beaver");
+    compile();
+  }
+
+  @Test
+  public void externalRepeated() {
+    p().pr("extern abc.xyz.Beaver;", CR, //
+        "class {", INDENT, //
+        "*Beaver busy;", OUTDENT, //
+        "}");
+    compile();
+  }
+
+  @Test
+  public void listOpt() {
+    p().pr("extern abc.xyz.Beaver;", CR, //
+        "class {", INDENT, //
+        "?*Beaver busy;", OUTDENT, //
+        "}");
+    compile();
+  }
+
+  @Test
+  public void typeFileVarious() {
+    p().pr("class {", INDENT, //
+        "File alpha;", CR, //
+        "?File beta;", CR, //
+        "*File gamma;", CR, //
+        "?*File delta;", CR, //
+        "File epsilon = ", quote("abc/xyz.txt"), ";", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void optComments() {
+    addArg("comments");
+    p().pr("class {", INDENT, //
+        "File alpha;", CR, //
+        "int beta;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void builtIn() {
+    p().pr("class {", INDENT, //
+        "IPoint location;", CR, //
+        "IRect x;", CR, //
+        "FPoint floc;", CR, //
+        "FRect frect;", CR, //
+        "Matrix mat;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void typeJsonMapVarious() {
+    p().pr("class {", INDENT, //
+        "JSMap alpha;", CR, //
+        "?JSMap beta;", CR, //
+        "*JSMap gamma;", CR, //
+        "JSMap epsilon = ", quote("{\\\"a\\\":15,\\\"b\\\":\\\"hello\\\"}"), ";", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void typeJsonListVarious() {
+    p().pr("class {", INDENT, //
+        "JSList alpha;", CR, //
+        "?JSList beta;", CR, //
+        "*JSList gamma;", CR, //
+        "JSList epsilon = ", quote("[\\\"a\\\",15,\\\"b\\\",\\\"hello\\\"]"), ";", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void qualifiedReference() {
+    p().pr("class {", INDENT, //
+        "foo.gen.MongoParams mongo_params;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void implicitEnumReference() {
+    p().pr("class {", INDENT, //
+        "enum foo.gen.MongoEnum val;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void ipoints() {
+    p().pr("class {", INDENT, //
+        "IPoint a;", CR, //
+        "?IPoint b;", CR, //
+        "*IPoint c;", CR, //
+        "?*IPoint d;", CR, //
+        "IPoint e = [32,64];", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void typeMapVarious() {
+    p().pr("extern abc.xyz.Beaver;", CR, //
+        "class {", INDENT, //
+        "map string File alpha;", CR, //
+        "?map string File beta;", CR, //
+        "map string Beaver gamma;", CR, //
+        "map string string delta;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void typeBoxedValues() {
+    p().pr("extern abc.xyz.Beaver;", CR, //
+        "class {", INDENT, //
+        "map string long name_map;", CR, //
+        "set long ages_set;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void typeSetVarious() {
+    p().pr("extern abc.xyz.Beaver;", CR, //
+        "class {", INDENT, //
+        "set File alpha;", CR, //
+        "?set File beta;", CR, //
+        "set Beaver gamma;", CR, //
+        "set string delta;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void deprecations() {
+    p().pr("class {", INDENT, //
+        "-int alpha;", CR, //
+        "int beta = " + Integer.MAX_VALUE + ";", CR, //
+        "-?int gamma;", CR, //
+        "-?*int epsilon;", CR, //
+        OUTDENT, "}");
+    compile();
   }
 
 }
