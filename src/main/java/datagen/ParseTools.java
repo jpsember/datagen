@@ -291,22 +291,27 @@ public final class ParseTools {
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 
+  @Deprecated
   public static final String immutableCopyOfList(String expr) {
     return PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
   }
 
+  @Deprecated
   public static final String mutableCopyOfList(String expr) {
     return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
   }
 
+  @Deprecated
   public static final String mutableCopyOfMap(String expr) {
     return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
   }
 
+  @Deprecated
   public static final String immutableCopyOfMap(String expr) {
     return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
   }
 
+  @Deprecated
   public static final String mutableCopyOfSet(String expr) {
     return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
   }

@@ -152,8 +152,8 @@ public abstract class DataType implements DefaultValueParser {
    * Default returns the expression unchanged. ListDataType overrides this to
    * construct a mutable copy instead. If more structured types are added, I'll
    * override this method appropriately.
-   * 
    */
+  @Deprecated
   public String sourceExpressionToMutable(String valueExpression) {
     return valueExpression;
   }
@@ -163,6 +163,7 @@ public abstract class DataType implements DefaultValueParser {
    *
    * Default returns the expression unchanged
    */
+  @Deprecated
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
     s.a(targetExpression, " = ", valueExpression);
@@ -260,7 +261,7 @@ public abstract class DataType implements DefaultValueParser {
     }
     return mListVariant;
   }
- 
+
   private boolean mPreparedVariantOptional;
   private boolean mPreparedVariantList;
   private DataType mOptionalVariant;
