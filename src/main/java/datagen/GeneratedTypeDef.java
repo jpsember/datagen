@@ -49,10 +49,11 @@ import js.json.JSMap;
  */
 public final class GeneratedTypeDef extends BaseObject {
 
-  public GeneratedTypeDef(String name, String packageName, DataType enumTypeOrNull) {
+  public GeneratedTypeDef(String name, String packageName, DataType enumTypeOrNull, boolean oldStyle) {
     setName(name);
     mPackageName = nullToEmpty(packageName);
     mEnumDataType = (EnumDataType) enumTypeOrNull;
+    mOldStyle = oldStyle;
   }
 
   public void setDeprecated(boolean f) {
@@ -76,6 +77,10 @@ public final class GeneratedTypeDef extends BaseObject {
 
   public boolean isEnum() {
     return mEnumDataType != null;
+  }
+
+  public boolean isOldStyle() {
+    return mOldStyle;
   }
 
   /**
@@ -234,6 +239,7 @@ public final class GeneratedTypeDef extends BaseObject {
   private final EnumDataType mEnumDataType;
   private final List<FieldDef> mFields = arrayList();
   private final Set<String> mFieldNames = hashSet();
+  private final boolean mOldStyle;
   private SourceBuilder mClassSpecificSourceBuilder;
   private String mClassSpecificSource;
 }

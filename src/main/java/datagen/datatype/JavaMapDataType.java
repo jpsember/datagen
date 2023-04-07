@@ -27,6 +27,7 @@ package datagen.datatype;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
+import datagen.Context;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
@@ -39,8 +40,8 @@ public class JavaMapDataType extends JavaDataType {
     mWrappedKeyType = wrappedKeyType;
     mWrappedValueType = wrappedValueType;
     setQualifiedClassName(
-        ParseTools.parseQualifiedName("java.util.Map<" + wrappedKeyType.qualifiedClassName().className() + ", "
-            + wrappedValueType.qualifiedClassName().className() + ">", null));
+        ParseTools.parseQualifiedName("java.util.Map<" + wrappedKeyType.qualifiedClassName().className()
+            + ", " + wrappedValueType.qualifiedClassName().className() + ">", null));
   }
 
   public JavaDataType wrappedKeyType() {
@@ -70,14 +71,20 @@ public class JavaMapDataType extends JavaDataType {
    * elements are stored in the new map unchanged.
    */
   @Override
-  public String sourceExpressionToMutable(String valueExpression) {
-    return ParseTools.mutableCopyOfMap(valueExpression);
+  public String sourceExpressionToMutable2(String valueExpression) {
+    if (Context.generatedTypeDef.isOldStyle())
+      return ParseTools.mutableCopyOfMap(valueExpression);
+    else
+      return super.sourceExpressionToMutable2(valueExpression);
   }
 
   @Override
-  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
+  public void sourceExpressionToImmutable2(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
+    if (Context.generatedTypeDef.isOldStyle())
     s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
+    else
+      super.sourceExpressionToImmutable2(s, fieldDef, targetExpression, valueExpression);
   }
 
   @Override

@@ -74,7 +74,7 @@ public final class JavaSourceGen extends SourceGen {
     s.in(4);
     for (FieldDef f : def.fields()) {
       s.a(CR);
-      f.dataType().sourceExpressionToImmutable(s, f, "r." + f.instanceName(), "" + f.instanceName());
+      f.dataType().sourceExpressionToImmutable2(s, f, "r." + f.instanceName(), "" + f.instanceName());
       s.a(";");
     }
     s.out();
@@ -183,7 +183,7 @@ public final class JavaSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.in(4);
     for (FieldDef f : def.fields()) {
-      s.a(f.instanceName(), " = ", f.dataType().sourceExpressionToMutable("m." + f.instanceName()), ";", CR);
+      s.a(f.instanceName(), " = ", f.dataType().sourceExpressionToMutable2("m." + f.instanceName()), ";", CR);
     }
     s.out();
     return content();

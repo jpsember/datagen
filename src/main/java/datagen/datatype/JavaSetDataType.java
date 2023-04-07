@@ -27,6 +27,7 @@ package datagen.datatype;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
+import datagen.Context;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
@@ -37,8 +38,8 @@ public class JavaSetDataType extends JavaDataType {
 
   public JavaSetDataType(JavaDataType wrappedValueType) {
     mWrappedValueType = wrappedValueType;
-    setQualifiedClassName(
-        ParseTools.parseQualifiedName("java.util.Set<" + wrappedValueType.qualifiedClassName().className() +   ">", null));
+    setQualifiedClassName(ParseTools.parseQualifiedName(
+        "java.util.Set<" + wrappedValueType.qualifiedClassName().className() + ">", null));
   }
 
   public JavaDataType wrappedValueType() {
@@ -48,7 +49,7 @@ public class JavaSetDataType extends JavaDataType {
   @Override
   protected String provideTypeName() {
     QualifiedName valName = wrappedValueType().qualifiedClassName();
-    return ParseTools.PKG_SET + "<" + ParseTools.importExprWithClassName(valName)    + ">";
+    return ParseTools.PKG_SET + "<" + ParseTools.importExprWithClassName(valName) + ">";
   }
 
   @Override
@@ -62,14 +63,19 @@ public class JavaSetDataType extends JavaDataType {
    * elements are stored in the new set unchanged.
    */
   @Override
-  public String sourceExpressionToMutable(String valueExpression) {
-    return ParseTools.mutableCopyOfSet(valueExpression);
+  public String sourceExpressionToMutable2(String valueExpression) {
+    if (Context.generatedTypeDef.isOldStyle())
+      return ParseTools.mutableCopyOfList(valueExpression);
+    else
+      return super.sourceExpressionToMutable2(valueExpression);
   }
 
   @Override
-  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
+  public void sourceExpressionToImmutable2(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
-    s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
+    if (Context.generatedTypeDef.isOldStyle()) s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
+    else
+     super.sourceExpressionToImmutable2(s, fieldDef, targetExpression, valueExpression);
   }
 
   @Override
@@ -77,9 +83,8 @@ public class JavaSetDataType extends JavaDataType {
     sourceIfNotNull(s, f);
     s.a(OPEN, //
         ParseTools.PKG_JSLIST, " j = new ", ParseTools.PKG_JSLIST, "();", CR, //
-        "for (",   wrappedValueType().typeName(), " e : ",
-        f.instanceName(), ")", IN, //
-        "j.add(", wrappedValueType().sourceGenerateSerializeToObjectExpression("e"),  ");", OUT, //
+        "for (", wrappedValueType().typeName(), " e : ", f.instanceName(), ")", IN, //
+        "j.add(", wrappedValueType().sourceGenerateSerializeToObjectExpression("e"), ");", OUT, //
         "m.put(", f.nameStringConstantQualified(), ", j);", //
         CLOSE, CR);
     sourceEndIf(s);
@@ -99,8 +104,7 @@ public class JavaSetDataType extends JavaDataType {
     s.a(OPEN, //
         "JSList m2 = m.optJSList(", QUOTE, f.name(), ");", CR, //
         "if (m2 != null && !m2.isEmpty())", OPEN, //
-        "Set<",   wrappedValueType().typeName(), "> mp = new ",
-        ParseTools.PKG_HASH_SET, "<>();", CR, //
+        "Set<", wrappedValueType().typeName(), "> mp = new ", ParseTools.PKG_HASH_SET, "<>();", CR, //
         "for (Object e : m2.wrappedList())", IN, //
         "mp.add(", wrappedValueType().deserializeJsonToMapValue("e"), ");", OUT, //
         f.instanceName(), " = ", "mp", ";", CLOSE, //

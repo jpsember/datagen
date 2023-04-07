@@ -20,10 +20,10 @@ public class JavaDataType extends DataType {
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     if (f.optional() || isPrimitive()) {
       s.a(targetExpr, " = ", //
-          sourceExpressionToMutable("x"));
+          sourceExpressionToMutable2("x"));
     } else {
       s.a(targetExpr, " = ", //
-          sourceExpressionToMutable("(x == null) ? " + f.defaultValueOrNull() + " : x"));
+          sourceExpressionToMutable2("(x == null) ? " + f.defaultValueOrNull() + " : x"));
     }
     s.a(";");
   }

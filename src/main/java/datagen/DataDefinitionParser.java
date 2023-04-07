@@ -85,7 +85,8 @@ final class DataDefinitionParser extends BaseObject {
   private void prepareHandlers() {
     mHandlers = hashMap();
     mHandlers.put(EXTERN, () -> processExternalReference(ContractDataType.construct()));
-    mHandlers.put(FIELDS, () -> procDataType());
+    mHandlers.put(FIELDS, () -> procDataType(true));
+    mHandlers.put(CLASS, () -> procDataType(false));
     mHandlers.put(ENUM, () -> procEnum());
   }
 
@@ -148,10 +149,10 @@ final class DataDefinitionParser extends BaseObject {
     Context.dataTypeManager.add(qualifiedClassName.className(), dataType);
   }
 
-  private void procDataType() {
+  private void procDataType(boolean oldStyle) {
     String typeName = DataUtil.convertUnderscoresToCamelCase(
         Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
-    setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null));
+    setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null, oldStyle));
 
     Context.generatedTypeDef.setDeprecated(readIf(DEPRECATION));
     
@@ -240,7 +241,7 @@ final class DataDefinitionParser extends BaseObject {
     QualifiedName className = parseQualifiedName(enumName, packageName());
     //EnumDataType enumDataType = new EnumDataType();
     enumDataType.setQualifiedClassName(className);
-    setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType));
+    setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType, false));
 
     Context.generatedTypeDef.setDeprecated(readIf(DEPRECATION));
     

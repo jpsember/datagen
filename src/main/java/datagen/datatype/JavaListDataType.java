@@ -30,6 +30,7 @@ import static js.base.Tools.*;
 
 import java.util.List;
 
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
@@ -60,16 +61,24 @@ public class JavaListDataType extends JavaDataType {
    * Constructs a mutable copy of a list. Note that while it creates a copy of
    * the list, it doesn't create copies of its elements; the references to those
    * elements are stored in the new list unchanged.
+   * 
+   * This does not apply unless 'old style' is in effect
    */
   @Override
-  public String sourceExpressionToMutable(String valueExpression) {
-    return ParseTools.mutableCopyOfList(valueExpression);
+  public String sourceExpressionToMutable2(String valueExpression) {
+    if (Context.generatedTypeDef.isOldStyle())
+      return ParseTools.mutableCopyOfList(valueExpression);
+    else
+      return super.sourceExpressionToMutable2(valueExpression);
   }
 
   @Override
-  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
+  public void sourceExpressionToImmutable2(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
+    if (Context.generatedTypeDef.isOldStyle())
     s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
+    else
+      super.sourceExpressionToImmutable2(s, fieldDef, targetExpression, valueExpression);
   }
 
   public DataType wrappedType() {
