@@ -79,9 +79,6 @@ public final class JavaSourceGen extends SourceGen {
       if (Context.nonClassMode()) {
         f.dataType().sourceExpressionToImmutable(s, f, targetExpression, valueExpression);
       } else {
-        if (Context.debugMode()) {
-          todo("do we need debug mode code here?");
-        }
         s.a(targetExpression, " = ", valueExpression);
       }
       s.a(";");
