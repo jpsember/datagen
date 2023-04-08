@@ -904,7 +904,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void immutable() {
     p().pr(//
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "* string str_array;", CR, //
         "map string string str_map;", CR, //
         "set string str_set;", CR, //
