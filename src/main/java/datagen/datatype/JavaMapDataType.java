@@ -72,7 +72,8 @@ public class JavaMapDataType extends JavaDataType {
    */
   @Override
   public String sourceExpressionToMutable(String valueExpression) {
-    if (Context.generatedTypeDef.isOldStyle())
+    badState("not imp yet");
+      if (!Context.generatedTypeDef.classMode())
       return ParseTools.mutableCopyOfMap(valueExpression);
     else
       return super.sourceExpressionToMutable(valueExpression);
@@ -83,8 +84,12 @@ public class JavaMapDataType extends JavaDataType {
       String valueExpression) {
     if (Context.generatedTypeDef.isOldStyle())
       s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
-    else
+    else {
+      if (Context.debugMode()) {
+        todo("do we need debug mode code here?");
+      }
       super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
+    }
   }
 
   @Override

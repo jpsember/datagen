@@ -75,7 +75,7 @@ public class PythonListDataType extends PythonDataType {
    */
   @Override
   public String sourceExpressionToMutable(String valueExpression) {
-    if (Context.generatedTypeDef.isOldStyle())
+    if (!Context.generatedTypeDef.classMode())
       return valueExpression + ".copy()";
     else
       return valueExpression;

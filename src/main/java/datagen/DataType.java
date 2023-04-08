@@ -156,10 +156,11 @@ public abstract class DataType implements DefaultValueParser {
    * Per issue #33, this will only have an effect if user is defining the
    * datatype using the old 'fields' keyword.
    */
+  @Deprecated
   public String sourceExpressionToMutable(String valueExpression) {
     return valueExpression;
   }
-
+ 
   /**
    * Generate source code to convert a value to an immutable form
    *
@@ -168,6 +169,7 @@ public abstract class DataType implements DefaultValueParser {
    * Per issue #33, this will only have an effect if user is defining the
    * datatype using the old 'fields' keyword.
    */
+  @Deprecated // for refactor
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
     s.a(targetExpression, " = ", valueExpression);

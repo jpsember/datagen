@@ -69,12 +69,21 @@ public final class JavaSourceGen extends SourceGen {
   }
 
   @Override
-  protected String generateCopyFromBuilderToImmutable() {
+  protected final /* <-- for now */ String generateCopyFromBuilderToImmutable() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.in(4);
     for (FieldDef f : def.fields()) {
       s.a(CR);
-      f.dataType().sourceExpressionToImmutable(s, f, "r." + f.instanceName(), "" + f.instanceName());
+      String targetExpression = "r." + f.instanceName();
+      String valueExpression = f.instanceName();
+      if (Context.nonClassMode()) {
+        f.dataType().sourceExpressionToImmutable(s, f, targetExpression, valueExpression);
+      } else {
+        if (Context.debugMode()) {
+          todo("do we need debug mode code here?");
+        }
+        s.a(targetExpression, " = ", valueExpression);
+      }
       s.a(";");
     }
     s.out();

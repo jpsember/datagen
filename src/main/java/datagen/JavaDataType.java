@@ -18,14 +18,14 @@ public class JavaDataType extends DataType {
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+    String expr;
     if (f.optional() || isPrimitive()) {
-      s.a(targetExpr, " = ", //
-          sourceExpressionToMutable("x"));
-    } else {
-      s.a(targetExpr, " = ", //
-          sourceExpressionToMutable("(x == null) ? " + f.defaultValueOrNull() + " : x"));
-    }
-    s.a(";");
+      expr = "x";
+      } else {
+      expr = "(x == null) ? " + f.defaultValueOrNull() + " : x";
+      }
+    s.a(targetExpr, " = ",
+        sourceExpressionToMutable(expr),";");
   }
 
   /**

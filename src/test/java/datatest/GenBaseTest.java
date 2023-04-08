@@ -41,6 +41,14 @@ import js.testutil.MyTestCase;
 
 public abstract class GenBaseTest extends MyTestCase {
 
+  protected final void debug() {
+    addArg("debug");
+  }
+  
+  protected final void classMode() {
+    addArg("class_mode");
+  }
+
   protected final void compile() {
     closeCurrentDat();
     checkState(!mDatRecords.isEmpty());

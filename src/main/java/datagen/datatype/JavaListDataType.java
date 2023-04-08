@@ -66,19 +66,29 @@ public class JavaListDataType extends JavaDataType {
    */
   @Override
   public String sourceExpressionToMutable(String valueExpression) {
-    if (Context.generatedTypeDef.isOldStyle())
+    if (!Context.generatedTypeDef.classMode())
       return ParseTools.mutableCopyOfList(valueExpression);
-    else
-      return super.sourceExpressionToMutable(valueExpression);
+
+    // In debug mode, we want to ensure this is an immutable form
+    if (Context.debugMode()) {
+      todo("add DataUtil method to return an immutable copy of something if it is NOT ALREADY");
+      return PKG_DATAUTIL + ".immutableCopyOf(" + valueExpression + ")";
+    }
+
+    return super.sourceExpressionToMutable(valueExpression);
   }
 
   @Override
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
-    if (Context.generatedTypeDef.isOldStyle())
+    if (!Context.generatedTypeDef.classMode())
       s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
-    else
+    else {
+      if (Context.debugMode()) {
+        todo("do we need debug mode code here?");
+      }
       super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
+    }
   }
 
   public DataType wrappedType() {

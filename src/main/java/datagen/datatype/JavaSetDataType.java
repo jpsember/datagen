@@ -63,8 +63,10 @@ public class JavaSetDataType extends JavaDataType {
    * elements are stored in the new set unchanged.
    */
   @Override
+  @Deprecated
   public String sourceExpressionToMutable(String valueExpression) {
-    if (Context.generatedTypeDef.isOldStyle())
+    badState("not imp yet");
+    if (!Context.generatedTypeDef.classMode())
       return ParseTools.mutableCopyOfList(valueExpression);
     else
       return super.sourceExpressionToMutable(valueExpression);
@@ -73,10 +75,14 @@ public class JavaSetDataType extends JavaDataType {
   @Override
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
-    if (Context.generatedTypeDef.isOldStyle())
+    if (!Context.generatedTypeDef.classMode())
       s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
-    else
+    else {
+      if (Context.debugMode()) {
+        todo("do we need debug mode code here?");
+      }
       super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
+    }
   }
 
   @Override

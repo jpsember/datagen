@@ -44,7 +44,7 @@ public final class Context {
   public static DataTypeManager dataTypeManager;
   public static DatWithSource datWithSource;
   public static Set<File> generatedFilesSet;
-  
+
   public static void prepare(Files files, DatagenConfig config) {
     discard();
     Context.files = files;
@@ -56,6 +56,14 @@ public final class Context {
     discard();
     Context.datWithSource = entry;
     Context.dataTypeManager = new DataTypeManager();
+  }
+
+  public static boolean nonClassMode() {
+    return !generatedTypeDef.classMode();
+  }
+
+  public static boolean debugMode() {
+    return config.debug();
   }
 
   /**

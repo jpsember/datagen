@@ -46,10 +46,9 @@ import static js.base.Tools.*;
 public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
-  public void singleLineCommentOld() {
-    p().pr("// A single-line comment", CR);
-    p().pr("fields {}");
-    compile();
+  public void singleLineComment() {
+    classMode();
+    singleLineCommentOld();
   }
 
   @Test
@@ -664,7 +663,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void singleLineComment() {
+  public void singleLineCommentOld() {
     p().pr("// A single-line comment", CR);
     p().pr("class {}");
     compile();
@@ -672,22 +671,14 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void multiLineComment() {
-    p().pr("/* A multiline", CR);
-    p().pr("     comment", CR);
-    p().pr("  */   ");
-    p().pr("class {}");
-    compile();
+    classMode();
+    multiLineCommentOld();
   }
 
   @Test
   public void typeIntVarious() {
-    p().pr("class {", INDENT, //
-        "int alpha;", CR, //
-        "int beta = " + Integer.MAX_VALUE + ";", CR, //
-        "?int gamma;", CR, //
-        "?*int epsilon;", CR, //
-        OUTDENT, "}");
-    compile();
+    classMode();
+    typeIntVariousOld();
   }
 
   @Test
@@ -716,13 +707,8 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeShortVarious() {
-    p().pr("class {", INDENT, //
-        "short alpha;", CR, //
-        "short beta = " + Byte.MAX_VALUE + ";", CR, //
-        "?short gamma;", CR, //
-        "?*short epsilon;", CR, //
-        OUTDENT, "}");
-    compile();
+    classMode();
+    typeShortVariousOld();
   }
 
   @Test
@@ -762,74 +748,50 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeString() {
-    verboseNames();
-    p().pr("class {", INDENT, //
-        "string alpha;", CR, //
-        "string beta = \"hello\";", CR, //
-        "?string gamma;", CR, //
-        "*string delta;", CR, //
-        "?*string epsilon;", CR, //
-        "*string hotel = [\"abc\",\"123\"];", CR, //
-        OUTDENT, "}");
-    compile();
+    classMode();
+    typeStringOld();
   }
 
   @Test
   public void typeBool() {
-    p().pr("class {", INDENT, //
-        "bool alpha;", CR, //
-        "bool beta = true;", CR, //
-        "?bool gamma;", CR, //
-        OUTDENT, "}");
-    compile();
+    classMode();
+    typeBoolOld();
   }
 
   @Test
   public void external() {
-    p().pr("extern abc.xyz.Beaver;", CR, //
-        "class {", INDENT, //
-        "Beaver busy;", CR, //
-        "?Beaver opt;", CR, //
-        OUTDENT, "}");
-    compile();
+    classMode();
+    externalOld();
   }
 
   @Test
   public void externalList() {
-    p().pr("extern abc.xyz.Beaver;", CR, //
-        "class {", INDENT, //
-        "*Beaver mult;", CR, //
-        OUTDENT, "}");
-    compile();
+    classMode();
+    externalListOld();
   }
 
   @Test
   public void external2() {
-    p().pr( // This one omits the 'extern' line, so it assumes the same package
-        "class {", INDENT, //
-        "Beaver busy;", CR, //
-        "?Beaver opt;", CR, //
-        OUTDENT, "}");
-    generateDummyDatFile("Beaver");
-    compile();
+    classMode();
+    external2Old();
   }
 
   @Test
   public void externalRepeated() {
-    p().pr("extern abc.xyz.Beaver;", CR, //
-        "class {", INDENT, //
-        "*Beaver busy;", OUTDENT, //
-        "}");
-    compile();
+    classMode();
+    externalRepeatedOld();
+  }
+
+  @Test
+  public void externalRepeatedDebug() {
+    debug();
+    externalRepeated();
   }
 
   @Test
   public void listOpt() {
-    p().pr("extern abc.xyz.Beaver;", CR, //
-        "class {", INDENT, //
-        "?*Beaver busy;", OUTDENT, //
-        "}");
-    compile();
+    classMode();
+    listOptOld();
   }
 
   @Test
@@ -846,24 +808,14 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void optComments() {
-    addArg("comments");
-    p().pr("class {", INDENT, //
-        "File alpha;", CR, //
-        "int beta;", CR, //
-        OUTDENT, "}");
-    compile();
+    classMode();
+    optCommentsOld();
   }
 
   @Test
   public void builtIn() {
-    p().pr("class {", INDENT, //
-        "IPoint location;", CR, //
-        "IRect x;", CR, //
-        "FPoint floc;", CR, //
-        "FRect frect;", CR, //
-        "Matrix mat;", CR, //
-        OUTDENT, "}");
-    compile();
+    classMode();
+    builtInOld();
   }
 
   @Test
@@ -890,30 +842,20 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void qualifiedReference() {
-    p().pr("class {", INDENT, //
-        "foo.gen.MongoParams mongo_params;", CR, //
-        OUTDENT, "}");
-    compile();
+    classMode();
+    qualifiedReferenceOld();
   }
 
   @Test
   public void implicitEnumReference() {
-    p().pr("class {", INDENT, //
-        "enum foo.gen.MongoEnum val;", CR, //
-        OUTDENT, "}");
-    compile();
+    classMode();
+    implicitEnumReferenceOld();
   }
 
   @Test
   public void ipoints() {
-    p().pr("class {", INDENT, //
-        "IPoint a;", CR, //
-        "?IPoint b;", CR, //
-        "*IPoint c;", CR, //
-        "?*IPoint d;", CR, //
-        "IPoint e = [32,64];", CR, //
-        OUTDENT, "}");
-    compile();
+    classMode();
+    ipointsOld();
   }
 
   @Test
@@ -930,35 +872,20 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeBoxedValues() {
-    p().pr("extern abc.xyz.Beaver;", CR, //
-        "class {", INDENT, //
-        "map string long name_map;", CR, //
-        "set long ages_set;", CR, //
-        OUTDENT, "}");
-    compile();
+    classMode();
+    typeBoxedValuesOld();
   }
 
   @Test
   public void typeSetVarious() {
-    p().pr("extern abc.xyz.Beaver;", CR, //
-        "class {", INDENT, //
-        "set File alpha;", CR, //
-        "?set File beta;", CR, //
-        "set Beaver gamma;", CR, //
-        "set string delta;", CR, //
-        OUTDENT, "}");
-    compile();
+    classMode();
+    typeSetVariousOld();
   }
 
   @Test
   public void deprecations() {
-    p().pr("class {", INDENT, //
-        "-int alpha;", CR, //
-        "int beta = " + Integer.MAX_VALUE + ";", CR, //
-        "-?int gamma;", CR, //
-        "-?*int epsilon;", CR, //
-        OUTDENT, "}");
-    compile();
+    classMode();
+    deprecationsOld();
   }
 
 }
