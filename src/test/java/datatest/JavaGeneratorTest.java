@@ -765,6 +765,12 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
+  public void externalListDebug() {
+    debug();
+    externalList();
+  }
+
+  @Test
   public void externalList() {
     classMode();
     externalListOld();
