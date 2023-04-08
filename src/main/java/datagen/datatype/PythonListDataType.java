@@ -84,7 +84,7 @@ public class PythonListDataType extends PythonDataType {
   @Override
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
-    if (Context.generatedTypeDef.isOldStyle()) {
+    if (!Context.generatedTypeDef.classMode()) {
       if (fieldDef.optional()) {
         s.a("x = ", valueExpression, CR);
         s.a(targetExpression, " = x if x is None else x.copy()", CR);

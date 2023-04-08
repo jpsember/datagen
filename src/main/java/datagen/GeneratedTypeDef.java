@@ -79,14 +79,10 @@ public final class GeneratedTypeDef extends BaseObject {
     return mEnumDataType != null;
   }
 
-  @Deprecated
-  public boolean isOldStyle() {
-    return !classMode();
+  public boolean classMode() {
+    return mClassMode;
   }
 
-  public boolean classMode() {return mClassMode;
-  }
-  
   /**
    * Get EnumDataType for this type (must be an enum)
    */

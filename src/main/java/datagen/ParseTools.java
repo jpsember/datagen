@@ -292,33 +292,28 @@ public final class ParseTools {
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 
-  @Deprecated // for refactoring
   public static final String immutableCopyOfList(String expr) {
-    checkState(Context.generatedTypeDef.isOldStyle());
+    checkState(!Context.generatedTypeDef.classMode());
     return PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
   }
 
-  @Deprecated
   public static final String mutableCopyOfList(String expr) {
-    checkState(Context.generatedTypeDef.isOldStyle());
+    checkState(!Context.generatedTypeDef.classMode());
     return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
   }
 
-  @Deprecated
- public static final String mutableCopyOfMap(String expr) {
-    checkState(Context.generatedTypeDef.isOldStyle());
+  public static final String mutableCopyOfMap(String expr) {
+    checkState(!Context.generatedTypeDef.classMode());
     return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
   }
 
-  @Deprecated
-public static final String immutableCopyOfMap(String expr) {
-    checkState(Context.generatedTypeDef.isOldStyle());
-    return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
+  public static final String immutableCopyOfMap(String expr) {
+    checkState(!Context.generatedTypeDef.classMode());
+    return PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
   }
 
-  @Deprecated
-public static final String mutableCopyOfSet(String expr) {
-    checkState(Context.generatedTypeDef.isOldStyle());
+  public static final String mutableCopyOfSet(String expr) {
+    checkState(!Context.generatedTypeDef.classMode());
     return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
   }
 

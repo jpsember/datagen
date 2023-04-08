@@ -24,6 +24,7 @@
  **/
 package datagen.datatype;
 
+import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
@@ -65,11 +66,15 @@ public class JavaSetDataType extends JavaDataType {
   @Override
   @Deprecated
   public String sourceExpressionToMutable(String valueExpression) {
-    badState("not imp yet");
     if (!Context.generatedTypeDef.classMode())
       return ParseTools.mutableCopyOfList(valueExpression);
-    else
-      return super.sourceExpressionToMutable(valueExpression);
+
+    // In debug mode, we want to ensure this is an immutable form
+    if (Context.debugMode()) {
+      return PKG_DATAUTIL + ".immutableCopyOf(" + valueExpression + ")";
+    }
+
+    return super.sourceExpressionToMutable(valueExpression);
   }
 
   @Override

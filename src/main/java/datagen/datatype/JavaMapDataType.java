@@ -24,6 +24,7 @@
  **/
 package datagen.datatype;
 
+import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
@@ -72,17 +73,20 @@ public class JavaMapDataType extends JavaDataType {
    */
   @Override
   public String sourceExpressionToMutable(String valueExpression) {
-    badState("not imp yet");
-      if (!Context.generatedTypeDef.classMode())
+    if (!Context.generatedTypeDef.classMode())
       return ParseTools.mutableCopyOfMap(valueExpression);
-    else
-      return super.sourceExpressionToMutable(valueExpression);
+
+    // In debug mode, we want to ensure this is an immutable form
+    if (Context.debugMode()) {
+      return PKG_DATAUTIL + ".immutableCopyOf(" + valueExpression + ")";
+    }
+    return super.sourceExpressionToMutable(valueExpression);
   }
 
   @Override
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
-    if (Context.generatedTypeDef.isOldStyle())
+    if (!Context.generatedTypeDef.classMode())  
       s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
     else {
       if (Context.debugMode()) {

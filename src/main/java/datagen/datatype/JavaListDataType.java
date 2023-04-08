@@ -68,13 +68,10 @@ public class JavaListDataType extends JavaDataType {
   public String sourceExpressionToMutable(String valueExpression) {
     if (!Context.generatedTypeDef.classMode())
       return ParseTools.mutableCopyOfList(valueExpression);
-
     // In debug mode, we want to ensure this is an immutable form
     if (Context.debugMode()) {
-      todo("add DataUtil method to return an immutable copy of something if it is NOT ALREADY");
       return PKG_DATAUTIL + ".immutableCopyOf(" + valueExpression + ")";
     }
-
     return super.sourceExpressionToMutable(valueExpression);
   }
 
