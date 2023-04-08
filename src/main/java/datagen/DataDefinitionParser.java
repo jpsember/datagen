@@ -85,8 +85,8 @@ final class DataDefinitionParser extends BaseObject {
   private void prepareHandlers() {
     mHandlers = hashMap();
     mHandlers.put(EXTERN, () -> processExternalReference(ContractDataType.construct()));
-    mHandlers.put(FIELDS, () -> procDataType(true));
-    mHandlers.put(CLASS, () -> procDataType(false));
+    mHandlers.put(FIELDS, () -> procDataType(false));
+    mHandlers.put(CLASS, () -> procDataType(true));
     mHandlers.put(ENUM, () -> procEnum());
   }
 
@@ -151,8 +151,10 @@ final class DataDefinitionParser extends BaseObject {
 
   private static boolean sOldStyleWarningIssued;
 
-  private void procDataType(boolean oldStyle) {
-    if (oldStyle) {
+  private void procDataType(boolean classMode) {
+    if (Context.config.classMode())
+      classMode = true;
+    if (!classMode) {
       if (!sOldStyleWarningIssued && !testMode()) {
         sOldStyleWarningIssued = true;
         pr("Generating older version of source code; recommend using 'class' keyword instead of 'fields'...");
@@ -161,7 +163,7 @@ final class DataDefinitionParser extends BaseObject {
 
     String typeName = DataUtil.convertUnderscoresToCamelCase(
         Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
-    setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null, oldStyle));
+    setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null, classMode));
 
     Context.generatedTypeDef.setDeprecated(readIf(DEPRECATION));
 

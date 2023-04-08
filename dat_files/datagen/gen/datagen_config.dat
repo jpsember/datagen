@@ -21,4 +21,12 @@ fields {
   // Produce verbose internal names in generated source files
   //
   bool verbose_names;
+
+  // Use new 'class' code generation instead of 'fields' (issue #33)
+  //
+  bool class_mode;
+
+  // Add debug checks
+  //
+  bool debug;
 }
