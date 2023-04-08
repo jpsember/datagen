@@ -116,31 +116,31 @@ public class SampleDataType implements AbstractData {
     return new Builder(this);
   }
 
-  protected static final String _0 = "b1";
-  protected static final String _1 = "b2";
-  protected static final String _2 = "b3";
-  protected static final String _3 = "b4";
-  protected static final String _4 = "s1";
-  protected static final String _5 = "s2";
-  protected static final String _6 = "s3";
-  protected static final String _7 = "s4";
-  protected static final String _8 = "i1";
-  protected static final String _9 = "i2";
-  protected static final String _10 = "i3";
-  protected static final String _11 = "i4";
-  protected static final String _12 = "l1";
-  protected static final String _13 = "l2";
-  protected static final String _14 = "l3";
-  protected static final String _15 = "l4";
-  protected static final String _16 = "f1";
-  protected static final String _17 = "f2";
-  protected static final String _18 = "f3";
-  protected static final String _19 = "f4";
-  protected static final String _20 = "d1";
-  protected static final String _21 = "d2";
-  protected static final String _22 = "d3";
-  protected static final String _23 = "d4";
-  protected static final String _24 = "s";
+  protected static final String B1 = "b1";
+  protected static final String B2 = "b2";
+  protected static final String B3 = "b3";
+  protected static final String B4 = "b4";
+  protected static final String S1 = "s1";
+  protected static final String S2 = "s2";
+  protected static final String S3 = "s3";
+  protected static final String S4 = "s4";
+  protected static final String I1 = "i1";
+  protected static final String I2 = "i2";
+  protected static final String I3 = "i3";
+  protected static final String I4 = "i4";
+  protected static final String L1 = "l1";
+  protected static final String L2 = "l2";
+  protected static final String L3 = "l3";
+  protected static final String L4 = "l4";
+  protected static final String F1 = "f1";
+  protected static final String F2 = "f2";
+  protected static final String F3 = "f3";
+  protected static final String F4 = "f4";
+  protected static final String D1 = "d1";
+  protected static final String D2 = "d2";
+  protected static final String D3 = "d3";
+  protected static final String D4 = "d4";
+  protected static final String S = "s";
 
   @Override
   public String toString() {
@@ -150,59 +150,59 @@ public class SampleDataType implements AbstractData {
   @Override
   public JSMap toJson() {
     JSMap m = new JSMap();
-    m.putUnsafe(_0, mB1);
+    m.putUnsafe(B1, mB1);
     if (mB2 != null) {
-      m.putUnsafe(_1, mB2);
+      m.putUnsafe(B2, mB2);
     }
-    m.putUnsafe(_2, DataUtil.encodeBase64Maybe(mB3));
+    m.putUnsafe(B3, DataUtil.encodeBase64Maybe(mB3));
     if (mB4 != null) {
-      m.putUnsafe(_3, DataUtil.encodeBase64Maybe(mB4));
+      m.putUnsafe(B4, DataUtil.encodeBase64Maybe(mB4));
     }
-    m.putUnsafe(_4, mS1);
+    m.putUnsafe(S1, mS1);
     if (mS2 != null) {
-      m.putUnsafe(_5, mS2);
+      m.putUnsafe(S2, mS2);
     }
-    m.putUnsafe(_6, DataUtil.encodeBase64Maybe(mS3));
+    m.putUnsafe(S3, DataUtil.encodeBase64Maybe(mS3));
     if (mS4 != null) {
-      m.putUnsafe(_7, DataUtil.encodeBase64Maybe(mS4));
+      m.putUnsafe(S4, DataUtil.encodeBase64Maybe(mS4));
     }
-    m.putUnsafe(_8, mI1);
+    m.putUnsafe(I1, mI1);
     if (mI2 != null) {
-      m.putUnsafe(_9, mI2);
+      m.putUnsafe(I2, mI2);
     }
-    m.putUnsafe(_10, DataUtil.encodeBase64Maybe(mI3));
+    m.putUnsafe(I3, DataUtil.encodeBase64Maybe(mI3));
     if (mI4 != null) {
-      m.putUnsafe(_11, DataUtil.encodeBase64Maybe(mI4));
+      m.putUnsafe(I4, DataUtil.encodeBase64Maybe(mI4));
     }
-    m.putUnsafe(_12, mL1);
+    m.putUnsafe(L1, mL1);
     if (mL2 != null) {
-      m.putUnsafe(_13, mL2);
+      m.putUnsafe(L2, mL2);
     }
-    m.putUnsafe(_14, DataUtil.encodeBase64Maybe(mL3));
+    m.putUnsafe(L3, DataUtil.encodeBase64Maybe(mL3));
     if (mL4 != null) {
-      m.putUnsafe(_15, DataUtil.encodeBase64Maybe(mL4));
+      m.putUnsafe(L4, DataUtil.encodeBase64Maybe(mL4));
     }
-    m.putUnsafe(_16, mF1);
+    m.putUnsafe(F1, mF1);
     if (mF2 != null) {
-      m.putUnsafe(_17, mF2);
+      m.putUnsafe(F2, mF2);
     }
-    m.putUnsafe(_18, DataUtil.encodeBase64Maybe(mF3));
+    m.putUnsafe(F3, DataUtil.encodeBase64Maybe(mF3));
     if (mF4 != null) {
-      m.putUnsafe(_19, DataUtil.encodeBase64Maybe(mF4));
+      m.putUnsafe(F4, DataUtil.encodeBase64Maybe(mF4));
     }
-    m.putUnsafe(_20, mD1);
+    m.putUnsafe(D1, mD1);
     if (mD2 != null) {
-      m.putUnsafe(_21, mD2);
+      m.putUnsafe(D2, mD2);
     }
-    m.putUnsafe(_22, DataUtil.encodeBase64Maybe(mD3));
+    m.putUnsafe(D3, DataUtil.encodeBase64Maybe(mD3));
     if (mD4 != null) {
-      m.putUnsafe(_23, DataUtil.encodeBase64Maybe(mD4));
+      m.putUnsafe(D4, DataUtil.encodeBase64Maybe(mD4));
     }
     {
       JSList j = new JSList();
       for (File e : mS)
         j.add(e.toString());
-      m.put(_24, j);
+      m.put(S, j);
     }
     return m;
   }
@@ -218,92 +218,92 @@ public class SampleDataType implements AbstractData {
   }
 
   private SampleDataType(JSMap m) {
-    mB1 = m.opt(_0, (byte) 0);
-    mB2 = m.optByte(_1);
+    mB1 = m.opt(B1, (byte) 0);
+    mB2 = m.optByte(B2);
     {
       mB3 = DataUtil.EMPTY_BYTE_ARRAY;
-      Object x = m.optUnsafe(_2);
+      Object x = m.optUnsafe(B3);
       if (x != null) {
         mB3 = DataUtil.parseBytesFromArrayOrBase64(x);
       }
     }
     {
-      Object x = m.optUnsafe(_3);
+      Object x = m.optUnsafe(B4);
       if (x != null) {
         mB4 = DataUtil.parseBytesFromArrayOrBase64(x);
       }
     }
-    mS1 = m.opt(_4, (short) 0);
-    mS2 = m.optShort(_5);
+    mS1 = m.opt(S1, (short) 0);
+    mS2 = m.optShort(S2);
     {
       mS3 = DataUtil.EMPTY_SHORT_ARRAY;
-      Object x = m.optUnsafe(_6);
+      Object x = m.optUnsafe(S3);
       if (x != null) {
         mS3 = DataUtil.parseShortsFromArrayOrBase64(x);
       }
     }
     {
-      Object x = m.optUnsafe(_7);
+      Object x = m.optUnsafe(S4);
       if (x != null) {
         mS4 = DataUtil.parseShortsFromArrayOrBase64(x);
       }
     }
-    mI1 = m.opt(_8, 0);
-    mI2 = m.optInt(_9);
+    mI1 = m.opt(I1, 0);
+    mI2 = m.optInt(I2);
     {
       mI3 = DataUtil.EMPTY_INT_ARRAY;
-      Object x = m.optUnsafe(_10);
+      Object x = m.optUnsafe(I3);
       if (x != null) {
         mI3 = DataUtil.parseIntsFromArrayOrBase64(x);
       }
     }
     {
-      Object x = m.optUnsafe(_11);
+      Object x = m.optUnsafe(I4);
       if (x != null) {
         mI4 = DataUtil.parseIntsFromArrayOrBase64(x);
       }
     }
-    mL1 = m.opt(_12, 0L);
-    mL2 = m.optLong(_13);
+    mL1 = m.opt(L1, 0L);
+    mL2 = m.optLong(L2);
     {
       mL3 = DataUtil.EMPTY_LONG_ARRAY;
-      Object x = m.optUnsafe(_14);
+      Object x = m.optUnsafe(L3);
       if (x != null) {
         mL3 = DataUtil.parseLongsFromArrayOrBase64(x);
       }
     }
     {
-      Object x = m.optUnsafe(_15);
+      Object x = m.optUnsafe(L4);
       if (x != null) {
         mL4 = DataUtil.parseLongsFromArrayOrBase64(x);
       }
     }
-    mF1 = m.opt(_16, 0f);
-    mF2 = m.optFloat(_17);
+    mF1 = m.opt(F1, 0f);
+    mF2 = m.optFloat(F2);
     {
       mF3 = DataUtil.EMPTY_FLOAT_ARRAY;
-      Object x = m.optUnsafe(_18);
+      Object x = m.optUnsafe(F3);
       if (x != null) {
         mF3 = DataUtil.parseFloatsFromArrayOrBase64(x);
       }
     }
     {
-      Object x = m.optUnsafe(_19);
+      Object x = m.optUnsafe(F4);
       if (x != null) {
         mF4 = DataUtil.parseFloatsFromArrayOrBase64(x);
       }
     }
-    mD1 = m.opt(_20, 0.0);
-    mD2 = m.optDouble(_21);
+    mD1 = m.opt(D1, 0.0);
+    mD2 = m.optDouble(D2);
     {
       mD3 = DataUtil.EMPTY_DOUBLE_ARRAY;
-      Object x = m.optUnsafe(_22);
+      Object x = m.optUnsafe(D3);
       if (x != null) {
         mD3 = DataUtil.parseDoublesFromArrayOrBase64(x);
       }
     }
     {
-      Object x = m.optUnsafe(_23);
+      Object x = m.optUnsafe(D4);
       if (x != null) {
         mD4 = DataUtil.parseDoublesFromArrayOrBase64(x);
       }
@@ -549,7 +549,7 @@ public class SampleDataType implements AbstractData {
       mD2 = m.mD2;
       mD3 = m.mD3;
       mD4 = m.mD4;
-      mS = DataUtil.mutableCopyOf(m.mS);
+      mS = m.mS;
     }
 
     @Override
@@ -590,7 +590,7 @@ public class SampleDataType implements AbstractData {
       r.mD2 = mD2;
       r.mD3 = mD3;
       r.mD4 = mD4;
-      r.mS = DataUtil.mutableCopyOf(mS);
+      r.mS = mS;
       return r;
     }
 
@@ -715,7 +715,7 @@ public class SampleDataType implements AbstractData {
     }
 
     public Builder s(Set<File> x) {
-      mS = DataUtil.mutableCopyOf((x == null) ? DataUtil.emptySet() : x);
+      mS = (x == null) ? DataUtil.emptySet() : x;
       return this;
     }
 

@@ -1,4 +1,4 @@
-fields {
+class {
   // Path to .dat file, relative to datagen_config.dat_path
   //
   string dat_rel_path;

@@ -55,6 +55,10 @@ public class DatagenConfig implements AbstractData {
     return mDebug;
   }
 
+  public boolean quietMode() {
+    return mQuietMode;
+  }
+
   @Override
   public Builder toBuilder() {
     return new Builder(this);
@@ -72,6 +76,7 @@ public class DatagenConfig implements AbstractData {
   protected static final String VERBOSE_NAMES = "verbose_names";
   protected static final String CLASS_MODE = "class_mode";
   protected static final String DEBUG = "debug";
+  protected static final String QUIET_MODE = "quiet_mode";
 
   @Override
   public String toString() {
@@ -93,6 +98,7 @@ public class DatagenConfig implements AbstractData {
     m.putUnsafe(VERBOSE_NAMES, mVerboseNames);
     m.putUnsafe(CLASS_MODE, mClassMode);
     m.putUnsafe(DEBUG, mDebug);
+    m.putUnsafe(QUIET_MODE, mQuietMode);
     return m;
   }
 
@@ -146,6 +152,7 @@ public class DatagenConfig implements AbstractData {
     mVerboseNames = m.opt(VERBOSE_NAMES, false);
     mClassMode = m.opt(CLASS_MODE, false);
     mDebug = m.opt(DEBUG, false);
+    mQuietMode = m.opt(QUIET_MODE, false);
   }
 
   public static Builder newBuilder() {
@@ -185,6 +192,8 @@ public class DatagenConfig implements AbstractData {
       return false;
     if (!(mDebug == other.mDebug))
       return false;
+    if (!(mQuietMode == other.mQuietMode))
+      return false;
     return true;
   }
 
@@ -205,6 +214,7 @@ public class DatagenConfig implements AbstractData {
       r = r * 37 + (mVerboseNames ? 1 : 0);
       r = r * 37 + (mClassMode ? 1 : 0);
       r = r * 37 + (mDebug ? 1 : 0);
+      r = r * 37 + (mQuietMode ? 1 : 0);
       m__hashcode = r;
     }
     return r;
@@ -222,6 +232,7 @@ public class DatagenConfig implements AbstractData {
   protected boolean mVerboseNames;
   protected boolean mClassMode;
   protected boolean mDebug;
+  protected boolean mQuietMode;
   protected int m__hashcode;
 
   public static final class Builder extends DatagenConfig {
@@ -239,6 +250,7 @@ public class DatagenConfig implements AbstractData {
       mVerboseNames = m.mVerboseNames;
       mClassMode = m.mClassMode;
       mDebug = m.mDebug;
+      mQuietMode = m.mQuietMode;
     }
 
     @Override
@@ -267,6 +279,7 @@ public class DatagenConfig implements AbstractData {
       r.mVerboseNames = mVerboseNames;
       r.mClassMode = mClassMode;
       r.mDebug = mDebug;
+      r.mQuietMode = mQuietMode;
       return r;
     }
 
@@ -327,6 +340,11 @@ public class DatagenConfig implements AbstractData {
 
     public Builder debug(boolean x) {
       mDebug = x;
+      return this;
+    }
+
+    public Builder quietMode(boolean x) {
+      mQuietMode = x;
       return this;
     }
 

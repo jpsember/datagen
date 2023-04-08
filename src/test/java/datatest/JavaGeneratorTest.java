@@ -874,7 +874,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeBoxedValuesOld() {
-    p().pr("extern abc.xyz.Beaver;", CR, //
+    p().pr(//
         "fields {", INDENT, //
         "* string name_list;", CR, //
         "map string long name_map;", CR, //

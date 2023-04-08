@@ -1,4 +1,4 @@
-fields {
+class {
   string name;
   bool enum_flag;
 }

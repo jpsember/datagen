@@ -77,8 +77,10 @@ final class DataDefinitionParser extends BaseObject {
     if (!summary.isEmpty()) {
       if (Context.config.treatWarningsAsErrors()) {
         throw badArg(summary);
-      } else
-        pr(summary);
+      } else {
+        if (!Context.config.quietMode())
+          pr(summary);
+      }
     }
   }
 

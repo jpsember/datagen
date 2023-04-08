@@ -2,7 +2,7 @@
 // also used in some unit tests that require a data type with fields of various types;
 //
 
-fields {
+class {
 
   byte b1;
   ?byte b2;

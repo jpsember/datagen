@@ -1,10 +1,8 @@
-enum Language;
-
-fields {
+class {
   File start_dir;
   File dat_path = "dat_files";
 
-  Language language;
+  enum Language language;
   File source_path;
   bool clean;
   bool delete_old;
@@ -29,4 +27,8 @@ fields {
   // Add debug checks
   //
   bool debug;
+
+  // Suppress some output (to quiet unit tests)
+  //
+  bool quiet_mode;
 }

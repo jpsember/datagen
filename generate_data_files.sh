@@ -4,4 +4,4 @@ set -eu
 # Generates data classes, with specific options
 #
 
-datagen clean comments
+datagen clean
