@@ -118,10 +118,12 @@ public class JavaSetDataType extends JavaDataType {
         "if (m2 != null && !m2.isEmpty())", OPEN, //
         "Set<", wrappedValueType().typeName(), "> mp = new ", ParseTools.PKG_HASH_SET, "<>();", CR, //
         "for (Object e : m2.wrappedList())", IN, //
-        "mp.add(", wrappedValueType().deserializeJsonToMapValue("e"), ");", OUT, //
-        f.instanceName(), " = ", "mp", ";", CLOSE, //
+        "mp.add(", wrappedValueType().deserializeJsonToMapValue("e"), ");", OUT);
+    String expr = "mp";
+    if (Context.debugClassMode())
+      expr = ParseTools.immutableCopyOfMap(expr);
+    s.a(f.instanceName(), " = ", expr, ";", CLOSE, //
         CLOSE);
-
     s.close();
   }
 

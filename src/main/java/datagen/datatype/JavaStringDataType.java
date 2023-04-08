@@ -27,8 +27,10 @@ package datagen.datatype;
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
+import datagen.Context;
 import datagen.FieldDef;
 import datagen.JavaDataType;
+import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
@@ -62,8 +64,11 @@ public final class JavaStringDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a(f.instanceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(", f.nameStringConstantQualified(),
-        "), ", f.optional(), ");", CR);
+    String expr = PKG_DATAUTIL + ".parseListOfObjects(m.optJSList(" + f.nameStringConstantQualified() + "), "
+        + f.optional() + ")";
+    if (Context.debugMode())
+      expr = ParseTools.immutableCopyOfList(expr);
+    s.a(f.instanceName(), " = ", expr, ";", CR);
   }
 
   @Override

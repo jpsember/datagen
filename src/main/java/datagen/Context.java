@@ -66,6 +66,10 @@ public final class Context {
     return config.debug();
   }
 
+  public static boolean debugClassMode() {
+    return generatedTypeDef.classMode() && debugMode();
+  }
+
   /**
    * Discard some old elements
    */

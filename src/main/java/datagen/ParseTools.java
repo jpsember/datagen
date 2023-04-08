@@ -293,7 +293,6 @@ public final class ParseTools {
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 
   public static final String immutableCopyOfList(String expr) {
-    checkState(!Context.generatedTypeDef.classMode());
     return PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
   }
 
@@ -308,7 +307,6 @@ public final class ParseTools {
   }
 
   public static final String immutableCopyOfMap(String expr) {
-    checkState(!Context.generatedTypeDef.classMode());
     return PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
   }
 

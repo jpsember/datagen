@@ -86,7 +86,7 @@ public class JavaMapDataType extends JavaDataType {
   @Override
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
-    if (!Context.generatedTypeDef.classMode())  
+    if (!Context.generatedTypeDef.classMode())
       s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
     else {
       if (Context.debugMode()) {
@@ -128,8 +128,12 @@ public class JavaMapDataType extends JavaDataType {
         ParseTools.PKG_CONCURRENT_MAP, "<>();", CR, //
         "for (Map.Entry<String, Object> e : m2.wrappedMap().entrySet())", IN, //
         "mp.put(", wrappedKeyType().deserializeStringToMapKey("e.getKey()"), ", ",
-        wrappedValueType().deserializeJsonToMapValue("e.getValue()"), ");", OUT, //
-        f.instanceName(), " = ", "mp", ";", CLOSE, //
+        wrappedValueType().deserializeJsonToMapValue("e.getValue()"), ");", OUT //
+    );
+    String expr = "mp";
+    if (Context.debugClassMode())
+      expr = ParseTools.immutableCopyOfMap(expr);
+    s.a(f.instanceName(), " = ", expr, ";", CLOSE, //
         CLOSE);
 
     s.close();

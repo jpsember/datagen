@@ -111,7 +111,7 @@ public class JavaListDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    wrappedType().sourceDeserializeFromList(s, f);
+     wrappedType().sourceDeserializeFromList(s, f);
   }
 
   @Override
