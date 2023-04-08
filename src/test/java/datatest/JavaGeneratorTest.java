@@ -901,4 +901,21 @@ public class JavaGeneratorTest extends GenBaseTest {
     deprecationsOld();
   }
 
+  @Test
+  public void immutable() {
+    p().pr(//
+        "fields {", INDENT, //
+        "* string str_array;", CR, //
+        "map string string str_map;", CR, //
+        "set string str_set;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void immutableDebug() {
+    debug();
+    immutable();
+  }
+
 }
