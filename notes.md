@@ -75,3 +75,37 @@ fields {
   File python_source_path;
 }
 ```
+
+## Fields and immutability
+
+We think of the 'built' data type instances as being immutable, or in other words, as having immutable fields - a caller cannot change a field's value.
+
+In practice, this has some gotchas:
+
++ Primitive arrays
+  ```
+  int[] a;
+  ```
+  The reference `a` cannot be changed (it cannot be made to point to a different array), but its elements *can* be changed.
+
++ Lists, Maps, Sets
+
+  Consider a list:
+  ```
+  List<String> a;
+  ```
+  The reference `a` cannot be changed, but the size and contents of `a` *can* be changed. Maps and sets have the same quality as lists here.
+
++ Java Objects
+  ```
+  Foo a;
+  ```
+  The reference `a` cannot be changed; but fields of `a` can be changed if class `Foo` has methods (or public fields) that allow this.
+
+We support a `debug` mode, where the code is modified to try to catch errors in client code.  Errors that it will attempt to catch include:
+
++ getting a list L from an immutable data object X, then later modifying L (and modifying X unintentionally)
++ passing a list L as an argument to a builder Y's setter, and later modifying L (unintentionally modifying Y)
+
+I don't see a practical way to enforce these constraints (i.e. throwing an exception if they are violated), so I may abandon further work on the `debug` mode.
+
