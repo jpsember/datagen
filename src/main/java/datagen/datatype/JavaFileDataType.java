@@ -90,10 +90,7 @@ public final class JavaFileDataType extends JavaDataType {
     if (!Context.generatedTypeDef.classMode())
       s.a(f.instanceName(), " = ", ParseTools.immutableCopyOfList("result"), ";");
     else {
-      if (Context.debugMode()) {
-        todo("do we need debug mode code here?");
-      }
-      s.a(f.instanceName(), " = ", "result", ";");
+      s.a(f.instanceName(), " = result;");
     }
     sourceEndIf(s);
   }

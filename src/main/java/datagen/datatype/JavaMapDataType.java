@@ -24,7 +24,6 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
@@ -75,11 +74,6 @@ public class JavaMapDataType extends JavaDataType {
   public String sourceExpressionToMutable(String valueExpression) {
     if (!Context.generatedTypeDef.classMode())
       return ParseTools.mutableCopyOfMap(valueExpression);
-
-    // In debug mode, we want to ensure this is an immutable form
-    if (Context.debugMode()) {
-      return PKG_DATAUTIL + ".immutableCopyOf(" + valueExpression + ")";
-    }
     return super.sourceExpressionToMutable(valueExpression);
   }
 
@@ -89,9 +83,6 @@ public class JavaMapDataType extends JavaDataType {
     if (!Context.generatedTypeDef.classMode())
       s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
     else {
-      if (Context.debugMode()) {
-        todo("do we need debug mode code here?");
-      }
       super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
     }
   }
@@ -130,10 +121,7 @@ public class JavaMapDataType extends JavaDataType {
         "mp.put(", wrappedKeyType().deserializeStringToMapKey("e.getKey()"), ", ",
         wrappedValueType().deserializeJsonToMapValue("e.getValue()"), ");", OUT //
     );
-    String expr = "mp";
-    if (Context.debugClassMode())
-      expr = ParseTools.immutableCopyOfMap(expr);
-    s.a(f.instanceName(), " = ", expr, ";", CLOSE, //
+    s.a(f.instanceName(), " = mp;", CLOSE, //
         CLOSE);
 
     s.close();

@@ -24,7 +24,6 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
@@ -64,16 +63,9 @@ public class JavaSetDataType extends JavaDataType {
    * elements are stored in the new set unchanged.
    */
   @Override
-  @Deprecated
   public String sourceExpressionToMutable(String valueExpression) {
     if (!Context.generatedTypeDef.classMode())
-      return ParseTools.mutableCopyOfList(valueExpression);
-
-    // In debug mode, we want to ensure this is an immutable form
-    if (Context.debugMode()) {
-      return PKG_DATAUTIL + ".immutableCopyOf(" + valueExpression + ")";
-    }
-
+      return ParseTools.mutableCopyOfSet(valueExpression);
     return super.sourceExpressionToMutable(valueExpression);
   }
 
@@ -81,11 +73,8 @@ public class JavaSetDataType extends JavaDataType {
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
     if (!Context.generatedTypeDef.classMode())
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
+      s.a(targetExpression, " = ", ParseTools.immutableCopyOfSet(valueExpression));
     else {
-      if (Context.debugMode()) {
-        todo("do we need debug mode code here?");
-      }
       super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
     }
   }
@@ -119,10 +108,7 @@ public class JavaSetDataType extends JavaDataType {
         "Set<", wrappedValueType().typeName(), "> mp = new ", ParseTools.PKG_HASH_SET, "<>();", CR, //
         "for (Object e : m2.wrappedList())", IN, //
         "mp.add(", wrappedValueType().deserializeJsonToMapValue("e"), ");", OUT);
-    String expr = "mp";
-    if (Context.debugClassMode())
-      expr = ParseTools.immutableCopyOfMap(expr);
-    s.a(f.instanceName(), " = ", expr, ";", CLOSE, //
+    s.a(f.instanceName(), " = mp;", CLOSE, //
         CLOSE);
     s.close();
   }

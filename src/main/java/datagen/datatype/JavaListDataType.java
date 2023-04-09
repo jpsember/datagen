@@ -68,10 +68,6 @@ public class JavaListDataType extends JavaDataType {
   public String sourceExpressionToMutable(String valueExpression) {
     if (!Context.generatedTypeDef.classMode())
       return ParseTools.mutableCopyOfList(valueExpression);
-    // In debug mode, we want to ensure this is an immutable form
-    if (Context.debugMode()) {
-      return PKG_DATAUTIL + ".immutableCopyOf(" + valueExpression + ")";
-    }
     return super.sourceExpressionToMutable(valueExpression);
   }
 
@@ -80,12 +76,8 @@ public class JavaListDataType extends JavaDataType {
       String valueExpression) {
     if (!Context.generatedTypeDef.classMode())
       s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
-    else {
-      if (Context.debugMode()) {
-        todo("do we need debug mode code here?");
-      }
+    else
       super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
-    }
   }
 
   public DataType wrappedType() {
@@ -111,7 +103,7 @@ public class JavaListDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-     wrappedType().sourceDeserializeFromList(s, f);
+    wrappedType().sourceDeserializeFromList(s, f);
   }
 
   @Override

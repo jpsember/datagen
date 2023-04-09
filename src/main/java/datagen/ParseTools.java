@@ -315,6 +315,10 @@ public final class ParseTools {
     return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
   }
 
+  public static final String immutableCopyOfSet(String expr) {
+    return PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
+  }
+
   public static QualifiedName assertHasPackage(QualifiedName q) {
     if (q.packagePath().isEmpty())
       throw badArg("Package is empty:", q);

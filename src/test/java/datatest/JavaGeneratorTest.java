@@ -755,12 +755,6 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void externalListDebug() {
-    debug();
-    externalList();
-  }
-
-  @Test
   public void externalList() {
     classMode();
     externalListOld();
@@ -776,12 +770,6 @@ public class JavaGeneratorTest extends GenBaseTest {
   public void externalRepeated() {
     classMode();
     externalRepeatedOld();
-  }
-
-  @Test
-  public void externalRepeatedDebug() {
-    debug();
-    externalRepeated();
   }
 
   @Test
@@ -884,12 +872,6 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeBoxedValuesDebug() {
-    debug();
-    typeBoxedValues();
-  }
-
-  @Test
   public void typeSetVarious() {
     classMode();
     typeSetVariousOld();
@@ -910,12 +892,6 @@ public class JavaGeneratorTest extends GenBaseTest {
         "set string str_set;", CR, //
         OUTDENT, "}");
     compile();
-  }
-
-  @Test
-  public void immutableDebug() {
-    debug();
-    immutable();
   }
 
 }
