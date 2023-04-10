@@ -79,13 +79,9 @@ public final class JavaFileDataType extends JavaDataType {
         ParseTools.PKG_JSLIST, " j = m.optJSList(", f.nameStringConstantQualified(), ");", CR);
     sourceIfNotNull(s, "j");
     s.a("result = new ", ParseTools.PKG_ARRAYLIST, "<>(j.size());", CR, //
-        "for (Object z : j.wrappedList())", OPEN, //
-        typeName(), " y = ", provideSourceDefaultValue(), ";", CR);
-    sourceIfNotNull(s, "z");
-    s.a(getSerializeDataType(), " x = (", getSerializeDataType(), ") z;", CR, //
-        "y = ", getConstructFromX(), ";", CLOSE, //
-        "result.add(y);");
-    sourceEndIf(s);
+        "for (Object x : j.wrappedList())", OPEN, //
+        "result.add(new File((String) x));", CLOSE //
+    );
     s.a(CLOSE);
     if (!Context.generatedTypeDef.classMode())
       s.a(f.instanceName(), " = ", ParseTools.immutableCopyOfList("result"), ";");
@@ -93,14 +89,6 @@ public final class JavaFileDataType extends JavaDataType {
       s.a(f.instanceName(), " = result;");
     }
     sourceEndIf(s);
-  }
-
-  private String getSerializeDataType() {
-    return "String";
-  }
-
-  private String getConstructFromX() {
-    return "new " + typeName() + "(x)";
   }
 
   @Override

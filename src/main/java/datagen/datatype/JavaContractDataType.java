@@ -95,8 +95,10 @@ public   class JavaContractDataType extends JavaDataType implements ContractData
     return f.defaultValueSource() + ".parse(" + expr + ")";
   }
 
+  @Deprecated
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+    todo("refactor this?");
     s.a(f.instanceName(), " = ", ParseTools.PKG_DATAUTIL, ".parseListOfObjects(", typeName(),
         ".DEFAULT_INSTANCE, m.optJSList(", f.nameStringConstantQualified(), "), ", f.optional(), ");");
   }
