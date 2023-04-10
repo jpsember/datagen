@@ -78,10 +78,12 @@ public final class JavaFileDataType extends JavaDataType {
         PKG_LIST, "<", typeName(), "> result = ", f.nullIfOptional(PKG_MUTABLELIST), ";", CR, //
         ParseTools.PKG_JSLIST, " j = m.optJSList(", f.nameStringConstantQualified(), ");", CR);
     sourceIfNotNull(s, "j");
-    s.a("result = new ", ParseTools.PKG_ARRAYLIST, "<>(j.size());", CR, //
-        "for (Object x : j.wrappedList())", OPEN, //
-        "result.add(new File((String) x));", CLOSE //
-    );
+    s.a("List<Object> w = j.wrappedList();", CR);
+    s.a("int s = w.size();", CR);
+    s.a("File[] z = new File[s];", CR);
+    s.a("for (int i = 0; i < s; i++)", OPEN);
+    s.a("z[i] = new File((String) w.get(i)));", CLOSE);
+    s.a("result = ", ParseTools.PKG_ARRAYS, ".asList(z);");
     s.a(CLOSE);
     if (!Context.generatedTypeDef.classMode())
       s.a(f.instanceName(), " = ", ParseTools.immutableCopyOfList("result"), ";");
