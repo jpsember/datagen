@@ -111,9 +111,9 @@ public class JavaDoubleArrayDataType extends JavaContractDataType {
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String defaultValue = f.defaultValueOrNull();
     if (defaultValue.equals("null"))
-      s.a(targetExpr, " = x;");
+      s.a(targetExpr, " = x");
     else
-      s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
+      s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x");
   }
 
   //------------------------------------------------------------------

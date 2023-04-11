@@ -65,7 +65,7 @@ public class JavaByteArrayDataType extends JavaContractDataType {
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String defaultValue = f.defaultValueOrNull();
-    s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x;");
+    s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x");
   }
 
   //------------------------------------------------------------------

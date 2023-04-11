@@ -127,7 +127,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void enumMisc() {
+  public void enumMisc() { 
     language(Language.PYTHON);
     p().pr("enum Zebra;", CR, //
         "fields {", INDENT, //

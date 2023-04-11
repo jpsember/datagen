@@ -316,7 +316,7 @@ public class SampleDataType implements AbstractData {
           Set<File> mp = new HashSet<>();
           for (Object e : m2.wrappedList())
             mp.add(new File((String) e));
-          mS = mp;
+          mS = DataUtil.immutableCopyOf(mp) /*DEBUG*/ ;
         }
       }
     }
@@ -549,7 +549,7 @@ public class SampleDataType implements AbstractData {
       mD2 = m.mD2;
       mD3 = m.mD3;
       mD4 = m.mD4;
-      mS = m.mS;
+      mS = DataUtil.immutableCopyOf(m.mS) /*DEBUG*/ ;
     }
 
     @Override
@@ -715,7 +715,7 @@ public class SampleDataType implements AbstractData {
     }
 
     public Builder s(Set<File> x) {
-      mS = (x == null) ? DataUtil.emptySet() : x;
+      mS = DataUtil.immutableCopyOf((x == null) ? DataUtil.emptySet() : x) /*DEBUG*/ ;
       return this;
     }
 

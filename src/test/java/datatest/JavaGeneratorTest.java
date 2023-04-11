@@ -656,12 +656,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     JSMap m = u.toJson();
     SampleDataType v = SampleDataType.DEFAULT_INSTANCE.parse(m);
     checkState(u.equals(v));
-
-    // Note: though we are dealing with an immutable data object,
-    // its fields (the set) are mutable
-    //
-    v.s().add(new File("gamma.txt"));
-    checkState(!u.equals(v));
   }
 
   @Test
@@ -783,7 +777,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     classMode();
     external2Old();
   }
-
 
   @Test
   public void externalRepeatedDebug() {

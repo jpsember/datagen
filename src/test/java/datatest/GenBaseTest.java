@@ -42,18 +42,27 @@ import js.testutil.MyTestCase;
 public abstract class GenBaseTest extends MyTestCase {
 
   protected final void debug() {
-    addArg("debug");
+    checkState(mUnsafeMode == null);
+    mUnsafeMode = false;
   }
 
   protected final void unsafe() {
-    addArg("unsafe");
+    checkState(mUnsafeMode == null);
+    mUnsafeMode = true;
   }
-  
+
   protected final void classMode() {
+    mUnsafeRequired = true;
     addArg("class_mode");
   }
 
   protected final void compile() {
+    if (mUnsafeRequired && mUnsafeMode == null)
+      unsafe();
+    if (mUnsafeMode != null) {
+      if (mUnsafeMode == true)
+        addArg("unsafe");
+    }
     closeCurrentDat();
     checkState(!mDatRecords.isEmpty());
     for (DatRecord ty : mDatRecords)
@@ -190,5 +199,8 @@ public abstract class GenBaseTest extends MyTestCase {
   // List of completed dat records
   //
   private List<DatRecord> mDatRecords = arrayList();
+
+  private Boolean mUnsafeMode;
+  private boolean mUnsafeRequired;
 
 }
