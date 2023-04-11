@@ -767,7 +767,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void externalListDebug() {
+  public void externalListDebug() { 
     debug();
     externalList();
   }
