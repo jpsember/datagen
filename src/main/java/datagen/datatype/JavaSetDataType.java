@@ -77,7 +77,7 @@ public class JavaSetDataType extends JavaDataType {
       return;
     }
     if (Context.debugMode()) {
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfSet(valueExpression), ParseTools.debugComment());
+      s.a(targetExpression, " = ", ParseTools.immutableCopyOfSet(valueExpression) );
       return;
     }
     super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);

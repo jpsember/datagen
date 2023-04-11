@@ -68,7 +68,6 @@ public final class JavaStringDataType extends JavaDataType {
         + f.optional() + ")";
     if (Context.debugMode()) {
       expr = ParseTools.immutableCopyOfList(expr);
-      s.a(ParseTools.debugComment());
     }
     s.a(f.instanceName(), " = ", expr, ";", CR);
   }

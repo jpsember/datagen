@@ -85,7 +85,7 @@ public class JavaMapDataType extends JavaDataType {
       return;
     }
       if (Context.debugMode()) {
-        s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression), ParseTools.debugComment());
+        s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression) );
         return;
      }
       super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);

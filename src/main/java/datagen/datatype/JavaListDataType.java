@@ -76,17 +76,15 @@ public class JavaListDataType extends JavaDataType {
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
     if (!Context.generatedTypeDef.classMode()) {
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression),";");
+      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
        return;
     }
 
     if (Context.debugMode()) {
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression), ";",
-          ParseTools.debugComment());
+      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression) );
       return;
     }
     super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
-    s.a(";");
   }
 
   public DataType wrappedType() {
@@ -169,13 +167,12 @@ public class JavaListDataType extends JavaDataType {
     }
 
     if (!Context.classMode()) {
-      s.a(targetExpr, " = ", sourceExpressionToMutable(expr), ";");
+      s.a(targetExpr, " = ", sourceExpressionToMutable(expr) );
     } else {
       if (Context.debugMode()) {
         sourceExpressionToImmutable(s, f, targetExpr, expr);
-        s.a(";");
       } else
-        s.a(targetExpr, " = ", expr, ";");
+        s.a(targetExpr, " = ", expr);
     }
 
   }

@@ -26,12 +26,13 @@ public class JavaDataType extends DataType {
     }
 
     if (!Context.classMode()) {
-      s.a(targetExpr, " = ", sourceExpressionToMutable(expr), ";");
+      s.a(targetExpr, " = ", sourceExpressionToMutable(expr) );
     } else {
       if (Context.debugMode()) {
         sourceExpressionToImmutable(s, f, targetExpr, expr);
+       
       } else
-        s.a(targetExpr, " = ", expr, ";");
+        s.a(targetExpr, " = ", expr );
     }
     //    
     //    String expr2;

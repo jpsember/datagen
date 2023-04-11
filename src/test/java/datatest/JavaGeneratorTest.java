@@ -382,7 +382,6 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeFileVariousOld() {
-    //rv();
     p().pr("fields {", INDENT, //
         "File alpha;", CR, //
         "?File beta;", CR, //
@@ -400,7 +399,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeFileVariousDebug() { 
+  public void typeFileVariousDebug() {
     debug();
     typeFileVariousUnsafe();
   }

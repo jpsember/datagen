@@ -61,8 +61,9 @@ public final class JavaSourceGen extends SourceGen {
       if (Context.nonClassMode()) {
         f.dataType().sourceExpressionToImmutable(s, f, targetExpression, valueExpression);
       } else {
-        s.a(targetExpression, " = ", valueExpression, ";");
+        s.a(targetExpression, " = ", valueExpression);
       }
+      s.a(";");
     }
     s.out();
     return content();
@@ -80,7 +81,7 @@ public final class JavaSourceGen extends SourceGen {
       s.a("public ", "Builder ", f.setterName(), "(", d.typeName(), " x)", OPEN);
       String targetExpr = f.instanceName();
       d.sourceSetter(s, f, targetExpr);
-      s.a(CR, "return this;", CLOSE);
+      s.a(";", CR, "return this;", CLOSE);
     }
     s.out();
     return content();
@@ -178,7 +179,7 @@ public final class JavaSourceGen extends SourceGen {
       } else {
         if (Context.debugMode()) {
           f.dataType().sourceExpressionToImmutable(s, f, f.instanceName(), expr);
-          s.a(";",CR);
+          s.a(";", CR);
         } else {
           s.a(f.instanceName(), " = ", expr, ";", CR);
         }

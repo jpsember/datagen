@@ -293,7 +293,10 @@ public final class ParseTools {
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 
   public static final String immutableCopyOfList(String expr) {
-    return PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
+    String result = PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
+    if (Context.debugMode())
+      result += debugComment();
+    return result;
   }
 
   public static final String mutableCopyOfList(String expr) {
@@ -307,7 +310,10 @@ public final class ParseTools {
   }
 
   public static final String immutableCopyOfMap(String expr) {
-    return PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
+    String result = PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
+    if (Context.debugMode())
+      result += debugComment();
+    return result;
   }
 
   public static final String mutableCopyOfSet(String expr) {
@@ -316,7 +322,10 @@ public final class ParseTools {
   }
 
   public static final String immutableCopyOfSet(String expr) {
-    return PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
+    String result = PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
+    if (Context.debugMode())
+      result += debugComment();
+    return result;
   }
 
   public static QualifiedName assertHasPackage(QualifiedName q) {
@@ -358,12 +367,14 @@ public final class ParseTools {
   }
 
   private static int k = 0;
-  private static int ktarg = -1;
+  private static int ktarg = -1;// 4;
 
   public static Object debugComment() {
     if (Context.debugMode()) {
       if (ktarg >= 0) {
         k++;
+        if (k == ktarg)
+          die("reached target");
         return " /*DEBUG" + k + "*/ ";
       }
       return " /*DEBUG*/ ";
