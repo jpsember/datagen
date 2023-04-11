@@ -59,7 +59,23 @@ public final class Context {
   }
 
   public static boolean nonClassMode() {
-    return !generatedTypeDef.classMode();
+    return !classMode();
+  }
+
+  public static boolean debugMode() {
+    return config.debug();
+  }
+
+  public static boolean unsafeMode() {
+    return classMode() && !debugMode();
+  }
+  
+  public static boolean classMode() {
+    return generatedTypeDef.classMode();
+  }
+
+  public static boolean debugClassMode() {
+    return generatedTypeDef.classMode() && debugMode();
   }
 
   /**

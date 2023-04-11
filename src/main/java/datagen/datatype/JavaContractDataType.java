@@ -95,7 +95,6 @@ public   class JavaContractDataType extends JavaDataType implements ContractData
     return f.defaultValueSource() + ".parse(" + expr + ")";
   }
 
-  @Deprecated
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     todo("refactor this?");

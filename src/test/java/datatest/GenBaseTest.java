@@ -41,10 +41,12 @@ import js.testutil.MyTestCase;
 
 public abstract class GenBaseTest extends MyTestCase {
 
-  // Not used at present, so mark it deprecated
-  @Deprecated
   protected final void debug() {
     addArg("debug");
+  }
+
+  protected final void unsafe() {
+    addArg("unsafe");
   }
   
   protected final void classMode() {

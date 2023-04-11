@@ -351,4 +351,24 @@ public final class ParseTools {
     return result.build();
   }
 
+  public static Object assignToListExpr(String expr) {
+    if (Context.unsafeMode())
+      return expr;
+    return ParseTools.immutableCopyOfList(expr);
+  }
+
+  private static int k = 0;
+  private static int ktarg = -1;
+
+  public static Object debugComment() {
+    if (Context.debugMode()) {
+      if (ktarg >= 0) {
+        k++;
+        return " /*DEBUG" + k + "*/ ";
+      }
+      return " /*DEBUG*/ ";
+    }
+    return "";
+  }
+
 }

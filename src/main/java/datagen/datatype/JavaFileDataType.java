@@ -28,7 +28,6 @@ import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
-import datagen.Context;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
@@ -82,14 +81,10 @@ public final class JavaFileDataType extends JavaDataType {
     s.a("int s = w.size();", CR);
     s.a("File[] z = new File[s];", CR);
     s.a("for (int i = 0; i < s; i++)", OPEN);
-    s.a("z[i] = new File((String) w.get(i)));", CLOSE);
+    s.a("z[i] = new File((String) w.get(i));", CLOSE);
     s.a("result = ", ParseTools.PKG_ARRAYS, ".asList(z);");
     s.a(CLOSE);
-    if (!Context.generatedTypeDef.classMode())
-      s.a(f.instanceName(), " = ", ParseTools.immutableCopyOfList("result"), ";");
-    else {
-      s.a(f.instanceName(), " = result;");
-    }
+    s.a(f.instanceName(), " = ", ParseTools.assignToListExpr("result"), ";");
     sourceEndIf(s);
   }
 

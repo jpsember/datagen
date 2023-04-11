@@ -21,11 +21,28 @@ public class JavaDataType extends DataType {
     String expr;
     if (f.optional() || isPrimitive()) {
       expr = "x";
-      } else {
+    } else {
       expr = "(x == null) ? " + f.defaultValueOrNull() + " : x";
-      }
-    s.a(targetExpr, " = ",
-        sourceExpressionToMutable(expr),";");
+    }
+
+    if (!Context.classMode()) {
+      s.a(targetExpr, " = ", sourceExpressionToMutable(expr), ";");
+    } else {
+      if (Context.debugMode()) {
+        sourceExpressionToImmutable(s, f, targetExpr, expr);
+      } else
+        s.a(targetExpr, " = ", expr, ";");
+    }
+    //    
+    //    String expr2;
+    //    if (!Context.classMode())
+    //      expr2 = sourceExpressionToMutable(expr);
+    //    else {
+    //      if (Context.debugMode())
+    //        expr2 = sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
+    //    }
+    //    
+    //    s.a(targetExpr, " = ", sourceExpressionToMutable(expr), ";");
   }
 
   /**

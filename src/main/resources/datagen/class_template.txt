@@ -85,7 +85,7 @@
 [!copyfield_from_builder]      return r;
     }
 
-    @@// Field 'setters'.  Where appropriate, if an argument is immutable, a mutable copy is stored instead
+    @@// Field 'setters'
 
 [!setters]
 
@@ -96,12 +96,6 @@
   @@/**
   @@ * The default (immutable) instance of this data object
   @@ */
-  public static final [!class] DEFAULT_INSTANCE = new [!class]();
-
-  @@/**
-  @@ * The private constructor.  To create new instances, use newBuilder()
-  @@ */
-  private [!class]() {
-[!init_instance_fields]  }
+  public static final [!class] DEFAULT_INSTANCE = new [!class](JSMap.DEFAULT_INSTANCE);
 
 }

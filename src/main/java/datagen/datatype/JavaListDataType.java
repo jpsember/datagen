@@ -68,16 +68,25 @@ public class JavaListDataType extends JavaDataType {
   public String sourceExpressionToMutable(String valueExpression) {
     if (!Context.generatedTypeDef.classMode())
       return ParseTools.mutableCopyOfList(valueExpression);
-    return super.sourceExpressionToMutable(valueExpression);
+    // In debug mode, this is already in immutable form; no need to modify it
+    return valueExpression;
   }
 
   @Override
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
-    if (!Context.generatedTypeDef.classMode())
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
-    else
-      super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
+    if (!Context.generatedTypeDef.classMode()) {
+      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression),";");
+       return;
+    }
+
+    if (Context.debugMode()) {
+      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression), ";",
+          ParseTools.debugComment());
+      return;
+    }
+    super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
+    s.a(";");
   }
 
   public DataType wrappedType() {
@@ -148,6 +157,27 @@ public class JavaListDataType extends JavaDataType {
     sb.a(");").cr();
 
     return fieldDef.constantName();
+  }
+
+  @Override
+  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+    String expr;
+    if (f.optional() || isPrimitive()) {
+      expr = "x";
+    } else {
+      expr = "(x == null) ? " + f.defaultValueOrNull() + " : x";
+    }
+
+    if (!Context.classMode()) {
+      s.a(targetExpr, " = ", sourceExpressionToMutable(expr), ";");
+    } else {
+      if (Context.debugMode()) {
+        sourceExpressionToImmutable(s, f, targetExpr, expr);
+        s.a(";");
+      } else
+        s.a(targetExpr, " = ", expr, ";");
+    }
+
   }
 
   private final DataType mWrappedType;

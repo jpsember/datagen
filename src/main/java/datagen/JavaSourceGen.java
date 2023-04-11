@@ -51,24 +51,6 @@ public final class JavaSourceGen extends SourceGen {
   }
 
   @Override
-  protected String generateInitInstanceFields() {
-    GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(2);
-    for (FieldDef f : def.fields()) {
-      if (f.optional())
-        continue;
-
-      // We don't need an explicit initializer if the desired initial value equals the Java default value
-      String initialValue = f.defaultValueOrNull();
-      if (initialValue.equals(f.dataType().compilerInitialValue()))
-        continue;
-      s.a(CR, f.instanceName(), " = ", initialValue, ";");
-    }
-    s.out();
-    return content();
-  }
-
-  @Override
   protected final /* <-- for now */ String generateCopyFromBuilderToImmutable() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.in(4);
@@ -79,9 +61,8 @@ public final class JavaSourceGen extends SourceGen {
       if (Context.nonClassMode()) {
         f.dataType().sourceExpressionToImmutable(s, f, targetExpression, valueExpression);
       } else {
-        s.a(targetExpression, " = ", valueExpression);
+        s.a(targetExpression, " = ", valueExpression, ";");
       }
-      s.a(";");
     }
     s.out();
     return content();
@@ -97,7 +78,7 @@ public final class JavaSourceGen extends SourceGen {
       if (f.deprecated())
         s.a("@Deprecated", CR);
       s.a("public ", "Builder ", f.setterName(), "(", d.typeName(), " x)", OPEN);
-      String targetExpr = "" + f.instanceName();
+      String targetExpr = f.instanceName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "return this;", CLOSE);
     }
@@ -185,11 +166,23 @@ public final class JavaSourceGen extends SourceGen {
   }
 
   @Override
-  protected String generateImmutableToBuilder() {
+  protected final /** <- for now */
+  String generateImmutableToBuilder() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.in(4);
     for (FieldDef f : def.fields()) {
-      s.a(f.instanceName(), " = ", f.dataType().sourceExpressionToMutable("m." + f.instanceName()), ";", CR);
+      String expr = "m." + f.instanceName();
+      if (!Context.classMode()) {
+        expr = f.dataType().sourceExpressionToMutable(expr);
+        s.a(f.instanceName(), " = ", expr, ";", CR);
+      } else {
+        if (Context.debugMode()) {
+          f.dataType().sourceExpressionToImmutable(s, f, f.instanceName(), expr);
+          s.a(";",CR);
+        } else {
+          s.a(f.instanceName(), " = ", expr, ";", CR);
+        }
+      }
     }
     s.out();
     return content();

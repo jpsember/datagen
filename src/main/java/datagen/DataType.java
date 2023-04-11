@@ -157,6 +157,8 @@ public abstract class DataType implements DefaultValueParser {
    * datatype using the old 'fields' keyword.
    */
   public String sourceExpressionToMutable(String valueExpression) {
+    // Suspect this method isn't required if classMode
+    checkState(!Context.generatedTypeDef.classMode());
     return valueExpression;
   }
 

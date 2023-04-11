@@ -24,9 +24,13 @@ class {
   //
   bool class_mode;
 
-  // Add debug checks
+  // Add debug checks (deprecated)
   //
-  bool debug;
+  - bool debug;
+
+  // Omit debug checks
+  //
+  bool unsafe;
 
   // Suppress some output (to quiet unit tests)
   //

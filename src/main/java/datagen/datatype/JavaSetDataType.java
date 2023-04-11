@@ -65,18 +65,22 @@ public class JavaSetDataType extends JavaDataType {
   @Override
   public String sourceExpressionToMutable(String valueExpression) {
     if (!Context.generatedTypeDef.classMode())
-      return ParseTools.mutableCopyOfSet(valueExpression);
-    return super.sourceExpressionToMutable(valueExpression);
+      return ParseTools.mutableCopyOfList(valueExpression);
+    return valueExpression;
   }
 
   @Override
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
-    if (!Context.generatedTypeDef.classMode())
+    if (!Context.generatedTypeDef.classMode()) {
       s.a(targetExpression, " = ", ParseTools.immutableCopyOfSet(valueExpression));
-    else {
-      super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
+      return;
     }
+    if (Context.debugMode()) {
+      s.a(targetExpression, " = ", ParseTools.immutableCopyOfSet(valueExpression), ParseTools.debugComment());
+      return;
+    }
+    super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
   }
 
   @Override
@@ -108,7 +112,10 @@ public class JavaSetDataType extends JavaDataType {
         "Set<", wrappedValueType().typeName(), "> mp = new ", ParseTools.PKG_HASH_SET, "<>();", CR, //
         "for (Object e : m2.wrappedList())", IN, //
         "mp.add(", wrappedValueType().deserializeJsonToMapValue("e"), ");", OUT);
-    s.a(f.instanceName(), " = mp;", CLOSE, //
+    String expr = "mp";
+    if (Context.debugClassMode())
+      expr = ParseTools.immutableCopyOfSet(expr);
+    s.a(f.instanceName(), " = ", expr, ";", CLOSE, //
         CLOSE);
     s.close();
   }
