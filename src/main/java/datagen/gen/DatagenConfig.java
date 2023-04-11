@@ -51,11 +51,6 @@ public class DatagenConfig implements AbstractData {
     return mClassMode;
   }
 
-  @Deprecated
-  public boolean debug() {
-    return mDebug;
-  }
-
   public boolean unsafe() {
     return mUnsafe;
   }
@@ -80,7 +75,6 @@ public class DatagenConfig implements AbstractData {
   protected static final String PYTHON_SOURCE_PATH = "python_source_path";
   protected static final String VERBOSE_NAMES = "verbose_names";
   protected static final String CLASS_MODE = "class_mode";
-  protected static final String DEBUG = "debug";
   protected static final String UNSAFE = "unsafe";
   protected static final String QUIET_MODE = "quiet_mode";
 
@@ -103,7 +97,6 @@ public class DatagenConfig implements AbstractData {
     m.putUnsafe(PYTHON_SOURCE_PATH, mPythonSourcePath.toString());
     m.putUnsafe(VERBOSE_NAMES, mVerboseNames);
     m.putUnsafe(CLASS_MODE, mClassMode);
-    m.putUnsafe(DEBUG, mDebug);
     m.putUnsafe(UNSAFE, mUnsafe);
     m.putUnsafe(QUIET_MODE, mQuietMode);
     return m;
@@ -158,7 +151,6 @@ public class DatagenConfig implements AbstractData {
     }
     mVerboseNames = m.opt(VERBOSE_NAMES, false);
     mClassMode = m.opt(CLASS_MODE, false);
-    mDebug = m.opt(DEBUG, false);
     mUnsafe = m.opt(UNSAFE, false);
     mQuietMode = m.opt(QUIET_MODE, false);
   }
@@ -198,8 +190,6 @@ public class DatagenConfig implements AbstractData {
       return false;
     if (!(mClassMode == other.mClassMode))
       return false;
-    if (!(mDebug == other.mDebug))
-      return false;
     if (!(mUnsafe == other.mUnsafe))
       return false;
     if (!(mQuietMode == other.mQuietMode))
@@ -223,7 +213,6 @@ public class DatagenConfig implements AbstractData {
       r = r * 37 + mPythonSourcePath.hashCode();
       r = r * 37 + (mVerboseNames ? 1 : 0);
       r = r * 37 + (mClassMode ? 1 : 0);
-      r = r * 37 + (mDebug ? 1 : 0);
       r = r * 37 + (mUnsafe ? 1 : 0);
       r = r * 37 + (mQuietMode ? 1 : 0);
       m__hashcode = r;
@@ -242,7 +231,6 @@ public class DatagenConfig implements AbstractData {
   protected File mPythonSourcePath;
   protected boolean mVerboseNames;
   protected boolean mClassMode;
-  protected boolean mDebug;
   protected boolean mUnsafe;
   protected boolean mQuietMode;
   protected int m__hashcode;
@@ -261,7 +249,6 @@ public class DatagenConfig implements AbstractData {
       mPythonSourcePath = m.mPythonSourcePath;
       mVerboseNames = m.mVerboseNames;
       mClassMode = m.mClassMode;
-      mDebug = m.mDebug;
       mUnsafe = m.mUnsafe;
       mQuietMode = m.mQuietMode;
     }
@@ -291,7 +278,6 @@ public class DatagenConfig implements AbstractData {
       r.mPythonSourcePath = mPythonSourcePath;
       r.mVerboseNames = mVerboseNames;
       r.mClassMode = mClassMode;
-      r.mDebug = mDebug;
       r.mUnsafe = mUnsafe;
       r.mQuietMode = mQuietMode;
       return r;
@@ -349,12 +335,6 @@ public class DatagenConfig implements AbstractData {
 
     public Builder classMode(boolean x) {
       mClassMode = x;
-      return this;
-    }
-
-    @Deprecated
-    public Builder debug(boolean x) {
-      mDebug = x;
       return this;
     }
 

@@ -24,10 +24,6 @@ class {
   //
   bool class_mode;
 
-  // Add debug checks (deprecated)
-  //
-  - bool debug;
-
   // Omit debug checks
   //
   bool unsafe;
