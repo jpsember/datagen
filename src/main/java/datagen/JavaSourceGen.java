@@ -70,6 +70,24 @@ public final class JavaSourceGen extends SourceGen {
   }
 
   @Override
+  protected final String generateInitInstanceFields() {
+    GeneratedTypeDef def = Context.generatedTypeDef;
+    s.in(2);
+    for (FieldDef f : def.fields()) {
+      if (f.optional())
+        continue;
+
+      // We don't need an explicit initializer if the desired initial value equals the Java default value
+      String initialValue = f.defaultValueOrNull();
+      if (initialValue.equals(f.dataType().compilerInitialValue()))
+        continue;
+      s.a(CR, f.instanceName(), " = ", initialValue, ";");
+    }
+    s.out();
+    return content();
+  }
+  
+  @Override
   protected final String generateSetters() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.in(2);

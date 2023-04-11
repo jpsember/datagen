@@ -71,6 +71,18 @@ public class PythonSourceGen extends SourceGen {
   }
 
   @Override
+  protected final String generateInitInstanceFields() {
+    GeneratedTypeDef def = Context.generatedTypeDef;
+    s.in(2);
+    s.a("self.", hashFieldName(), " = None", CR);
+    for (FieldDef f : def.fields()) {
+      s.a("self.", f.instanceName(), " = ", f.defaultValueOrNull(), CR);
+    }
+    s.out();
+    return content();
+  }
+
+  @Override
   protected String generateCopyFromBuilderToImmutable() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.in(2);

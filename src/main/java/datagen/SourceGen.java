@@ -74,6 +74,7 @@ public abstract class SourceGen extends BaseObject {
       m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable());
       m.put("equals", generateEquals());
       m.put("hashcode", generateHashCode());
+      m.put("init_instance_fields", generateInitInstanceFields());
       m.put("instance_fields", generateInstanceFields());
       m.put("parse", generateParse());
       m.put("setters", generateSetters());
@@ -217,6 +218,8 @@ public abstract class SourceGen extends BaseObject {
   }
 
   protected abstract void generateEnumValues(EnumDataType dt);
+
+  protected abstract String generateInitInstanceFields();
 
   protected abstract String generateCopyFromBuilderToImmutable();
 

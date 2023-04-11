@@ -96,6 +96,12 @@
   @@/**
   @@ * The default (immutable) instance of this data object
   @@ */
-  public static final [!class] DEFAULT_INSTANCE = new [!class](JSMap.DEFAULT_INSTANCE);
+  public static final [!class] DEFAULT_INSTANCE = new [!class]();
+
+  @@/**
+  @@ * The private constructor.  To create new instances, use newBuilder()
+  @@ */
+  private [!class]() {
+[!init_instance_fields]  }
 
 }

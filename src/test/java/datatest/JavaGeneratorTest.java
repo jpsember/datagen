@@ -358,7 +358,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   public void externalRepeatedOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "fields {", INDENT, //
-        "*Beaver busy;", OUTDENT, //
+        "*Beaver b;", OUTDENT, //
         "}");
     compile();
   }
@@ -784,16 +784,17 @@ public class JavaGeneratorTest extends GenBaseTest {
     external2Old();
   }
 
-  @Test
-  public void externalRepeated() {
-    classMode();
-    externalRepeatedOld();
-  }
 
   @Test
   public void externalRepeatedDebug() {
     debug();
-    externalRepeated();
+    externalRepeatedUnsafe();
+  }
+
+  @Test
+  public void externalRepeatedUnsafe() {
+    classMode();
+    externalRepeatedOld();
   }
 
   @Test
