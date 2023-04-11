@@ -54,8 +54,14 @@ final class DataDefinitionParser extends BaseObject {
     try {
       prepareHandlers();
       startScanner();
-      while (scanner().hasNext())
+      while (scanner().hasNext()) {
+        if (readIf(DEPRECATION)) {
+          checkState(!mDeprecationFlag, "unexpected token");
+          mDeprecationFlag = true;
+        }
         handler(read()).run();
+        checkState(!mDeprecationFlag, "orphan deprecation token");
+      }
 
       if (Context.generatedTypeDef == null)
         badArg("No 'fields {...}' specified");
@@ -71,6 +77,8 @@ final class DataDefinitionParser extends BaseObject {
       throw t;
     }
   }
+
+  private boolean mDeprecationFlag;
 
   private void reportUnusedReferences() {
     String summary = Context.dataTypeManager.unusedReferencesSummary();
@@ -167,7 +175,10 @@ final class DataDefinitionParser extends BaseObject {
         Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
     setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null, classMode));
 
-    Context.generatedTypeDef.setDeprecated(readIf(DEPRECATION));
+    if (mDeprecationFlag) {
+      Context.generatedTypeDef.setDeprecated(true);
+      mDeprecationFlag = false;
+    }
 
     read(BROP);
 

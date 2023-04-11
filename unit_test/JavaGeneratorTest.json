@@ -2,6 +2,8 @@
            "base64Encoding2" : 5270,
                    "builtIn" : 9982,
                 "builtInOld" : 9387,
+           "deprecatedClass" : 5703,
+           "deprecatedField" : 9185,
               "deprecations" : 6581,
            "deprecationsOld" : 4592,
                "enumExample" : 5985,

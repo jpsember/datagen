@@ -924,4 +924,44 @@ public class JavaGeneratorTest extends GenBaseTest {
     immutable();
   }
 
+  @Test
+  public void deprecatedClass() {
+    p().pr(//
+        "- class {", INDENT, //
+        "int x;", CR, //
+        "string y;", CR, //
+        "File z;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test(expected = RuntimeException.class)
+  public void dupDeprecatedClass() {
+    p().pr(//
+        "- - class {", INDENT, //
+        "int x;", CR, //
+        "string y;", CR, //
+        "File z;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test(expected = RuntimeException.class)
+  public void orphanedDeprecatedClass() {
+    p().pr(//
+        "- extern js.foo.Bar;");
+    compile();
+  }
+
+  @Test(expected = RuntimeException.class)
+  public void dupDeprecatedField() {
+    p().pr(//
+        "class {", INDENT, //
+        "int x;", CR, //
+        "- - string y;", CR, //
+        "File z;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
 }
