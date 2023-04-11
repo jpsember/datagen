@@ -60,8 +60,9 @@ public abstract class GenBaseTest extends MyTestCase {
     if (mUnsafeRequired && mUnsafeMode == null)
       unsafe();
     if (mUnsafeMode != null) {
-      if (mUnsafeMode == true)
+      if (mUnsafeMode == true) {
         addArg("unsafe");
+      }
     }
     closeCurrentDat();
     checkState(!mDatRecords.isEmpty());

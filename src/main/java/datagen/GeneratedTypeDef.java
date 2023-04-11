@@ -57,15 +57,23 @@ public final class GeneratedTypeDef extends BaseObject {
   }
 
   public void setDeprecated(boolean f) {
-    checkState(mDeprecated == null);
     mDeprecated = f;
   }
 
-  public boolean isDeprecated() {
-    return mDeprecated == Boolean.TRUE;
+  public void setUnsafe(boolean f) {
+    mUnsafe = f;
   }
 
-  private Boolean mDeprecated;
+  public boolean isDeprecated() {
+    return mDeprecated;
+  }
+
+  public boolean isUnsafe() {
+    return mUnsafe;
+  }
+
+  private boolean mDeprecated;
+  private boolean mUnsafe;
 
   public String packageName() {
     return mPackageName;

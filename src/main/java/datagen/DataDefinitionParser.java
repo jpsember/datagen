@@ -56,11 +56,21 @@ final class DataDefinitionParser extends BaseObject {
       startScanner();
       while (scanner().hasNext()) {
         if (readIf(DEPRECATION)) {
-          checkState(!mDeprecationFlag, "unexpected token");
-          mDeprecationFlag = true;
+          if (mDeprecationToken != null)
+            mReadIfToken.fail("unexpected");
+          mDeprecationToken = mReadIfToken;
         }
+        if (readIf(UNSAFE)) {
+          if (mUnsafeToken != null)
+            mReadIfToken.fail("unexpected");
+          mUnsafeToken = mReadIfToken;
+        }
+
         handler(read()).run();
-        checkState(!mDeprecationFlag, "orphan deprecation token");
+        if (mDeprecationToken != null)
+          mDeprecationToken.fail("unused");
+        if (mUnsafeToken != null)
+          mUnsafeToken.fail("unused");
       }
 
       if (Context.generatedTypeDef == null)
@@ -78,7 +88,8 @@ final class DataDefinitionParser extends BaseObject {
     }
   }
 
-  private boolean mDeprecationFlag;
+  private Token mDeprecationToken;
+  private Token mUnsafeToken;
 
   private void reportUnusedReferences() {
     String summary = Context.dataTypeManager.unusedReferencesSummary();
@@ -125,9 +136,11 @@ final class DataDefinitionParser extends BaseObject {
     Token t = scanner().peek();
     boolean result = (t != null && t.id(type));
     if (result)
-      read();
+      mReadIfToken = read();
     return result;
   }
+
+  private Token mReadIfToken;
 
   private Token read() {
     mLastReadToken = scanner().read();
@@ -175,10 +188,18 @@ final class DataDefinitionParser extends BaseObject {
         Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
     setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null, classMode));
 
-    if (mDeprecationFlag) {
+    if (mDeprecationToken != null) {
       Context.generatedTypeDef.setDeprecated(true);
-      mDeprecationFlag = false;
+      mDeprecationToken = null;
     }
+
+    boolean unsafeMode = Context.config.unsafe();
+    if (mUnsafeToken != null) {
+      unsafeMode = true;
+      mUnsafeToken = null;
+    }
+
+    Context.generatedTypeDef.setUnsafe(unsafeMode);
 
     read(BROP);
 

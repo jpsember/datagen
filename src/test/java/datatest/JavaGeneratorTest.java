@@ -964,4 +964,21 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
+  @Test
+  public void implicitDebug() {
+    p().pr(//
+        "class {", INDENT, //
+        "* string y = [\"hello\",\"bob\"];", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void explicitUnsafe() {
+    p().pr(//
+        "unsafe class {", INDENT, //
+        "* string y = [\"hello\",\"bob\"];", CR, //
+        OUTDENT, "}");
+    compile();
+  }
 }

@@ -63,7 +63,7 @@ public final class Context {
   }
 
   public static boolean debugMode() {
-    return !config.unsafe();
+    return !generatedTypeDef.isUnsafe();
   }
 
   public static boolean unsafeMode() {

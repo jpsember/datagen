@@ -34,4 +34,5 @@ MAP: map
 SET: set
 EXTERN: extern
 DEPRECATION: \-
+UNSAFE: unsafe
 
