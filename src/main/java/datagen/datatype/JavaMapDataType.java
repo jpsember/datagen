@@ -84,11 +84,11 @@ public class JavaMapDataType extends JavaDataType {
       s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
       return;
     }
-      if (Context.debugMode()) {
-        s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression) );
-        return;
-     }
-      super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
+    if (Context.debugMode()) {
+      s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
+      return;
+    }
+    super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
   }
 
   @Override
@@ -126,7 +126,7 @@ public class JavaMapDataType extends JavaDataType {
         wrappedValueType().deserializeJsonToMapValue("e.getValue()"), ");", OUT //
     );
     String expr = "mp";
-    if (Context.debugClassMode())
+    if (Context.debugMode())
       expr = ParseTools.immutableCopyOfMap(expr);
     s.a(f.instanceName(), " = ", expr, ";", CLOSE, //
         CLOSE);

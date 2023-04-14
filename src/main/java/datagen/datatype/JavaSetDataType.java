@@ -113,7 +113,7 @@ public class JavaSetDataType extends JavaDataType {
         "for (Object e : m2.wrappedList())", IN, //
         "mp.add(", wrappedValueType().deserializeJsonToMapValue("e"), ");", OUT);
     String expr = "mp";
-    if (Context.debugClassMode())
+    if (Context.debugMode())
       expr = ParseTools.immutableCopyOfSet(expr);
     s.a(f.instanceName(), " = ", expr, ";", CLOSE, //
         CLOSE);

@@ -58,22 +58,22 @@ public final class Context {
     Context.dataTypeManager = new DataTypeManager();
   }
 
-  public static boolean nonClassMode() {
-    return !classMode();
-  }
-
-  public static boolean debugMode() {
-    return !generatedTypeDef.isUnsafe();
-  }
-
-  public static boolean unsafeMode() {
-    return classMode() && !debugMode();
-  }
-
   public static boolean classMode() {
     return generatedTypeDef.classMode();
   }
 
+  public static boolean nonClassMode() {
+    return !classMode();
+  }
+
+  /**
+   * Debug mode only applies in class mode
+   */
+  public static boolean debugMode() {
+    return classMode() && !generatedTypeDef.isUnsafe();
+  }
+
+  @Deprecated // debugMode suffices
   public static boolean debugClassMode() {
     return generatedTypeDef.classMode() && debugMode();
   }

@@ -112,7 +112,7 @@ public   class JavaContractDataType extends JavaDataType implements ContractData
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    s.a(targetExpr, " = ", "(x == null) ? ", f.defaultValueOrNull(), " : x.build();");
+    s.a(targetExpr, " = ", "(x == null) ? ", f.defaultValueOrNull(), " : x.build()");
   }
 
   @Override

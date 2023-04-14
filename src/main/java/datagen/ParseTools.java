@@ -367,19 +367,9 @@ public final class ParseTools {
     return ParseTools.immutableCopyOfList(expr);
   }
 
-  private static int k = 0;
-  private static int ktarg = -1;// 4;
-
   public static Object debugComment() {
-    if (Context.debugMode()) {
-      if (ktarg >= 0) {
-        k++;
-        if (k == ktarg)
-          die("reached target");
-        return " /*DEBUG" + k + "*/ ";
-      }
+    if (Context.debugMode())  
       return " /*DEBUG*/ ";
-    }
     return "";
   }
 
