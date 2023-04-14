@@ -981,4 +981,85 @@ public class JavaGeneratorTest extends GenBaseTest {
         OUTDENT, "}");
     compile();
   }
+  
+  /**
+   * A single test that covers a lot of ground
+   */
+  @Test
+  public void big() {
+    p().pr("extern z.Bah;");
+
+    p().pr("fields {", INDENT, //
+        "int i1;", CR, //
+        "int i2 = " + Integer.MAX_VALUE + ";", CR, //
+        "?int i3;", CR, //
+        "?*int i4;", CR, //
+
+        "byte by1;", CR, //
+        "byte by2 = " + Byte.MAX_VALUE + ";", CR, //
+        "?byte by3;", CR, //
+        "?*byte by4;", CR, //
+
+        "string str1;", CR, //
+        "string str2 = \"hello\";", CR, //
+        "?string src3;", CR, //
+        "*string str4;", CR, //
+        "?*string str5;", CR, //
+        "*string str6 = [\"abc\",\"123\"];", CR, //
+
+        "bool bool1;", CR, //
+        "bool bool2 = true;", CR, //
+        "?bool bool3;", CR, //
+
+        "Bah bv1;", CR, //
+        "?Bah bv2;", CR, //
+        "*Bah bv3;", CR, //
+
+        "File file1;", CR, //
+        "?File file2;", CR, //
+        "*File file3;", CR, //
+        "?*File file4;", CR, //
+        "File file5 = ", quote("abc/xyz.txt"), ";", CR, //
+
+        "IPoint location;", CR, //
+        "IRect locx;", CR, //
+        "FPoint floc;", CR, //
+        "FRect frect;", CR, //
+        "Matrix mat;", CR, //
+
+        "JSMap jalpha;", CR, //
+        "?JSMap jbeta;", CR, //
+        "*JSMap jgamma;", CR, //
+        "JSMap jepsilon = ", quote("{\\\"a\\\":15,\\\"b\\\":\\\"hello\\\"}"), ";", CR, //
+
+        "JSList lalpha;", CR, //
+        "?JSList lbeta;", CR, //
+        "*JSList lgamma;", CR, //
+        "JSList lepsilon = ", quote("[\\\"a\\\",15,\\\"b\\\",\\\"hello\\\"]"), ";", CR, //
+
+        "foo.gen.Garp garp;", CR, //
+        "enum foo.gen.Zebra zeb;", CR, //
+
+        "IPoint za;", CR, //
+        "?IPoint zb;", CR, //
+        "*IPoint zc;", CR, //
+        "?*IPoint zd;", CR, //
+        "IPoint ze = [32,64];", CR, //
+
+        "map string File mp1;", CR, //
+        "?map string File mp2;", CR, //
+        "map string Bah mp3;", CR, //
+        "map string string mp4;", CR, //
+
+        "map string long name_map;", CR, //
+        "set long ages_set;", CR, //
+
+        "set File set1;", CR, //
+        "?set File set2;", CR, //
+        "set Bah set3;", CR, //
+        "set string set4;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
 }
