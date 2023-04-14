@@ -61,6 +61,13 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
+  public void typeIntVarious() {
+    debug();
+    classMode();
+    typeIntVariousOld();
+  }
+
+  @Test
   public void typeIntVariousOld() {
     p().pr("fields {", INDENT, //
         "int alpha;", CR, //
@@ -82,6 +89,13 @@ public class JavaGeneratorTest extends GenBaseTest {
     log("Original:", INDENT, x);
     log("Parsed:", INDENT, u2);
     assertEquals(x, u2);
+  }
+
+  @Test
+  public void typeByteVarious() {
+    debug();
+    classMode();
+    typeByteVariousOld();
   }
 
   @Test
@@ -131,6 +145,12 @@ public class JavaGeneratorTest extends GenBaseTest {
     log("Original:", INDENT, x);
     log("Parsed:", INDENT, u2);
     assertEquals(x, u2);
+  }
+
+  @Test
+  public void typeShortVarious() {
+    classMode();
+    typeShortVariousOld();
   }
 
   @Test
@@ -262,6 +282,18 @@ public class JavaGeneratorTest extends GenBaseTest {
         "*double hotel = [3, 1e-3];", CR, //
         OUTDENT, "}");
     compile();
+  }
+
+  @Test
+  public void typeString() {
+    debug();
+    typeStringUnsafe();
+  }
+
+  @Test
+  public void typeStringUnsafe() {
+    classMode();
+    typeStringOld();
   }
 
   @Test
@@ -444,17 +476,6 @@ public class JavaGeneratorTest extends GenBaseTest {
         "?JSList beta;", CR, //
         "*JSList gamma;", CR, //
         "JSList epsilon = ", quote("[\\\"a\\\",15,\\\"b\\\",\\\"hello\\\"]"), ";", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
-  public void problem() {
-    p().pr("extern js.scredit.gen.ProjectState;", CR, //
-        "fields {", INDENT, //
-        "int version = 14;", CR, //
-        "JSMap recent_projects;", CR, //
-        "?ProjectState default_project_state;", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -672,12 +693,6 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeIntVarious() {
-    classMode();
-    typeIntVariousOld();
-  }
-
-  @Test
   public void typeIntListSerialization() {
     SampleDataType.Builder b = SampleDataType.newBuilder();
     b.i3(SAMPLE_INTS);
@@ -688,23 +703,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     log("Original:", INDENT, x);
     log("Parsed:", INDENT, u2);
     assertEquals(x, u2);
-  }
-
-  @Test
-  public void typeByteVarious() {
-    p().pr("class {", INDENT, //
-        "byte alpha;", CR, //
-        "byte beta = " + Byte.MAX_VALUE + ";", CR, //
-        "?byte gamma;", CR, //
-        "?*byte epsilon;", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
-  public void typeShortVarious() {
-    classMode();
-    typeShortVariousOld();
   }
 
   @Test
@@ -740,12 +738,6 @@ public class JavaGeneratorTest extends GenBaseTest {
         "*double hotel = [3, 1e-3];", CR, //
         OUTDENT, "}");
     compile();
-  }
-
-  @Test
-  public void typeString() {
-    classMode();
-    typeStringOld();
   }
 
   @Test
@@ -981,7 +973,7 @@ public class JavaGeneratorTest extends GenBaseTest {
         OUTDENT, "}");
     compile();
   }
-  
+
   /**
    * A single test that covers a lot of ground
    */

@@ -31,7 +31,6 @@
        "multiLineCommentOld" : 3270,
                "optComments" : 4894,
             "optCommentsOld" : 1080,
-                   "problem" : 6900,
         "qualifiedReference" : 1546,
      "qualifiedReferenceOld" : 5130,
        "secondEnumReference" : 3373,
@@ -42,7 +41,7 @@
            "typeBoxedValues" : 5400,
       "typeBoxedValuesDebug" : 7102,
         "typeBoxedValuesOld" : 7472,
-           "typeByteVarious" : 5777,
+           "typeByteVarious" : 9102,
         "typeByteVariousOld" : 1195,
          "typeDoubleVarious" : 9549,
       "typeDoubleVariousOld" : 3214,
@@ -66,6 +65,7 @@
          "typeSetVariousOld" : 1561,
           "typeShortVarious" : 9045,
        "typeShortVariousOld" : 6355,
-                "typeString" : 8721,
-             "typeStringOld" : 5069
+                "typeString" : 2104,
+             "typeStringOld" : 5069,
+          "typeStringUnsafe" : 5684
 }
