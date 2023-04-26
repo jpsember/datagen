@@ -2,106 +2,97 @@
 
 [!imports]
 
-@@/**
-@@ * Generated Java data class (do not edit!)
-@@ *
-@@ * Instances of this class should be considered immutable.  A mutable copy of an instance
-@@ * can be constructed by calling the toBuilder() method.  When clients pass instances to other
-@@ * code, if mutation of those instances is not desired, then the client should ensure that the
-@@ * instance is not actually a Builder (e.g. by calling build() if necessary).
-@@ */
-[!deprecated]public class [!class] implements {{js.data.AbstractData|AbstractData}} {
+@@//
+@@// Generated Go data class (do not edit!)
+@@//
+[!deprecated]type [!class] struct {
+[!instance_fields]
+}
 
-  @@// Field 'getters'
+[!deprecated]type [!class]Builder struct {
+    m [!class]
+}
+
+// ---------------------------------------------------------------------------------------
+// [!class] interface
+// ---------------------------------------------------------------------------------------
+
+type [!class]OrBuilder interface {
+    DataClass
+    [!class_getter_declaration]
+    Build() *[!class]
+    ToBuilder() *[!class]Builder
+}
+
+var Default[!class] = &[!class]{} // Will have to modify when defaults are supported
+
+// Convenience method to get a fresh builder.
+func New[!class]() *[!class]Builder {
+  return Default[!class].ToBuilder()
+}
+
+// ---------------------------------------------------------------------------------------
+// Implementation of static (built) object
+// ---------------------------------------------------------------------------------------
+
 
 [!class_getter_implementation]
 
-  @@/**
-  @@ * Construct a builder from this data class object.
-  @@ * Where appropriate, this object's values are defensively copied to mutable versions
-  @@ */
-  @Override
-  public Builder toBuilder() {
-    return new Builder(this);
-  }
+func (v *[!class]) ToBuilder() *[!class]Builder {
+  var b = new(![class]Builder)
+  var d = &b.m
+[!copy_to_builder]
+  return b
+}
 
-  @@// Constants used to refer to the fields, e.g., as they appear in json maps
-
-[!string_constants]
-
-[!to_string]
-
-  @@/**
-  @@ * Serialize this object to a json map
-  @@ */
+func (v *[!class]) ToJson() any {
+  var m = NewJSMap()
 [!to_json]
+  return m
+}
 
-  @@/**
-  @@ * The instance is already immutable, so return unchanged
-  @@ */
-  @Override
-  public [!class] build() {
-    return this;
-  }
-
+func (v *[!class]) Parse(source any) DataClass {
+  var s = source.(*JSMap)
+  var n [!class]
 [!parse]
+  return &n
+}
 
-  @@/**
-  @@ * Construct a new builder for objects of this data class
-  @@ */
-  public static Builder newBuilder() {
-    return new Builder(DEFAULT_INSTANCE);
-  }
+func (v *[!class]) String() string {
+  var x = v.ToJson()
+  var x2 = x.(*JSMap)
+  return PrintJSEntity(x2, true)
+}
 
-[!equals]
+// ---------------------------------------------------------------------------------------
+// Implementation of builder
+// ---------------------------------------------------------------------------------------
 
-[!hashcode]
-
-[!instance_fields]
-
-  public static final class Builder extends [!class] {
-
-    private Builder([!class] m) {
-[!copy_to_builder]    }
-
-    @Override
-    public Builder toBuilder() {
-      return this;
-    }
-
-    @Override
-    public int hashCode() {
-      m__hashcode = 0;
-      return super.hashCode();
-    }
-
-    @@/**
-    @@ * Create an immutable version of this builder.  Where appropriate, defensive, immutable copies
-    @@ * are made of the builder fields.
-    @@ */
-    @Override
-    public [!class] build() {
-      [!class] r = new [!class]();
-[!copyfield_from_builder]      return r;
-    }
-
-    @@// Field 'setters'
+[!go_builder_getter_implementation]
 
 [!setters]
 
-  }
+func (v *[!class]Builder) Build() *[!class] {
+  var b = new([!class])
+  var s = &v.m
+[!copyfield_from_builder]
+  return b
+}
 
-[!class_specific]
 
-  @@/**
-  @@ * The default (immutable) instance of this data object
-  @@ */
-  public static final [!class] DEFAULT_INSTANCE = new [!class]();
 
-  @@/**
-  @@ * The private constructor.  To create new instances, use newBuilder()
-  @@ */
-  private [!class]() {
-[!init_instance_fields]  }
+func (v *[!class]Builder) ToBuilder() *[!class]Builder {
+  return v
+}
 
+func (v *[!class]Builder) ToJson() any {
+  return v.m.ToJson()
+}
+
+func (v *[!class]Builder) Parse(source any) DataClass {
+  return Default[!class].Parse(source)
+}
+
+func (v *[!class]Builder) String() string {
+  return v.m.String()
 }
