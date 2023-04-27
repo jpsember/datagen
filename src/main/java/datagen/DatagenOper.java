@@ -179,7 +179,7 @@ public class DatagenOper extends AppOper {
         sourceClassName = protoName;
         break;
       case GO:
-        sourceClassName = DataUtil.convertUnderscoresToCamelCase(protoName);
+        sourceClassName = protoName;  
         break;
       }
       String relativeClassFile = relPathExpr + sourceClassName + "." + sourceFileExtension();

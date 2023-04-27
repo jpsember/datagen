@@ -26,7 +26,6 @@ package datagen.datatype;
 
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
-import static datagen.SourceBuilder.*;
 
 import datagen.FieldDef;
 import datagen.PythonDataType;

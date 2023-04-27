@@ -39,11 +39,11 @@ public class GoGeneratorTest  extends GenBaseTest {
   }
 
   @Test
-  public void simple() {
+  public void crow() {
     rv();
     p().pr("class {", INDENT, //
-        "int alpha;", CR, //
-        "string beta;", CR, //
+        "string name;", CR, //
+        "int rage;", CR, //
         OUTDENT, "}");
     compile();
   }

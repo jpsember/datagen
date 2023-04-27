@@ -174,12 +174,12 @@ public final class ParseTools {
       for (String line : lines) {
         if (line.isEmpty()) {
           if (blanks == 0)
-            sb.append('\n');
+            addCr(sb);
           blanks++;
         } else {
           blanks = 0;
           sb.append(line);
-          sb.append('\n');
+          addCr(sb);
         }
       }
     }
@@ -198,11 +198,11 @@ public final class ParseTools {
         }
         if (sb.length() != 0) {
           for (int i = 0; i < blankRequest; i++)
-            sb.append('\n');
+            addCr(sb);
         }
         blankRequest = 0;
         sb.append(line);
-        sb.append('\n');
+        addCr(sb);
       }
     }
       break;

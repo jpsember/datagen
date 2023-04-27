@@ -94,19 +94,19 @@ public final class GoSourceGen extends SourceGen {
   @Override
   protected final String generateSetters() {
     s.a("**generateSetters");
-//    GeneratedTypeDef def = Context.generatedTypeDef;
-//    s.in(2);
-//    for (FieldDef f : def.fields()) {
-//      s.br();
-//      DataType d = f.dataType();
-//      if (f.deprecated())
-//        s.a("@Deprecated", CR);
-//      s.a("public ", "Builder ", f.setterName(), "(", d.typeName(), " x)", OPEN);
-//      String targetExpr = f.instanceName();
-//      d.sourceSetter(s, f, targetExpr);
-//      s.a(";", CR, "return this;", CLOSE);
-//    }
-//    s.out();
+    //    GeneratedTypeDef def = Context.generatedTypeDef;
+    //    s.in(2);
+    //    for (FieldDef f : def.fields()) {
+    //      s.br();
+    //      DataType d = f.dataType();
+    //      if (f.deprecated())
+    //        s.a("@Deprecated", CR);
+    //      s.a("public ", "Builder ", f.setterName(), "(", d.typeName(), " x)", OPEN);
+    //      String targetExpr = f.instanceName();
+    //      d.sourceSetter(s, f, targetExpr);
+    //      s.a(";", CR, "return this;", CLOSE);
+    //    }
+    //    s.out();
     return content();
   }
 
@@ -141,12 +141,12 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected String generateImports(List<String> qualifiedClassNames) {
-    s.a("**generateImports");
+    //s.a("**generateImports");
+    s.in(2);
+    s.a(". \"js/base\"").cr();
+    s.a(". \"js/json\"").cr();
+    
     for (String cn : qualifiedClassNames) {
-      // We don't need to import anything from java.lang
-      if (cn.startsWith("java.lang."))
-        continue;
-
       // We also don't need to import anything from the local package
       // Assumes the class name includes a package
       String packageName = cn.substring(0, cn.lastIndexOf('.'));
@@ -155,6 +155,7 @@ public final class GoSourceGen extends SourceGen {
 
       s.a("import ", cn, ";").cr();
     }
+    s.out();
     return content();
   }
 
@@ -230,12 +231,16 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected String generateInstanceFields() {
-    s.a("**GenerateInstanceFields");
+    todo("fields are generated in strange order for go; perhaps go sourcegen should override methods to enforce order?");
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(0);
-    for (FieldDef f : def.fields())
-      s.a("protected ", f.dataType().typeName(), " ", f.instanceName(), ";", CR);
-    s.a("protected int m__hashcode;");
+    s.in();
+    int i = INIT_INDEX;
+    for (FieldDef f : def.fields()) {
+      i++;
+      if (i != 0)
+        s.a(CR);
+      s.a(f.instanceName()," ",f.dataType().typeName());
+    }
     s.out();
     return content();
   }
@@ -281,24 +286,24 @@ public final class GoSourceGen extends SourceGen {
   @Override
   protected void addAdditionalTemplateValues(JSMap m) {
     m.put("class_getter_declaration", generateClassGetterDeclaration());
-//    m.put("go_builder_getter_declaration", generateBuilderGetterDeclaration());
+    //    m.put("go_builder_getter_declaration", generateBuilderGetterDeclaration());
     m.put("go_builder_getter_implementation", generateBuilderGetterImplementation());
-    }
-
- 
-  private String generateClassGetterDeclaration() {
-      //  Name() string // '[!class_getter_declaration]
-    GeneratedTypeDef def = Context.generatedTypeDef;
-      return def.name()+"() ?string? need type name";
   }
-  
+
+  private String generateClassGetterDeclaration() {
+    //  Name() string // '[!class_getter_declaration]
+    GeneratedTypeDef def = Context.generatedTypeDef;
+    return def.name() + "() ?string? need type name";
+  }
+
   private String generateBuilderGetterImplementation() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
       s.br();
-      
-      s.a("func (v *",def.name(),"Builder) Set", f.name(),"(",f.name()," ",f.dataType().typeName(), ") *",def.name(),"Builder {", OPEN, //
-          "v.m.",f.name()," = ",f.name(),CR, //
+
+      s.a("func (v *", def.name(), "Builder) Set", f.name(), "(", f.name(), " ", f.dataType().typeName(),
+          ") *", def.name(), "Builder {", OPEN, //
+          "v.m.", f.name(), " = ", f.name(), CR, //
           "return ", f.instanceName(), CLOSE);
     }
     return content();

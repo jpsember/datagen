@@ -36,13 +36,26 @@ import js.parsing.Scanner;
 public final class GoIntDataType extends PythonDataType {
 
   public GoIntDataType(int nbits) {
-  mBits = nbits;
+    mBits = nbits;
+
+    switch (nbits) {
+    case 8:
+    case 16:
+    case 32:
+    case 64:
+      mTypeName = "int" + nbits;
+      break;
+    default:
+      throw badArg("nbits:", nbits);
+    }
   }
+
   private final int mBits;
-  
+  private final String mTypeName;
+
   @Override
-  protected String provideQualifiedClassNameExpr() {loadTools();
-    return "string";
+  protected String provideQualifiedClassNameExpr() {
+    return mTypeName;
   }
 
   @Override
@@ -63,12 +76,12 @@ public final class GoIntDataType extends PythonDataType {
         f.defaultValueOrNull(), ")");
   }
 
-//  @Override
-//  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-//    s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR);
-//    s.doIf(f.optional(), "if x is not None:", OPEN);
-//    s.a("inst.", f.instanceName(), " = x.copy()");
-//    s.endIf(CLOSE);
-//  }
+  //  @Override
+  //  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+  //    s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR);
+  //    s.doIf(f.optional(), "if x is not None:", OPEN);
+  //    s.a("inst.", f.instanceName(), " = x.copy()");
+  //    s.endIf(CLOSE);
+  //  }
 
 }

@@ -39,6 +39,13 @@ public final class Utils {
     throw notSupported(insertStringToFront("Language not supported:", messages));
   }
 
+  private static DebugCounter crCounter = new DebugCounter("crs",0);
+
+  public static void addCr(StringBuilder dest) {
+    crCounter.event(dest);
+    dest.append('\n');
+  }
+
   public static Language language() {
     return Context.config.language();
   }

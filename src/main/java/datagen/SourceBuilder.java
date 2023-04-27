@@ -28,6 +28,7 @@ import static js.base.Tools.*;
 
 import java.util.List;
 
+import static datagen.Utils.*;
 import datagen.gen.Language;
 
 /**
@@ -48,7 +49,7 @@ public final class SourceBuilder {
   public String toString() {
     throw die("unexpected! Did you mean to call content()?");
   }
-  
+
   public void reset() {
     mStringBuilder.setLength(0);
   }
@@ -128,9 +129,9 @@ public final class SourceBuilder {
   public SourceBuilder setDefaultIndent(int indent) {
     mIndent = indent;
     mDefaultIndent = indent;
-  return this;
+    return this;
   }
-  
+
   public String content() {
     if (mIndent != mDefaultIndent) {
       pr("*** About to fail!");
@@ -143,12 +144,15 @@ public final class SourceBuilder {
     return result;
   }
 
+  private static DebugCounter sIndentCounter = new DebugCounter("indenting",0);
+
   /**
    * Move margin to right by specific amount; do a CR
    */
   public SourceBuilder in(int adjustment) {
     mOldIndentStack.add(mIndent);
     mIndent += adjustment;
+    sIndentCounter.event(mStringBuilder, adjustment, "=", mIndent);
     cr();
     return this;
   }
@@ -157,7 +161,9 @@ public final class SourceBuilder {
    * Tab the margin to the right, and do a CR
    */
   public SourceBuilder in() {
-    return in(2);
+    todo("is it ok to use default indent here?");
+    return in(mDefaultIndent);
+    //    return in(2);
   }
 
   private boolean python() {
@@ -194,6 +200,7 @@ public final class SourceBuilder {
   public SourceBuilder out() {
     cr();
     mIndent = pop(mOldIndentStack);
+    sIndentCounter.event(mStringBuilder, "<", mIndent);
     mPendingIndent = 0;
     return this;
   }
@@ -237,7 +244,7 @@ public final class SourceBuilder {
   }
 
   private void generateCr() {
-    mStringBuilder.append('\n');
+    addCr(mStringBuilder);
     mColumn = 0;
     if (mPendingIndent > mIndent) {
       mIndent = mPendingIndent;

@@ -1,13 +1,13 @@
 [!package_decl]
 
-[!imports]
+import (
+[!imports])
 
 @@//
 @@// Generated Go data class (do not edit!)
 @@//
 [!deprecated]type [!class] struct {
-[!instance_fields]
-}
+[!instance_fields]}
 
 [!deprecated]type [!class]Builder struct {
     m [!class]
