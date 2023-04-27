@@ -258,7 +258,15 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected String generateToJson() {
-    return "";
+    GeneratedTypeDef def = Context.generatedTypeDef;
+    int i = INIT_INDEX;
+    for (FieldDef f : def.fields()) {
+      i++;
+      if (i != 0)
+        s.a(CR);
+      s.a("m.Put(\"",f.instanceName(),"\", v.",f.instanceName(),")  // need type-specific PutXXX calls!");
+    }
+    return content();
   }
 
   @Override
