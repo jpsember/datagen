@@ -18,10 +18,10 @@ import (
 // ---------------------------------------------------------------------------------------
 
 type [!class]OrBuilder interface {
-    DataClass
-    [!class_getter_declaration]
-    Build() *[!class]
-    ToBuilder() *[!class]Builder
+  DataClass
+[!class_getter_declaration]
+  Build() *[!class]
+  ToBuilder() *[!class]Builder
 }
 
 var Default[!class] = &[!class]{} // Will have to modify when defaults are supported

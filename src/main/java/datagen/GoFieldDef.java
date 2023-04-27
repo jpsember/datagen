@@ -7,12 +7,12 @@ public class GoFieldDef extends FieldDef {
 
   @Override
   public String provideSetterName() {
-    return DataUtil.convertUnderscoresToCamelCase(name()) + "Set";
+    return provideGetterName() + "Set";
   }
 
   @Override
   public String provideGetterName() {
-    return "Set" + provideSetterName();
+    return DataUtil.convertUnderscoresToCamelCase(name());
   }
 
   @Override

@@ -291,9 +291,12 @@ public final class GoSourceGen extends SourceGen {
   }
 
   private String generateClassGetterDeclaration() {
-    //  Name() string // '[!class_getter_declaration]
     GeneratedTypeDef def = Context.generatedTypeDef;
-    return def.name() + "() ?string? need type name";
+    for (FieldDef f : def.fields()) {
+        s.a(CR);
+      s.a(f.getterName(),"() ",f.dataType().typeName());
+    }
+    return content();
   }
 
   private String generateBuilderGetterImplementation() {
