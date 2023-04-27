@@ -59,6 +59,8 @@ public final class Utils {
       return "java";
     case PYTHON:
       return "py";
+    case GO:
+      return "go";
     }
   }
 
@@ -73,6 +75,8 @@ public final class Utils {
       return "None";
     case JAVA:
       return "null";
+    case GO:
+      return "nil";
     }
   }
 

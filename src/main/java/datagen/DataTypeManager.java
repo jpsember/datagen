@@ -54,7 +54,17 @@ public final class DataTypeManager extends BaseObject {
 
     switch (language()) {
     default:
-      throw languageNotSupported();
+    {
+      add("byte", new GoIntDataType(8));
+      add("short",new GoIntDataType(16));
+      add("int", new GoIntDataType(32));
+      add("long", new GoIntDataType(64));
+      add("float", new GoFloatDataType(32));
+      add("double", new GoFloatDataType(64));
+      add("bool", new GoBooleanDataType());
+      add("string", new GoStringDataType());
+    }
+    break;
     case PYTHON:
       tmp = new PyIntDataType();
       add("byte", tmp);

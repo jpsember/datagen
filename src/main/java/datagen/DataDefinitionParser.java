@@ -114,7 +114,7 @@ final class DataDefinitionParser extends BaseObject {
   private Runnable handler(Token token) {
     Runnable r = mHandlers.get(token.id());
     if (r == null)
-      throw token.fail("No handler for", quote(token.text()));
+      throw token.fail("No handler for", quote(token.text()), "id:",token.id());
     return r;
   }
 

@@ -167,7 +167,9 @@ public final class ParseTools {
     switch (language) {
     default:
       throw languageNotSupported();
-    case JAVA: {
+
+    case JAVA:
+    case GO: {
       int blanks = 1;
       for (String line : lines) {
         if (line.isEmpty()) {
@@ -368,7 +370,7 @@ public final class ParseTools {
   }
 
   public static Object debugComment() {
-    if (Context.debugMode())  
+    if (Context.debugMode())
       return " /*DEBUG*/ ";
     return "";
   }

@@ -38,11 +38,13 @@ public abstract class FieldDef extends BaseObject {
     switch (language()) {
     default:
       throw languageNotSupported();
-    case JAVA:
+     case JAVA:
       return new JavaFieldDef();
     case PYTHON:
       return new PythonFieldDef();
-    }
+    case GO:
+      return new GoFieldDef();
+   }
   }
 
   public FieldDef() {

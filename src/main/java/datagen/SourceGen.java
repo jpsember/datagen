@@ -50,6 +50,8 @@ public abstract class SourceGen extends BaseObject {
       return new JavaSourceGen();
     case PYTHON:
       return new PythonSourceGen();
+    case GO:
+      return new GoSourceGen();
     }
   }
 
@@ -81,6 +83,8 @@ public abstract class SourceGen extends BaseObject {
       m.put("string_constants", generateStringConstants());
       m.put("to_json", generateToJson());
       m.put("to_string", generateToString());
+      addAdditionalTemplateValues(m);
+      //pr("template:",INDENT,m);
       s.setDefaultIndent(0);
     }
 
@@ -134,6 +138,12 @@ public abstract class SourceGen extends BaseObject {
     }
 
     postGenerate();
+  }
+
+  /**
+   * Add any additional key/value pairs to a template, i.e. for other languages
+   */
+  protected void addAdditionalTemplateValues(JSMap templateMap) {
   }
 
   /**

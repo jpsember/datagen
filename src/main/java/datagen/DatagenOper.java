@@ -178,6 +178,9 @@ public class DatagenOper extends AppOper {
       case PYTHON:
         sourceClassName = protoName;
         break;
+      case GO:
+        sourceClassName = DataUtil.convertUnderscoresToCamelCase(protoName);
+        break;
       }
       String relativeClassFile = relPathExpr + sourceClassName + "." + sourceFileExtension();
       File sourceFile = new File(config.sourcePath(), relativeClassFile);
