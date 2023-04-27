@@ -30,6 +30,7 @@ import static js.base.Tools.*;
 import java.util.List;
 
 import datagen.datatype.EnumDataType;
+import js.data.DataUtil;
 import js.file.Files;
 import js.json.JSMap;
 import js.json.JSObject;
@@ -271,7 +272,17 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected String generateParse() {
-    return "";
+    //  n.name = s.GetString("name")
+    //  n.rage = s.GetInt32("rage")
+    GeneratedTypeDef def = Context.generatedTypeDef;
+    int i = INIT_INDEX;
+    for (FieldDef f : def.fields()) {
+      i++;
+      if (i != 0)
+        s.a(CR);
+      s.a("n.",f.instanceName(), " = s.Get",DataUtil.capitalizeFirst(f.dataType().typeName()),"(\"",f.instanceName(),"\")");
+    }
+    return content();
   }
 
   @Override
