@@ -39,10 +39,9 @@ func New[!class]() *[!class]Builder {
 [!class_getter_implementation]
 
 func (v *[!class]) ToBuilder() *[!class]Builder {
-  var b = new(![class]Builder)
+  var b = new([!class]Builder)
   var d = &b.m
-[!copy_to_builder]
-  return b
+[!copy_to_builder]  return b
 }
 
 func (v *[!class]) ToJson() any {
