@@ -26,17 +26,19 @@ package datagen.datatype;
 
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
-import static datagen.SourceBuilder.*;
 
 import datagen.FieldDef;
-import datagen.PythonDataType;
+import datagen.GoDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public final class GoIntDataType extends PythonDataType {
+public final class GoIntDataType extends GoDataType {
+  @Override
+  public   boolean isPrimitive() {
+    return true;
+  }
 
   public GoIntDataType(int nbits) {
-    mBits = nbits;
 
     switch (nbits) {
     case 8:
@@ -48,9 +50,10 @@ public final class GoIntDataType extends PythonDataType {
     default:
       throw badArg("nbits:", nbits);
     }
+    // mBits = nbits;
   }
 
-  private final int mBits;
+  //private final int mBits;
   private final String mTypeName;
 
   @Override
@@ -60,28 +63,22 @@ public final class GoIntDataType extends PythonDataType {
 
   @Override
   public final String provideSourceDefaultValue() {
-    return "\"\"";
+    return "0";
   }
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
+    notFinished();
     return scanner.read(STRING).text();
   }
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
+    notFinished();
     //  n.name = s.GetString("name")
     s.a("n.", f.instanceName(), " = s.GetStringOr(", f.nameStringConstantQualified(), ", ",
         f.defaultValueOrNull(), ")");
   }
-
-  //  @Override
-  //  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-  //    s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR);
-  //    s.doIf(f.optional(), "if x is not None:", OPEN);
-  //    s.a("inst.", f.instanceName(), " = x.copy()");
-  //    s.endIf(CLOSE);
-  //  }
 
 }

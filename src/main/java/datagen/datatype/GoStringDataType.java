@@ -26,19 +26,28 @@ package datagen.datatype;
 
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
-import static datagen.SourceBuilder.*;
 
 import datagen.FieldDef;
-import datagen.PythonDataType;
+import datagen.GoDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public final class GoStringDataType extends PythonDataType {
+public final class GoStringDataType extends GoDataType {
+  @Override
+  public boolean isPrimitive() {
+    return true;
+  }
 
   @Override
-  protected String provideQualifiedClassNameExpr() {loadTools();
+  protected String provideTypeName() {
     return "string";
   }
+
+//  @Override
+//  protected String provideQualifiedClassNameExpr() {
+//    loadTools();
+//    return "string";
+//  }
 
   @Override
   public final String provideSourceDefaultValue() {
@@ -58,12 +67,12 @@ public final class GoStringDataType extends PythonDataType {
         f.defaultValueOrNull(), ")");
   }
 
-//  @Override
-//  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-//    s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR);
-//    s.doIf(f.optional(), "if x is not None:", OPEN);
-//    s.a("inst.", f.instanceName(), " = x.copy()");
-//    s.endIf(CLOSE);
-//  }
+  //  @Override
+  //  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+  //    s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR);
+  //    s.doIf(f.optional(), "if x is not None:", OPEN);
+  //    s.a("inst.", f.instanceName(), " = x.copy()");
+  //    s.endIf(CLOSE);
+  //  }
 
 }

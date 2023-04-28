@@ -28,11 +28,16 @@ import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
 import datagen.FieldDef;
-import datagen.PythonDataType;
+import datagen.GoDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public final class GoBooleanDataType extends PythonDataType {
+public final class GoBooleanDataType extends  GoDataType {
+
+@Override
+  public   boolean isPrimitive() {
+    return true;
+  }
 
   @Override
   protected String provideQualifiedClassNameExpr() {loadTools();

@@ -33,7 +33,6 @@ import datagen.datatype.EnumDataType;
 import js.data.DataUtil;
 import js.file.Files;
 import js.json.JSMap;
-import js.json.JSObject;
 
 public final class GoSourceGen extends SourceGen {
 
@@ -55,21 +54,13 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected final String generateCopyFromBuilderToImmutable() {
-    s.a("**generateCopyFromBuilderToImmutable");
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(4);
     for (FieldDef f : def.fields()) {
       s.a(CR);
-      String targetExpression = "r." + f.instanceName();
-      String valueExpression = f.instanceName();
-      if (Context.nonClassMode()) {
-        f.dataType().sourceExpressionToImmutable(s, f, targetExpression, valueExpression);
-      } else {
-        s.a(targetExpression, " = ", valueExpression);
-      }
-      s.a(";");
+      String targetExpression = "b." + f.instanceName();
+      String valueExpression = "s." + f.instanceName();
+      s.a(targetExpression, " = ", valueExpression);
     }
-    s.out();
     return content();
   }
 
@@ -94,20 +85,20 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected final String generateSetters() {
-    s.a("**generateSetters");
-    //    GeneratedTypeDef def = Context.generatedTypeDef;
-    //    s.in(2);
-    //    for (FieldDef f : def.fields()) {
-    //      s.br();
-    //      DataType d = f.dataType();
-    //      if (f.deprecated())
-    //        s.a("@Deprecated", CR);
-    //      s.a("public ", "Builder ", f.setterName(), "(", d.typeName(), " x)", OPEN);
-    //      String targetExpr = f.instanceName();
-    //      d.sourceSetter(s, f, targetExpr);
-    //      s.a(";", CR, "return this;", CLOSE);
-    //    }
-    //    s.out();
+
+    GeneratedTypeDef def = Context.generatedTypeDef;
+    //s.in(2);
+    for (FieldDef f : def.fields()) {
+      s.br();
+      DataType d = f.dataType();
+
+      s.a("func (v *", def.name(), "Builder) ", f.setterName(), "(", f.instanceName(), " ", d.typeName(),
+          ") *", def.name(), "Builder", OPEN);
+      String targetExpr = "v." + f.instanceName();
+      d.sourceSetter(s, f, targetExpr);
+      s.a(CR, "return v", CLOSE);
+    }
+    //s.out();
     return content();
   }
 
@@ -146,7 +137,7 @@ public final class GoSourceGen extends SourceGen {
     s.in(2);
     s.a(". \"js/base\"").cr();
     s.a(". \"js/json\"").cr();
-    
+
     for (String cn : qualifiedClassNames) {
       // We also don't need to import anything from the local package
       // Assumes the class name includes a package
@@ -186,8 +177,8 @@ public final class GoSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
       s.br();
-      s.a("func (v *",def.name(),") ",f.getterName(),"() ",f.dataType().typeName()," ",OPEN, //
-          "return v.",f.instanceName(),CLOSE);
+      s.a("func (v *", def.name(), ") ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
+          "return v.", f.instanceName(), CLOSE);
     }
     return content();
   }
@@ -199,12 +190,12 @@ public final class GoSourceGen extends SourceGen {
     for (FieldDef f : def.fields()) {
       // d.rage = v.rage
       String expr = "v." + f.instanceName();
-        if (Context.debugMode()) {
-          f.dataType().sourceExpressionToImmutable(s, f, "d."+f.instanceName(), expr);
-          s.a(CR);
-        } else {
-          s.a("d."+f.instanceName(), " = ", expr,  CR);
-        }
+      if (Context.debugMode()) {
+        f.dataType().sourceExpressionToImmutable(s, f, "d." + f.instanceName(), expr);
+        s.a(CR);
+      } else {
+        s.a("d." + f.instanceName(), " = ", expr, CR);
+      }
     }
     s.out();
     return content();
@@ -225,7 +216,8 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected String generateInstanceFields() {
-    todo("fields are generated in strange order for go; perhaps go sourcegen should override methods to enforce order?");
+    todo(
+        "fields are generated in strange order for go; perhaps go sourcegen should override methods to enforce order?");
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.in();
     int i = INIT_INDEX;
@@ -233,7 +225,7 @@ public final class GoSourceGen extends SourceGen {
       i++;
       if (i != 0)
         s.a(CR);
-      s.a(f.instanceName()," ",f.dataType().typeName());
+      s.a(f.instanceName(), " ", f.dataType().typeName());
     }
     s.out();
     return content();
@@ -254,9 +246,6 @@ public final class GoSourceGen extends SourceGen {
     s.out();
   }
 
-  private static String sClassTemplate = Files.readString(SourceGen.class, "class_template_go.txt");
-  private static String sEnumTemplate = Files.readString(SourceGen.class, "enum_template_go.txt");
-
   @Override
   protected String generateToJson() {
     GeneratedTypeDef def = Context.generatedTypeDef;
@@ -265,7 +254,7 @@ public final class GoSourceGen extends SourceGen {
       i++;
       if (i != 0)
         s.a(CR);
-      s.a("m.Put(\"",f.instanceName(),"\", v.",f.instanceName(),")  // need type-specific PutXXX calls!");
+      s.a("m.Put(\"", f.instanceName(), "\", v.", f.instanceName(), ")  // need type-specific PutXXX calls!");
     }
     return content();
   }
@@ -280,7 +269,8 @@ public final class GoSourceGen extends SourceGen {
       i++;
       if (i != 0)
         s.a(CR);
-      s.a("n.",f.instanceName(), " = s.Get",DataUtil.capitalizeFirst(f.dataType().typeName()),"(\"",f.instanceName(),"\")");
+      s.a("n.", f.instanceName(), " = s.Get", DataUtil.capitalizeFirst(f.dataType().typeName()), "(\"",
+          f.instanceName(), "\")");
     }
     return content();
   }
@@ -305,8 +295,8 @@ public final class GoSourceGen extends SourceGen {
   private String generateClassGetterDeclaration() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
-        s.a(CR);
-      s.a(f.getterName(),"() ",f.dataType().typeName());
+      s.a(CR);
+      s.a(f.getterName(), "() ", f.dataType().typeName());
     }
     return content();
   }
@@ -315,13 +305,13 @@ public final class GoSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
       s.br();
-
-      s.a("func (v *", def.name(), "Builder) Set", f.name(), "(", f.name(), " ", f.dataType().typeName(),
-          ") *", def.name(), "Builder {", OPEN, //
-          "v.m.", f.name(), " = ", f.name(), CR, //
-          "return ", f.instanceName(), CLOSE);
+      s.a("func (v *", def.name(), "Builder) ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
+          "return v.m.", f.instanceName(), CLOSE);
     }
     return content();
   }
+
+  private static String sClassTemplate = Files.readString(SourceGen.class, "class_template_go.txt");
+  private static String sEnumTemplate = Files.readString(SourceGen.class, "enum_template_go.txt");
 
 }

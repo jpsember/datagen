@@ -26,50 +26,56 @@ package datagen.datatype;
 
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
-import static datagen.SourceBuilder.*;
 
 import datagen.FieldDef;
-import datagen.PythonDataType;
+import datagen.GoDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public final class GoFloatDataType extends PythonDataType {
-
+public final class GoFloatDataType extends GoDataType {
+  @Override
+  public   boolean isPrimitive() {
+    return true;
+  }
 
   public GoFloatDataType(int nbits) {
-  mBits = nbits;
+    switch (nbits) {
+
+    case 32:
+    case 64:
+      mTypeName = "float" + nbits;
+      break;
+    default:
+      throw badArg("nbits:", nbits);
+    }
+    //mBits = nbits;
   }
-  private final int mBits;
-  
+
+  //private final int mBits;
+  private final String mTypeName;
+
   @Override
-  protected String provideQualifiedClassNameExpr() {loadTools();
-    return "string";
+  protected String provideQualifiedClassNameExpr() {
+    return mTypeName;
   }
 
   @Override
   public final String provideSourceDefaultValue() {
-    return "\"\"";
+    return "0";
   }
 
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
+    notFinished();
     return scanner.read(STRING).text();
   }
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    //  n.name = s.GetString("name")
+    notFinished();
     s.a("n.", f.instanceName(), " = s.GetStringOr(", f.nameStringConstantQualified(), ", ",
         f.defaultValueOrNull(), ")");
   }
-
-//  @Override
-//  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-//    s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR);
-//    s.doIf(f.optional(), "if x is not None:", OPEN);
-//    s.a("inst.", f.instanceName(), " = x.copy()");
-//    s.endIf(CLOSE);
-//  }
 
 }

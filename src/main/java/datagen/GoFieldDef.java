@@ -7,7 +7,7 @@ public class GoFieldDef extends FieldDef {
 
   @Override
   public String provideSetterName() {
-    return provideGetterName() + "Set";
+    return "Set" + provideGetterName();
   }
 
   @Override
