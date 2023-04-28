@@ -171,9 +171,6 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected final String generateGetters() {
-    // func (v *Crow) Name() string {
-    //   return v.name
-    // }
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
       s.br();
@@ -254,15 +251,13 @@ public final class GoSourceGen extends SourceGen {
       i++;
       if (i != 0)
         s.a(CR);
-      s.a("m.Put(\"", f.instanceName(), "\", v.", f.instanceName(), ")  // need type-specific PutXXX calls!");
+      s.a("m.Put(\"", f.instanceName(), "\", v.", f.instanceName(), ")");
     }
     return content();
   }
 
   @Override
   protected String generateParse() {
-    //  n.name = s.GetString("name")
-    //  n.rage = s.GetInt32("rage")
     GeneratedTypeDef def = Context.generatedTypeDef;
     int i = INIT_INDEX;
     for (FieldDef f : def.fields()) {
@@ -288,7 +283,6 @@ public final class GoSourceGen extends SourceGen {
   @Override
   protected void addAdditionalTemplateValues(JSMap m) {
     m.put("class_getter_declaration", generateClassGetterDeclaration());
-    //    m.put("go_builder_getter_declaration", generateBuilderGetterDeclaration());
     m.put("go_builder_getter_implementation", generateBuilderGetterImplementation());
   }
 

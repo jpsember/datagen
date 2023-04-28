@@ -24,8 +24,9 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static js.base.Tools.*;
+
+import static datagen.ParseTools.*;
 
 import datagen.FieldDef;
 import datagen.GoDataType;
@@ -40,14 +41,9 @@ public final class GoStringDataType extends GoDataType {
 
   @Override
   protected String provideTypeName() {
+    loadTools();
     return "string";
   }
-
-//  @Override
-//  protected String provideQualifiedClassNameExpr() {
-//    loadTools();
-//    return "string";
-//  }
 
   @Override
   public final String provideSourceDefaultValue() {
