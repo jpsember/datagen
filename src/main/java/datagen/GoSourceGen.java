@@ -54,13 +54,17 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected final String generateCopyFromBuilderToImmutable() {
+    //s.in();
+    s.specialIndentAdj(2);
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
-      s.a(CR);
+      s.cr();
       String targetExpression = "b." + f.instanceName();
       String valueExpression = "s." + f.instanceName();
       s.a(targetExpression, " = ", valueExpression);
     }
+    s.specialIndentAdj(-2);
+    // s.out();
     return content();
   }
 
@@ -87,7 +91,8 @@ public final class GoSourceGen extends SourceGen {
   protected final String generateSetters() {
 
     GeneratedTypeDef def = Context.generatedTypeDef;
-    //s.in(2);
+   // s.specialIndentAdj(-4);
+
     for (FieldDef f : def.fields()) {
       s.br();
       DataType d = f.dataType();
@@ -98,7 +103,7 @@ public final class GoSourceGen extends SourceGen {
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "return v", CLOSE);
     }
-    //s.out();
+    
     return content();
   }
 
@@ -178,13 +183,15 @@ public final class GoSourceGen extends SourceGen {
       s.a("func (v *", def.name(), ") ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
           "return v.", f.instanceName(), CLOSE);
     }
+    s.specialIndentAdj(2);
     return content();
   }
 
   @Override
   protected final String generateImmutableToBuilder() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in();
+    s.specialIndentAdj(-2);
+       s.in();
     for (FieldDef f : def.fields()) {
       String expr = "v." + f.instanceName();
       if (Context.debugMode()) {
@@ -195,7 +202,8 @@ public final class GoSourceGen extends SourceGen {
       s.a(CR);
     }
     s.out();
-    return content();
+    s.specialIndentAdj( 2);
+      return content();
   }
 
   @Override
@@ -245,24 +253,21 @@ public final class GoSourceGen extends SourceGen {
   @Override
   protected String generateToJson() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    int i = INIT_INDEX;
+    s.specialIndentAdj(-2);
     for (FieldDef f : def.fields()) {
-      i++;
-      if (i != 0)
-        s.a(CR);
+      s.cr();
       s.a("m.Put(\"", f.instanceName(), "\", v.", f.instanceName(), ")");
     }
-    return content();
+    s.specialIndentAdj( 2);
+  return content();
   }
 
   @Override
   protected String generateParse() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    int i = INIT_INDEX;
+    s.in();
     for (FieldDef f : def.fields()) {
-      i++;
-      if (i != 0)
-        s.a(CR);
+      s.cr();
       s.a("n.", f.instanceName(), " = s.Get", DataUtil.capitalizeFirst(f.dataType().typeName()), "(\"",
           f.instanceName(), "\")");
     }
@@ -287,22 +292,26 @@ public final class GoSourceGen extends SourceGen {
 
   private String generateClassGetterDeclaration() {
     GeneratedTypeDef def = Context.generatedTypeDef;
+    s.specialIndentAdj(-2);
     for (FieldDef f : def.fields()) {
       //todo("not sure doIndent is necessary");
       //s.doIndent();
       s.a(f.getterName(), "() ", f.dataType().typeName());
       s.a(CR);
     }
-    return trimRight(content());
+    s.specialIndentAdj(2);
+      return trimRight(content());
   }
 
   private String generateBuilderGetterImplementation() {
+    s.specialIndentAdj(-2);
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
       s.br();
       s.a("func (v *", def.name(), "Builder) ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
           "return v.m.", f.instanceName(), CLOSE);
     }
+    s.specialIndentAdj(2);
     return content();
   }
 

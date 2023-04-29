@@ -50,8 +50,7 @@ func (v *[!class]) ToBuilder() *[!class]Builder {
 
 func (v *[!class]) ToJson() any {
   var m = NewJSMap()
-[!to_json]
-  return m
+[!to_json]  return m
 }
 
 func (v *[!class]) Parse(source any) DataClass {
