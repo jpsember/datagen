@@ -216,15 +216,10 @@ public final class GoSourceGen extends SourceGen {
     todo(
         "fields are generated in strange order for go; perhaps go sourcegen should override methods to enforce order?");
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in();
-    int i = INIT_INDEX;
     for (FieldDef f : def.fields()) {
-      i++;
-      if (i != 0)
-        s.a(CR);
       s.a(f.instanceName(), " ", f.dataType().typeName());
+      s.a(CR);
     }
-    s.out();
     return content();
   }
 
