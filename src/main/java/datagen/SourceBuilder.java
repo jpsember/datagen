@@ -160,6 +160,18 @@ public final class SourceBuilder {
     return in(mDefaultIndent);
   }
 
+  /**
+   * Do a CR, and adjust indent by a particular value; to adjust for some
+   * special circumstances
+   */
+  public SourceBuilder specialIndentAdj(int adjAmount) {
+    int newIndent = mIndent + adjAmount;
+    cr();
+    mIndent = newIndent;
+    mPendingIndent = 0;
+    return this;
+  }
+
   private boolean python() {
     return mLanguage == Language.PYTHON;
   }
@@ -261,6 +273,10 @@ public final class SourceBuilder {
   }
 
   private DebugCounter dc = new DebugCounter("a", 0);
+
+  public StringBuilder debugStringBuilder() {
+    return mStringBuilder;
+  }
 
   private void addSafe(String str) {
     dc.event(mStringBuilder, "addSafe");

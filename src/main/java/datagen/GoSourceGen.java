@@ -172,6 +172,7 @@ public final class GoSourceGen extends SourceGen {
   @Override
   protected final String generateGetters() {
     GeneratedTypeDef def = Context.generatedTypeDef;
+    s.specialIndentAdj(-2);
     for (FieldDef f : def.fields()) {
       s.br();
       s.a("func (v *", def.name(), ") ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
