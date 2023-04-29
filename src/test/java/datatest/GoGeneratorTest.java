@@ -27,10 +27,14 @@ package datatest;
 import org.junit.Test;
 
 import datagen.gen.Language;
+import js.data.DataUtil;
+import js.file.Files;
 
 import static js.base.Tools.*;
 
-public class GoGeneratorTest  extends GenBaseTest {
+import java.io.File;
+
+public class GoGeneratorTest extends GenBaseTest {
 
   @Override
   public void setup() {
@@ -44,10 +48,20 @@ public class GoGeneratorTest  extends GenBaseTest {
     p().pr("class {", INDENT, //
         "string name;", CR, //
         "int rage;", CR, //
-        "long timestamp;",CR, //
-        "bool live;",CR, //
+        "long timestamp;", CR, //
+        "bool live;", CR, //
         OUTDENT, "}");
     compile();
+
+    {
+      File target = new File("adj_crow.go");
+      if (true || !target.exists()) {
+        String s = Files.readString(new File("crow.go"));
+        StringBuilder sb = new StringBuilder();
+        DataUtil.convertTabsToSpaces(2, s, sb);
+        Files.S.writeString(target, sb.toString());
+      }
+    }
   }
 
 }

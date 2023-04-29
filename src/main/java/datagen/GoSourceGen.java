@@ -94,7 +94,7 @@ public final class GoSourceGen extends SourceGen {
 
       s.a("func (v *", def.name(), "Builder) ", f.setterName(), "(", f.instanceName(), " ", d.typeName(),
           ") *", def.name(), "Builder", OPEN);
-      String targetExpr = "v." + f.instanceName();
+      String targetExpr = "v.m." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "return v", CLOSE);
     }
@@ -216,8 +216,12 @@ public final class GoSourceGen extends SourceGen {
     todo(
         "fields are generated in strange order for go; perhaps go sourcegen should override methods to enforce order?");
     GeneratedTypeDef def = Context.generatedTypeDef;
+    int max = 0;
     for (FieldDef f : def.fields()) {
-      s.a(f.instanceName(), " ", f.dataType().typeName());
+      max = Math.max(max, f.instanceName().length());
+    }
+    for (FieldDef f : def.fields()) {
+      s.a(f.instanceName(), spaces(1 + max - f.instanceName().length()), f.dataType().typeName());
       s.a(CR);
     }
     return content();

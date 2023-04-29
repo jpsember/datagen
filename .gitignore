@@ -31,3 +31,7 @@ target
 
 experiment
 src/main/java/datagen/TypeString.java
+crow.go
+cmp.sh
+adj_crow.go
+

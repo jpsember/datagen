@@ -35,8 +35,12 @@ func New[!class]() *[!class]Builder {
 // Implementation of static (built) object
 // ---------------------------------------------------------------------------------------
 
-
 [!class_getter_implementation]
+
+func (v *[!class]) Build() *[!class] {
+  // This is already the immutable (built) version.
+  return v
+}
 
 func (v *[!class]) ToBuilder() *[!class]Builder {
   var b = new([!class]Builder)
