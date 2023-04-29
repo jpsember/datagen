@@ -289,7 +289,7 @@ public final class GoSourceGen extends SourceGen {
       s.a(f.getterName(), "() ", f.dataType().typeName());
       s.a(CR);
     }
-    return content();
+    return trimRight(content());
   }
 
   private String generateBuilderGetterImplementation() {
