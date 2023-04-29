@@ -51,11 +51,9 @@ public class PythonSourceGen extends SourceGen {
 
   @Override
   protected void generateEnumValues(EnumDataType dt) {
-    s.in();
     for (String label : dt.labels()) {
       s.a(label, " = ", quote(label.toLowerCase())).cr();
     }
-    s.out();
   }
 
   @Override

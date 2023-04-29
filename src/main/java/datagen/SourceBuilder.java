@@ -161,9 +161,7 @@ public final class SourceBuilder {
    * Tab the margin to the right, and do a CR
    */
   public SourceBuilder in() {
-    todo("is it ok to use default indent here?");
     return in(mDefaultIndent);
-    //    return in(2);
   }
 
   private boolean python() {

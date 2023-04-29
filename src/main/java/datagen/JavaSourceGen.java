@@ -86,7 +86,7 @@ public final class JavaSourceGen extends SourceGen {
     s.out();
     return content();
   }
-  
+
   @Override
   protected final String generateSetters() {
     GeneratedTypeDef def = Context.generatedTypeDef;
@@ -302,7 +302,6 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected void generateEnumValues(EnumDataType dt) {
-    s.in();
     int i = INIT_INDEX;
     for (String label : dt.labels()) {
       i++;
@@ -311,7 +310,6 @@ public final class JavaSourceGen extends SourceGen {
       s.a(label);
     }
     s.a(";");
-    s.out();
   }
 
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template.txt");

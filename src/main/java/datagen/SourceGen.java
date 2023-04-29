@@ -66,6 +66,8 @@ public abstract class SourceGen extends BaseObject {
     String content = getTemplate();
     m.put("deprecated", def.isDeprecated() ? "@Deprecated\n" : "");
     if (def.isEnum()) {
+      todo("can this be set in the template via some sort of embedded code?");
+      s.setDefaultIndent(2);
       generateEnumValues(def.enumDataType());
       m.put("default_value", def.enumDataType().labels().get(0));
       m.put("enum_values", content());
