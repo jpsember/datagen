@@ -10,7 +10,7 @@ import (
 [!instance_fields]}
 
 [!deprecated]type [!class]Builder struct {
-    m [!class]
+  m [!class]
 }
 
 // ---------------------------------------------------------------------------------------

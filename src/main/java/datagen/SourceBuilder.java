@@ -30,6 +30,7 @@ import java.util.List;
 
 import static datagen.Utils.*;
 import datagen.gen.Language;
+import js.base.Tools;
 
 /**
  * Formats source code to a buffer
@@ -52,6 +53,7 @@ public final class SourceBuilder {
 
   public void reset() {
     mStringBuilder.setLength(0);
+    mColumn = 0;
   }
 
   /**
@@ -133,18 +135,12 @@ public final class SourceBuilder {
   }
 
   public String content() {
-    if (mIndent != mDefaultIndent) {
-      pr("*** About to fail!");
-      pr("mIndent is", mIndent);
-      pr(mStringBuilder);
-      checkState(mIndent == mDefaultIndent);
-    }
     String result = mStringBuilder.toString();
     reset();
     return result;
   }
 
-  private static DebugCounter sIndentCounter = new DebugCounter("indenting",0);
+  private static DebugCounter sIndentCounter = new DebugCounter("indenting", 0);
 
   /**
    * Move margin to right by specific amount; do a CR
@@ -224,19 +220,50 @@ public final class SourceBuilder {
     return this;
   }
 
-  private void doIndent() {
+  private void validate() {
+    alert("performing validation");
+    String problem = null;
+
+    int len = mStringBuilder.length();
+    do {
+
+      if (mColumn > len) {
+        problem = "column > buffer length";
+        break;
+      }
+
+    } while (false);
+    if (problem != null) {
+      pr("*** Validation problem; column:", mColumn, "indent:", mIndent, "buffer length:", len);
+      pr("buffer:");
+      pr(Tools.insertLeftRightMargins(mStringBuilder));
+      pr("Problem:", problem);
+      pr("Column:", mColumn, "indent:", mIndent, "buffer length:", len);
+      badState("validation problem");
+    }
+
+  }
+
+  public void doIndent() {
+    validate();
     if (mColumn < mIndent) {
       addSafe(spaces(mIndent - mColumn));
     }
   }
 
+  private DebugCounter dAddMisc = new DebugCounter("m", 0);
+
   private void add(String str) {
+    dAddMisc.event(mStringBuilder);
     if (str.indexOf('\n') >= 0)
       throw new IllegalArgumentException("newline in text: '" + str + "'");
     addSafe(str);
   }
 
+  private DebugCounter dc = new DebugCounter("a", 0);
+
   private void addSafe(String str) {
+    dc.event(mStringBuilder, "addSafe");
     mStringBuilder.append(str);
     mColumn += str.length();
   }
@@ -265,5 +292,13 @@ public final class SourceBuilder {
   private StringBuilder mStringBuilder = new StringBuilder();
   private List<Boolean> mConditionalStack = arrayList();
   private List<Integer> mOldIndentStack = arrayList();
+
+  public int debugCursor() {
+    return mColumn;
+  }
+
+  public int debugIndent() {
+    return mIndent;
+  }
 
 }

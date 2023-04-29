@@ -9,7 +9,7 @@ public class DebugCounter {
   public DebugCounter(String name, int target) {
     loadTools();
     if (target != 0)
-      alert("DebugCounter is active:", name);
+      alertWithSkip(1,"DebugCounter is active:", name);
     mTarget = target;
   }
 
@@ -23,9 +23,8 @@ public class DebugCounter {
     if (messages.length > 0) {
       target.append(":");
       target.append(BasePrinter.toString(messages));
-      target.append(']');
     }
-
+    target.append(']');
   }
 
   private final int mTarget;

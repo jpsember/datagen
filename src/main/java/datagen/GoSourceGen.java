@@ -284,8 +284,10 @@ public final class GoSourceGen extends SourceGen {
   private String generateClassGetterDeclaration() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
-      s.a(CR);
+      //todo("not sure doIndent is necessary");
+      //s.doIndent();
       s.a(f.getterName(), "() ", f.dataType().typeName());
+      s.a(CR);
     }
     return content();
   }
