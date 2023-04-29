@@ -184,16 +184,15 @@ public final class GoSourceGen extends SourceGen {
   @Override
   protected final String generateImmutableToBuilder() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(0);
+    s.in();
     for (FieldDef f : def.fields()) {
-      // d.rage = v.rage
       String expr = "v." + f.instanceName();
       if (Context.debugMode()) {
         f.dataType().sourceExpressionToImmutable(s, f, "d." + f.instanceName(), expr);
-        s.a(CR);
       } else {
-        s.a("d." + f.instanceName(), " = ", expr, CR);
+        s.a("d." + f.instanceName(), " = ", expr);
       }
+      s.a(CR);
     }
     s.out();
     return content();
