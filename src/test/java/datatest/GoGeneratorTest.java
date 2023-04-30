@@ -44,6 +44,7 @@ public class GoGeneratorTest extends GenBaseTest {
 
   @Test
   public void crow() {
+    rv();
     p().pr("class {", INDENT, //
         "string name;", CR, //
         "int rage;", CR, //

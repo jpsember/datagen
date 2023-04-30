@@ -54,8 +54,7 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected final String generateCopyFromBuilderToImmutable() {
-    //s.in();
-    s.specialIndentAdj(2);
+    s.setIndent(2);
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
       s.cr();
@@ -63,8 +62,6 @@ public final class GoSourceGen extends SourceGen {
       String valueExpression = "s." + f.instanceName();
       s.a(targetExpression, " = ", valueExpression);
     }
-    s.specialIndentAdj(-2);
-    // s.out();
     return content();
   }
 
@@ -176,14 +173,14 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected final String generateGetters() {
+   // s.setIndent(0);
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.specialIndentAdj(-2);
     for (FieldDef f : def.fields()) {
-      s.br();
+  //    s.debugStringBuilder().append("???");
       s.a("func (v *", def.name(), ") ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
           "return v.", f.instanceName(), CLOSE);
-    }
-    s.specialIndentAdj(2);
+      s.br();
+       }
     return content();
   }
 
@@ -221,9 +218,8 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected String generateInstanceFields() {
-    todo(
-        "fields are generated in strange order for go; perhaps go sourcegen should override methods to enforce order?");
     GeneratedTypeDef def = Context.generatedTypeDef;
+    s.setIndent(2);
     int max = 0;
     for (FieldDef f : def.fields()) {
       max = Math.max(max, f.instanceName().length());
@@ -265,7 +261,7 @@ public final class GoSourceGen extends SourceGen {
   @Override
   protected String generateParse() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in();
+    s.setIndent(2);
     for (FieldDef f : def.fields()) {
       s.cr();
       s.a("n.", f.instanceName(), " = s.Get", DataUtil.capitalizeFirst(f.dataType().typeName()), "(\"",
@@ -292,14 +288,13 @@ public final class GoSourceGen extends SourceGen {
 
   private String generateClassGetterDeclaration() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.specialIndentAdj(-2);
+    s.setIndent(2);
     for (FieldDef f : def.fields()) {
       //todo("not sure doIndent is necessary");
       //s.doIndent();
       s.a(f.getterName(), "() ", f.dataType().typeName());
       s.a(CR);
     }
-    s.specialIndentAdj(2);
     return trimRight(content());
   }
 

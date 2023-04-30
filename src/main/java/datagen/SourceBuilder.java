@@ -45,7 +45,7 @@ public final class SourceBuilder {
 
   public SourceBuilder(Language language) {
     mLanguage = language;
-    mDefaultIndent = 2;
+    mTabSize = 2;
   }
 
   public String toString() {
@@ -126,6 +126,8 @@ public final class SourceBuilder {
 
   public SourceBuilder setIndent(int indent) {
     mIndent = indent;
+    if (indent > 0)
+      alertWithSkip(1, "indent set to:",indent);
     return this;
   }
 
@@ -158,18 +160,18 @@ public final class SourceBuilder {
    * Tab the margin to the right, and do a CR
    */
   public SourceBuilder in() {
-    return in(mDefaultIndent);
+    return in(mTabSize);
   }
 
   /**
    * Do a CR, and adjust indent by a particular value; to adjust for some
    * special circumstances
    */
+  @Deprecated
   public SourceBuilder specialIndentAdj(int adjAmount) {
     int newIndent = mIndent + adjAmount;
     cr();
     setIndent(newIndent);
-    mPendingIndent = 0;
     return this;
   }
 
@@ -208,7 +210,6 @@ public final class SourceBuilder {
     cr();
     setIndent(pop(mOldIndentStack));
     sIndentCounter.event(mStringBuilder, "<", mIndent);
-    mPendingIndent = 0;
     return this;
   }
 
@@ -260,6 +261,7 @@ public final class SourceBuilder {
   public void doIndent() {
     validate();
     if (mColumn < mIndent) {
+    // addSafe("[col:"+mColumn+" indent:"+mIndent+"]");
       addSafe(spaces(mIndent - mColumn));
     }
   }
@@ -284,10 +286,6 @@ public final class SourceBuilder {
   private void generateCr() {
     addCr(mStringBuilder);
     mColumn = 0;
-    if (mPendingIndent > mIndent) {
-      setIndent(mPendingIndent);
-      mPendingIndent = 0;
-    }
   }
 
   private char prevChar(char def) {
@@ -296,11 +294,13 @@ public final class SourceBuilder {
     return mStringBuilder.charAt(mStringBuilder.length() - 1);
   }
 
+  @Deprecated
+  public StringBuilder debugStringBuilder() {return mStringBuilder;}
+  
   private final Language mLanguage;
   private boolean mQuotePending;
   private int mIndent;
-  private final int mDefaultIndent;
-  private int mPendingIndent;
+  private final int mTabSize;
   private int mColumn;
   private StringBuilder mStringBuilder = new StringBuilder();
   private List<Boolean> mConditionalStack = arrayList();
