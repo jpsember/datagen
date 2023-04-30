@@ -146,7 +146,7 @@ public final class GoSourceGen extends SourceGen {
       }
       s.a(CR);
     }
-    return content();
+    return contentChomp();
   }
 
   @Override
@@ -205,20 +205,11 @@ public final class GoSourceGen extends SourceGen {
   protected String generateParse() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
-
-    todo("not finished");
     for (FieldDef f : def.fields()) {
-      s.comment("continue from here");
       f.dataType().sourceDeserializeFromObject(s, f);
       s.cr();
     }
-
-    //    for (FieldDef f : def.fields()) {
-    //      s.cr();
-    //      s.a("n.", f.instanceName(), " = s.Get", DataUtil.capitalizeFirst(f.dataType().typeName()), "(\"",
-    //          f.instanceName(), "\")");
-    //    }
-    return content();
+    return contentChomp();
   }
 
   @Override
@@ -245,8 +236,6 @@ public final class GoSourceGen extends SourceGen {
       // We don't need an explicit initializer if the desired initial value equals Go's default value
       String defaultValue = f.defaultValueOrNull();
       String compilerInitialValue = f.dataType().compilerInitialValue();
-      s.comment("field:", f.instanceName(), "defaultValueOrNull:", defaultValue, "compilerInitialValue:",
-          compilerInitialValue);
       if (defaultValue.equals(compilerInitialValue))
         continue;
       s.a("m.", f.instanceName(), " = ", defaultValue, CR);

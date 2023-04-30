@@ -65,9 +65,9 @@ func (v *[!class]) ToJson() any {
 
 func (v *[!class]) Parse(source any) DataClass {
   var s = source.(*JSMap)
-  var n [!class]
+  var n = new[!class]
 [!parse]
-  return &n
+  return n
 }
 
 func (v *[!class]) String() string {

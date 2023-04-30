@@ -61,12 +61,13 @@ public final class SourceBuilder {
     return this;
   }
 
-  public SourceBuilder comment(Object...messages) {
-  alert("generating debug comments");
-  cr();
-  a("// ");
-  a(BasePrinter.toString(messages));
-   cr();return this;
+  public SourceBuilder comment(Object... messages) {
+    alert("generating debug comments");
+    cr();
+    a("// ");
+    a(BasePrinter.toString(messages));
+    cr();
+    return this;
   }
 
   /**
