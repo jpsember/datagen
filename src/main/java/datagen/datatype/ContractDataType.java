@@ -47,6 +47,8 @@ public interface ContractDataType {
       return new JavaContractDataType();
     case PYTHON:
       return new PythonContractDataType();
+    case GO:
+      return new GoContractDataType();
     }
   }
 }

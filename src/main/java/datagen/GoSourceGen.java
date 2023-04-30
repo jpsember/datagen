@@ -30,10 +30,9 @@ import static js.base.Tools.*;
 import java.util.List;
 
 import datagen.datatype.EnumDataType;
-import js.data.DataUtil;
+import datagen.datatype.GoContractDataType;
 import js.file.Files;
 import js.json.JSMap;
-import js.json.JSObject;
 
 public final class GoSourceGen extends SourceGen {
 
@@ -93,7 +92,7 @@ public final class GoSourceGen extends SourceGen {
           ") *", def.name(), "Builder", OPEN);
       String targetExpr = "v.m." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
-       s.a(CR, "return v", CLOSE);
+      s.a(CR, "return v", CLOSE);
       s.br();
     }
 
@@ -104,7 +103,7 @@ public final class GoSourceGen extends SourceGen {
   protected String generateImports(List<String> qualifiedClassNames) {
     s.setIndent(2);
     s.a(". \"js/base\"").cr();
-    s.a(". \"js/data\"").cr();
+    s.comment("Add the fancy qualified stuff to automatically determine which imports are necessary");
     s.a(". \"js/json\"").cr();
 
     for (String cn : qualifiedClassNames) {

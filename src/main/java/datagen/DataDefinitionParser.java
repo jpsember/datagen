@@ -28,7 +28,6 @@ import static js.base.Tools.*;
 import static datagen.ParseTools.*;
 
 import java.io.File;
-import java.util.List;
 import java.util.Map;
 
 import datagen.datatype.ContractDataType;
