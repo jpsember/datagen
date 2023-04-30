@@ -69,7 +69,7 @@ public final class GoSourceGen extends SourceGen {
   protected final String generateInitInstanceFields() {
     s.a("**generateInitInstanceFields");
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(2);
+    s.setIndent(2);
     for (FieldDef f : def.fields()) {
       if (f.optional())
         continue;
@@ -80,7 +80,6 @@ public final class GoSourceGen extends SourceGen {
         continue;
       s.a(CR, f.instanceName(), " = ", initialValue, ";");
     }
-    s.out();
     return content();
   }
 
@@ -104,39 +103,9 @@ public final class GoSourceGen extends SourceGen {
     return content();
   }
 
-  //  @Override
-  //  protected String generateToString() {
-  //    s.a("**generateSetters");
-  //      s.in(0);
-  //    s.a("@Override", CR, //
-  //        "public String toString()", OPEN, //
-  //        "return toJson().prettyPrint();", CLOSE, //
-  //        CR, OUT);
-  //    return content();
-  //  }
-
-  //  @Override
-  //  protected String generateToJson() {
-  //    GeneratedTypeDef def = Context.generatedTypeDef;
-  //    s.in(0);
-  //
-  //    s.a("@Override", CR, //
-  //        "public JSMap toJson()", OPEN);
-  //
-  //    s.a(ParseTools.PKG_JSMAP, " m = new ", ParseTools.PKG_JSMAP, "();", CR);
-  //
-  //    for (FieldDef fieldDef : def.fields())
-  //      fieldDef.dataType().sourceSerializeToObject(s, fieldDef);
-  //
-  //    s.a("return m;");
-  //    s.a(CLOSE, OUT);
-  //    return content();
-  //  }
-
   @Override
   protected String generateImports(List<String> qualifiedClassNames) {
-    //s.a("**generateImports");
-    s.in(2);
+    s.setIndent(2);
     s.a(". \"js/base\"").cr();
     s.a(". \"js/json\"").cr();
 
@@ -149,38 +118,17 @@ public final class GoSourceGen extends SourceGen {
 
       s.a("import ", cn, ";").cr();
     }
-    s.out();
     return content();
   }
 
-  //  @Override
-  //  protected String generateParse() {
-  //    GeneratedTypeDef def = Context.generatedTypeDef;
-  //    s.br();
-  //    s.in(0);
-  //    s.a("@Override", CR, //
-  //        "public ", def.name(), " parse(Object obj)", OPEN, //
-  //        "return new ", def.name(), "((JSMap) obj);", CLOSE, //
-  //        BR, //
-  //        "private ", def.name(), "(JSMap m)", OPEN);
-  //    for (FieldDef f : def.fields()) {
-  //      f.dataType().sourceDeserializeFromObject(s, f);
-  //      s.cr();
-  //    }
-  //    s.a(CLOSE, OUT);
-  //    return content();
-  //  }
-
   @Override
   protected final String generateGetters() {
-   // s.setIndent(0);
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
-  //    s.debugStringBuilder().append("???");
       s.a("func (v *", def.name(), ") ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
           "return v.", f.instanceName(), CLOSE);
       s.br();
-       }
+    }
     return content();
   }
 
@@ -204,12 +152,10 @@ public final class GoSourceGen extends SourceGen {
   protected String generateStringConstants() {
     s.a("**GenerateStringConstants");
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(0);
     for (FieldDef f : def.fields()) {
       s.br();
       s.a("protected static final String ", f.nameStringConstantQualified(), " = \"", f.name(), "\";");
     }
-    s.out();
     return content();
   }
 
@@ -286,8 +232,6 @@ public final class GoSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
     for (FieldDef f : def.fields()) {
-      //todo("not sure doIndent is necessary");
-      //s.doIndent();
       s.a(f.getterName(), "() ", f.dataType().typeName());
       s.a(CR);
     }
@@ -297,10 +241,10 @@ public final class GoSourceGen extends SourceGen {
   private String generateBuilderGetterImplementation() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
-       s.a("func (v *", def.name(), "Builder) ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
+      s.a("func (v *", def.name(), "Builder) ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
           "return v.m.", f.instanceName(), CLOSE);
-       s.br();
-         }
+      s.br();
+    }
     return content();
   }
 

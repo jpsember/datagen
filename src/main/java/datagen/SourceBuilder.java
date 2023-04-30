@@ -55,7 +55,7 @@ public final class SourceBuilder {
   /**
    * Wrap the next object within quotes (")
    */
-  public SourceBuilder quoteNextObject() {
+  private SourceBuilder quoteNextObject() {
     checkState(!mQuotePending);
     mQuotePending = true;
     return this;
@@ -144,7 +144,7 @@ public final class SourceBuilder {
   /**
    * Move margin to right by specific amount; do a CR
    */
-  public SourceBuilder in(int adjustment) {
+  private SourceBuilder in(int adjustment) {
     if (adjustment == 0)
       alertWithSkip(1, "in with zero");
     mOldIndentStack.add(mIndent);
@@ -244,7 +244,7 @@ public final class SourceBuilder {
 
   }
 
-  public void doIndent() {
+  private void doIndent() {
     validate();
     if (mColumn < mIndent) {
       addSafe(spaces(mIndent - mColumn));
