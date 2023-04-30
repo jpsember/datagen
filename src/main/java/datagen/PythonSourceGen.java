@@ -59,12 +59,11 @@ public class PythonSourceGen extends SourceGen {
   @Override
   protected String generateStringConstants() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(0);
+    s.setIndent(2);
     for (FieldDef f : def.fields()) {
-      s.br();
       s.a(f.nameStringConstantUnqualified(), " = ", quote(f.name()));
+      s.br();
     }
-    s.out();
     return content();
   }
 
