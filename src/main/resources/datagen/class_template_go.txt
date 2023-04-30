@@ -1,7 +1,13 @@
+// ---------------------------------------------------------------------------------------
+// Generated code: DO NOT MODIFY
+// ---------------------------------------------------------------------------------------
+
 [!package_decl]
 
 import (
 [!imports])
+
+var _ = Pr  // To avoid warning about unused js/base import
 
 @@//
 @@// Generated Go data class (do not edit!)
@@ -65,7 +71,7 @@ func (v *[!class]) ToJson() any {
 
 func (v *[!class]) Parse(source any) DataClass {
   var s = source.(*JSMap)
-  var n = new[!class]
+  var n = new[!class]()
 [!parse]
   return n
 }

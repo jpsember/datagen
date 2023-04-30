@@ -104,6 +104,7 @@ public final class GoSourceGen extends SourceGen {
   protected String generateImports(List<String> qualifiedClassNames) {
     s.setIndent(2);
     s.a(". \"js/base\"").cr();
+    s.a(". \"js/data\"").cr();
     s.a(". \"js/json\"").cr();
 
     for (String cn : qualifiedClassNames) {

@@ -121,6 +121,7 @@ public class DatagenOper extends AppOper {
         case JAVA:
           f = new File("src/main/java");
           break;
+        case GO:
         case PYTHON:
           f = Files.currentDirectory();
           break;

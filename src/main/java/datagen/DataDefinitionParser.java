@@ -28,6 +28,7 @@ import static js.base.Tools.*;
 import static datagen.ParseTools.*;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 import datagen.datatype.ContractDataType;
@@ -114,7 +115,7 @@ final class DataDefinitionParser extends BaseObject {
   private Runnable handler(Token token) {
     Runnable r = mHandlers.get(token.id());
     if (r == null)
-      throw token.fail("No handler for", quote(token.text()), "id:",token.id());
+      throw token.fail("No handler for", quote(token.text()), "id:", token.id());
     return r;
   }
 
@@ -309,7 +310,20 @@ final class DataDefinitionParser extends BaseObject {
     if (mPackageName == null) {
       File datPath = new File(Context.datWithSource.datRelPath());
       String parentName = nullToEmpty(datPath.getParent());
-      mPackageName = parentName.replace('/', '.');
+      switch (Context.config.language()) {
+      case JAVA:
+      case PYTHON:
+        mPackageName = parentName.replace('/', '.');
+        break;
+      case GO: {
+        int c = parentName.indexOf('/');
+        if (c < 0)
+          c = parentName.length();
+        mPackageName = parentName.substring(0, c);
+      }
+        break;
+      }
+      checkNotNull(mPackageName, "language not supported");
     }
     return mPackageName;
   }
