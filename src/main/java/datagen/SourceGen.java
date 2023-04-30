@@ -67,12 +67,12 @@ public abstract class SourceGen extends BaseObject {
     m.put("deprecated", def.isDeprecated() ? "@Deprecated\n" : "");
     if (def.isEnum()) {
       todo("can this be set in the template via some sort of embedded code?");
-      s.setDefaultIndent(2);
+      s.setIndent(2);
       generateEnumValues(def.enumDataType());
       m.put("default_value", def.enumDataType().labels().get(0));
       m.put("enum_values", content());
     } else {
-      s.setDefaultIndent(2);
+      s.setIndent(2);
       m.put("class_getter_implementation", generateGetters());
       m.put("copy_to_builder", generateImmutableToBuilder());
       m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable());
@@ -87,7 +87,7 @@ public abstract class SourceGen extends BaseObject {
       m.put("to_string", generateToString());
       addAdditionalTemplateValues(m);
       //pr("template:",INDENT,m);
-      s.setDefaultIndent(0);
+      s.setIndent(0);
     }
 
     // Get any source that DataTypes may have needed to add;
@@ -163,13 +163,24 @@ public abstract class SourceGen extends BaseObject {
     return Context.datWithSource.sourceRelPath();
   }
 
-  protected final SourceBuilder s = new SourceBuilder(language());
+  protected SourceBuilder s = new SourceBuilder(language());
 
   /**
    * Get content of SourceBuilder, and reset the SourceBuilder
    */
   protected final String content() {
-    return s.content();
+    String content = s.content();
+    s = new SourceBuilder(language());
+    return content;
+  }
+  /**
+   * Get chomped content of SourceBuilder, and reset the SourceBuilder
+   */
+  protected final String contentChomp() {
+    todo("clunky, calling s for both");
+    String content = s.contentChomp();
+    s = new SourceBuilder(language());
+    return content;
   }
 
   /**

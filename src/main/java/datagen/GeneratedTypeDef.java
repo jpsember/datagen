@@ -189,9 +189,10 @@ public final class GeneratedTypeDef extends BaseObject {
    * Get buffer for writing class-specific source
    */
   public SourceBuilder classSpecificSourceBuilder() {
-    checkState(mClassSpecificSource == null, "source already retrieved");
-    if (mClassSpecificSourceBuilder == null)
+    if (mClassSpecificSourceBuilder == null) {
+      checkState(mClassSpecificSource == null, "source already retrieved");
       mClassSpecificSourceBuilder = new SourceBuilder(language());
+    }
     return mClassSpecificSourceBuilder;
   }
 
@@ -199,8 +200,10 @@ public final class GeneratedTypeDef extends BaseObject {
    * Get the accumulated class-specific source
    */
   public String getClassSpecificSource() {
-    if (mClassSpecificSource == null)
+    if (mClassSpecificSource == null) {
       mClassSpecificSource = classSpecificSourceBuilder().content();
+      mClassSpecificSourceBuilder = null;
+    }
     return mClassSpecificSource;
   }
 

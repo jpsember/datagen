@@ -56,7 +56,7 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("/* A multiline", CR);
     p().pr("     comment", CR);
     p().pr("  */   ");
-    p().pr("fields {}");
+    p().pr("fields {int alpha;}");
     compile();
   }
 
@@ -682,7 +682,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void singleLineCommentOld() {
     p().pr("// A single-line comment", CR);
-    p().pr("class {}");
+    p().pr("class {int alpha;}");
     compile();
   }
 

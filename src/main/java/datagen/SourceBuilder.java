@@ -45,15 +45,11 @@ public final class SourceBuilder {
 
   public SourceBuilder(Language language) {
     mLanguage = language;
+    mDefaultIndent = 2;
   }
 
   public String toString() {
     throw die("unexpected! Did you mean to call content()?");
-  }
-
-  public void reset() {
-    mStringBuilder.setLength(0);
-    mColumn = 0;
   }
 
   /**
@@ -128,16 +124,27 @@ public final class SourceBuilder {
     return this;
   }
 
-  public SourceBuilder setDefaultIndent(int indent) {
+  public SourceBuilder setIndent(int indent) {
     mIndent = indent;
-    mDefaultIndent = indent;
     return this;
   }
 
   public String content() {
     String result = mStringBuilder.toString();
-    reset();
+    todo("why do we have to clear it out here?  Someone is continuing to use it?");
+    mStringBuilder.setLength(0);
+    setIndent(0);
     return result;
+  }
+
+  /**
+   * Return content, with final linefeed removed (if one exists)
+   */
+  public String contentChomp() {
+    String content = content();
+    if (content.endsWith("\n"))
+      content = content.substring(0, content.length() - 1);
+    return content;
   }
 
   private static DebugCounter sIndentCounter = new DebugCounter("indenting", 0);
@@ -146,6 +153,8 @@ public final class SourceBuilder {
    * Move margin to right by specific amount; do a CR
    */
   public SourceBuilder in(int adjustment) {
+    if (adjustment == 0)
+      alertWithSkip(1, "in with zero");
     mOldIndentStack.add(mIndent);
     mIndent += adjustment;
     sIndentCounter.event(mStringBuilder, adjustment, "=", mIndent);
@@ -167,7 +176,7 @@ public final class SourceBuilder {
   public SourceBuilder specialIndentAdj(int adjAmount) {
     int newIndent = mIndent + adjAmount;
     cr();
-    mIndent = newIndent;
+    setIndent(newIndent);
     mPendingIndent = 0;
     return this;
   }
@@ -205,7 +214,7 @@ public final class SourceBuilder {
    */
   public SourceBuilder out() {
     cr();
-    mIndent = pop(mOldIndentStack);
+    setIndent(pop(mOldIndentStack));
     sIndentCounter.event(mStringBuilder, "<", mIndent);
     mPendingIndent = 0;
     return this;
@@ -274,10 +283,6 @@ public final class SourceBuilder {
 
   private DebugCounter dc = new DebugCounter("a", 0);
 
-  public StringBuilder debugStringBuilder() {
-    return mStringBuilder;
-  }
-
   private void addSafe(String str) {
     dc.event(mStringBuilder, "addSafe");
     mStringBuilder.append(str);
@@ -288,7 +293,7 @@ public final class SourceBuilder {
     addCr(mStringBuilder);
     mColumn = 0;
     if (mPendingIndent > mIndent) {
-      mIndent = mPendingIndent;
+      setIndent(mPendingIndent);
       mPendingIndent = 0;
     }
   }
@@ -302,19 +307,11 @@ public final class SourceBuilder {
   private final Language mLanguage;
   private boolean mQuotePending;
   private int mIndent;
-  private int mDefaultIndent;
+  private final int mDefaultIndent;
   private int mPendingIndent;
   private int mColumn;
   private StringBuilder mStringBuilder = new StringBuilder();
   private List<Boolean> mConditionalStack = arrayList();
   private List<Integer> mOldIndentStack = arrayList();
-
-  public int debugCursor() {
-    return mColumn;
-  }
-
-  public int debugIndent() {
-    return mIndent;
-  }
 
 }

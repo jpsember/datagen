@@ -91,7 +91,7 @@ public final class GoSourceGen extends SourceGen {
   protected final String generateSetters() {
 
     GeneratedTypeDef def = Context.generatedTypeDef;
-   // s.specialIndentAdj(-4);
+    // s.specialIndentAdj(-4);
 
     for (FieldDef f : def.fields()) {
       s.br();
@@ -103,7 +103,7 @@ public final class GoSourceGen extends SourceGen {
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "return v", CLOSE);
     }
-    
+
     return content();
   }
 
@@ -191,7 +191,7 @@ public final class GoSourceGen extends SourceGen {
   protected final String generateImmutableToBuilder() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.specialIndentAdj(-2);
-       s.in();
+    s.in();
     for (FieldDef f : def.fields()) {
       String expr = "v." + f.instanceName();
       if (Context.debugMode()) {
@@ -202,8 +202,8 @@ public final class GoSourceGen extends SourceGen {
       s.a(CR);
     }
     s.out();
-    s.specialIndentAdj( 2);
-      return content();
+    s.specialIndentAdj(2);
+    return content();
   }
 
   @Override
@@ -258,8 +258,8 @@ public final class GoSourceGen extends SourceGen {
       s.cr();
       s.a("m.Put(\"", f.instanceName(), "\", v.", f.instanceName(), ")");
     }
-    s.specialIndentAdj( 2);
-  return content();
+    s.specialIndentAdj(2);
+    return content();
   }
 
   @Override
@@ -300,7 +300,7 @@ public final class GoSourceGen extends SourceGen {
       s.a(CR);
     }
     s.specialIndentAdj(2);
-      return trimRight(content());
+    return trimRight(content());
   }
 
   private String generateBuilderGetterImplementation() {
