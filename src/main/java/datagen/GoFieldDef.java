@@ -1,5 +1,7 @@
 package datagen;
 
+import static js.base.Tools.*;
+
 import js.data.DataUtil;
 import static datagen.Utils.*;
 
@@ -17,7 +19,7 @@ public class GoFieldDef extends FieldDef {
 
   @Override
   public String provideNameStringConstantUnqualified() {
-    return verboseVariant("_" + index(), name().toUpperCase());
+    return  quote(name());
   }
 
   @Override

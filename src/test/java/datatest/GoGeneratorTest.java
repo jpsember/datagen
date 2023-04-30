@@ -50,6 +50,7 @@ public class GoGeneratorTest extends GenBaseTest {
         "int rage = 16;", CR, //
         "long timestamp;", CR, //
         "bool live;", CR, //
+        "string zebra = \"frank\";", CR, //
         OUTDENT, "}");
     compile();
 

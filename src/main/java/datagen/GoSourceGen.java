@@ -86,19 +86,15 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected final String generateSetters() {
-
     GeneratedTypeDef def = Context.generatedTypeDef;
-    // s.specialIndentAdj(-4);
-
     for (FieldDef f : def.fields()) {
-      s.br();
       DataType d = f.dataType();
-
       s.a("func (v *", def.name(), "Builder) ", f.setterName(), "(", f.instanceName(), " ", d.typeName(),
           ") *", def.name(), "Builder", OPEN);
       String targetExpr = "v.m." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
-      s.a(CR, "return v", CLOSE);
+       s.a(CR, "return v", CLOSE);
+      s.br();
     }
 
     return content();

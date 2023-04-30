@@ -63,7 +63,7 @@ public final class GoBooleanDataType extends GoDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("n.", f.instanceName(), " = s.GetStringOr(", f.nameStringConstantQualified(), ", ",
+    s.a("n.", f.instanceName(), " = s.GetBoolOr(", f.nameStringConstantQualified(), ", ",
         f.defaultValueOrNull(), ")");
   }
 
