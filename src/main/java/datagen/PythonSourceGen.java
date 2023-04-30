@@ -69,32 +69,30 @@ public class PythonSourceGen extends SourceGen {
 
   @Override
   protected final String generateInitInstanceFields() {
+    s.setIndent(4);
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(2);
     s.a("self.", hashFieldName(), " = None", CR);
     for (FieldDef f : def.fields()) {
       s.a("self.", f.instanceName(), " = ", f.defaultValueOrNull(), CR);
     }
-    s.out();
     return content();
   }
 
   @Override
   protected String generateCopyFromBuilderToImmutable() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(2);
+    s.setIndent(4);
     for (FieldDef f : def.fields()) {
       s.cr();
       f.dataType().sourceExpressionToImmutable(s, f, "v." + f.instanceName(), "self." + f.instanceName());
     }
-    s.out();
     return content();
   }
 
   @Override
   protected String generateSetters() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(0);
+    s.setIndent(2);
     for (FieldDef f : def.fields()) {
       s.a("\\\\", CR);
       DataType d = f.dataType();
@@ -109,19 +107,17 @@ public class PythonSourceGen extends SourceGen {
     for (FieldDef f : def.fields())
       s.a(f.name(), " = property(", def.name(), ".", propertyGetName(f), ", ", f.setterName(), ")", CR);
 
-    s.out();
     return content();
   }
 
   @Override
   protected String generateToJson() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(2);
+    s.setIndent(4);
     s.a("m = {}", CR);
     for (FieldDef fieldDef : def.fields())
       fieldDef.dataType().sourceSerializeToObject(s, fieldDef);
     s.a("return m");
-    s.a(CLOSE);
     return content();
   }
 
@@ -162,13 +158,12 @@ public class PythonSourceGen extends SourceGen {
   @Override
   protected String generateParse() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.br();
-    s.in(2);
+    s.setIndent(4);
     for (FieldDef f : def.fields()) {
       f.dataType().sourceDeserializeFromObject(s, f);
       s.cr();
     }
-    s.a(OUT);
+
     return content();
   }
 
@@ -195,7 +190,7 @@ public class PythonSourceGen extends SourceGen {
   @Override
   protected String generateImmutableToBuilder() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(2);
+    s.setIndent(4);
     s.a("x = ", def.name(), "Builder()", CR);
     for (FieldDef f : def.fields()) {
       String arg = "self." + f.instanceName();
@@ -210,14 +205,13 @@ public class PythonSourceGen extends SourceGen {
       }
     }
     s.a("return x", CR);
-    s.out();
     return content();
   }
 
   @Override
   protected String generateEquals() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(4);
+    s.setIndent(6);
     s.a("return hash(self) == hash(other)");
     if (!def.fields().isEmpty()) {
       boolean first = true;
@@ -233,7 +227,6 @@ public class PythonSourceGen extends SourceGen {
       if (!first)
         s.out();
     }
-    s.out();
     return content();
   }
 
@@ -242,7 +235,7 @@ public class PythonSourceGen extends SourceGen {
   @Override
   protected String generateHashCode() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(2);
+    s.setIndent(4);
     String hashVarName = "self." + hashFieldName();
     s.a("if ", hashVarName, " is None:", IN);
     s.a("r = 1", CR);
@@ -255,7 +248,7 @@ public class PythonSourceGen extends SourceGen {
       }
     }
     s.a(hashVarName, " = r").out();
-    s.a("return ", hashVarName).out();
+    s.a("return ", hashVarName);
 
     String c = content();
     Matcher m = PATTERN_HASH_INITIAL_VALUE.matcher(c);
