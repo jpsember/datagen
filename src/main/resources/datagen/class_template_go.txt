@@ -45,12 +45,14 @@ func (v *[!class]) Build() *[!class] {
 func (v *[!class]) ToBuilder() *[!class]Builder {
   var b = new([!class]Builder)
   var d = &b.m
-[!copy_to_builder]  return b
+[!copy_to_builder]
+  return b
 }
 
 func (v *[!class]) ToJson() any {
   var m = NewJSMap()
-[!to_json]  return m
+[!to_json]
+  return m
 }
 
 func (v *[!class]) Parse(source any) DataClass {

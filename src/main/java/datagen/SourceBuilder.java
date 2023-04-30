@@ -96,7 +96,9 @@ public final class SourceBuilder {
         continue;
       }
 
-      doIndent();
+      if (mColumn < mIndent) {
+        addSafe(spaces(mIndent - mColumn));
+      }
       String s = msg.toString();
 
       if (mQuotePending) {
@@ -138,26 +140,13 @@ public final class SourceBuilder {
     return content;
   }
 
-  private static DebugCounter sIndentCounter = new DebugCounter("indenting", 0);
-
-  /**
-   * Move margin to right by specific amount; do a CR
-   */
-  private SourceBuilder in(int adjustment) {
-    if (adjustment == 0)
-      alertWithSkip(1, "in with zero");
-    mOldIndentStack.add(mIndent);
-    mIndent += adjustment;
-    sIndentCounter.event(mStringBuilder, adjustment, "=", mIndent);
-    cr();
-    return this;
-  }
-
   /**
    * Tab the margin to the right, and do a CR
    */
   public SourceBuilder in() {
-    return in(mTabSize);
+    mIndent += mTabSize;
+    cr();
+    return this;
   }
 
   private boolean python() {
@@ -193,8 +182,7 @@ public final class SourceBuilder {
    */
   public SourceBuilder out() {
     cr();
-    setIndent(pop(mOldIndentStack));
-    sIndentCounter.event(mStringBuilder, "<", mIndent);
+    setIndent(mIndent - mTabSize);
     return this;
   }
 
@@ -219,25 +207,13 @@ public final class SourceBuilder {
     return this;
   }
 
-  private void doIndent() {
-    if (mColumn < mIndent) {
-      addSafe(spaces(mIndent - mColumn));
-    }
-  }
-
-  private DebugCounter dAddMisc = new DebugCounter("m", 0);
-
   private void add(String str) {
-    dAddMisc.event(mStringBuilder);
     if (str.indexOf('\n') >= 0)
       throw new IllegalArgumentException("newline in text: '" + str + "'");
     addSafe(str);
   }
 
-  private DebugCounter dc = new DebugCounter("a", 0);
-
   private void addSafe(String str) {
-    dc.event(mStringBuilder, "addSafe");
     mStringBuilder.append(str);
     mColumn += str.length();
   }
@@ -253,18 +229,12 @@ public final class SourceBuilder {
     return mStringBuilder.charAt(mStringBuilder.length() - 1);
   }
 
-  @Deprecated
-  public StringBuilder debugStringBuilder() {
-    return mStringBuilder;
-  }
-
   private final Language mLanguage;
-  private boolean mQuotePending;
-  private int mIndent;
   private final int mTabSize;
+  private int mIndent;
   private int mColumn;
+  private boolean mQuotePending;
   private StringBuilder mStringBuilder = new StringBuilder();
   private List<Boolean> mConditionalStack = arrayList();
-  private List<Integer> mOldIndentStack = arrayList();
 
 }
