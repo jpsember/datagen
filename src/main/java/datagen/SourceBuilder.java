@@ -129,21 +129,13 @@ public final class SourceBuilder {
     return this;
   }
 
-  public String content() {
-    String result = mStringBuilder.toString();
-    todo("why do we have to clear it out here?  Someone is continuing to use it?");
-    mStringBuilder.setLength(0);
-    setIndent(0);
-    return result;
-  }
-
   /**
-   * Return content, with final linefeed removed (if one exists)
+   * Get content, and disable the SourceBuilder (it should not be used after
+   * this is called)
    */
-  public String contentChomp() {
-    String content = content();
-    if (content.endsWith("\n"))
-      content = content.substring(0, content.length() - 1);
+  public String getContent() {
+    String content = mStringBuilder.toString();
+    mStringBuilder = null;
     return content;
   }
 

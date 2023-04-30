@@ -169,17 +169,18 @@ public abstract class SourceGen extends BaseObject {
    * Get content of SourceBuilder, and reset the SourceBuilder
    */
   protected final String content() {
-    String content = s.content();
+    String content = s.getContent();
     s = new SourceBuilder(language());
     return content;
   }
+
   /**
    * Get chomped content of SourceBuilder, and reset the SourceBuilder
    */
   protected final String contentChomp() {
-    todo("clunky, calling s for both");
-    String content = s.contentChomp();
-    s = new SourceBuilder(language());
+    String content = content();
+    if (content.endsWith("\n"))
+      content = content.substring(0, content.length() - 1);
     return content;
   }
 

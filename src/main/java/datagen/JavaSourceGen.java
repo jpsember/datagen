@@ -203,7 +203,7 @@ public final class JavaSourceGen extends SourceGen {
         }
       }
     }
-    return s.contentChomp();
+    return contentChomp();
   }
 
   @Override
