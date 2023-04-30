@@ -30,7 +30,6 @@ import java.util.List;
 
 import static datagen.Utils.*;
 import datagen.gen.Language;
-import js.base.Tools;
 
 /**
  * Formats source code to a buffer
@@ -220,32 +219,7 @@ public final class SourceBuilder {
     return this;
   }
 
-  private void validate() {
-    alert("performing validation");
-    String problem = null;
-
-    int len = mStringBuilder.length();
-    do {
-
-      if (mColumn > len) {
-        problem = "column > buffer length";
-        break;
-      }
-
-    } while (false);
-    if (problem != null) {
-      pr("*** Validation problem; column:", mColumn, "indent:", mIndent, "buffer length:", len);
-      pr("buffer:");
-      pr(Tools.insertLeftRightMargins(mStringBuilder));
-      pr("Problem:", problem);
-      pr("Column:", mColumn, "indent:", mIndent, "buffer length:", len);
-      badState("validation problem");
-    }
-
-  }
-
   private void doIndent() {
-    validate();
     if (mColumn < mIndent) {
       addSafe(spaces(mIndent - mColumn));
     }
