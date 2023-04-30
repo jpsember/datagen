@@ -47,7 +47,7 @@ public class GoGeneratorTest extends GenBaseTest {
     rv();
     p().pr("class {", INDENT, //
         "string name;", CR, //
-        "int rage;", CR, //
+        "int rage = 16;", CR, //
         "long timestamp;", CR, //
         "bool live;", CR, //
         OUTDENT, "}");

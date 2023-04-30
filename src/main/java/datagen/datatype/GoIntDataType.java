@@ -74,8 +74,8 @@ public final class GoIntDataType extends GoDataType {
   @Override
   public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
       FieldDef fieldDef) {
-    notFinished();
-    return scanner.read(STRING).text();
+    int value = scanner.readInt(NUMBER);
+    return Integer.toString(value);
   }
 
   @Override

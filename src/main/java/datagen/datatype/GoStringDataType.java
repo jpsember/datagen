@@ -34,7 +34,7 @@ import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
 public final class GoStringDataType extends GoDataType {
-  
+
   @Override
   public boolean isPrimitive() {
     return true;
@@ -64,7 +64,6 @@ public final class GoStringDataType extends GoDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    //  n.name = s.GetString("name")
     s.a("n.", f.instanceName(), " = s.GetStringOr(", f.nameStringConstantQualified(), ", ",
         f.defaultValueOrNull(), ")");
   }
