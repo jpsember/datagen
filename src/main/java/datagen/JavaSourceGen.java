@@ -303,6 +303,7 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected void generateEnumValues(EnumDataType dt) {
+   s.setIndent(2);
     int i = INIT_INDEX;
     for (String label : dt.labels()) {
       i++;

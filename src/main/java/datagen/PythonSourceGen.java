@@ -51,6 +51,7 @@ public class PythonSourceGen extends SourceGen {
 
   @Override
   protected void generateEnumValues(EnumDataType dt) {
+    s.setIndent(2);
     for (String label : dt.labels()) {
       s.a(label, " = ", quote(label.toLowerCase())).cr();
     }
@@ -171,7 +172,7 @@ public class PythonSourceGen extends SourceGen {
   protected String generateGetters() {
 
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.in(0);
+    s.setIndent(2);
 
     for (FieldDef f : def.fields()) {
       s.a("\\\\").cr();
@@ -183,7 +184,6 @@ public class PythonSourceGen extends SourceGen {
     for (FieldDef f : def.fields())
       s.a(f.name(), " = property(", propertyGetName(f), ")", CR);
 
-    s.out();
     return content();
   }
 

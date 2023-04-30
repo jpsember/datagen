@@ -126,8 +126,6 @@ public final class SourceBuilder {
 
   public SourceBuilder setIndent(int indent) {
     mIndent = indent;
-    if (indent > 0)
-      alertWithSkip(1, "indent set to:",indent);
     return this;
   }
 
@@ -261,7 +259,6 @@ public final class SourceBuilder {
   public void doIndent() {
     validate();
     if (mColumn < mIndent) {
-    // addSafe("[col:"+mColumn+" indent:"+mIndent+"]");
       addSafe(spaces(mIndent - mColumn));
     }
   }
@@ -295,8 +292,10 @@ public final class SourceBuilder {
   }
 
   @Deprecated
-  public StringBuilder debugStringBuilder() {return mStringBuilder;}
-  
+  public StringBuilder debugStringBuilder() {
+    return mStringBuilder;
+  }
+
   private final Language mLanguage;
   private boolean mQuotePending;
   private int mIndent;

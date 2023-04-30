@@ -66,13 +66,10 @@ public abstract class SourceGen extends BaseObject {
     String content = getTemplate();
     m.put("deprecated", def.isDeprecated() ? "@Deprecated\n" : "");
     if (def.isEnum()) {
-      todo("can this be set in the template via some sort of embedded code?");
-      s.setIndent(2);
       generateEnumValues(def.enumDataType());
       m.put("default_value", def.enumDataType().labels().get(0));
       m.put("enum_values", content());
     } else {
-      s.setIndent(2);
       m.put("class_getter_implementation", generateGetters());
       m.put("copy_to_builder", generateImmutableToBuilder());
       m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable());
@@ -86,8 +83,6 @@ public abstract class SourceGen extends BaseObject {
       m.put("to_json", generateToJson());
       m.put("to_string", generateToString());
       addAdditionalTemplateValues(m);
-      //pr("template:",INDENT,m);
-      s.setIndent(0);
     }
 
     // Get any source that DataTypes may have needed to add;
