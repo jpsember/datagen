@@ -24,12 +24,20 @@ type [!class]OrBuilder interface {
   ToBuilder() *[!class]Builder
 }
 
-var Default[!class] = &[!class]{} // Will have to modify when defaults are supported
+var Default[!class] = new[!class]()
 
 // Convenience method to get a fresh builder.
 func New[!class]() *[!class]Builder {
   return Default[!class].ToBuilder()
 }
+
+// Construct a new static object, with fields initialized appropriately
+func new[!class]() *[!class] {
+  var m = [!class]{}
+[!class_init_fields_to_defaults]
+  return &m
+}
+
 
 // ---------------------------------------------------------------------------------------
 // Implementation of static (built) object
@@ -82,8 +90,6 @@ func (v *[!class]Builder) Build() *[!class] {
 [!copyfield_from_builder]
   return b
 }
-
-
 
 func (v *[!class]Builder) ToBuilder() *[!class]Builder {
   return v

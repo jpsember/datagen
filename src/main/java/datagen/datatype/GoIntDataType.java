@@ -34,8 +34,13 @@ import js.parsing.Scanner;
 
 public final class GoIntDataType extends GoDataType {
   @Override
-  public   boolean isPrimitive() {
+  public boolean isPrimitive() {
     return true;
+  }
+
+  @Override
+  public String compilerInitialValue() {
+    return "0";
   }
 
   public GoIntDataType(int nbits) {
@@ -50,10 +55,10 @@ public final class GoIntDataType extends GoDataType {
     default:
       throw badArg("nbits:", nbits);
     }
-    // mBits = nbits;
+    mBits = nbits;
   }
 
-  //private final int mBits;
+  private final int mBits;
   private final String mTypeName;
 
   @Override
@@ -75,10 +80,8 @@ public final class GoIntDataType extends GoDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    notFinished();
-    //  n.name = s.GetString("name")
-    s.a("n.", f.instanceName(), " = s.GetStringOr(", f.nameStringConstantQualified(), ", ",
-        f.defaultValueOrNull(), ")");
+    s.a("n.", f.instanceName(), " = s.OptInt", mBits, "(\"", f.instanceName(), "\", ", f.defaultValueOrNull(),
+        ")", CR);
   }
 
 }

@@ -33,9 +33,15 @@ import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
 public final class GoFloatDataType extends GoDataType {
+
   @Override
-  public   boolean isPrimitive() {
+  public boolean isPrimitive() {
     return true;
+  }
+
+  @Override
+  public String compilerInitialValue() {
+    return "0";
   }
 
   public GoFloatDataType(int nbits) {

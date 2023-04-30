@@ -33,6 +33,7 @@ import datagen.datatype.EnumDataType;
 import js.data.DataUtil;
 import js.file.Files;
 import js.json.JSMap;
+import js.json.JSObject;
 
 public final class GoSourceGen extends SourceGen {
 
@@ -204,11 +205,19 @@ public final class GoSourceGen extends SourceGen {
   protected String generateParse() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
+
+    todo("not finished");
     for (FieldDef f : def.fields()) {
+      s.comment("continue from here");
+      f.dataType().sourceDeserializeFromObject(s, f);
       s.cr();
-      s.a("n.", f.instanceName(), " = s.Get", DataUtil.capitalizeFirst(f.dataType().typeName()), "(\"",
-          f.instanceName(), "\")");
     }
+
+    //    for (FieldDef f : def.fields()) {
+    //      s.cr();
+    //      s.a("n.", f.instanceName(), " = s.Get", DataUtil.capitalizeFirst(f.dataType().typeName()), "(\"",
+    //          f.instanceName(), "\")");
+    //    }
     return content();
   }
 
@@ -224,8 +233,25 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected void addAdditionalTemplateValues(JSMap m) {
+    m.put("class_init_fields_to_defaults", generateInitFieldsToDefaults());
     m.put("class_getter_declaration", generateClassGetterDeclaration());
     m.put("go_builder_getter_implementation", generateBuilderGetterImplementation());
+  }
+
+  private String generateInitFieldsToDefaults() {
+    GeneratedTypeDef def = Context.generatedTypeDef;
+    s.setIndent(2);
+    for (FieldDef f : def.fields()) {
+      // We don't need an explicit initializer if the desired initial value equals Go's default value
+      String defaultValue = f.defaultValueOrNull();
+      String compilerInitialValue = f.dataType().compilerInitialValue();
+      s.comment("field:", f.instanceName(), "defaultValueOrNull:", defaultValue, "compilerInitialValue:",
+          compilerInitialValue);
+      if (defaultValue.equals(compilerInitialValue))
+        continue;
+      s.a("m.", f.instanceName(), " = ", defaultValue, CR);
+    }
+    return trimRight(content());
   }
 
   private String generateClassGetterDeclaration() {

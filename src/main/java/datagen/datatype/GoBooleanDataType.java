@@ -32,15 +32,21 @@ import datagen.GoDataType;
 import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
-public final class GoBooleanDataType extends  GoDataType {
+public final class GoBooleanDataType extends GoDataType {
 
-@Override
-  public   boolean isPrimitive() {
+  @Override
+  public boolean isPrimitive() {
     return true;
   }
 
   @Override
-  protected String provideQualifiedClassNameExpr() {loadTools();
+  public String compilerInitialValue() {
+    return "false";
+  }
+
+  @Override
+  protected String provideQualifiedClassNameExpr() {
+    loadTools();
     return "bool";
   }
 
@@ -61,12 +67,12 @@ public final class GoBooleanDataType extends  GoDataType {
         f.defaultValueOrNull(), ")");
   }
 
-//  @Override
-//  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-//    s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR);
-//    s.doIf(f.optional(), "if x is not None:", OPEN);
-//    s.a("inst.", f.instanceName(), " = x.copy()");
-//    s.endIf(CLOSE);
-//  }
+  //  @Override
+  //  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+  //    s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR);
+  //    s.doIf(f.optional(), "if x is not None:", OPEN);
+  //    s.a("inst.", f.instanceName(), " = x.copy()");
+  //    s.endIf(CLOSE);
+  //  }
 
 }

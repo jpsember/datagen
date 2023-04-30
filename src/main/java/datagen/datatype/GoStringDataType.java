@@ -34,9 +34,15 @@ import datagen.SourceBuilder;
 import js.parsing.Scanner;
 
 public final class GoStringDataType extends GoDataType {
+  
   @Override
   public boolean isPrimitive() {
     return true;
+  }
+
+  @Override
+  public String compilerInitialValue() {
+    return "\"\"";
   }
 
   @Override

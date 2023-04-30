@@ -30,6 +30,7 @@ import java.util.List;
 
 import static datagen.Utils.*;
 import datagen.gen.Language;
+import js.base.BasePrinter;
 
 /**
  * Formats source code to a buffer
@@ -58,6 +59,14 @@ public final class SourceBuilder {
     checkState(!mQuotePending);
     mQuotePending = true;
     return this;
+  }
+
+  public SourceBuilder comment(Object...messages) {
+  alert("generating debug comments");
+  cr();
+  a("// ");
+  a(BasePrinter.toString(messages));
+   cr();return this;
   }
 
   /**
