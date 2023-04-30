@@ -161,18 +161,6 @@ public final class SourceBuilder {
     return in(mTabSize);
   }
 
-  /**
-   * Do a CR, and adjust indent by a particular value; to adjust for some
-   * special circumstances
-   */
-  @Deprecated
-  public SourceBuilder specialIndentAdj(int adjAmount) {
-    int newIndent = mIndent + adjAmount;
-    cr();
-    setIndent(newIndent);
-    return this;
-  }
-
   private boolean python() {
     return mLanguage == Language.PYTHON;
   }
