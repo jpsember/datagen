@@ -30,7 +30,6 @@ import static js.base.Tools.*;
 import java.util.List;
 
 import datagen.datatype.EnumDataType;
-import datagen.datatype.GoContractDataType;
 import js.file.Files;
 import js.json.JSMap;
 
