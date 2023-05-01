@@ -180,7 +180,8 @@ final class DataDefinitionParser extends BaseObject {
     if (!classMode) {
       if (!sOldStyleWarningIssued && !testMode()) {
         sOldStyleWarningIssued = true;
-        pr("Generating older version of source code; recommend using 'class' keyword instead of 'fields'...");
+        if (false)
+          pr("Generating older version of source code; recommend using 'class' keyword instead of 'fields'...");
       }
     }
 
