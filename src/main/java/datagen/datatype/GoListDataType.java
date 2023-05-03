@@ -28,7 +28,7 @@ public class GoListDataType extends JavaDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return "&[]" + mWrappedType.typeName(); 
+    return "[]" + mWrappedType.typeName() + "{}";
   }
 
 //  /**
@@ -126,6 +126,13 @@ public class GoListDataType extends JavaDataType {
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+    
+    if (true) {
+      s.a("// ==== not finished GoListDataType.sourceSetter ===", CR);
+      return;
+    }
+    
+    
     String expr;
     if (f.optional() || isPrimitive()) {
       expr = "x";

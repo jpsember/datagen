@@ -55,19 +55,19 @@ public abstract class GoDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    if (false) {
-      s.a("==== not finished sourceDeserializeFromList ===", CR);
+    if (true) {
+      s.a("// ==== not finished GoDataType.sourceDeserializeFromList ===", CR);
       return;
     }
     
-    
-    s.a("var x = s.OptList(",  f.nameStringConstantQualified(), ")",CR, //
-        "if x != nil ",OPEN, //
-        "var y = [len(x)]", typeName(), CR, //
-        "for i := range x.Length() ",OPEN, //
-        "var z = x.Get(i)", CR, //
-        this.
-    
+//    
+//    s.a("var x = s.OptList(",  f.nameStringConstantQualified(), ")",CR, //
+//        "if x != nil ",OPEN, //
+//        "var y = [len(x)]", typeName(), CR, //
+//        "for i := range x.Length() ",OPEN, //
+//        "var z = x.Get(i)", CR, //
+//        this.
+//    
     if (f.optional()) {
       s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR, //
           "if x is not None:", OPEN, //
