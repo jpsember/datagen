@@ -110,3 +110,5 @@ func (v *[!class]Builder) Parse(source any) DataClass {
 func (v *[!class]Builder) String() string {
   return v.m.String()
 }
+
+[!class_specific]

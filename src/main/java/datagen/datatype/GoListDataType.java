@@ -109,17 +109,19 @@ public class GoListDataType extends JavaDataType {
       }
     }
 
+    // Construct the class-specific source (which will appear elsewhere in the generated source file)
+    // defining the variable containing the default value for the list
+    //
     SourceBuilder sb = classSpecificSource;
-    sb.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = ", ParseTools.PKG_TOOLS,
-        ".arrayList(");
+    sb.a("var ", fieldDef.constantName(), " = ", typeName(), "{");
     int index = INIT_INDEX;
     for (String expr : parsedExpressions) {
       index++;
       if (index > 0)
-        sb.a(",");
+        sb.a(", ");
       sb.a(expr);
     }
-    sb.a(");").cr();
+    sb.a("}", CR);
 
     return fieldDef.constantName();
   }
@@ -130,11 +132,10 @@ public class GoListDataType extends JavaDataType {
     String argName = f.instanceName();
 
     s.a("if ", argName, " == nil", OPEN, //
-        argName, " = ", sourceDefaultValue(),  CLOSE, //
+        argName, " = ", f.defaultValueOrNull(), CLOSE, //
         targetExpr, " = ", argName //
     );
-    s.a(" // I think we need an external variable for the default value, as it is referenced here as well? Or, will that happen if we define an explicit default value?",CR);
-    s.a(" // not implemented: in debug mode, set to an immutable slice?",CR);
+    s.a(" // not implemented: in debug mode, set to an immutable slice?", CR);
   }
 
   private final DataType mWrappedType;
