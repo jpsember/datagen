@@ -81,4 +81,9 @@ public final class GoStringDataType extends GoDataType {
   //    s.endIf(CLOSE);
   //  }
 
+  @Override
+  protected String parseElementFromJsonValue(String jsentityExpression) {
+    return jsentityExpression + "." + "ToString()";
+  }
+
 }

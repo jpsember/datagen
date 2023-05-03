@@ -55,27 +55,30 @@ public abstract class GoDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    if (true) {
-      s.a("// ==== not finished GoDataType.sourceDeserializeFromList ===", CR);
-      return;
-    }
-    
-//    
-//    s.a("var x = s.OptList(",  f.nameStringConstantQualified(), ")",CR, //
-//        "if x != nil ",OPEN, //
-//        "var y = [len(x)]", typeName(), CR, //
-//        "for i := range x.Length() ",OPEN, //
-//        "var z = x.Get(i)", CR, //
-//        this.
-//    
-    if (f.optional()) {
-      s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR, //
-          "if x is not None:", OPEN, //
-          "inst.", f.instanceName(), " = x.copy()", CLOSE);
-    } else {
-      s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
-          f.nullIfOptional("[]"), ").copy()", CR);
-    }
+    //    var jslist = s.OptList("kids")
+    //    if jslist != nil {
+    //      var length = jslist.Length()
+    //      var z = make([]string, length)
+    //      for i := 0; i < length; i++ {
+    //        z[i] = jslist.Get(i).ToString()
+    //      }
+    //      n.kids = z
+    //    }
+    s.a(OPEN, //
+        "var jslist = s.OptList(\"", f.instanceName(), "\")", CR, //
+        "if jslist != nil ", OPEN, //
+        "var length = jslist.Length()", CR, "var z = make(", f.dataType().typeName(), ", length)", CR, //
+        "for i := 0; i < length; i++ ", OPEN, //
+        "z[i] = ", parseElementFromJsonValue("jslist.Get(i)"), CLOSE, //
+        "n.", f.instanceName(), " = z", CLOSE, //
+        CLOSE);
+  }
+
+  /**
+   * Construct go source code to extract a datatype's value from a JSEntity
+   */
+  protected String parseElementFromJsonValue(String jsentityExpression) {
+    throw notSupported("parseElementfromJsonValue:", jsentityExpression, "data type:", typeName());
   }
 
   @Override

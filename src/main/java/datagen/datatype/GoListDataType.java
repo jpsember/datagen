@@ -133,7 +133,7 @@ public class GoListDataType extends JavaDataType {
         argName, " = ", sourceDefaultValue(),  CLOSE, //
         targetExpr, " = ", argName //
     );
-    s.a(" // I think we need an external variable for the default value, as it is referenced here as well?",CR);
+    s.a(" // I think we need an external variable for the default value, as it is referenced here as well? Or, will that happen if we define an explicit default value?",CR);
     s.a(" // not implemented: in debug mode, set to an immutable slice?",CR);
   }
 
