@@ -2,10 +2,10 @@ package datagen.datatype;
 
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
+import static datagen.SourceBuilder.*;
 
 import java.util.List;
 
-import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
@@ -31,35 +31,35 @@ public class GoListDataType extends JavaDataType {
     return "[]" + mWrappedType.typeName() + "{}";
   }
 
-//  /**
-//   * Constructs a mutable copy of a list. Note that while it creates a copy of
-//   * the list, it doesn't create copies of its elements; the references to those
-//   * elements are stored in the new list unchanged.
-//   * 
-//   * This does not apply unless 'old style' is in effect
-//   */
-//  @Override
-//  public String sourceExpressionToMutable(String valueExpression) {
-//    if (!Context.generatedTypeDef.classMode())
-//      return ParseTools.mutableCopyOfList(valueExpression);
-//    // In debug mode, this is already in immutable form; no need to modify it
-//    return valueExpression;
-//  }
-//
-//  @Override
-//  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
-//      String valueExpression) {
-//    if (!Context.generatedTypeDef.classMode()) {
-//      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
-//      return;
-//    }
-//
-//    if (Context.debugMode()) {
-//      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
-//      return;
-//    }
-//    super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
-//  }
+  //  /**
+  //   * Constructs a mutable copy of a list. Note that while it creates a copy of
+  //   * the list, it doesn't create copies of its elements; the references to those
+  //   * elements are stored in the new list unchanged.
+  //   * 
+  //   * This does not apply unless 'old style' is in effect
+  //   */
+  //  @Override
+  //  public String sourceExpressionToMutable(String valueExpression) {
+  //    if (!Context.generatedTypeDef.classMode())
+  //      return ParseTools.mutableCopyOfList(valueExpression);
+  //    // In debug mode, this is already in immutable form; no need to modify it
+  //    return valueExpression;
+  //  }
+  //
+  //  @Override
+  //  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
+  //      String valueExpression) {
+  //    if (!Context.generatedTypeDef.classMode()) {
+  //      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
+  //      return;
+  //    }
+  //
+  //    if (Context.debugMode()) {
+  //      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
+  //      return;
+  //    }
+  //    super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
+  //  }
 
   public DataType wrappedType() {
     return mWrappedType;
@@ -68,13 +68,13 @@ public class GoListDataType extends JavaDataType {
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     sourceIfNotNull(s, f);
-    s.a("=== not finished sourceSerializeToObject===",CR);
-//    s.a(OPEN, //
-//        ParseTools.PKG_JSLIST, " j = new ", ParseTools.PKG_JSLIST, "();", CR, //
-//        "for (", wrappedType().typeName(), " x : ", f.instanceName(), ")", IN, //
-//        "j.add(", wrappedType().sourceGenerateSerializeToObjectExpression("x"), ");", OUT, //
-//        "m.put(", f.nameStringConstantQualified(), ", j);", //
-//        CLOSE, CR);
+    s.a("=== not finished sourceSerializeToObject===", CR);
+    //    s.a(OPEN, //
+    //        ParseTools.PKG_JSLIST, " j = new ", ParseTools.PKG_JSLIST, "();", CR, //
+    //        "for (", wrappedType().typeName(), " x : ", f.instanceName(), ")", IN, //
+    //        "j.add(", wrappedType().sourceGenerateSerializeToObjectExpression("x"), ");", OUT, //
+    //        "m.put(", f.nameStringConstantQualified(), ", j);", //
+    //        CLOSE, CR);
     sourceEndIf(s);
   }
 
@@ -126,29 +126,15 @@ public class GoListDataType extends JavaDataType {
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    
-    if (true) {
-      s.a("// ==== not finished GoListDataType.sourceSetter ===", CR);
-      return;
-    }
-    
-    
-    String expr;
-    if (f.optional() || isPrimitive()) {
-      expr = "x";
-    } else {
-      expr = "(x == null) ? " + f.defaultValueOrNull() + " : x";
-    }
 
-    if (!Context.classMode()) {
-      s.a(targetExpr, " = ", sourceExpressionToMutable(expr));
-    } else {
-      if (Context.debugMode()) {
-        sourceExpressionToImmutable(s, f, targetExpr, expr);
-      } else
-        s.a(targetExpr, " = ", expr);
-    }
+    String argName = f.instanceName();
 
+    s.a("if ", argName, " == nil", OPEN, //
+        argName, " = ", sourceDefaultValue(),  CLOSE, //
+        targetExpr, " = ", argName //
+    );
+    s.a(" // I think we need an external variable for the default value, as it is referenced here as well?",CR);
+    s.a(" // not implemented: in debug mode, set to an immutable slice?",CR);
   }
 
   private final DataType mWrappedType;
