@@ -36,6 +36,11 @@ import js.parsing.Scanner;
 public final class GoStringDataType extends GoDataType {
 
   @Override
+  protected String provideQualifiedClassNameExpr() {
+    return "string";
+  }
+
+  @Override
   public boolean isPrimitive() {
     return true;
   }

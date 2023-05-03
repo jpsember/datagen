@@ -7,8 +7,6 @@
 import (
 [!imports])
 
-var _ = Pr  // To avoid warning about unused js/base import
-
 @@//
 @@// Generated Go data class (do not edit!)
 @@//

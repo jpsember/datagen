@@ -25,7 +25,7 @@ public abstract class GoDataType extends DataType {
     notSupported();
   }
 
-  public   void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String arg = f.instanceName();
     if (isPrimitive()) {
       s.a(targetExpr, " = ", arg, CR);
@@ -55,7 +55,19 @@ public abstract class GoDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    notFinished();
+    if (false) {
+      s.a("==== not finished sourceDeserializeFromList ===", CR);
+      return;
+    }
+    
+    
+    s.a("var x = s.OptList(",  f.nameStringConstantQualified(), ")",CR, //
+        "if x != nil ",OPEN, //
+        "var y = [len(x)]", typeName(), CR, //
+        "for i := range x.Length() ",OPEN, //
+        "var z = x.Get(i)", CR, //
+        this.
+    
     if (f.optional()) {
       s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR, //
           "if x is not None:", OPEN, //

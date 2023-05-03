@@ -38,6 +38,7 @@ import datagen.datatype.JavaSetDataType;
 import datagen.datatype.PythonListDataType;
 import datagen.datatype.ContractDataType;
 import datagen.datatype.EnumDataType;
+import datagen.datatype.GoListDataType;
 import datagen.gen.PartialType;
 import datagen.gen.QualifiedName;
 import datagen.gen.TypeStructure;
@@ -142,8 +143,21 @@ public final class GeneratedTypeDef extends BaseObject {
     case LIST:
       // Convert list to particular scalar types in special cases
       complexType = dataType.getListVariant();
-      if (complexType == null)
-        complexType = python() ? new PythonListDataType(dataType) : new JavaListDataType(dataType);
+      if (complexType == null) {
+        switch (language()) {
+        default:
+          throw notSupported();
+        case JAVA:
+          complexType = new JavaListDataType(dataType);
+          break;
+        case PYTHON:
+          complexType = new PythonListDataType(dataType);
+          break;
+        case GO:
+          complexType = new GoListDataType(dataType);
+          break;
+        }
+      }
       break;
     case KEY_VALUE_MAP: {
       switch (language()) {

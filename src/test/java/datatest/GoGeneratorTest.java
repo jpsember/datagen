@@ -44,7 +44,6 @@ public class GoGeneratorTest extends GenBaseTest {
 
   @Test
   public void crow() {
-    rv();
     p().pr("class {", INDENT, //
         "string name;", CR, //
         "int rage = 16;", CR, //
@@ -54,7 +53,7 @@ public class GoGeneratorTest extends GenBaseTest {
         OUTDENT, "}");
     compile();
 
-    {
+    if (false) {
       File target = new File("adj_crow.go");
       if (true || !target.exists()) {
         String s = Files.readString(new File("crow.go"));
@@ -65,4 +64,13 @@ public class GoGeneratorTest extends GenBaseTest {
     }
   }
 
+  
+  @Test
+  public void cat() {
+    p().pr("class {", INDENT, //
+        "string name = \"kirby\";", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+  
 }
