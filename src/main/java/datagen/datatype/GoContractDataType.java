@@ -62,15 +62,11 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    if (true)
-      return "???sourceGenerateSerializeToObjectExpression";
     return getSerializeToJSONValue(valueExpression);
   }
 
   public String getSerializeToJSONValue(String value) {
-    if (true)
-      return "???getSerializeToJSONValue";
-    return value + ".to_json()";
+    return value + ".ToJson()";
   }
 
   @Override
@@ -89,7 +85,7 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
 
   @Override
   public String getConstructFromX() {
-    throw notSupported("getConstructFromX");
+    throw notSupported("GoContractDataType.getConstructFromX");
   }
 
 }

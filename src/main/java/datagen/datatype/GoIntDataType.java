@@ -84,4 +84,14 @@ public final class GoIntDataType extends GoDataType {
         ")", CR);
   }
 
+  @Override
+  protected String parseElementFromJsonValue(String jsentityExpression) {
+    String expr = jsentityExpression+
+        ".ToInteger()";
+     if (mBits != 64) {
+       expr = "int"+mBits+"("+expr+")";
+     }
+     return expr;
+  }
+  
 }

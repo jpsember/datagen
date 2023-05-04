@@ -83,10 +83,7 @@ public abstract class GoDataType extends DataType {
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-    notFinished();
-    sourceIfNotNull(s, f);
-    s.a("m[", f.nameStringConstantQualified(), "] = ",
-        sourceGenerateSerializeToObjectExpression("self." + f.instanceName()));
-    sourceEndIf(s).cr();
+    s.a("m.Put(", f.nameStringConstantQualified(), ", ", //
+        sourceGenerateSerializeToObjectExpression("v." + f.instanceName()), ")", CR);
   }
 }

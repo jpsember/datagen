@@ -67,15 +67,13 @@ public class GoListDataType extends JavaDataType {
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-    sourceIfNotNull(s, f);
-    s.a("=== not finished sourceSerializeToObject===", CR);
-    //    s.a(OPEN, //
-    //        ParseTools.PKG_JSLIST, " j = new ", ParseTools.PKG_JSLIST, "();", CR, //
-    //        "for (", wrappedType().typeName(), " x : ", f.instanceName(), ")", IN, //
-    //        "j.add(", wrappedType().sourceGenerateSerializeToObjectExpression("x"), ");", OUT, //
-    //        "m.put(", f.nameStringConstantQualified(), ", j);", //
-    //        CLOSE, CR);
-    sourceEndIf(s);
+    s.a(OPEN, //
+        "var list = NewJSList()",CR, //
+        "for _, x := range v.",f.instanceName()," ",OPEN, //
+        "list.Add(", wrappedType().sourceGenerateSerializeToObjectExpression("x"),")",//
+        CLOSE, //
+        "m.Put(",quote( f.instanceName()),", list)", // 
+        CLOSE);
   }
 
   @Override

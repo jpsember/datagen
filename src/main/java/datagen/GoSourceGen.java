@@ -190,10 +190,10 @@ public final class GoSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
     for (FieldDef f : def.fields()) {
+      f.dataType().sourceSerializeToObject(s, f);
       s.cr();
-      s.a("m.Put(\"", f.instanceName(), "\", v.", f.instanceName(), ")");
     }
-    return content();
+    return contentChomp();
   }
 
   @Override
