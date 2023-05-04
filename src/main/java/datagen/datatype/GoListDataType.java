@@ -11,6 +11,7 @@ import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
+import datagen.gen.QualifiedName;
 import js.parsing.Scanner;
 
 public class GoListDataType extends JavaDataType {
@@ -18,39 +19,59 @@ public class GoListDataType extends JavaDataType {
   public GoListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
 
-    pr("goListDataType, wrapped type:",wrappedType);
+    pr("goListDataType, wrapped type:", wrappedType);
     alert(
         "If wrapped type is a ContractDataType, I think we want an array of pointers to objects, not objects");
 
-    String prefix = "";
-    if (wrappedType instanceof ContractDataType) {
-      //    halt("wrapped type:", wrappedType.qualifiedClassName());
-      prefix = "*";
-    }
+//    String prefix = "";
+//    if (wrappedType instanceof ContractDataType) {
+//      //    halt("wrapped type:", wrappedType.qualifiedClassName());
+//      prefix = "*";
+//    }
 
     setQualifiedClassName(
-        ParseTools.parseQualifiedName("[]" + prefix + wrappedType.qualifiedClassName().className(), null));
-pr("qualifiedClassName:",qualifiedClassName());
+        ParseTools.parseQualifiedName("[]" +// prefix + 
+    wrappedType.qualifiedClassName().className(), null));
+    pr("qualifiedClassName:", qualifiedClassName());
   }
 
   @Override
   protected String provideTypeName() {
-    if (true) {
-    return qualifiedClassName().className();
-    }
-    
-    pr("providing type name, wrapped type:",wrappedType().qualifiedClassName());
-    return "[]" + ParseTools.importExprWithClassName(wrappedType().qualifiedClassName());
+  //  if (true) {
+      return qualifiedClassName().className();
+//    }
+//    String result = "[]" + ParseTools.importExprWithClassName(wrappedInterfaceName());
+//    return result;
   }
 
   @Override
   public String provideSourceDefaultValue() {
-    return "[]" + mWrappedType.typeName() + "{}";
+    return "[]" + wrappedInterfaceName().className() + "{}";
   }
 
   public DataType wrappedType() {
     return mWrappedType;
   }
+
+  /**
+   * Get alternate name of wrapped type, if it's a ContractDataType. Converts
+   * 'Foo' to 'FooOrBuilder'
+   */
+  private QualifiedName wrappedInterfaceName() {
+    if (mQualifiedInterfaceName == null) {
+      if (wrappedType() instanceof ContractDataType) {
+        QualifiedName.Builder b = wrappedType().qualifiedClassName().toBuilder();
+        b.className(b.className() + "OrBuilder");
+        b.combined(b.packagePath() + b.className());
+        mQualifiedInterfaceName = b.build();
+      } else {
+        mQualifiedInterfaceName = wrappedType().qualifiedClassName();
+      }
+    }
+    return mQualifiedInterfaceName;
+  }
+
+  private QualifiedName mQualifiedInterfaceName;
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {

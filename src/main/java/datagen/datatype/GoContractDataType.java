@@ -14,20 +14,20 @@ import datagen.ParseTools;
  */
 public class GoContractDataType extends GoDataType implements ContractDataType {
 
-  @Override
-  protected String provideTypeName() {
-    // We will consider the typeName() to be "FooOrBuilder", and the builtTypeName() to be "Foo".
-    String expr = super.provideTypeName();
-    mBuiltTypeName = expr;
-    return expr + "OrBuilder";
-  }
+//  @Override
+//  protected String provideTypeName() {
+//    // We will consider the typeName() to be "FooOrBuilder", and the builtTypeName() to be "Foo".
+//    String expr = super.provideTypeName();
+//    mBuiltTypeName = expr;
+//    return expr + "OrBuilder";
+//  }
 
-  private String builtTypeName() {
-    typeName();
-    return mBuiltTypeName;
-  }
-
-  private String mBuiltTypeName;
+//  private String builtTypeName() {
+//    typeName();
+//    return mBuiltTypeName;
+//  }
+//
+//  private String mBuiltTypeName;
 
   @Override
   public String provideSourceDefaultValue() {
@@ -47,7 +47,7 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
     //
     s.a(OPEN, "var x = s.OptMap(\"", f.name(), "\")", CR, //
         "if x != nil ", OPEN, //
-        "n.", f.instanceName(), " = Default", builtTypeName(), ".Parse(x).(*", builtTypeName(), ")", //
+        "n.", f.instanceName(), " = Default", typeName(), ".Parse(x).(*", typeName(), ")", //
         CLOSE, //
         CLOSE);
   }
@@ -75,7 +75,7 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String arg = f.instanceName();
     s.a("if ", arg, " == nil ", OPEN, //
-        "v.m.", f.instanceName(), " = Default", builtTypeName(), //
+        "v.m.", f.instanceName(), " = Default", typeName(), //
         CR, "} else {", CR, "v.m.", f.instanceName(), " = ", arg, ".Build()", //,
         CLOSE);
   }
@@ -92,6 +92,6 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-    return "Default" + builtTypeName() + ".Parse(" + jsentityExpression + ").(" + builtTypeName() + ")";
+    return "Default" + typeName() + ".Parse(" + jsentityExpression + ").(" + typeName() + "OrBuilder)";
   }
 }
