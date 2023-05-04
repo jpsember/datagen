@@ -64,27 +64,24 @@ public class GoGeneratorTest extends GenBaseTest {
     }
   }
 
-  
   @Test
   public void cat() {
     p().pr("class {", INDENT, //
         "string name = \"kirby\";", CR, //
-        "*string children = [\"winken\",\"blinken\",\"nod\"];",CR, //
-        "*int lucky_numbers = [9, 14 ];",CR,
-        OUTDENT, "}");
+        "*string children = [\"winken\",\"blinken\",\"nod\"];", CR, //
+        "*int lucky_numbers = [9, 14 ];", CR, OUTDENT, "}");
     compile();
   }
-  
+
   @Test
   public void contractTypes() {
     p().pr("class {", INDENT, //
         "string name = \"kirby\";", CR, //
-        "*string children = [\"winken\",\"blinken\",\"nod\"];",CR, //
-        "*int lucky_numbers = [9, 14 ];",CR,
-        OUTDENT, "}");
+        "*string children = [\"winken\",\"blinken\",\"nod\"];", CR, //
+        "*int lucky_numbers = [9, 14 ];", CR, OUTDENT, "}");
     compile();
   }
-  
+
   @Test
   public void externalRepeated() {
     p().pr("extern abc.xyz.Beaver;", CR, //
