@@ -24,28 +24,22 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static js.base.Tools.*;
-
-import java.util.List;
 
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
-import js.parsing.Token;
 
 /**
  * DataType that wraps objects that implement the DataType interface
  */
-public   class JavaContractDataType extends JavaDataType implements ContractDataType {
+public class JavaContractDataType extends JavaDataType implements ContractDataType {
 
- 
   @Override
-  public  void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
+  public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     sourceIfNotNull(s, f);
-    s.a("m.",getStoreInJsonMapMethodName(),"(", f.nameStringConstantQualified(), ", ",
+    s.a("m.", getStoreInJsonMapMethodName(), "(", f.nameStringConstantQualified(), ", ",
         sourceGenerateSerializeToObjectExpression("" + f.instanceName()), ");");
     sourceEndIf(s).cr();
   }
@@ -120,44 +114,47 @@ public   class JavaContractDataType extends JavaDataType implements ContractData
     return provideSourceDefaultValue() + ".parse((JSMap) " + jsonValue + ")";
   }
 
-  @Override
-  public String parseDefaultValue(Scanner scanner, SourceBuilder sb, FieldDef fieldDef) {
-
-    // Attempt to infer from the tokens how to parse a default value
-
-    Token t = scanner.peek();
-
-    // If it looks like [ ...., ...]
-    //
-    // then scan a sequence of comma-delimited strings, and pass as arguments to a constructor
-    // 
-    if (t.id(SQOP)) {
-      scanner.read();
-      List<String> exprs = arrayList();
-      boolean commaExp = false;
-      while (scanner.readIf(SQCL) == null) {
-        if (commaExp) {
-          scanner.read(COMMA);
-          commaExp = false;
-          continue;
-        }
-        exprs.add(scanner.read().text());
-        commaExp = true;
-      }
-
-      sb.a("  private static final ", fieldDef.dataType().typeName(), " ", fieldDef.constantName(),
-          "  = new ", typeName(), "(");
-      int i = INIT_INDEX;
-      for (String expr : exprs) {
-        i++;
-        if (i > 0)
-          sb.a(", ");
-        sb.a(expr);
-      }
-      sb.a(");", CR);
-      return fieldDef.constantName();
-    }
-    throw notSupported("can't parse default value for token:", t);
-  }
+  //  @Override
+  //  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
+  //   // String text = json.get("");
+  ////  @Override
+  ////  public String parseDefaultValue(Scanner scanner, SourceBuilder sb, FieldDef fieldDef) {
+  //
+  //    // Attempt to infer from the tokens how to parse a default value
+  //
+  ////    Token t = scanner.peek();
+  //
+  //    // If it looks like [ ...., ...]
+  //    //
+  //    // then scan a sequence of comma-delimited strings, and pass as arguments to a constructor
+  //    // 
+  //    if (t.id(SQOP)) {
+  //      scanner.read();
+  //      List<String> exprs = arrayList();
+  //      boolean commaExp = false;
+  //      while (scanner.readIf(SQCL) == null) {
+  //        if (commaExp) {
+  //          scanner.read(COMMA);
+  //          commaExp = false;
+  //          continue;
+  //        }
+  //        exprs.add(scanner.read().text());
+  //        commaExp = true;
+  //      }
+  //
+  //      sb.a("  private static final ", fieldDef.dataType().typeName(), " ", fieldDef.constantName(),
+  //          "  = new ", typeName(), "(");
+  //      int i = INIT_INDEX;
+  //      for (String expr : exprs) {
+  //        i++;
+  //        if (i > 0)
+  //          sb.a(", ");
+  //        sb.a(expr);
+  //      }
+  //      sb.a(");", CR);
+  //      return fieldDef.constantName();
+  //    }
+  //    throw notSupported("can't parse default value for token:", t);
+  //  }
 
 }

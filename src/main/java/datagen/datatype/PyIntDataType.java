@@ -27,6 +27,7 @@ package datagen.datatype;
 import datagen.FieldDef;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
+import js.json.JSMap;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
 
@@ -38,9 +39,8 @@ public class PyIntDataType extends PythonDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    long value = Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Long.MIN_VALUE, Long.MAX_VALUE);
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
+    long value = json.getLong("");
     return Long.toString(value);
   }
 

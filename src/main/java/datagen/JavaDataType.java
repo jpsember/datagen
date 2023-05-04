@@ -4,8 +4,15 @@ import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
 import js.data.DataUtil;
+import js.json.JSMap;
 
 public class JavaDataType extends DataType {
+
+  public final String parseDefaultLongValue(JSMap json, long min, long max) {
+    Long lv = json.getLong("");
+    checkArgument(lv >= min && lv <= max);
+    return lv.toString();
+  }
 
   @Override
   public final boolean isPrimitive() {
@@ -26,12 +33,12 @@ public class JavaDataType extends DataType {
     }
 
     if (!Context.classMode()) {
-      s.a(targetExpr, " = ", sourceExpressionToMutable(expr) );
+      s.a(targetExpr, " = ", sourceExpressionToMutable(expr));
     } else {
       if (Context.debugMode()) {
         sourceExpressionToImmutable(s, f, targetExpr, expr);
       } else
-        s.a(targetExpr, " = ", expr );
+        s.a(targetExpr, " = ", expr);
     }
   }
 

@@ -31,6 +31,10 @@ import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
+import js.data.DataUtil;
+import js.json.JSList;
+import js.json.JSMap;
+import js.json.JSUtils;
 import js.parsing.Scanner;
 
 public class JavaJsonListDataType extends JavaDataType {
@@ -46,10 +50,10 @@ public class JavaJsonListDataType extends JavaDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    classSpecificSource.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = new ",
-        typeName(), "(", scanner.read(STRING).text(), ");", CR);
+  public String parseDefaultValue(SourceBuilder sb, FieldDef fieldDef, JSMap json) {
+    JSList lst = json.getList("");
+    sb.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = new ", typeName(), "(",
+        DataUtil.escapeChars(lst.toString(), true), ");", CR);
     return fieldDef.constantName();
   }
 

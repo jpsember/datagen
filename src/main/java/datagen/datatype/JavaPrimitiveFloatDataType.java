@@ -24,11 +24,13 @@
  **/
 package datagen.datatype;
 
+import static js.base.Tools.*;
 
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
+import js.json.JSMap;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
 
@@ -45,10 +47,8 @@ public class JavaPrimitiveFloatDataType extends JavaDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDefUnused) {
-    float value = parseFloatValue(scanner.read(NUMBER).text());
-    return Float.toString(value) + "f";
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
+    return Float.toString((float) (json.getDouble(""))) + "f";
   }
 
   @Override

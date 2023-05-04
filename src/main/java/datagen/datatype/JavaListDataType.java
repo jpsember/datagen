@@ -24,11 +24,8 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
-
-import java.util.List;
 
 import datagen.Context;
 import datagen.DataType;
@@ -36,7 +33,9 @@ import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
+import js.json.JSList;
+import js.json.JSMap;
+import js.json.JSUtils;
 
 public class JavaListDataType extends JavaDataType {
 
@@ -77,11 +76,11 @@ public class JavaListDataType extends JavaDataType {
       String valueExpression) {
     if (!Context.generatedTypeDef.classMode()) {
       s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
-       return;
+      return;
     }
 
     if (Context.debugMode()) {
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression) );
+      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
       return;
     }
     super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
@@ -110,7 +109,8 @@ public class JavaListDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    todo("the sourceDeserializeFromList method seems to be misnamed, as it is actually reading a list from a JSMap first");
+    todo(
+        "the sourceDeserializeFromList method seems to be misnamed, as it is actually reading a list from a JSMap first");
     wrappedType().sourceDeserializeFromList(s, f);
   }
 
@@ -123,35 +123,18 @@ public class JavaListDataType extends JavaDataType {
   }
 
   @Override
-  public String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource, FieldDef fieldDef) {
+  public String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
 
-    List<String> parsedExpressions = arrayList();
-
-    {
-      scanner.read(SQOP);
-      for (int index = 0;; index++) {
-        if (scanner.readIf(SQCL) != null)
-          break;
-        if (index > 0) {
-          scanner.read(COMMA);
-          // Allow an extraneous trailing comma
-          if (scanner.readIf(SQCL) != null)
-            break;
-        }
-        String expr = wrappedType().parseDefaultValue(scanner, classSpecificSource, null);
-        parsedExpressions.add(expr);
-      }
-    }
+    JSList parsedExpressions = json.getList("");
 
     SourceBuilder sb = classSpecificSource;
     sb.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = ", ParseTools.PKG_TOOLS,
         ".arrayList(");
-    int index = INIT_INDEX;
-    for (String expr : parsedExpressions) {
-      index++;
+    for (int index = 0; index < parsedExpressions.size(); index++) {
+      Object expr = parsedExpressions.getUnsafe(index);
       if (index > 0)
         sb.a(",");
-      sb.a(expr);
+      sb.a(JSUtils.valueToString(expr));
     }
     sb.a(");").cr();
 
@@ -168,7 +151,7 @@ public class JavaListDataType extends JavaDataType {
     }
 
     if (!Context.classMode()) {
-      s.a(targetExpr, " = ", sourceExpressionToMutable(expr) );
+      s.a(targetExpr, " = ", sourceExpressionToMutable(expr));
     } else {
       if (Context.debugMode()) {
         sourceExpressionToImmutable(s, f, targetExpr, expr);

@@ -28,15 +28,14 @@ import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
-import java.util.List;
-
 import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
+import js.json.JSList;
+import js.json.JSMap;
 
 public class PythonListDataType extends PythonDataType {
 
@@ -134,36 +133,50 @@ public class PythonListDataType extends PythonDataType {
   }
 
   @Override
-  public String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource, FieldDef fieldDef) {
+  public String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
 
-    List<String> parsedExpressions = arrayList();
-
-    {
-      scanner.read(SQOP);
-      for (int index = 0;; index++) {
-        if (scanner.readIf(SQCL) != null)
-          break;
-        if (index > 0) {
-          scanner.read(COMMA);
-          // Allow an extraneous trailing comma
-          if (scanner.readIf(SQCL) != null)
-            break;
-        }
-        String expr = wrappedType().parseDefaultValue(scanner, classSpecificSource, null);
-        parsedExpressions.add(expr);
-      }
-    }
+    JSList parsedExpressions = json.getList("");
 
     SourceBuilder sb = classSpecificSource;
     sb.a(fieldDef.constantName(), "  = [");
-    int index = INIT_INDEX;
-    for (String expr : parsedExpressions) {
-      index++;
-      if (index > 0) {
+
+    for (int index = 0; index < parsedExpressions.size(); index++) {
+      Object expr = parsedExpressions.getUnsafe(index);
+      if (index > 0)
         sb.a(",");
-      }
       sb.a(expr);
     }
+    sb.a(");").cr();
+
+    //    
+    //    List<String> parsedExpressions = arrayList();
+    //
+    //    {
+    //      scanner.read(SQOP);
+    //      for (int index = 0;; index++) {
+    //        if (scanner.readIf(SQCL) != null)
+    //          break;
+    //        if (index > 0) {
+    //          scanner.read(COMMA);
+    //          // Allow an extraneous trailing comma
+    //          if (scanner.readIf(SQCL) != null)
+    //            break;
+    //        }
+    //        String expr = wrappedType().parseDefaultValue(scanner, classSpecificSource, null);
+    //        parsedExpressions.add(expr);
+    //      }
+    //    }
+    //
+    //    SourceBuilder sb = classSpecificSource;
+    //    sb.a(fieldDef.constantName(), "  = [");
+    //    int index = INIT_INDEX;
+    //    for (String expr : parsedExpressions) {
+    //      index++;
+    //      if (index > 0) {
+    //        sb.a(",");
+    //      }
+    //      sb.a(expr);
+    //    }
     sb.a("]").cr();
     return fieldDef.constantName();
   }

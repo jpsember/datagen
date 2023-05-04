@@ -24,18 +24,13 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
-
-import java.util.List;
 
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
-import js.parsing.Token;
 
 /**
  * DataType that wraps objects that implement the DataType interface
@@ -106,46 +101,46 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
     }
   }
 
-  @Override
-  public String parseDefaultValue(Scanner scanner, SourceBuilder sb, FieldDef fieldDef) {
-
-    // Attempt to infer from the tokens how to parse a default value
-
-    Token t = scanner.peek();
-
-    // If it looks like [ ...., ...]
-    //
-    // then scan a sequence of comma-delimited strings, and pass as arguments to a constructor
-    // 
-    if (t.id(SQOP)) {
-      scanner.read();
-      List<String> exprs = arrayList();
-      boolean commaExp = false;
-      while (scanner.readIf(SQCL) == null) {
-        if (commaExp) {
-          scanner.read(COMMA);
-          commaExp = false;
-          continue;
-        }
-        exprs.add(scanner.read().text());
-        commaExp = true;
-      }
-
-      String constName;
-      constName = "DEF" + fieldDef.nameStringConstantUnqualified();
-      sb.a(constName, "  = ", typeName(), "(");
-      int i = INIT_INDEX;
-      for (String expr : exprs) {
-        i++;
-        if (i > 0)
-          sb.a(", ");
-        sb.a(expr);
-      }
-      sb.a(")", CR);
-
-      return constName;
-    }
-    throw notSupported("can't parse default value for token:", t);
-  }
+  //  @Override
+  //  public String parseDefaultValue(Scanner scanner, SourceBuilder sb, FieldDef fieldDef) {
+  //
+  //    // Attempt to infer from the tokens how to parse a default value
+  //
+  //    Token t = scanner.peek();
+  //
+  //    // If it looks like [ ...., ...]
+  //    //
+  //    // then scan a sequence of comma-delimited strings, and pass as arguments to a constructor
+  //    // 
+  //    if (t.id(SQOP)) {
+  //      scanner.read();
+  //      List<String> exprs = arrayList();
+  //      boolean commaExp = false;
+  //      while (scanner.readIf(SQCL) == null) {
+  //        if (commaExp) {
+  //          scanner.read(COMMA);
+  //          commaExp = false;
+  //          continue;
+  //        }
+  //        exprs.add(scanner.read().text());
+  //        commaExp = true;
+  //      }
+  //
+  //      String constName;
+  //      constName = "DEF" + fieldDef.nameStringConstantUnqualified();
+  //      sb.a(constName, "  = ", typeName(), "(");
+  //      int i = INIT_INDEX;
+  //      for (String expr : exprs) {
+  //        i++;
+  //        if (i > 0)
+  //          sb.a(", ");
+  //        sb.a(expr);
+  //      }
+  //      sb.a(")", CR);
+  //
+  //      return constName;
+  //    }
+  //    throw notSupported("can't parse default value for token:", t);
+  //  }
 
 }

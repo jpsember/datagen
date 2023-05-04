@@ -254,7 +254,8 @@ final class DataDefinitionParser extends BaseObject {
         // A JSList, starting with [
         // A string, starting with "
         // 
-        performParseTest();
+        todo("refactor to make these names more sensible");
+        JSMap defaultValue = parseDefaultValueAsJsonMap();
 
         // See if there is a parser for default values for this field.  This can either be the data type's parseDefaultValue() method,
         // or one mapped to the type's class (in case it is outside of the datagen project)
@@ -262,13 +263,56 @@ final class DataDefinitionParser extends BaseObject {
         DefaultValueParser parser = Context.dataTypeManager.parser(key);
         if (parser == null)
           parser = fieldDef.dataType();
-        String defValue = parser.parseDefaultValue(scanner(),
-            Context.generatedTypeDef.classSpecificSourceBuilder(), fieldDef);
+        String defValue = parser.parseDefaultValue(Context.generatedTypeDef.classSpecificSourceBuilder(),
+            fieldDef, defaultValue);
         fieldDef.setDefaultValue(defValue);
       }
 
       read(SEMI);
     }
+  }
+
+  private JSMap parseDefaultValueAsJsonMap() {
+    StringBuilder sb = new StringBuilder();
+    List<Integer> stack = arrayList();
+    boolean done = false;
+    while (!done) {
+      Token t = read();
+      switch (t.id()) {
+      case NUMBER:
+      case STRING:
+      case BOOL:
+        if (stack.isEmpty())
+          done = true;
+        break;
+      case BROP:
+        push(stack, BRCL);
+        break;
+      case SQOP:
+        push(stack, SQCL);
+        break;
+      case BRCL:
+      case SQCL:
+        checkState(last(stack) == t.id());
+        pop(stack);
+        if (stack.isEmpty())
+          done = true;
+        break;
+      default:
+        checkState(!stack.isEmpty());
+        break;
+      }
+      sb.append(t.text());
+    }
+    String result = sb.toString();
+
+    // If it's not a map, wrap it in a map with key ""
+    //
+    if (!result.startsWith("{")) {
+      result = "{\"\":" + result + "}";
+    }
+
+    return new JSMap(result);
   }
 
   private PartialType parsePartialType() {
@@ -346,53 +390,5 @@ final class DataDefinitionParser extends BaseObject {
   private Token mLastReadToken;
   private String mPackageName;
   private Map<Integer, Runnable> mHandlers;
-
-  private void performParseTest() {
-    int tokenCount = 0;
-    StringBuilder sb = new StringBuilder();
-    List<Integer> stack = arrayList();
-    boolean done = false;
-    while (!done) {
-      Token t = read();
-      tokenCount++;
-      pr("read:", t, "stack size:", stack.size());
-      switch (t.id()) {
-      case NUMBER:
-      case STRING:
-      case BOOL:
-        if (stack.isEmpty())
-          done = true;
-        break;
-      case BROP:
-        push(stack, BRCL);
-        break;
-      case SQOP:
-        push(stack, SQCL);
-        break;
-      case BRCL:
-      case SQCL:
-        checkState(last(stack) == t.id());
-        pop(stack);
-        if (stack.isEmpty())
-          done = true;
-        break;
-      default:
-        checkState(!stack.isEmpty());
-        break;
-      }
-      sb.append(t.text());
-    }
-    String result = sb.toString();
-
-    // If it's not a map, wrap it in a map with key ""
-    //
-    if (!result.startsWith("{")) {
-      result = "{\"\":" + result + "}";
-    }
-
-    JSMap verify = new JSMap(result);
-    pr(verify);
-    scanner().unread(tokenCount);
-  }
 
 }

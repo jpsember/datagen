@@ -31,7 +31,9 @@ import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
+import js.data.DataUtil;
+import js.json.JSMap;
+import js.json.JSUtils;
 
 /**
  * For Python, this will generate python dicts, to the extent that they are
@@ -51,10 +53,9 @@ public final class JavaJsonMapDataType extends JavaDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
     classSpecificSource.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = new ",
-        typeName(), "(", scanner.read(STRING).text(), ");", CR);
+        typeName(), "(", DataUtil.escapeChars(json.toString(), true), ");", CR);
     return fieldDef.constantName();
   }
 

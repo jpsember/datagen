@@ -24,13 +24,12 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
 import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
+import js.json.JSMap;
 
 public final class GoFloatDataType extends GoDataType {
 
@@ -71,17 +70,15 @@ public final class GoFloatDataType extends GoDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    notFinished();
-    return scanner.read(STRING).text();
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap map) {
+    return Float.toString(((float) (map.getDouble(""))));
   }
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     notFinished();
-    s.a("n.", f.instanceName(), " = s.Opt(", f.nameStringConstantQualified(), ", ",
-        f.defaultValueOrNull(), ")");
+    s.a("n.", f.instanceName(), " = s.Opt(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(),
+        ")");
   }
 
 }

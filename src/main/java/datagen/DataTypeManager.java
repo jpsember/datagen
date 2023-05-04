@@ -35,9 +35,8 @@ import js.geometry.IPoint;
 import js.geometry.IRect;
 import js.geometry.Matrix;
 import js.geometry.Polygon;
-import js.parsing.Scanner;
+import js.json.JSMap;
 
-import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 import static datagen.Utils.*;
 
@@ -116,7 +115,6 @@ public final class DataTypeManager extends BaseObject {
     checkState(previousMapping == null, "duplicate data type for key:", key);
   }
 
-  @Deprecated
   public void add(String key, DataType dataType, DefaultValueParser defaultValueParser) {
     add(key, dataType);
     if (defaultValueParser != null)
@@ -162,15 +160,11 @@ public final class DataTypeManager extends BaseObject {
 
   private static final DefaultValueParser IPOINT_PARSER = new DefaultValueParser() {
     @Override
-    public String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource, FieldDef fieldDef) {
+    public String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap js) {
+      IPoint value = IPoint.get(js, "");
       String typeName = fieldDef.dataType().typeName();
-      scanner.read(SQOP);
-      int x = scanner.readInt(NUMBER);
-      scanner.read(COMMA);
-      int y = scanner.readInt(NUMBER);
-      scanner.read(SQCL);
       classSpecificSource.a("  private static final ", fieldDef.dataType().typeName(), " ",
-          fieldDef.constantName(), "  = new ", typeName, "(", x, ", ", y, ");", CR);
+          fieldDef.constantName(), "  = new ", typeName, "(", value.x, ", ", value.y, ");", CR);
       return fieldDef.constantName();
     }
   };

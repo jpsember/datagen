@@ -28,8 +28,7 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
-import static datagen.ParseTools.*;
+import js.json.JSMap;
 
 /**
  * Datatype for primitive bytes, i.e. "byte x;"
@@ -47,11 +46,15 @@ public class JavaPrimitiveByteDataType extends JavaDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDefUnused) {
-    int value = (int) Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Byte.MIN_VALUE, Byte.MAX_VALUE);
-    return Integer.toString(value);
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
+    return parseDefaultLongValue(json, Byte.MIN_VALUE, Byte.MAX_VALUE); //.toString(json.getInt(""));
   }
+//  @Override
+//  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
+//      FieldDef fieldDefUnused) {
+//    int value = (int) Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Byte.MIN_VALUE, Byte.MAX_VALUE);
+//    return Integer.toString(value);
+//  }
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {

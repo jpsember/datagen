@@ -31,6 +31,7 @@ import static datagen.SourceBuilder.*;
 import datagen.FieldDef;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
+import js.json.JSMap;
 import js.parsing.Scanner;
 
 public final class PyStringDataType extends PythonDataType {
@@ -46,9 +47,8 @@ public final class PyStringDataType extends PythonDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    return scanner.read(STRING).text();
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
+    return json.get("");
   }
 
   @Override

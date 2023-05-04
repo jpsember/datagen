@@ -39,6 +39,7 @@ import js.data.IntArray;
 import js.data.LongArray;
 import js.data.ShortArray;
 import js.file.Files;
+import js.json.JSList;
 import js.json.JSMap;
 
 import static js.base.Tools.*;
@@ -458,13 +459,16 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
+  private static final JSMap sampleMap = map().put("a", 15).put("b", "hello");
+  private static final JSList sampleList = list().add(15).add("hello");
+
   @Test
   public void typeJsonMapVariousOld() {
     p().pr("fields {", INDENT, //
         "JSMap alpha;", CR, //
         "?JSMap beta;", CR, //
         "*JSMap gamma;", CR, //
-        "JSMap epsilon = ", quote("{\\\"a\\\":15,\\\"b\\\":\\\"hello\\\"}"), ";", CR, //
+        "JSMap epsilon = ", sampleMap.toString(), ";", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -475,7 +479,7 @@ public class JavaGeneratorTest extends GenBaseTest {
         "JSList alpha;", CR, //
         "?JSList beta;", CR, //
         "*JSList gamma;", CR, //
-        "JSList epsilon = ", quote("[\\\"a\\\",15,\\\"b\\\",\\\"hello\\\"]"), ";", CR, //
+        "JSList epsilon = ", sampleList.toString(), ";", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -818,7 +822,7 @@ public class JavaGeneratorTest extends GenBaseTest {
         "JSMap alpha;", CR, //
         "?JSMap beta;", CR, //
         "*JSMap gamma;", CR, //
-        "JSMap epsilon = ", quote("{\\\"a\\\":15,\\\"b\\\":\\\"hello\\\"}"), ";", CR, //
+        "JSMap epsilon = ", map().put("a", 15).put("b", "hello"), ";", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -829,7 +833,7 @@ public class JavaGeneratorTest extends GenBaseTest {
         "JSList alpha;", CR, //
         "?JSList beta;", CR, //
         "*JSList gamma;", CR, //
-        "JSList epsilon = ", quote("[\\\"a\\\",15,\\\"b\\\",\\\"hello\\\"]"), ";", CR, //
+        "JSList epsilon = ", sampleList.toString(), ";", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -1022,12 +1026,12 @@ public class JavaGeneratorTest extends GenBaseTest {
         "JSMap jalpha;", CR, //
         "?JSMap jbeta;", CR, //
         "*JSMap jgamma;", CR, //
-        "JSMap jepsilon = ", quote("{\\\"a\\\":15,\\\"b\\\":\\\"hello\\\"}"), ";", CR, //
+        "JSMap jepsilon = ", sampleMap.toString(), ";", CR, //
 
         "JSList lalpha;", CR, //
         "?JSList lbeta;", CR, //
         "*JSList lgamma;", CR, //
-        "JSList lepsilon = ", quote("[\\\"a\\\",15,\\\"b\\\",\\\"hello\\\"]"), ";", CR, //
+        "JSList lepsilon = ", sampleList.toString(), ";", CR, //
 
         "foo.gen.Garp garp;", CR, //
         "enum foo.gen.Zebra zeb;", CR, //

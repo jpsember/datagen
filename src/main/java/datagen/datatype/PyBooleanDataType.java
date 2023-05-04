@@ -31,6 +31,8 @@ import datagen.FieldDef;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
 import js.data.DataUtil;
+import js.json.JSList;
+import js.json.JSMap;
 import js.parsing.Scanner;
 
 public class PyBooleanDataType extends PythonDataType {
@@ -46,9 +48,9 @@ public class PyBooleanDataType extends PythonDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    return DataUtil.capitalizeFirst(scanner.read(BOOL).text());
+  public String parseDefaultValue(SourceBuilder sb, FieldDef fieldDef, JSMap json) {
+    Boolean b = json.getBoolean("");
+    return DataUtil.capitalizeFirst(b.toString());
   }
 
   @Override

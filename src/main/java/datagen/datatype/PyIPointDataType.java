@@ -29,6 +29,8 @@ import static js.base.Tools.*;
 
 import datagen.FieldDef;
 import datagen.SourceBuilder;
+import js.json.JSList;
+import js.json.JSMap;
 import js.parsing.Scanner;
 
 public class PyIPointDataType extends PythonContractDataType {
@@ -42,15 +44,10 @@ public class PyIPointDataType extends PythonContractDataType {
   }
 
   @Override
-  public String parseDefaultValue(Scanner scanner, SourceBuilder sb, FieldDef fieldDef) {
-    scanner.read(SQOP);
-    int x = scanner.readInt(NUMBER);
-    scanner.read(COMMA);
-    int y = scanner.readInt(NUMBER);
-    scanner.read(SQCL);
-    String constName = "DEF" + fieldDef.nameStringConstantUnqualified()
-    ;
-    sb.a(constName, "  = ", typeName(), ".with_x_y(", x, ", ", y, ")", CR);
+  public String parseDefaultValue(SourceBuilder sb, FieldDef fieldDef, JSMap json) {
+    JSList list = json.getList("");
+    String constName = "DEF" + fieldDef.nameStringConstantUnqualified();
+    sb.a(constName, "  = ", typeName(), ".with_x_y(", list.getInt(0), ", ", list.getInt(1), ")", CR);
     return constName;
   }
 

@@ -28,6 +28,7 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
+import js.json.JSMap;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
 
@@ -47,11 +48,8 @@ public class JavaPrimitiveShortDataType extends JavaDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    int value = (int) Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Short.MIN_VALUE,
-        Short.MAX_VALUE);
-    return Integer.toString(value);
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
+    return Integer.toString(json.getInt(""));
   }
 
   @Override

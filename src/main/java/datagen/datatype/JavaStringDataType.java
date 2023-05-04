@@ -32,6 +32,8 @@ import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
+import js.data.DataUtil;
+import js.json.JSMap;
 import js.parsing.Scanner;
 
 public final class JavaStringDataType extends JavaDataType {
@@ -47,9 +49,8 @@ public final class JavaStringDataType extends JavaDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    return scanner.read(STRING).text();
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
+    return DataUtil.escapeChars(json.get(""), true);
   }
 
   @Override

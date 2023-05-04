@@ -26,14 +26,11 @@ package datagen;
 
 import static js.base.Tools.*;
 
-import js.parsing.Scanner;
+import js.json.JSMap;
 
-//@Deprecated
 public interface DefaultValueParser {
 
-  default String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDefOrNull) {
+  default String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDefOrNull, JSMap json) {
     throw notSupported("parseDefaultValue");
   }
-
 }

@@ -26,12 +26,10 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
-import static datagen.ParseTools.*;
-
 import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
+import js.json.JSMap;
 
 public final class GoStringDataType extends GoDataType {
 
@@ -62,9 +60,8 @@ public final class GoStringDataType extends GoDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    return scanner.read(STRING).text();
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap map) {
+    return map.get("");
   }
 
   @Override

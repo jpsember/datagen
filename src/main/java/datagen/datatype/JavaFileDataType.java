@@ -32,7 +32,8 @@ import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
+import js.data.DataUtil;
+import js.json.JSMap;
 
 public final class JavaFileDataType extends JavaDataType {
 
@@ -47,10 +48,11 @@ public final class JavaFileDataType extends JavaDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
+    String text = json.get("");
     classSpecificSource.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = new File(",
-        scanner.read(STRING).text(), ");", CR);
+        DataUtil.escapeChars(text, true)
+        , ");", CR);
     return fieldDef.constantName();
   }
 
@@ -77,7 +79,7 @@ public final class JavaFileDataType extends JavaDataType {
         PKG_LIST, "<", typeName(), "> result = ", f.nullIfOptional(PKG_MUTABLELIST), ";", CR, //
         ParseTools.PKG_JSLIST, " j = m.optJSList(", f.nameStringConstantQualified(), ");", CR);
     sourceIfNotNull(s, "j");
-    s.a("result = ",ParseTools.PKG_DATAUTIL,".parseFileListFrom(j);");
+    s.a("result = ", ParseTools.PKG_DATAUTIL, ".parseFileListFrom(j);");
     s.a(CLOSE);
     s.a(f.instanceName(), " = ", ParseTools.assignToListExpr("result"), ";");
     sourceEndIf(s);

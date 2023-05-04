@@ -30,6 +30,7 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
+import js.json.JSMap;
 import js.parsing.Scanner;
 
 /**
@@ -48,11 +49,10 @@ public class JavaPrimitiveIntegerDataType extends JavaDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDefUnused) {
-    int value = scanner.readInt(NUMBER);
-    return Integer.toString(value);
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
+    return Integer.toString(json.getInt(""));
   }
+   
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {

@@ -24,7 +24,6 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
 import java.util.List;
@@ -32,7 +31,7 @@ import java.util.List;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
+import js.json.JSMap;
 
 public class JavaDoubleArrayDataType extends JavaContractDataType {
 
@@ -57,35 +56,37 @@ public class JavaDoubleArrayDataType extends JavaContractDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    List<String> parsedNumbers = arrayList();
-
-    {
-      scanner.read(SQOP);
-      for (int index = 0;; index++) {
-        if (scanner.readIf(SQCL) != null)
-          break;
-        if (index > 0) {
-          scanner.read(COMMA);
-          // Allow an extraneous trailing comma
-          if (scanner.readIf(SQCL) != null)
-            break;
-        }
-        parsedNumbers.add(scanner.read(NUMBER).text());
-      }
-    }
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
+    //    List<String> parsedNumbers = arrayList();
+    //
+    //    {
+    //      scanner.read(SQOP);
+    //      for (int index = 0;; index++) {
+    //        if (scanner.readIf(SQCL) != null)
+    //          break;
+    //        if (index > 0) {
+    //          scanner.read(COMMA);
+    //          // Allow an extraneous trailing comma
+    //          if (scanner.readIf(SQCL) != null)
+    //            break;
+    //        }
+    //        parsedNumbers.add(scanner.read(NUMBER).text());
+    //      }
+    //    }
 
     SourceBuilder sb = classSpecificSource;
     sb.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = ");
     sb.a("{");
+
+    List<? extends Object> lst = json.getList("").wrappedList();
+
     int index = INIT_INDEX;
-    for (String numberText : parsedNumbers) {
+    for (Object value : lst) {//String numberText : parsedNumbers) {
       index++;
       if (index > 0) {
         sb.a(",");
       }
-      sb.a(numberText);
+      sb.a(value);
     }
     sb.a("};").cr();
 

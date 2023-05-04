@@ -28,6 +28,7 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
+import js.json.JSMap;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
 
@@ -47,10 +48,8 @@ public class JavaPrimitiveLongDataType extends JavaDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    long value = Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Long.MIN_VALUE, Long.MAX_VALUE);
-    return Long.toString(value) + "L";
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
+    return parseDefaultLongValue(json, Long.MIN_VALUE, Long.MAX_VALUE) + "L";
   }
 
   @Override

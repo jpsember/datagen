@@ -4,6 +4,7 @@ import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
 import datagen.gen.QualifiedName;
+import js.json.JSMap;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
@@ -21,6 +22,12 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
     b.className(b.className() + "OrBuilder");
     ParseTools.assignCombined(b);
     super.setQualifiedClassName(b.build());
+  }
+
+  
+  @Override
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap map) {
+    throw notFinished("add default values for contract types");
   }
 
   @Override

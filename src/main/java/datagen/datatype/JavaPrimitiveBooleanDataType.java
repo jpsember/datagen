@@ -31,6 +31,7 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
+import js.json.JSMap;
 import js.parsing.Scanner;
 
 public class JavaPrimitiveBooleanDataType extends JavaDataType {
@@ -56,9 +57,8 @@ public class JavaPrimitiveBooleanDataType extends JavaDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    return scanner.read(BOOL).text();
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
+    return Boolean.toString(json.getBoolean(""));
   }
 
   @Override
@@ -93,7 +93,6 @@ public class JavaPrimitiveBooleanDataType extends JavaDataType {
         s.a("(Boolean) null");
       s.a(");");
     }
-
 
     @Override
     public String deserializeJsonToMapValue(String jsonValue) {

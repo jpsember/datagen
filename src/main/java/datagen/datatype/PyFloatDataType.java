@@ -27,6 +27,7 @@ package datagen.datatype;
 import datagen.FieldDef;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
+import js.json.JSMap;
 import js.parsing.Scanner;
 import static datagen.ParseTools.*;
 
@@ -43,10 +44,7 @@ public class PyFloatDataType extends PythonDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDefUnused) {
-    double value = parseDoubleValue(scanner.read(NUMBER).text());
-    return Double.toString(value);
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
+    return Double.toString(json.getDouble(""));
   }
-
 }

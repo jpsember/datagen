@@ -24,13 +24,12 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
 import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
+import js.json.JSMap;
 
 public final class GoIntDataType extends GoDataType {
   @Override
@@ -72,10 +71,8 @@ public final class GoIntDataType extends GoDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDef) {
-    int value = scanner.readInt(NUMBER);
-    return Integer.toString(value);
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap map) {
+    return Integer.toString(map.getInt(""));
   }
 
   @Override
@@ -86,12 +83,11 @@ public final class GoIntDataType extends GoDataType {
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-    String expr = jsentityExpression+
-        ".ToInteger()";
-     if (mBits != 64) {
-       expr = "int"+mBits+"("+expr+")";
-     }
-     return expr;
+    String expr = jsentityExpression + ".ToInteger()";
+    if (mBits != 64) {
+      expr = "int" + mBits + "(" + expr + ")";
+    }
+    return expr;
   }
-  
+
 }

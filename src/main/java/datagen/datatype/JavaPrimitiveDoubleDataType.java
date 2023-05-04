@@ -28,8 +28,7 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
-import js.parsing.Scanner;
-import static datagen.ParseTools.*;
+import js.json.JSMap;
 
 public class JavaPrimitiveDoubleDataType extends JavaDataType {
 
@@ -44,10 +43,8 @@ public class JavaPrimitiveDoubleDataType extends JavaDataType {
   }
 
   @Override
-  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-      FieldDef fieldDefUnused) {
-    double value = parseDoubleValue(scanner.read(NUMBER).text());
-    return Double.toString(value);
+  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
+    return Double.toString(json.getDouble(""));
   }
 
   @Override
