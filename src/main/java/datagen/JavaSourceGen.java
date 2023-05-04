@@ -65,7 +65,7 @@ public final class JavaSourceGen extends SourceGen {
       s.a(";");
       s.cr();
     }
-    return contentChomp();
+    return chomp(content());
   }
 
   @Override
@@ -203,7 +203,7 @@ public final class JavaSourceGen extends SourceGen {
         }
       }
     }
-    return contentChomp();
+    return chomp(content());
   }
 
   @Override

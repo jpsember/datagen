@@ -141,7 +141,7 @@ public final class GoSourceGen extends SourceGen {
       }
       s.a(CR);
     }
-    return contentChomp();
+    return chomp(content());
   }
 
   @Override
@@ -193,7 +193,7 @@ public final class GoSourceGen extends SourceGen {
       f.dataType().sourceSerializeToObject(s, f);
       s.cr();
     }
-    return contentChomp();
+    return chomp(content());
   }
 
   @Override
@@ -204,7 +204,7 @@ public final class GoSourceGen extends SourceGen {
       f.dataType().sourceDeserializeFromObject(s, f);
       s.cr();
     }
-    return contentChomp();
+    return chomp(content());
   }
 
   @Override

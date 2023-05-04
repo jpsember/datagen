@@ -170,17 +170,6 @@ public abstract class SourceGen extends BaseObject {
   }
 
   /**
-   * Get chomped content of SourceBuilder, and reset the SourceBuilder
-   */
-  protected final String contentChomp() {
-    todo("Can we call Tools.chomp here?");
-    String content = content();
-    if (content.endsWith("\n"))
-      content = content.substring(0, content.length() - 1);
-    return content;
-  }
-
-  /**
    * <pre>
    * Find references to classes that need importing, eg. "import json"
    * 

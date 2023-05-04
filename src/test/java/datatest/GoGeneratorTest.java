@@ -69,6 +69,8 @@ public class GoGeneratorTest extends GenBaseTest {
   public void cat() {
     p().pr("class {", INDENT, //
         "string name = \"kirby\";", CR, //
+        "*string children = [\"winken\",\"blinken\",\"nod\"];",CR, //
+        "*int lucky_numbers = [9, 14 ];",CR,
         OUTDENT, "}");
     compile();
   }
