@@ -28,6 +28,7 @@ import static js.base.Tools.*;
 
 import js.parsing.Scanner;
 
+//@Deprecated
 public interface DefaultValueParser {
 
   default String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,

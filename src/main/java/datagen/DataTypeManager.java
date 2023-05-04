@@ -53,10 +53,9 @@ public final class DataTypeManager extends BaseObject {
     DataType tmp;
 
     switch (language()) {
-    default:
-    {
+    default: {
       add("byte", new GoIntDataType(8));
-      add("short",new GoIntDataType(16));
+      add("short", new GoIntDataType(16));
       add("int", new GoIntDataType(32));
       add("long", new GoIntDataType(64));
       add("float", new GoFloatDataType(32));
@@ -64,7 +63,7 @@ public final class DataTypeManager extends BaseObject {
       add("bool", new GoBooleanDataType());
       add("string", new GoStringDataType());
     }
-    break;
+      break;
     case PYTHON:
       tmp = new PyIntDataType();
       add("byte", tmp);
@@ -113,12 +112,13 @@ public final class DataTypeManager extends BaseObject {
   }
 
   public void add(String key, DataType dataType) {
-    add(key, dataType, null);
-  }
-
-  public void add(String key, DataType dataType, DefaultValueParser defaultValueParser) {
     DataType previousMapping = mTypeMap.put(key, dataType);
     checkState(previousMapping == null, "duplicate data type for key:", key);
+  }
+
+  @Deprecated
+  public void add(String key, DataType dataType, DefaultValueParser defaultValueParser) {
+    add(key, dataType);
     if (defaultValueParser != null)
       mDefaultValueParserMap.put(dataType.typeName(), defaultValueParser);
   }

@@ -28,6 +28,7 @@ import static js.base.Tools.*;
 import static datagen.ParseTools.*;
 
 import java.io.File;
+import java.util.List;
 import java.util.Map;
 
 import datagen.datatype.ContractDataType;
@@ -36,6 +37,7 @@ import datagen.gen.PartialType;
 import datagen.gen.QualifiedName;
 import datagen.gen.TypeStructure;
 import js.file.Files;
+import js.json.JSMap;
 import js.parsing.ScanException;
 import js.parsing.Scanner;
 import js.parsing.Token;
@@ -143,9 +145,25 @@ final class DataDefinitionParser extends BaseObject {
   private Token mReadIfToken;
 
   private Token read() {
-    mLastReadToken = scanner().read();
+    if (mTokenBufferCursor < mTokenBuffer.size()) {
+      todo("unread isn't properly implemented w.r.t. scanner");
+      mLastReadToken = mTokenBuffer.get(mTokenBufferCursor);
+      mTokenBufferCursor++;
+      if (mTokenBufferCursor >= 100) {
+        mTokenBufferCursor -= 100;
+        remove(mTokenBuffer, 0, 100);
+      }
+    } else
+      mLastReadToken = scanner().read();
     return mLastReadToken;
   }
+
+  private void unread(Token t) {
+    mTokenBuffer.add(t);
+  }
+
+  private List<Token> mTokenBuffer = arrayList();
+  private int mTokenBufferCursor;
 
   private String read(int type) {
     Token t = read();
@@ -246,6 +264,14 @@ final class DataDefinitionParser extends BaseObject {
       if (readIf(EQUALS)) {
         checkState(!fieldDef.optional(), "cannot mix optional and default values");
 
+        // Parse the following expression, as one of:
+        //
+        // A Json map, starting with {
+        // A JSList, starting with [
+        // A string, starting with "
+        // 
+        performParseTest();
+
         // See if there is a parser for default values for this field.  This can either be the data type's parseDefaultValue() method,
         // or one mapped to the type's class (in case it is outside of the datagen project)
         String key = fieldDef.dataType().typeName();
@@ -336,4 +362,53 @@ final class DataDefinitionParser extends BaseObject {
   private Token mLastReadToken;
   private String mPackageName;
   private Map<Integer, Runnable> mHandlers;
+
+  private void performParseTest() {
+
+    List<Token> readStack = arrayList();
+
+    StringBuilder sb = new StringBuilder();
+    // sb.append("{\"\":");
+
+    List<Integer> stack = arrayList();
+
+    boolean done = false;
+    while (!done) {
+      Token t = read();
+      readStack.add(t);
+      switch (t.id()) {
+      case NUMBER:
+      case STRING:
+      case BOOL:
+        done = true;
+        break;
+      case BROP:
+        push(stack, BRCL);
+        break;
+      case SQOP:
+        push(stack, SQCL);
+        break;
+      case BRCL:
+      case SQCL:
+        checkState(last(stack) == t.id());
+        pop(stack);
+        break;
+      default:
+        checkState(!stack.isEmpty());
+        break;
+      }
+      sb.append(t.text());
+    }
+    String result = sb.toString();
+    if (!result.startsWith("{")) {
+      result = "{\"\":" + result + "}";
+    }
+    JSMap verify = new JSMap(result);
+    pr(verify);
+
+    while (!readStack.isEmpty()) {
+      unread(pop(readStack));
+    }
+  }
+
 }
