@@ -24,14 +24,12 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
 import datagen.FieldDef;
 import datagen.SourceBuilder;
 import js.json.JSList;
 import js.json.JSMap;
-import js.parsing.Scanner;
 
 public class PyIPointDataType extends PythonContractDataType {
 

@@ -248,30 +248,34 @@ final class DataDefinitionParser extends BaseObject {
       if (readIf(EQUALS)) {
         checkState(!fieldDef.optional(), "cannot mix optional and default values");
 
-        // Parse the following expression, as one of:
-        //
-        // A Json map, starting with {
-        // A JSList, starting with [
-        // A string, starting with "
-        // 
-        todo("refactor to make these names more sensible");
-        JSMap defaultValue = parseDefaultValueAsJsonMap();
-
         // See if there is a parser for default values for this field.  This can either be the data type's parseDefaultValue() method,
         // or one mapped to the type's class (in case it is outside of the datagen project)
         String key = fieldDef.dataType().typeName();
         DefaultValueParser parser = Context.dataTypeManager.parser(key);
         if (parser == null)
           parser = fieldDef.dataType();
-        String defValue = parser.parseDefaultValue(Context.generatedTypeDef.classSpecificSourceBuilder(),
-            fieldDef, defaultValue);
-        fieldDef.setDefaultValue(defValue);
+        String defaultValueSource = parser.parseDefaultValue(
+            Context.generatedTypeDef.classSpecificSourceBuilder(), fieldDef, parseDefaultValueAsJsonMap());
+        fieldDef.setDefaultValue(defaultValueSource);
       }
 
       read(SEMI);
     }
   }
 
+  /**
+   * Parse the next series of tokens as a json value, one of:
+   * 
+   * A Json map, starting with {
+   * 
+   * A JSList, starting with [
+   * 
+   * A string, starting with "
+   * 
+   * A boolean or number
+   * 
+   * If the resulting json value is not a JSMap, wrap it in a JSMap with key ""
+   */
   private JSMap parseDefaultValueAsJsonMap() {
     StringBuilder sb = new StringBuilder();
     List<Integer> stack = arrayList();

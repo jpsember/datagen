@@ -24,15 +24,14 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 import static datagen.SourceBuilder.*;
 
 import datagen.FieldDef;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
+import js.data.DataUtil;
 import js.json.JSMap;
-import js.parsing.Scanner;
 
 public final class PyStringDataType extends PythonDataType {
 
@@ -48,7 +47,7 @@ public final class PyStringDataType extends PythonDataType {
 
   @Override
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
-    return json.get("");
+    return DataUtil.escapeChars(json.get(""), true);
   }
 
   @Override

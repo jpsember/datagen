@@ -34,6 +34,7 @@ import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
+import js.data.DataUtil;
 import js.json.JSList;
 import js.json.JSMap;
 
@@ -144,39 +145,9 @@ public class PythonListDataType extends PythonDataType {
       Object expr = parsedExpressions.getUnsafe(index);
       if (index > 0)
         sb.a(",");
-      sb.a(expr);
+      sb.a(DataUtil.escapeChars(expr.toString(), true));
     }
-    sb.a(");").cr();
 
-    //    
-    //    List<String> parsedExpressions = arrayList();
-    //
-    //    {
-    //      scanner.read(SQOP);
-    //      for (int index = 0;; index++) {
-    //        if (scanner.readIf(SQCL) != null)
-    //          break;
-    //        if (index > 0) {
-    //          scanner.read(COMMA);
-    //          // Allow an extraneous trailing comma
-    //          if (scanner.readIf(SQCL) != null)
-    //            break;
-    //        }
-    //        String expr = wrappedType().parseDefaultValue(scanner, classSpecificSource, null);
-    //        parsedExpressions.add(expr);
-    //      }
-    //    }
-    //
-    //    SourceBuilder sb = classSpecificSource;
-    //    sb.a(fieldDef.constantName(), "  = [");
-    //    int index = INIT_INDEX;
-    //    for (String expr : parsedExpressions) {
-    //      index++;
-    //      if (index > 0) {
-    //        sb.a(",");
-    //      }
-    //      sb.a(expr);
-    //    }
     sb.a("]").cr();
     return fieldDef.constantName();
   }

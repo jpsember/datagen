@@ -24,16 +24,13 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
 import datagen.FieldDef;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
 import js.data.DataUtil;
-import js.json.JSList;
 import js.json.JSMap;
-import js.parsing.Scanner;
 
 public class PyBooleanDataType extends PythonDataType {
 

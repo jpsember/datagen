@@ -28,8 +28,6 @@ import datagen.FieldDef;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
 import js.json.JSMap;
-import js.parsing.Scanner;
-import static datagen.ParseTools.*;
 
 public class PyIntDataType extends PythonDataType {
 

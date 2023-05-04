@@ -24,14 +24,11 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
-
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.json.JSMap;
-import js.parsing.Scanner;
 
 /**
  * Datatype for primitive integers, i.e. "int x;"
@@ -52,7 +49,6 @@ public class JavaPrimitiveIntegerDataType extends JavaDataType {
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
     return Integer.toString(json.getInt(""));
   }
-   
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {

@@ -10,6 +10,7 @@ import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.json.JSList;
 import js.json.JSMap;
+import js.json.JSUtils;
 
 public class GoListDataType extends JavaDataType {
 
@@ -81,61 +82,16 @@ public class GoListDataType extends JavaDataType {
   public String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
 
     JSList parsedExpressions = json.getList("");
-    //    {
-    //    SourceBuilder sb = classSpecificSource;
-    //    sb.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = ", ParseTools.PKG_TOOLS,
-    //        ".arrayList(");
-    //    for (int index = 0; index < parsedExpressions.size(); index++) {
-    //      Object expr = parsedExpressions.getUnsafe(index);
-    //      if (index > 0)
-    //        sb.a(",");
-    //      sb.a(expr);
-    //    }
-    //    sb.a(");").cr();
-    //    }
-    //    
-    //    
-    //    
 
-    //    
-    //    List<String> parsedExpressions = arrayList();
-    //
-    //    {
-    //      scanner.read(SQOP);
-    //      for (int index = 0;; index++) {
-    //        if (scanner.readIf(SQCL) != null)
-    //          break;
-    //        if (index > 0) {
-    //          scanner.read(COMMA);
-    //          // Allow an extraneous trailing comma
-    //          if (scanner.readIf(SQCL) != null)
-    //            break;
-    //        }
-    //        String expr = wrappedType().parseDefaultValue(scanner, classSpecificSource, null);
-    //        parsedExpressions.add(expr);
-    //      }
-    //    }
-
-    // Construct the class-specific source (which will appear elsewhere in the generated source file)
-    // defining the variable containing the default value for the list
-    //
     SourceBuilder sb = classSpecificSource;
     sb.a("var ", fieldDef.constantName(), " = ", typeName(), "{");
 
     for (int index = 0; index < parsedExpressions.size(); index++) {
       Object expr = parsedExpressions.getUnsafe(index);
       if (index > 0)
-        sb.a(",");
-      sb.a(expr);
+        sb.a(", ");
+      sb.a(JSUtils.valueToString(expr));
     }
-    //    
-    //    int index = INIT_INDEX;
-    //    for (String expr : parsedExpressions) {
-    //      index++;
-    //      if (index > 0)
-    //        sb.a(", ");
-    //      sb.a(expr);
-    //    }
     sb.a("}", CR);
 
     return fieldDef.constantName();

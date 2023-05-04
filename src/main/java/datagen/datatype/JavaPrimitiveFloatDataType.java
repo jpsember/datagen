@@ -31,13 +31,12 @@ import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.json.JSMap;
-import js.parsing.Scanner;
-import static datagen.ParseTools.*;
 
 public class JavaPrimitiveFloatDataType extends JavaDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
+    loadTools();
     return "java.lang.float";
   }
 

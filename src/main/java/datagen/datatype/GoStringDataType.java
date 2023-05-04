@@ -29,6 +29,7 @@ import static js.base.Tools.*;
 import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
+import js.data.DataUtil;
 import js.json.JSMap;
 
 public final class GoStringDataType extends GoDataType {
@@ -61,7 +62,7 @@ public final class GoStringDataType extends GoDataType {
 
   @Override
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap map) {
-    return map.get("");
+    return DataUtil.escapeChars(map.get(""), true);
   }
 
   @Override

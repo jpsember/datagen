@@ -32,7 +32,6 @@ import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.json.JSMap;
-import js.parsing.Scanner;
 
 public class JavaPrimitiveBooleanDataType extends JavaDataType {
 

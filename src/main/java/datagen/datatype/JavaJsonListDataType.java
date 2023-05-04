@@ -34,8 +34,6 @@ import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.json.JSList;
 import js.json.JSMap;
-import js.json.JSUtils;
-import js.parsing.Scanner;
 
 public class JavaJsonListDataType extends JavaDataType {
 

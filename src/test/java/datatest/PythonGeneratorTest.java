@@ -32,6 +32,8 @@ import static js.base.Tools.*;
 
 public class PythonGeneratorTest extends GenBaseTest {
 
+  private static final String sampleStringList = list().add("a").add("b").toString();
+
   @Override
   public void setup() {
     super.setup();
@@ -93,7 +95,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void strings() {
+  public void strings() { 
     verboseNames();
     p().pr("fields {", INDENT, //
         "string alpha;", CR, //
@@ -101,7 +103,7 @@ public class PythonGeneratorTest extends GenBaseTest {
         "?string gamma;", CR, //
         "*string delta;", CR, //
         "?*string epsilon;", CR, //
-        "*string fox = [\"a\", \"b\"];", CR, //
+        "*string fox = ", sampleStringList , ";", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -127,7 +129,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void enumMisc() { 
+  public void enumMisc() {
     language(Language.PYTHON);
     p().pr("enum Zebra;", CR, //
         "fields {", INDENT, //

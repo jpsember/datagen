@@ -34,7 +34,6 @@ import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.json.JSMap;
-import js.parsing.Scanner;
 
 public final class JavaStringDataType extends JavaDataType {
 

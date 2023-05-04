@@ -33,7 +33,6 @@ import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.json.JSMap;
-import js.json.JSUtils;
 
 /**
  * For Python, this will generate python dicts, to the extent that they are

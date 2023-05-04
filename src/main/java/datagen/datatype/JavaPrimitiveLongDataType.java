@@ -29,8 +29,6 @@ import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
 import js.json.JSMap;
-import js.parsing.Scanner;
-import static datagen.ParseTools.*;
 
 /**
  * Datatype for longs (and boxed version)
