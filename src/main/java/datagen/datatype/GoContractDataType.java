@@ -3,6 +3,7 @@ package datagen.datatype;
 import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
+import datagen.gen.QualifiedName;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
@@ -14,28 +15,35 @@ import datagen.ParseTools;
  */
 public class GoContractDataType extends GoDataType implements ContractDataType {
 
-//  @Override
-//  protected String provideTypeName() {
-//    // We will consider the typeName() to be "FooOrBuilder", and the builtTypeName() to be "Foo".
-//    String expr = super.provideTypeName();
-//    mBuiltTypeName = expr;
-//    return expr + "OrBuilder";
-//  }
-
-//  private String builtTypeName() {
-//    typeName();
-//    return mBuiltTypeName;
-//  }
-//
-//  private String mBuiltTypeName;
+  @Override
+  public void setQualifiedClassName(QualifiedName qualifiedName) {
+    QualifiedName.Builder b = qualifiedName.toBuilder();
+    b.className(b.className() + "OrBuilder");
+    ParseTools.assignCombined(b);
+    super.setQualifiedClassName(b.build());
+  }
 
   @Override
   public String provideSourceDefaultValue() {
     return "Default" + ParseTools.importExprWithClassName(qualifiedClassName());
   }
 
+  @Override
+  protected String provideAlternateTypeName() {
+    String n = typeName();
+
+    // Delete any occurrences of 'OrBuilder' if they are followed by | or }
+    //
+    // i.e., an example is: "{{exp.CatOrBuilder|CatOrBuilder}}"
+    //
+    n = n.replace("OrBuilder|", "|");
+    n = n.replace("OrBuilder}", "}");
+
+    return n;
+  }
+
   public String getSerializeDataType() {
-    return "??Object??";
+    return "=== GoContractDataType.getSerializeDataType() not finished ===";
   }
 
   // Make this final for now to avoid unintended overriding
@@ -51,16 +59,6 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
         CLOSE, //
         CLOSE);
   }
-
-  //  @Override
-  //  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-  //    if (true) {
-  //      s.a("=== not implemented; GoContractDataType.sourceDeserializeFromList", CR);
-  //    }
-  //    s.a("inst.", f.instanceName(), " = ", ParseTools.PKGPY_DATAUTIL, ".parse_list_of_objects(",
-  //        builtTypeName(), ".default_instance, obj.get(", f.nameStringConstantQualified(), "), ",
-  //        f.optional() ? "True" : "False", ")");
-  //  }
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
@@ -92,6 +90,6 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-    return "Default" + typeName() + ".Parse(" + jsentityExpression + ").(" + typeName() + "OrBuilder)";
+    return "Default" + alternateTypeName() + ".Parse(" + jsentityExpression + ").(" + typeName() + ")";
   }
 }

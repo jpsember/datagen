@@ -38,7 +38,7 @@ public abstract class DataType implements DefaultValueParser {
   // Naming
   // ------------------------------------------------------------------
 
-  public final void setQualifiedClassName(QualifiedName qualifiedName) {
+  public void setQualifiedClassName(QualifiedName qualifiedName) {
     checkState(mClassWithPackage == null);
     mClassWithPackage = qualifiedName;
   }
@@ -96,12 +96,36 @@ public abstract class DataType implements DefaultValueParser {
    * Get type name, by calling provideTypeName() if necessary
    */
   public final String typeName() {
-    if (mTypeName == null)
+    if (mTypeName == null) {
       mTypeName = provideTypeName();
+    }
     return mTypeName;
   }
 
+  /**
+   * Get the 'alternate' type name, calling provideAlternateTypeName() if
+   * necessary.
+   * 
+   * For the Go language, when manipulating contract data types (e.g. dog.dat),
+   * we will usually refer to the type by its interface: DogOrBuilder. The
+   * alternate form will be the non-interface, built form: "Dog"; this method
+   * can be overridden to make this distinction.
+   *
+   * Languages that don't need this feature should not override this method.
+   */
+  protected String provideAlternateTypeName() {
+    return typeName();
+  }
+
+  public final String alternateTypeName() {
+    if (mAlternateTypeName == null) {
+      mAlternateTypeName = provideAlternateTypeName();
+    }
+    return mAlternateTypeName;
+  }
+
   private String mTypeName;
+  private String mAlternateTypeName;
   private QualifiedName mClassWithPackage;
 
   //------------------------------------------------------------------
