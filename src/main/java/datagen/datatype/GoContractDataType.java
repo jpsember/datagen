@@ -7,7 +7,6 @@ import datagen.SourceBuilder;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
-
 import datagen.ParseTools;
 
 /**
@@ -55,6 +54,9 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+    if (true) {
+      s.a("=== not implemented; GoContractDataType.sourceDeserializeFromList", CR);
+    }
     s.a("inst.", f.instanceName(), " = ", ParseTools.PKGPY_DATAUTIL, ".parse_list_of_objects(",
         builtTypeName(), ".default_instance, obj.get(", f.nameStringConstantQualified(), "), ",
         f.optional() ? "True" : "False", ")");
