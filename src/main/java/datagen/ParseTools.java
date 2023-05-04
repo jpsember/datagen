@@ -31,6 +31,7 @@ import java.util.regex.Pattern;
 
 import datagen.gen.Language;
 import datagen.gen.QualifiedName;
+import js.base.BasePrinter;
 import js.json.JSMap;
 import js.parsing.DFA;
 import js.parsing.MacroParser;
@@ -373,6 +374,28 @@ public final class ParseTools {
     if (Context.debugMode())
       return " /*DEBUG*/ ";
     return "";
+  }
+
+  public static String notSupportedMessage(Object... messages) {
+    StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+    StackTraceElement elem = stackTrace[2];
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("!!!=== Not supported yet");
+    if (messages.length > 0) {
+      sb.append(": ");
+      sb.append(BasePrinter.toString(messages));
+    } else {
+      sb.append("!");
+    }
+    sb.append(" (");
+    sb.append(elem.getFileName());
+    sb.append("(");
+    sb.append(elem.getLineNumber());
+    sb.append("): ");
+    sb.append(elem.getMethodName());
+    sb.append(") ===!!!");
+    return sb.toString();
   }
 
 }

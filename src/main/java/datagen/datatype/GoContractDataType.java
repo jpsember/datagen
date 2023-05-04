@@ -38,12 +38,11 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
     //
     n = n.replace("OrBuilder|", "|");
     n = n.replace("OrBuilder}", "}");
-
     return n;
   }
 
   public String getSerializeDataType() {
-    return "=== GoContractDataType.getSerializeDataType() not finished ===";
+    return ParseTools.notSupportedMessage();
   }
 
   // Make this final for now to avoid unintended overriding
@@ -85,7 +84,7 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
 
   @Override
   public String getConstructFromX() {
-    throw notSupported("GoContractDataType.getConstructFromX");
+    return ParseTools.notSupportedMessage();
   }
 
   @Override

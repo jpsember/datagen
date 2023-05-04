@@ -17,12 +17,12 @@ public abstract class GoDataType extends DataType {
 
   @Override
   public void sourceGenerateEquals(SourceBuilder s, String a, String b) {
-    notSupported();
+    s.a(ParseTools.notSupportedMessage());
   }
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    notSupported();
+    s.a(ParseTools.notSupportedMessage());
   }
 
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
@@ -38,14 +38,12 @@ public abstract class GoDataType extends DataType {
 
   @Override
   public void sourceIfNotNull(SourceBuilder s, String expr) {
-    notFinished();
-    s.doIf(true, "if ", expr, " is not None:", OPEN);
+    s.a(ParseTools.notSupportedMessage());
   }
 
   @Override
   public void sourceIfNotNull(SourceBuilder s, FieldDef f) {
-    notFinished();
-    s.doIf(f.optional(), "if self.", f.instanceName(), " is not None:", OPEN);
+    s.a(ParseTools.notSupportedMessage());
   }
 
   @Override
@@ -78,7 +76,7 @@ public abstract class GoDataType extends DataType {
    * Construct go source code to extract a datatype's value from a JSEntity
    */
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-    throw notSupported("parseElementfromJsonValue:", jsentityExpression, "data type:", typeName());
+    return ParseTools.notSupportedMessage();
   }
 
   @Override
