@@ -145,25 +145,9 @@ final class DataDefinitionParser extends BaseObject {
   private Token mReadIfToken;
 
   private Token read() {
-    if (mTokenBufferCursor < mTokenBuffer.size()) {
-      todo("unread isn't properly implemented w.r.t. scanner");
-      mLastReadToken = mTokenBuffer.get(mTokenBufferCursor);
-      mTokenBufferCursor++;
-      if (mTokenBufferCursor >= 100) {
-        mTokenBufferCursor -= 100;
-        remove(mTokenBuffer, 0, 100);
-      }
-    } else
-      mLastReadToken = scanner().read();
+    mLastReadToken = scanner().read();
     return mLastReadToken;
   }
-
-  private void unread(Token t) {
-    mTokenBuffer.add(t);
-  }
-
-  private List<Token> mTokenBuffer = arrayList();
-  private int mTokenBufferCursor;
 
   private String read(int type) {
     Token t = read();
@@ -364,23 +348,20 @@ final class DataDefinitionParser extends BaseObject {
   private Map<Integer, Runnable> mHandlers;
 
   private void performParseTest() {
-
-    List<Token> readStack = arrayList();
-
+    int tokenCount = 0;
     StringBuilder sb = new StringBuilder();
-    // sb.append("{\"\":");
-
     List<Integer> stack = arrayList();
-
     boolean done = false;
     while (!done) {
       Token t = read();
-      readStack.add(t);
+      tokenCount++;
+      pr("read:", t, "stack size:", stack.size());
       switch (t.id()) {
       case NUMBER:
       case STRING:
       case BOOL:
-        done = true;
+        if (stack.isEmpty())
+          done = true;
         break;
       case BROP:
         push(stack, BRCL);
@@ -392,6 +373,8 @@ final class DataDefinitionParser extends BaseObject {
       case SQCL:
         checkState(last(stack) == t.id());
         pop(stack);
+        if (stack.isEmpty())
+          done = true;
         break;
       default:
         checkState(!stack.isEmpty());
@@ -400,15 +383,16 @@ final class DataDefinitionParser extends BaseObject {
       sb.append(t.text());
     }
     String result = sb.toString();
+
+    // If it's not a map, wrap it in a map with key ""
+    //
     if (!result.startsWith("{")) {
       result = "{\"\":" + result + "}";
     }
+
     JSMap verify = new JSMap(result);
     pr(verify);
-
-    while (!readStack.isEmpty()) {
-      unread(pop(readStack));
-    }
+    scanner().unread(tokenCount);
   }
 
 }
