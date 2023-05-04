@@ -215,7 +215,7 @@ public final class GeneratedTypeDef extends BaseObject {
    */
   public String getClassSpecificSource() {
     if (mClassSpecificSource == null) {
-      mClassSpecificSource = classSpecificSourceBuilder().getContent();
+      mClassSpecificSource = chomp(classSpecificSourceBuilder().getContent());
       mClassSpecificSourceBuilder = null;
     }
     return mClassSpecificSource;
