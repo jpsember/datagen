@@ -92,15 +92,6 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-
-    //pr("go contract data type, parseElem from json value, entityExpr:",jsentityExpression,"typeName:",
-    return "Default" + builtTypeName() + ".Parse(" + jsentityExpression + ").(" 
-        +builtTypeName()+")";
-    //    String expr = jsentityExpression+
-    //        ".ToInteger()";
-    //     if (mBits != 64) {
-    //       expr = "int"+mBits+"("+expr+")";
-    //     }
-    //     return expr;
+    return "Default" + builtTypeName() + ".Parse(" + jsentityExpression + ").(" + builtTypeName() + ")";
   }
 }

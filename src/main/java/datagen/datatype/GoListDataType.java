@@ -17,12 +17,29 @@ public class GoListDataType extends JavaDataType {
 
   public GoListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
+
+    pr("goListDataType, wrapped type:",wrappedType);
+    alert(
+        "If wrapped type is a ContractDataType, I think we want an array of pointers to objects, not objects");
+
+    String prefix = "";
+    if (wrappedType instanceof ContractDataType) {
+      //    halt("wrapped type:", wrappedType.qualifiedClassName());
+      prefix = "*";
+    }
+
     setQualifiedClassName(
-        ParseTools.parseQualifiedName("[]" + wrappedType.qualifiedClassName().className(), null));
+        ParseTools.parseQualifiedName("[]" + prefix + wrappedType.qualifiedClassName().className(), null));
+pr("qualifiedClassName:",qualifiedClassName());
   }
 
   @Override
   protected String provideTypeName() {
+    if (true) {
+    return qualifiedClassName().className();
+    }
+    
+    pr("providing type name, wrapped type:",wrappedType().qualifiedClassName());
     return "[]" + ParseTools.importExprWithClassName(wrappedType().qualifiedClassName());
   }
 
@@ -31,36 +48,6 @@ public class GoListDataType extends JavaDataType {
     return "[]" + mWrappedType.typeName() + "{}";
   }
 
-  //  /**
-  //   * Constructs a mutable copy of a list. Note that while it creates a copy of
-  //   * the list, it doesn't create copies of its elements; the references to those
-  //   * elements are stored in the new list unchanged.
-  //   * 
-  //   * This does not apply unless 'old style' is in effect
-  //   */
-  //  @Override
-  //  public String sourceExpressionToMutable(String valueExpression) {
-  //    if (!Context.generatedTypeDef.classMode())
-  //      return ParseTools.mutableCopyOfList(valueExpression);
-  //    // In debug mode, this is already in immutable form; no need to modify it
-  //    return valueExpression;
-  //  }
-  //
-  //  @Override
-  //  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
-  //      String valueExpression) {
-  //    if (!Context.generatedTypeDef.classMode()) {
-  //      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
-  //      return;
-  //    }
-  //
-  //    if (Context.debugMode()) {
-  //      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
-  //      return;
-  //    }
-  //    super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
-  //  }
-
   public DataType wrappedType() {
     return mWrappedType;
   }
@@ -68,11 +55,11 @@ public class GoListDataType extends JavaDataType {
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     s.a(OPEN, //
-        "var list = NewJSList()",CR, //
-        "for _, x := range v.",f.instanceName()," ",OPEN, //
-        "list.Add(", wrappedType().sourceGenerateSerializeToObjectExpression("x"),")",//
+        "var list = NewJSList()", CR, //
+        "for _, x := range v.", f.instanceName(), " ", OPEN, //
+        "list.Add(", wrappedType().sourceGenerateSerializeToObjectExpression("x"), ")", //
         CLOSE, //
-        "m.Put(",quote( f.instanceName()),", list)", // 
+        "m.Put(", quote(f.instanceName()), ", list)", // 
         CLOSE);
   }
 
