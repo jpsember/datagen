@@ -52,6 +52,21 @@ public abstract class DataType implements DefaultValueParser {
     return mClassWithPackage;
   }
 
+  public final QualifiedName alternateQualifiedClassName() {
+    if (mAlternateClassWithPackage == null) {
+      String alt = alternateTypeName();
+      // If this looks like an import expression, just use the class name
+      // (this stuff is getting complicated... refactor at some point)
+      if (alt.startsWith("{{")) {
+        int i = alt.indexOf('|');
+        alt = alt.substring(i + 1, alt.length() - 2);
+      }
+      mAlternateClassWithPackage = ParseTools.assignCombined(qualifiedClassName().toBuilder().className(alt))
+          .build();
+    }
+    return mAlternateClassWithPackage;
+  }
+
   /**
    * Provide a qualified class name
    * 
@@ -127,6 +142,7 @@ public abstract class DataType implements DefaultValueParser {
   private String mTypeName;
   private String mAlternateTypeName;
   private QualifiedName mClassWithPackage;
+  private QualifiedName mAlternateClassWithPackage;
 
   //------------------------------------------------------------------
 

@@ -25,7 +25,7 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return "Default" + ParseTools.importExprWithClassName(qualifiedClassName());
+    return "Default" + ParseTools.importExprWithClassName(alternateQualifiedClassName());
   }
 
   @Override
@@ -54,7 +54,7 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
     //
     s.a(OPEN, "var x = s.OptMap(\"", f.name(), "\")", CR, //
         "if x != nil ", OPEN, //
-        "n.", f.instanceName(), " = Default", typeName(), ".Parse(x).(*", typeName(), ")", //
+        "n.", f.instanceName(), " = Default", alternateTypeName(), ".Parse(x).(", typeName(), ")", //
         CLOSE, //
         CLOSE);
   }
@@ -72,7 +72,7 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String arg = f.instanceName();
     s.a("if ", arg, " == nil ", OPEN, //
-        "v.m.", f.instanceName(), " = Default", typeName(), //
+        "v.m.", f.instanceName(), " = Default", alternateTypeName(), //
         CR, "} else {", CR, "v.m.", f.instanceName(), " = ", arg, ".Build()", //,
         CLOSE);
   }
