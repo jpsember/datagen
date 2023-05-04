@@ -69,7 +69,7 @@ public abstract class GoDataType extends DataType {
         "if jslist != nil ", OPEN, //
         "var length = jslist.Length()", CR, "var z = make(", f.dataType().typeName(), ", length)", CR, //
         "for i := 0; i < length; i++ ", OPEN, //
-        "z[i] = ", parseElementFromJsonValue("jslist.Get(i)"), CLOSE, //
+        "z[i] = ", parseElementFromJsonValue(f, "jslist.Get(i)"), CLOSE, //
         "n.", f.instanceName(), " = z", CLOSE, //
         CLOSE);
   }
@@ -77,7 +77,7 @@ public abstract class GoDataType extends DataType {
   /**
    * Construct go source code to extract a datatype's value from a JSEntity
    */
-  protected String parseElementFromJsonValue(String jsentityExpression) {
+  protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
     throw notSupported("parseElementfromJsonValue:", jsentityExpression, "data type:", typeName());
   }
 

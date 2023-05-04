@@ -110,6 +110,7 @@ public class JavaListDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
+    todo("the sourceDeserializeFromList method seems to be misnamed, as it is actually reading a list from a JSMap first");
     wrappedType().sourceDeserializeFromList(s, f);
   }
 

@@ -52,15 +52,15 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
         CLOSE);
   }
 
-  @Override
-  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    if (true) {
-      s.a("=== not implemented; GoContractDataType.sourceDeserializeFromList", CR);
-    }
-    s.a("inst.", f.instanceName(), " = ", ParseTools.PKGPY_DATAUTIL, ".parse_list_of_objects(",
-        builtTypeName(), ".default_instance, obj.get(", f.nameStringConstantQualified(), "), ",
-        f.optional() ? "True" : "False", ")");
-  }
+  //  @Override
+  //  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+  //    if (true) {
+  //      s.a("=== not implemented; GoContractDataType.sourceDeserializeFromList", CR);
+  //    }
+  //    s.a("inst.", f.instanceName(), " = ", ParseTools.PKGPY_DATAUTIL, ".parse_list_of_objects(",
+  //        builtTypeName(), ".default_instance, obj.get(", f.nameStringConstantQualified(), "), ",
+  //        f.optional() ? "True" : "False", ")");
+  //  }
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
@@ -90,4 +90,17 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
     throw notSupported("GoContractDataType.getConstructFromX");
   }
 
+  @Override
+  protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
+
+    //pr("go contract data type, parseElem from json value, entityExpr:",jsentityExpression,"typeName:",
+    return "Default" + builtTypeName() + ".Parse(" + jsentityExpression + ").(" 
+        +builtTypeName()+")";
+    //    String expr = jsentityExpression+
+    //        ".ToInteger()";
+    //     if (mBits != 64) {
+    //       expr = "int"+mBits+"("+expr+")";
+    //     }
+    //     return expr;
+  }
 }
