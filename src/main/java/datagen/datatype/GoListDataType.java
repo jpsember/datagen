@@ -16,9 +16,6 @@ public class GoListDataType extends JavaDataType {
 
   public GoListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
-    alert(
-        "If wrapped type is a ContractDataType, I think we want an array of pointers to objects, not objects");
-
     setQualifiedClassName(
         ParseTools.parseQualifiedName("[]" + wrappedType.qualifiedClassName().className(), null));
   }

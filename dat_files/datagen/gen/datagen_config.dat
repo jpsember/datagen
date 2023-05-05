@@ -26,7 +26,7 @@ class {
 
   // Omit debug checks
   //
-  bool unsafe;
+  bool unsafe_mode;
 
   // Suppress some output (to quiet unit tests)
   //

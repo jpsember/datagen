@@ -14,7 +14,7 @@ import datagen.ParseTools;
 /**
  * DataType that wraps objects that implement the DataType interface
  */
-public class GoContractDataType extends GoDataType { //implements ContractDataType {
+public class GoContractDataType extends GoDataType {
 
   @Override
   public void setQualifiedClassName(QualifiedName qualifiedName) {

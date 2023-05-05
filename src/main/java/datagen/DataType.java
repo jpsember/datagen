@@ -38,13 +38,15 @@ public abstract class DataType implements DefaultValueParser {
   // Naming
   // ------------------------------------------------------------------
 
+
   /**
-   * Set a qualified class name
+   * Construct name of type, wrapped if necessary within an "import expression"
+   * so that we are sure to generate import statements if the type appears in
+   * the source.
    * 
    * <pre>
    * 
-   * This is the name of the type, optionally with a fully-qualified path
-   * suitable for import statements, e.g.
+   * This is the name of the type, optionally with a fully-qualified path, e.g.
    * 
    *    java.io.File
    * 
@@ -56,6 +58,9 @@ public abstract class DataType implements DefaultValueParser {
    * </pre>
    */
   public final DataType with(String qualClassNameExpr) {
+    todo("have version of method that accepts interface, static, and builder versions");
+    todo("unify the QualifiedClassName with the typeName somehow");
+    
     // TODO: rename this method later, after refactoring done
     setQualifiedClassName(ParseTools.updateForPython(ParseTools.parseQualifiedName(qualClassNameExpr, null)));
     return this;
@@ -79,6 +84,7 @@ public abstract class DataType implements DefaultValueParser {
    * Can be overridden for compound types (maps, lists) to ensure the other
    * types are wrapped in import expressions as well
    */
+  @Deprecated
   protected   String provideTypeName() {
     todo(
         "Explicitly set qualified name, with appropriate wrapping; typeName() should just refer to that variable");
