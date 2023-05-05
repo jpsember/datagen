@@ -106,7 +106,7 @@ public class PythonListDataType extends PythonDataType {
     // TODO: for Python, we may want to convert individual items for other types, as we are doing for enums
     if (wrappedType() instanceof EnumDataType) {
       s.a("m[", f.nameStringConstantQualified(), "] = [x.value for x in self.", f.instanceName(), "]", CR);
-    } else if (wrappedType() instanceof ContractDataType) {
+    } else if (wrappedType() instanceof PythonContractDataType) {
       s.a("m[", f.nameStringConstantQualified(), "] = [x.to_json() for x in self.", f.instanceName(), "]",
           CR);
     } else

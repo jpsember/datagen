@@ -36,7 +36,6 @@ import datagen.datatype.JavaListDataType;
 import datagen.datatype.JavaMapDataType;
 import datagen.datatype.JavaSetDataType;
 import datagen.datatype.PythonListDataType;
-import datagen.datatype.ContractDataType;
 import datagen.datatype.EnumDataType;
 import datagen.datatype.GoListDataType;
 import datagen.gen.PartialType;
@@ -246,7 +245,7 @@ public final class GeneratedTypeDef extends BaseObject {
         if (partialType.enumFlag()) {
           dataType = EnumDataType.construct();
         } else
-          dataType = ContractDataType.construct();
+          dataType = DataTypeManager.constructContractDataType();
 
         className = updateForPython(className);
         dataType.setQualifiedClassName(className);

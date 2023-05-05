@@ -34,7 +34,7 @@ import datagen.SourceBuilder;
 /**
  * DataType that wraps objects that implement the DataType interface
  */
-public class JavaContractDataType extends JavaDataType implements ContractDataType {
+public class JavaContractDataType extends JavaDataType {
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
@@ -53,6 +53,7 @@ public class JavaContractDataType extends JavaDataType implements ContractDataTy
     return provideSourceDefaultValue() + ".parse(x)";
   }
 
+  @Deprecated
   public String getSerializeDataType() {
     return "Object";
   }

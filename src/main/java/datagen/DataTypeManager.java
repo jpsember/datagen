@@ -144,12 +144,25 @@ public final class DataTypeManager extends BaseObject {
     return mDefaultValueParserMap.get(key);
   }
 
+  public static DataType constructContractDataType() {
+    switch (language()) {
+    default:
+      throw languageNotSupported();
+    case JAVA:
+      return new JavaContractDataType();
+    case PYTHON:
+      return new PythonContractDataType();
+    case GO:
+      return new GoContractDataType();
+    }
+  }
+
   /**
    * Construct a DataType for a class that implements the AbstractData
    * interface, and register it
    */
   private void add(AbstractData defaultInstance, DefaultValueParser parser) {
-    DataType dataType = ContractDataType.construct();
+    DataType dataType = constructContractDataType();
     dataType.setQualifiedClassName(ParseTools.parseQualifiedName(defaultInstance.getClass().getName(), null));
     add(dataType.qualifiedClassName().className(), dataType, parser);
   }

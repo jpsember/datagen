@@ -31,7 +31,6 @@ import java.io.File;
 import java.util.List;
 import java.util.Map;
 
-import datagen.datatype.ContractDataType;
 import datagen.datatype.EnumDataType;
 import datagen.gen.PartialType;
 import datagen.gen.QualifiedName;
@@ -107,7 +106,8 @@ final class DataDefinitionParser extends BaseObject {
 
   private void prepareHandlers() {
     mHandlers = hashMap();
-    mHandlers.put(EXTERN, () -> processExternalReference(ContractDataType.construct()));
+
+    mHandlers.put(EXTERN, () -> processExternalReference(DataTypeManager.constructContractDataType()));
     mHandlers.put(FIELDS, () -> procDataType(false));
     mHandlers.put(CLASS, () -> procDataType(true));
     mHandlers.put(ENUM, () -> procEnum());
@@ -162,7 +162,7 @@ final class DataDefinitionParser extends BaseObject {
 
   /**
    * Process a reference to an externally defined type (either a
-   * DataContractDataType or an EnumDataType)
+   * ContractDataType or an EnumDataType)
    */
   private void processExternalReference(DataType dataType) {
     String nameExpression = read(ID);

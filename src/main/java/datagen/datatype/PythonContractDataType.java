@@ -35,7 +35,7 @@ import datagen.SourceBuilder;
 /**
  * DataType that wraps objects that implement the DataType interface
  */
-public class PythonContractDataType extends PythonDataType implements ContractDataType {
+public class PythonContractDataType extends PythonDataType {
 
   @Override
   public String provideSourceDefaultValue() {
@@ -83,6 +83,7 @@ public class PythonContractDataType extends PythonDataType implements ContractDa
     return getSerializeToJSONValue(valueExpression);
   }
 
+  @Deprecated
   public String getSerializeToJSONValue(String value) {
     return value + ".to_json()";
   }

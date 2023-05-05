@@ -14,7 +14,7 @@ import datagen.ParseTools;
 /**
  * DataType that wraps objects that implement the DataType interface
  */
-public class GoContractDataType extends GoDataType implements ContractDataType {
+public class GoContractDataType extends GoDataType { //implements ContractDataType {
 
   @Override
   public void setQualifiedClassName(QualifiedName qualifiedName) {
@@ -27,6 +27,21 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
   @Override
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap map) {
     throw notFinished("add default values for contract types");
+  }
+
+  private QualifiedName alternateQualifiedClassName() {
+    if (mAlternateClassWithPackage == null) {
+      String alt = alternateTypeName();
+      // If this looks like an import expression, just use the class name
+      // (this stuff is getting complicated... refactor at some point)
+      if (alt.startsWith("{{")) {
+        int i = alt.indexOf('|');
+        alt = alt.substring(i + 1, alt.length() - 2);
+      }
+      mAlternateClassWithPackage = ParseTools.assignCombined(qualifiedClassName().toBuilder().className(alt))
+          .build();
+    }
+    return mAlternateClassWithPackage;
   }
 
   @Override
@@ -89,12 +104,10 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
   }
 
   @Override
-  public String getConstructFromX() {
-    return ParseTools.notSupportedMessage();
-  }
-
-  @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
     return "Default" + alternateTypeName() + ".Parse(" + jsentityExpression + ").(" + typeName() + ")";
   }
+
+  private QualifiedName mAlternateClassWithPackage;
+
 }
