@@ -149,7 +149,7 @@ public class PythonSourceGen extends SourceGen {
     //
 
     for (String cn : qualifiedClassNames) {
-      QualifiedName q = ParseTools.assertHasPackage(QualifiedName.parse(cn, null));
+      QualifiedName q = ParseTools.assertHasPackage(QualifiedName.parse(cn, null,   Utils.language()));
       s.a("from ", q.packagePath(), " import ", q.className()).cr();
     }
     return content();

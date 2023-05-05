@@ -33,6 +33,7 @@ import datagen.JavaDataType;
 import datagen.ParseTools;
 import datagen.QualifiedName;
 import datagen.SourceBuilder;
+import datagen.gen.Language;
 
 public class JavaMapDataType extends JavaDataType {
 
@@ -41,7 +42,7 @@ public class JavaMapDataType extends JavaDataType {
     mWrappedValueType = wrappedValueType;
     setQualifiedClassName(
         QualifiedName.parse("java.util.Map<" + wrappedKeyType.qualifiedClassName().className() + ", "
-            + wrappedValueType.qualifiedClassName().className() + ">", null));
+            + wrappedValueType.qualifiedClassName().className() + ">", null, Language.JAVA));
   }
 
   public JavaDataType wrappedKeyType() {

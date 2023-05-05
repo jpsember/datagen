@@ -174,8 +174,19 @@ final class DataDefinitionParser extends BaseObject {
   private void processExternalReference(DataType dataType) {
     String nameExpression = read(ID);
     read(SEMI);
-    QualifiedName qualifiedClassName = QualifiedName.parse(nameExpression, packageName());
+    
+    if (Utils.python()) {
+    pr("parsing name:",nameExpression,"package:",packageName());
+    }
+    QualifiedName qualifiedClassName = QualifiedName.parse(nameExpression, packageName(), Utils.language());
+
+    QualifiedName q = qualifiedClassName;
+
     qualifiedClassName = updateForPython(qualifiedClassName);
+    if (q != qualifiedClassName) {
+      pr("!!! python changed quali name from:", INDENT, q, CR, "to:", CR, qualifiedClassName);
+    }
+
     dataType.setQualifiedClassName(qualifiedClassName);
     dataType.setDeclaredFlag();
     Context.dataTypeManager.add(qualifiedClassName.className(), dataType);
@@ -348,7 +359,7 @@ final class DataDefinitionParser extends BaseObject {
     String className2 = chomp(new File(Context.datWithSource.datRelPath()).getName(),
         DOT_EXT_DATA_DEFINITION);
     enumName = DataUtil.convertUnderscoresToCamelCase(className2);
-    QualifiedName className = QualifiedName.parse(enumName, packageName());
+    QualifiedName className = QualifiedName.parse(enumName, packageName(), Utils.language());
     enumDataType.setQualifiedClassName(className);
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType, false));
 
