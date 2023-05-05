@@ -36,6 +36,7 @@ public final class GoStringDataType extends GoDataType {
 
   @Override
   protected String provideQualifiedClassNameExpr() {
+    loadTools();
     return "string";
   }
 
@@ -47,12 +48,6 @@ public final class GoStringDataType extends GoDataType {
   @Override
   public String compilerInitialValue() {
     return "\"\"";
-  }
-
-  @Override
-  protected String provideTypeName() {
-    loadTools();
-    return "string";
   }
 
   @Override
@@ -70,14 +65,6 @@ public final class GoStringDataType extends GoDataType {
     s.a("n.", f.instanceName(), " = s.OptString(", f.nameStringConstantQualified(), ", ",
         f.defaultValueOrNull(), ")");
   }
-
-  //  @Override
-  //  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-  //    s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR);
-  //    s.doIf(f.optional(), "if x is not None:", OPEN);
-  //    s.a("inst.", f.instanceName(), " = x.copy()");
-  //    s.endIf(CLOSE);
-  //  }
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
