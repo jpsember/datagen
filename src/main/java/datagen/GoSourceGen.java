@@ -222,6 +222,8 @@ public final class GoSourceGen extends SourceGen {
     m.put("class_init_fields_to_defaults", generateInitFieldsToDefaults());
     m.put("class_getter_declaration", generateClassGetterDeclaration());
     m.put("go_builder_getter_implementation", generateBuilderGetterImplementation());
+    m.put("builder_name", Context.generatedTypeDef.name() + "Builder");
+    m.put("interface_name", "I" + Context.generatedTypeDef.name());
   }
 
   private String generateInitFieldsToDefaults() {

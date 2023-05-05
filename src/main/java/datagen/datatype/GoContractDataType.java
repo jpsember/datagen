@@ -19,12 +19,11 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
   @Override
   public void setQualifiedClassName(QualifiedName qualifiedName) {
     QualifiedName.Builder b = qualifiedName.toBuilder();
-    b.className(b.className() + "OrBuilder");
+    b.className("I" + b.className());
     ParseTools.assignCombined(b);
     super.setQualifiedClassName(b.build());
   }
 
-  
   @Override
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap map) {
     throw notFinished("add default values for contract types");
@@ -41,7 +40,7 @@ public class GoContractDataType extends GoDataType implements ContractDataType {
 
     // Delete any occurrences of 'OrBuilder' if they are followed by | or }
     //
-    // i.e., an example is: "{{exp.CatOrBuilder|CatOrBuilder}}"
+    // i.e., an example is: "{{exp.ICat|ICat}}"
     //
     n = n.replace("OrBuilder|", "|");
     n = n.replace("OrBuilder}", "}");

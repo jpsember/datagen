@@ -13,7 +13,7 @@ import (
 [!deprecated]type [!class] struct {
 [!instance_fields]}
 
-[!deprecated]type [!class]Builder struct {
+[!deprecated]type [!builder_name] struct {
   m [!class]
 }
 
@@ -21,17 +21,17 @@ import (
 // [!class] interface
 // ---------------------------------------------------------------------------------------
 
-type [!class]OrBuilder interface {
+type [!interface_name] interface {
   DataClass
 [!class_getter_declaration]
   Build() *[!class]
-  ToBuilder() *[!class]Builder
+  ToBuilder() *[!builder_name]
 }
 
 var Default[!class] = new[!class]()
 
 // Convenience method to get a fresh builder.
-func New[!class]() *[!class]Builder {
+func New[!class]() *[!builder_name] {
   return Default[!class].ToBuilder()
 }
 
@@ -54,8 +54,8 @@ func (v *[!class]) Build() *[!class] {
   return v
 }
 
-func (v *[!class]) ToBuilder() *[!class]Builder {
-  var b = new([!class]Builder)
+func (v *[!class]) ToBuilder() *[!builder_name] {
+  var b = new([!builder_name])
   var d = &b.m
 [!copy_to_builder]
   return b
@@ -88,26 +88,26 @@ func (v *[!class]) String() string {
 
 [!setters]
 
-func (v *[!class]Builder) Build() *[!class] {
+func (v *[!builder_name]) Build() *[!class] {
   var b = new([!class])
   var s = &v.m
 [!copyfield_from_builder]
   return b
 }
 
-func (v *[!class]Builder) ToBuilder() *[!class]Builder {
+func (v *[!builder_name]) ToBuilder() *[!builder_name] {
   return v
 }
 
-func (v *[!class]Builder) ToJson() any {
+func (v *[!builder_name]) ToJson() any {
   return v.m.ToJson()
 }
 
-func (v *[!class]Builder) Parse(source any) DataClass {
+func (v *[!builder_name]) Parse(source any) DataClass {
   return Default[!class].Parse(source)
 }
 
-func (v *[!class]Builder) String() string {
+func (v *[!builder_name]) String() string {
   return v.m.String()
 }
 

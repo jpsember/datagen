@@ -122,7 +122,7 @@ public abstract class DataType implements DefaultValueParser {
    * necessary.
    * 
    * For the Go language, when manipulating contract data types (e.g. dog.dat),
-   * we will usually refer to the type by its interface: DogOrBuilder. The
+   * we will usually refer to the type by its interface: IDog. The
    * alternate form will be the non-interface, built form: "Dog"; this method
    * can be overridden to make this distinction.
    *

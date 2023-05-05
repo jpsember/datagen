@@ -37,26 +37,6 @@ public class GoListDataType extends JavaDataType {
     return mWrappedType;
   }
 
-  //  /**
-  //   * Get alternate name of wrapped type, if it's a ContractDataType. Converts
-  //   * 'Foo' to 'FooOrBuilder'
-  //   */
-  //  private QualifiedName wrappedInterfaceName() {
-  //    if (mQualifiedInterfaceName == null) {
-  //      if (wrappedType() instanceof ContractDataType) {
-  //        QualifiedName.Builder b = wrappedType().qualifiedClassName().toBuilder();
-  //        b.className(b.className() + "OrBuilder");
-  //        b.combined(b.packagePath() + b.className());
-  //        mQualifiedInterfaceName = b.build();
-  //      } else {
-  //        mQualifiedInterfaceName = wrappedType().qualifiedClassName();
-  //      }
-  //    }
-  //    return mQualifiedInterfaceName;
-  //  }
-  //
-  //  private QualifiedName mQualifiedInterfaceName;
-
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     s.a(OPEN, //
