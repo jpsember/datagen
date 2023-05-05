@@ -34,5 +34,7 @@ MAP: map
 SET: set
 EXTERN: extern
 DEPRECATION: \-
-UNSAFE: unsafe
+# We want to be able to name some user fields 'unsafe', (like datagen's option itself),
+# so let's not make this a reserved word
+#UNSAFE: unsafe
 

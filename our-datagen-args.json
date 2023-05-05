@@ -1,0 +1,5 @@
+// This is renamed to prevent unit tests from seeing it and using these arguments by mistake
+{
+                  "comments" : false,
+             "verbose_names" : true
+}

@@ -69,7 +69,7 @@ public abstract class GenBaseTest extends MyTestCase {
     for (DatRecord ty : mDatRecords)
       writeDat(ty);
     addArg("language", mLanguage.toString().toLowerCase());
-    if (mVerboseNames)
+    if (!mCryptic)
       addArg("verbose_names");
     addArg("dat_path", datFilesDir(), "source_path", sourceDir());
     if (verbose())
@@ -177,8 +177,8 @@ public abstract class GenBaseTest extends MyTestCase {
     mLanguage = x;
   }
 
-  protected final void verboseNames() {
-    mVerboseNames = true;
+  protected final void cryptic() {
+    mCryptic = true;
   }
 
   protected final void generateDummyDatFile(String name) {
@@ -189,7 +189,7 @@ public abstract class GenBaseTest extends MyTestCase {
   }
 
   private Language mLanguage = Language.JAVA;
-  private boolean mVerboseNames;
+  private boolean mCryptic;
 
   private File mSourceDir;
   private File mDatFilesDir;

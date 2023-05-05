@@ -299,7 +299,6 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeStringOld() {
-    verboseNames();
     p().pr("fields {", INDENT, //
         "string alpha;", CR, //
         "string beta = \"hello\";", CR, //

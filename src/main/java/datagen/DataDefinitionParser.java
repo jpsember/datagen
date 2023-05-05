@@ -60,7 +60,7 @@ final class DataDefinitionParser extends BaseObject {
             mReadIfToken.fail("unexpected");
           mDeprecationToken = mReadIfToken;
         }
-        if (readIf(UNSAFE)) {
+        if (readIf("unsafe")) {
           if (mUnsafeToken != null)
             mReadIfToken.fail("unexpected");
           mUnsafeToken = mReadIfToken;
@@ -133,6 +133,14 @@ final class DataDefinitionParser extends BaseObject {
     mPackageName = null;
   }
 
+  private boolean readIf(String tokenText) {
+    Token t = scanner().peek();
+    boolean result = (t != null && t.text().equals(tokenText));
+    if (result)
+      mReadIfToken = read();
+    return result;
+  }
+
   private boolean readIf(int type) {
     Token t = scanner().peek();
     boolean result = (t != null && t.id(type));
@@ -166,7 +174,7 @@ final class DataDefinitionParser extends BaseObject {
   private void processExternalReference(DataType dataType) {
     String nameExpression = read(ID);
     read(SEMI);
-    QualifiedName qualifiedClassName =QualifiedName.parse(nameExpression, packageName());
+    QualifiedName qualifiedClassName = QualifiedName.parse(nameExpression, packageName());
     qualifiedClassName = updateForPython(qualifiedClassName);
     dataType.setQualifiedClassName(qualifiedClassName);
     dataType.setDeclaredFlag();

@@ -1,5 +1,0 @@
-class {
-  string package_path;
-  string class_name;
-  string combined;
-}
