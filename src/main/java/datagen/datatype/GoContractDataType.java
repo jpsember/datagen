@@ -62,10 +62,6 @@ public class GoContractDataType extends GoDataType { //implements ContractDataTy
     return n;
   }
 
-  public String getSerializeDataType() {
-    return ParseTools.notSupportedMessage();
-  }
-
   // Make this final for now to avoid unintended overriding
   @Override
   public final void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {

@@ -50,10 +50,6 @@ public class JavaDoubleArrayDataType extends JavaContractDataType {
     return ParseTools.PKG_DATAUTIL + ".encodeBase64Maybe(" + value + ")";
   }
 
-  @Override
-  public String getSerializeDataType() {
-    return ParseTools.PKG_OBJECT;
-  }
 
   @Override
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {

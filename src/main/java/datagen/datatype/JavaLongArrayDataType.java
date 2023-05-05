@@ -42,10 +42,6 @@ public class JavaLongArrayDataType extends JavaContractDataType {
     return "java.lang.long[]";
   }
 
-  public String getSerializeDataType() {
-    return ParseTools.PKG_OBJECT;  
-  }
-
   public String getSerializeToJSONValue(String value) {
     return ParseTools.PKG_DATAUTIL + ".encodeBase64Maybe(" + value + ")";
   }

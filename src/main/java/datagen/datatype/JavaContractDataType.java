@@ -53,30 +53,13 @@ public class JavaContractDataType extends JavaDataType {
     return provideSourceDefaultValue() + ".parse(x)";
   }
 
-  @Deprecated
-  public String getSerializeDataType() {
-    return "Object";
-  }
-
   // Make this final for now to avoid unintended overriding
   @Override
   public final void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.open();
     if (!f.optional())
       s.a(f.instanceName(), " = ", f.defaultValueOrNull(), ";", CR);
-
-    String typeExpr = getSerializeDataType();
-    if (typeExpr.equals(ParseTools.PKG_JSMAP)) {
-      s.a(ParseTools.PKG_JSMAP, " x = m.optJSMap(", f.nameStringConstantQualified(), ");", CR);
-    } else if (typeExpr.equals(ParseTools.PKG_JSLIST)) {
-      s.a(ParseTools.PKG_JSLIST, " x = m.optJSList(", f.nameStringConstantQualified(), ");", CR);
-    } else {
-      String castExpr = "m.optUnsafe";
-      // No cast is necessary if the type is Object
-      if (!typeExpr.equals(ParseTools.PKG_OBJECT))
-        castExpr = "(" + typeExpr + ") " + castExpr;
-      s.a(getSerializeDataType(), " x = ", castExpr, "(", f.nameStringConstantQualified(), ");", CR);
-    }
+    s.a(ParseTools.PKG_OBJECT, " x = m.optUnsafe(", f.nameStringConstantQualified(), ");", CR);
     sourceIfNotNull(s, "x");
     s.a(f.instanceName(), " = ", getConstructFromX(), ";");
     sourceEndIf(s);

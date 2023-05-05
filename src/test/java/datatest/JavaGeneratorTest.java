@@ -535,7 +535,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void ipointsOld() {
+  public void ipointsOld() { 
     p().pr("fields {", INDENT, //
         "IPoint a;", CR, //
         "?IPoint b;", CR, //
@@ -751,7 +751,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void external() {
+  public void external() { 
     classMode();
     externalOld();
   }

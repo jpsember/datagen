@@ -47,9 +47,6 @@ public class PythonContractDataType extends PythonDataType {
     return "x.copy()";
   }
 
-  public String getSerializeDataType() {
-    return "Object";
-  }
 
   // Make this final for now to avoid unintended overriding
   @Override
