@@ -73,47 +73,6 @@ public final class ParseTools {
     return sDFA;
   }
 
-  public static float parseFloatValue(String numberString) {
-    try {
-      float value = Float.parseFloat(numberString);
-      return value;
-    } catch (Throwable t) {
-      throw badArg("expected a float, not:", quote(numberString));
-    }
-  }
-
-  public static double parseDoubleValue(String numberString) {
-    try {
-      double value = Double.parseDouble(numberString);
-      return value;
-    } catch (Throwable t) {
-      throw badArg("expected a double, not:", quote(numberString));
-    }
-  }
-
-  public static String escapeJavaString(String s) {
-    StringBuilder b = new StringBuilder();
-    for (int i = 0; i < s.length(); i++) {
-      char c = s.charAt(i);
-      switch (c) {
-      case '"':
-        b.append('\\');
-        b.append(c);
-        break;
-      case '\n':
-        b.append('\\');
-        b.append('n');
-        break;
-      default:
-        if (c < 20)
-          throw die("unsupported character at: " + s.substring(i));
-        b.append(c);
-        break;
-      }
-    }
-    return b.toString();
-  }
-
   /**
    * Reformat lines to eliminate trailing whitespace and to adjust the number of
    * blank lines
@@ -203,10 +162,6 @@ public final class ParseTools {
     return "{{" + qualifiedClassName + "|" + sourceCode + "}}";
   }
 
-  public static String importExprWithoutCode(QualifiedName qualifiedName) {
-    return importExprWithCode(qualifiedName.combined(), "");
-  }
-
   public static String importExprWithClassName(QualifiedName qualifiedName) {
     // Python primitive types (e.g. int) won't have packages, so don't wrap them in import expressions
     if (qualifiedName.packagePath().isEmpty())
@@ -291,11 +246,6 @@ public final class ParseTools {
     return result;
   }
 
-  public static final String mutableCopyOfSet(String expr) {
-    checkState(!Context.generatedTypeDef.classMode());
-    return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
-  }
-
   public static final String immutableCopyOfSet(String expr) {
     String result = PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
     if (Context.debugMode())
@@ -313,6 +263,7 @@ public final class ParseTools {
    * Append filename to package if appropriate (Python only); see
    * PythonSourceGen.generateImports() for a discussion.
    */
+  @Deprecated
   public static QualifiedName updateForPython(QualifiedName qualifiedName) {
     QualifiedName result = qualifiedName;
     do {
