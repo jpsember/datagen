@@ -31,14 +31,14 @@ import datagen.Context;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
+import datagen.QualifiedName;
 import datagen.SourceBuilder;
-import datagen.gen.QualifiedName;
 
 public class JavaSetDataType extends JavaDataType {
 
   public JavaSetDataType(JavaDataType wrappedValueType) {
     mWrappedValueType = wrappedValueType;
-    setQualifiedClassName(ParseTools.parseQualifiedName(
+    setQualifiedClassName(QualifiedName.parse(
         "java.util.Set<" + wrappedValueType.qualifiedClassName().className() + ">", null));
   }
 

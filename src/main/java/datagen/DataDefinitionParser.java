@@ -33,7 +33,6 @@ import java.util.Map;
 
 import datagen.datatype.EnumDataType;
 import datagen.gen.PartialType;
-import datagen.gen.QualifiedName;
 import datagen.gen.TypeStructure;
 import js.file.Files;
 import js.json.JSMap;
@@ -167,7 +166,7 @@ final class DataDefinitionParser extends BaseObject {
   private void processExternalReference(DataType dataType) {
     String nameExpression = read(ID);
     read(SEMI);
-    QualifiedName qualifiedClassName = parseQualifiedName(nameExpression, packageName());
+    QualifiedName qualifiedClassName =QualifiedName.parse(nameExpression, packageName());
     qualifiedClassName = updateForPython(qualifiedClassName);
     dataType.setQualifiedClassName(qualifiedClassName);
     dataType.setDeclaredFlag();
@@ -341,7 +340,7 @@ final class DataDefinitionParser extends BaseObject {
     String className2 = chomp(new File(Context.datWithSource.datRelPath()).getName(),
         DOT_EXT_DATA_DEFINITION);
     enumName = DataUtil.convertUnderscoresToCamelCase(className2);
-    QualifiedName className = parseQualifiedName(enumName, packageName());
+    QualifiedName className = QualifiedName.parse(enumName, packageName());
     enumDataType.setQualifiedClassName(className);
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType, false));
 

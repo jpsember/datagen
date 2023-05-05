@@ -30,7 +30,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import datagen.datatype.EnumDataType;
-import datagen.gen.QualifiedName;
 import js.data.DataUtil;
 import js.file.Files;
 import js.parsing.RegExp;
@@ -150,7 +149,7 @@ public class PythonSourceGen extends SourceGen {
     //
 
     for (String cn : qualifiedClassNames) {
-      QualifiedName q = ParseTools.assertHasPackage(ParseTools.parseQualifiedName(cn, null));
+      QualifiedName q = ParseTools.assertHasPackage(QualifiedName.parse(cn, null));
       s.a("from ", q.packagePath(), " import ", q.className()).cr();
     }
     return content();

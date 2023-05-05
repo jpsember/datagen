@@ -3,13 +3,13 @@ package datagen.datatype;
 import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
-import datagen.gen.QualifiedName;
 import js.json.JSMap;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
 import datagen.ParseTools;
+import datagen.QualifiedName;
 
 /**
  * DataType that wraps objects that implement the DataType interface
@@ -18,10 +18,7 @@ public class GoContractDataType extends GoDataType {
 
   @Override
   public void setQualifiedClassName(QualifiedName qualifiedName) {
-    QualifiedName.Builder b = qualifiedName.toBuilder();
-    b.className("I" + b.className());
-    ParseTools.assignCombined(b);
-    super.setQualifiedClassName(b.build());
+    super.setQualifiedClassName(qualifiedName.withClassName("I" + qualifiedName.className()));
   }
 
   @Override
@@ -38,8 +35,7 @@ public class GoContractDataType extends GoDataType {
         int i = alt.indexOf('|');
         alt = alt.substring(i + 1, alt.length() - 2);
       }
-      mAlternateClassWithPackage = ParseTools.assignCombined(qualifiedClassName().toBuilder().className(alt))
-          .build();
+      mAlternateClassWithPackage = qualifiedClassName().withClassName(alt);
     }
     return mAlternateClassWithPackage;
   }

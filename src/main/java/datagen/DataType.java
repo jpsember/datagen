@@ -24,8 +24,6 @@
  **/
 package datagen;
 
-import datagen.gen.QualifiedName;
-
 import static js.base.Tools.*;
 import static datagen.Utils.*;
 
@@ -37,7 +35,6 @@ public abstract class DataType implements DefaultValueParser {
   // ------------------------------------------------------------------
   // Naming
   // ------------------------------------------------------------------
-
 
   /**
    * Construct name of type, wrapped if necessary within an "import expression"
@@ -60,9 +57,9 @@ public abstract class DataType implements DefaultValueParser {
   public final DataType with(String qualClassNameExpr) {
     todo("have version of method that accepts interface, static, and builder versions");
     todo("unify the QualifiedClassName with the typeName somehow");
-    
+
     // TODO: rename this method later, after refactoring done
-    setQualifiedClassName(ParseTools.updateForPython(ParseTools.parseQualifiedName(qualClassNameExpr, null)));
+    setQualifiedClassName(ParseTools.updateForPython(QualifiedName.parse(qualClassNameExpr, null)));
     return this;
   }
 
@@ -85,7 +82,7 @@ public abstract class DataType implements DefaultValueParser {
    * types are wrapped in import expressions as well
    */
   @Deprecated
-  protected   String provideTypeName() {
+  protected String provideTypeName() {
     todo(
         "Explicitly set qualified name, with appropriate wrapping; typeName() should just refer to that variable");
     if (isPrimitive())
@@ -95,10 +92,7 @@ public abstract class DataType implements DefaultValueParser {
     // we ensure it is imported
     // The assumption is that import expressions are needed iff type is not primitive
     //
-//    if (true)
-//      return qualifiedClassName().combined();
     return ParseTools.importedClassExpr(null, qualifiedClassName().combined());
-    
   }
 
   /**

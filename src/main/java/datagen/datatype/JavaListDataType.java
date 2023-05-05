@@ -32,6 +32,7 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
+import datagen.QualifiedName;
 import datagen.SourceBuilder;
 import js.json.JSList;
 import js.json.JSMap;
@@ -41,8 +42,8 @@ public class JavaListDataType extends JavaDataType {
 
   public JavaListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
-    setQualifiedClassName(ParseTools
-        .parseQualifiedName("java.util.List<" + wrappedType.qualifiedClassName().className() + ">", null));
+    setQualifiedClassName(
+        QualifiedName.parse("java.util.List<" + wrappedType.qualifiedClassName().className() + ">", null));
   }
 
   @Override
