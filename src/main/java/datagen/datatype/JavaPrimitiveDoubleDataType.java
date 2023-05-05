@@ -32,9 +32,10 @@ import js.json.JSMap;
 
 public class JavaPrimitiveDoubleDataType extends JavaDataType {
 
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "java.lang.double";
+  public static final DataType PRIM_TYPE = new JavaPrimitiveDoubleDataType().with("java.lang.double");
+  private static final DataType BOXED_TYPE = new Boxed().with("java.lang.Double");
+
+  private JavaPrimitiveDoubleDataType() {
   }
 
   @Override
@@ -57,7 +58,7 @@ public class JavaPrimitiveDoubleDataType extends JavaDataType {
 
   @Override
   public DataType optionalVariant() {
-    return new Boxed();
+    return BOXED_TYPE;
   }
 
   @Override

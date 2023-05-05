@@ -35,9 +35,9 @@ import js.json.JSMap;
 
 public final class PyStringDataType extends PythonDataType {
 
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "str";
+  {
+    setQualifiedClassName("str");
+    todo("make this a singleton");
   }
 
   @Override

@@ -33,6 +33,11 @@ import js.json.JSMap;
 
 public final class GoBooleanDataType extends GoDataType {
 
+  {
+    setQualifiedClassName("bool");
+    todo("make this a singleton");
+  }
+
   @Override
   public boolean isPrimitive() {
     return true;
@@ -41,12 +46,6 @@ public final class GoBooleanDataType extends GoDataType {
   @Override
   public String compilerInitialValue() {
     return "false";
-  }
-
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    loadTools();
-    return "bool";
   }
 
   @Override

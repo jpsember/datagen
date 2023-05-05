@@ -81,12 +81,12 @@ public final class DataTypeManager extends BaseObject {
       add("Matrix", new PyMatrixDataType());
       break;
     case JAVA:
-      add("byte",  JavaPrimitiveByteDataType.PRIM_TYPE);
-      add("short", new JavaPrimitiveShortDataType());
-      add("int", new JavaPrimitiveIntegerDataType());
+      add("byte", JavaPrimitiveByteDataType.PRIM_TYPE);
+      add("short", JavaPrimitiveShortDataType.PRIM_TYPE);
+      add("int", JavaPrimitiveIntegerDataType.PRIM_TYPE);
       add("long", new JavaPrimitiveLongDataType());
       add("float", new JavaPrimitiveFloatDataType());
-      add("double", new JavaPrimitiveDoubleDataType());
+      add("double",  JavaPrimitiveDoubleDataType.PRIM_TYPE);
       add("File", new JavaFileDataType());
       add(IPoint.DEFAULT_INSTANCE, IPOINT_PARSER);
       add("bool", JavaPrimitiveBooleanDataType.PRIM_TYPE);

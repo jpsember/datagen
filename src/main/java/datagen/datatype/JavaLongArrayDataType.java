@@ -32,14 +32,14 @@ import datagen.SourceBuilder;
 
 public class JavaLongArrayDataType extends JavaContractDataType {
 
-  @Override
-  public String provideSourceDefaultValue() {
-    return ParseTools.PKG_DATAUTIL + ".EMPTY_LONG_ARRAY";
+  {
+    setQualifiedClassName("java.lang.long[]");
+    todo("make this a singleton");
   }
 
   @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "java.lang.long[]";
+  public String provideSourceDefaultValue() {
+    return ParseTools.PKG_DATAUTIL + ".EMPTY_LONG_ARRAY";
   }
 
   public String getSerializeToJSONValue(String value) {

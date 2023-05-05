@@ -32,6 +32,7 @@ import datagen.SourceBuilder;
 import js.json.JSMap;
 
 public final class GoIntDataType extends GoDataType {
+
   @Override
   public boolean isPrimitive() {
     return true;
@@ -49,21 +50,16 @@ public final class GoIntDataType extends GoDataType {
     case 16:
     case 32:
     case 64:
-      mTypeName = "int" + nbits;
+      setQualifiedClassName("int" + nbits);
       break;
     default:
       throw badArg("nbits:", nbits);
     }
     mBits = nbits;
+    todo("make this a singleton");
   }
 
   private final int mBits;
-  private final String mTypeName;
-
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return mTypeName;
-  }
 
   @Override
   public final String provideSourceDefaultValue() {

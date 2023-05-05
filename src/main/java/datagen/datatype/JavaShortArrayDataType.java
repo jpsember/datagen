@@ -32,14 +32,14 @@ import datagen.SourceBuilder;
 
 public class JavaShortArrayDataType extends JavaContractDataType {
 
-  @Override
-  public String provideSourceDefaultValue() {
-    return ParseTools.PKG_DATAUTIL + ".EMPTY_SHORT_ARRAY";
+  {
+    setQualifiedClassName("java.lang.short[]");
+    todo("make this a singleton");
   }
 
   @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "java.lang.short[]";
+  public String provideSourceDefaultValue() {
+    return ParseTools.PKG_DATAUTIL + ".EMPTY_SHORT_ARRAY";
   }
 
   @Override

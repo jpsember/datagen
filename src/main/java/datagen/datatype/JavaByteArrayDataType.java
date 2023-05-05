@@ -32,14 +32,14 @@ import datagen.SourceBuilder;
 
 public class JavaByteArrayDataType extends JavaContractDataType {
 
-  @Override
-  public String provideSourceDefaultValue() {
-    return ParseTools.PKG_DATAUTIL + ".EMPTY_BYTE_ARRAY";
+  {
+    setQualifiedClassName("java.lang.byte[]");
+    todo("make this a singleton");
   }
 
   @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "java.lang.byte[]";
+  public String provideSourceDefaultValue() {
+    return ParseTools.PKG_DATAUTIL + ".EMPTY_BYTE_ARRAY";
   }
 
   @Override

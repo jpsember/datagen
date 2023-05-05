@@ -34,16 +34,15 @@ import js.json.JSMap;
 
 public class PyBooleanDataType extends PythonDataType {
 
+  {
+    setQualifiedClassName("bool");
+    todo("make this a singleton");
+  }
   @Override
   public final String compilerInitialValue() {
     return "False";
   }
-
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "bool";
-  }
-
+ 
   @Override
   public String parseDefaultValue(SourceBuilder sb, FieldDef fieldDef, JSMap json) {
     Boolean b = json.getBoolean("");

@@ -32,14 +32,14 @@ import datagen.SourceBuilder;
 
 public class JavaIntArrayDataType extends JavaContractDataType {
 
-  @Override
-  public String provideSourceDefaultValue() {
-    return ParseTools.PKG_DATAUTIL + ".EMPTY_INT_ARRAY";
+  {
+    setQualifiedClassName("java.lang.int[]");
+    todo("make this a singleton");
   }
 
   @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "java.lang.int[]";
+  public String provideSourceDefaultValue() {
+    return ParseTools.PKG_DATAUTIL + ".EMPTY_INT_ARRAY";
   }
 
   public String getSerializeToJSONValue(String value) {

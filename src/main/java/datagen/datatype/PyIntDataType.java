@@ -24,12 +24,19 @@
  **/
 package datagen.datatype;
 
+import static js.base.Tools.*;
+
 import datagen.FieldDef;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
 import js.json.JSMap;
 
 public class PyIntDataType extends PythonDataType {
+
+  {
+    setQualifiedClassName("int");
+    todo("make this a singleton");
+  }
 
   @Override
   public final String compilerInitialValue() {
@@ -40,11 +47,6 @@ public class PyIntDataType extends PythonDataType {
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
     long value = json.getLong("");
     return Long.toString(value);
-  }
-
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "int";
   }
 
 }

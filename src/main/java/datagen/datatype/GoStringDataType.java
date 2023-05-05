@@ -34,10 +34,9 @@ import js.json.JSMap;
 
 public final class GoStringDataType extends GoDataType {
 
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    loadTools();
-    return "string";
+  {
+    setQualifiedClassName("string");
+    todo("make this a singleton");
   }
 
   @Override

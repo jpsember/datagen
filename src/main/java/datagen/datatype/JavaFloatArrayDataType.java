@@ -32,14 +32,14 @@ import datagen.SourceBuilder;
 
 public class JavaFloatArrayDataType extends JavaContractDataType {
 
-  @Override
-  public String provideSourceDefaultValue() {
-    return ParseTools.PKG_DATAUTIL + ".EMPTY_FLOAT_ARRAY";
+  {
+    setQualifiedClassName("java.lang.float[]");
+    todo("make this a singleton");
   }
 
   @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "java.lang.float[]";
+  public String provideSourceDefaultValue() {
+    return ParseTools.PKG_DATAUTIL + ".EMPTY_FLOAT_ARRAY";
   }
 
   @Override

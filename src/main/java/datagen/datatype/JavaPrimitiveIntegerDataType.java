@@ -35,10 +35,12 @@ import js.json.JSMap;
  */
 public class JavaPrimitiveIntegerDataType extends JavaDataType {
 
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "java.lang.int";
+  public static final DataType PRIM_TYPE = new JavaPrimitiveIntegerDataType().with("java.lang.int");
+  public static final DataType BOXED_TYPE = new Boxed().with("java.lang.Integer");
+
+  private JavaPrimitiveIntegerDataType() {
   }
+  
 
   @Override
   public final String compilerInitialValue() {
@@ -57,7 +59,7 @@ public class JavaPrimitiveIntegerDataType extends JavaDataType {
 
   @Override
   public DataType optionalVariant() {
-    return new Boxed();
+    return BOXED_TYPE;
   }
 
   @Override

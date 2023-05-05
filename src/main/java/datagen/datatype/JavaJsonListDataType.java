@@ -37,9 +37,9 @@ import js.json.JSMap;
 
 public class JavaJsonListDataType extends JavaDataType {
 
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "js.json.JSList";
+  {
+    setQualifiedClassName("js.json.JSList");
+    todo("make this a singleton");
   }
 
   @Override

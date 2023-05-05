@@ -35,14 +35,14 @@ import js.json.JSMap;
 
 public class JavaDoubleArrayDataType extends JavaContractDataType {
 
-  @Override
-  public String provideSourceDefaultValue() {
-    return ParseTools.PKG_DATAUTIL + ".EMPTY_DOUBLE_ARRAY";
+  {
+    setQualifiedClassName("java.lang.double[]");
+    todo("make this a singleton");
   }
 
   @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "java.lang.double[]";
+  public String provideSourceDefaultValue() {
+    return ParseTools.PKG_DATAUTIL + ".EMPTY_DOUBLE_ARRAY";
   }
 
   @Override
@@ -50,26 +50,8 @@ public class JavaDoubleArrayDataType extends JavaContractDataType {
     return ParseTools.PKG_DATAUTIL + ".encodeBase64Maybe(" + value + ")";
   }
 
-
   @Override
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
-    //    List<String> parsedNumbers = arrayList();
-    //
-    //    {
-    //      scanner.read(SQOP);
-    //      for (int index = 0;; index++) {
-    //        if (scanner.readIf(SQCL) != null)
-    //          break;
-    //        if (index > 0) {
-    //          scanner.read(COMMA);
-    //          // Allow an extraneous trailing comma
-    //          if (scanner.readIf(SQCL) != null)
-    //            break;
-    //        }
-    //        parsedNumbers.add(scanner.read(NUMBER).text());
-    //      }
-    //    }
-
     SourceBuilder sb = classSpecificSource;
     sb.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = ");
     sb.a("{");
@@ -77,7 +59,7 @@ public class JavaDoubleArrayDataType extends JavaContractDataType {
     List<? extends Object> lst = json.getList("").wrappedList();
 
     int index = INIT_INDEX;
-    for (Object value : lst) {//String numberText : parsedNumbers) {
+    for (Object value : lst) {
       index++;
       if (index > 0) {
         sb.a(",");

@@ -24,6 +24,7 @@
  **/
 package datagen.datatype;
 
+
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
@@ -35,9 +36,10 @@ import js.json.JSMap;
  */
 public class JavaPrimitiveShortDataType extends JavaDataType {
 
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "java.lang.short";
+  public static final DataType PRIM_TYPE = new JavaPrimitiveShortDataType().with("java.lang.short");
+  private static final DataType BOXED_TYPE = new BoxedDataType().with("java.lang.Short");
+
+  private JavaPrimitiveShortDataType() {
   }
 
   @Override
@@ -57,7 +59,7 @@ public class JavaPrimitiveShortDataType extends JavaDataType {
 
   @Override
   public DataType optionalVariant() {
-    return new BoxedDataType();
+    return BOXED_TYPE;
   }
 
   @Override
@@ -66,11 +68,6 @@ public class JavaPrimitiveShortDataType extends JavaDataType {
   }
 
   private static class BoxedDataType extends JavaPrimitiveShortDataType {
-
-    @Override
-    protected String provideQualifiedClassNameExpr() {
-      return "java.lang.Short";
-    }
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {

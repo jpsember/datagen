@@ -37,9 +37,9 @@ import datagen.SourceBuilder;
  */
 public final class PythonJsonMapDataType extends PythonDataType {
 
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "dict";
+  {
+    setQualifiedClassName("dict");
+    todo("make this a singleton");
   }
 
   @Override
