@@ -35,9 +35,10 @@ import js.json.JSMap;
  */
 public class JavaPrimitiveByteDataType extends JavaDataType {
 
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "java.lang.byte";
+  public static final DataType PRIM_TYPE = new JavaPrimitiveByteDataType().with("java.lang.byte");
+  public static final DataType BOXED_TYPE = new Boxed().with("java.lang.Byte");
+
+  private JavaPrimitiveByteDataType() {
   }
 
   @Override
@@ -49,12 +50,6 @@ public class JavaPrimitiveByteDataType extends JavaDataType {
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
     return parseDefaultLongValue(json, Byte.MIN_VALUE, Byte.MAX_VALUE); //.toString(json.getInt(""));
   }
-//  @Override
-//  public final String parseDefaultValue(Scanner scanner, SourceBuilder classSpecificSource,
-//      FieldDef fieldDefUnused) {
-//    int value = (int) Scanner.ensureIntegerValue(scanner.read(NUMBER).text(), Byte.MIN_VALUE, Byte.MAX_VALUE);
-//    return Integer.toString(value);
-//  }
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
@@ -66,7 +61,7 @@ public class JavaPrimitiveByteDataType extends JavaDataType {
 
   @Override
   public DataType optionalVariant() {
-    return new Boxed();
+    return BOXED_TYPE;
   }
 
   @Override

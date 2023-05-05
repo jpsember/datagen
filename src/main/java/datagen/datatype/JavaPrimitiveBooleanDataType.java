@@ -35,14 +35,15 @@ import js.json.JSMap;
 
 public class JavaPrimitiveBooleanDataType extends JavaDataType {
 
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "java.lang.boolean";
+  public static final DataType PRIM_TYPE = new JavaPrimitiveBooleanDataType().with("java.lang.boolean");
+  public static final DataType BOXED_TYPE = new Boxed().with("java.lang.Boolean");
+
+  private JavaPrimitiveBooleanDataType() {
   }
 
   @Override
   public DataType optionalVariant() {
-    return new Boxed();
+    return BOXED_TYPE;
   }
 
   @Override
@@ -77,11 +78,6 @@ public class JavaPrimitiveBooleanDataType extends JavaDataType {
   }
 
   private static class Boxed extends JavaPrimitiveBooleanDataType {
-
-    @Override
-    protected String provideQualifiedClassNameExpr() {
-      return "java.lang.Boolean";
-    }
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {

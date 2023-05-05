@@ -342,7 +342,6 @@ final class DataDefinitionParser extends BaseObject {
         DOT_EXT_DATA_DEFINITION);
     enumName = DataUtil.convertUnderscoresToCamelCase(className2);
     QualifiedName className = parseQualifiedName(enumName, packageName());
-    //EnumDataType enumDataType = new EnumDataType();
     enumDataType.setQualifiedClassName(className);
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType, false));
 

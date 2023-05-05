@@ -81,7 +81,7 @@ public final class DataTypeManager extends BaseObject {
       add("Matrix", new PyMatrixDataType());
       break;
     case JAVA:
-      add("byte", new JavaPrimitiveByteDataType());
+      add("byte",  JavaPrimitiveByteDataType.PRIM_TYPE);
       add("short", new JavaPrimitiveShortDataType());
       add("int", new JavaPrimitiveIntegerDataType());
       add("long", new JavaPrimitiveLongDataType());
@@ -89,7 +89,7 @@ public final class DataTypeManager extends BaseObject {
       add("double", new JavaPrimitiveDoubleDataType());
       add("File", new JavaFileDataType());
       add(IPoint.DEFAULT_INSTANCE, IPOINT_PARSER);
-      add("bool", new JavaPrimitiveBooleanDataType());
+      add("bool", JavaPrimitiveBooleanDataType.PRIM_TYPE);
       add("string", new JavaStringDataType());
       add("JSMap", new JavaJsonMapDataType());
       add("JSList", new JavaJsonListDataType());

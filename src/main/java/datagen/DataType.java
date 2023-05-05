@@ -38,14 +38,24 @@ public abstract class DataType implements DefaultValueParser {
   // Naming
   // ------------------------------------------------------------------
 
+  public final DataType with(String qualClassNameExpr) {
+    setQualifiedClassName(qualClassNameExpr);
+    return this;
+  }
+
   public void setQualifiedClassName(QualifiedName qualifiedName) {
     checkState(mClassWithPackage == null);
     mClassWithPackage = qualifiedName;
   }
 
+  public final void setQualifiedClassName(String expr) {
+    setQualifiedClassName(ParseTools.updateForPython(ParseTools.parseQualifiedName(expr, null)));
+  }
+
   public final QualifiedName qualifiedClassName() {
     // If no QualifiedName assigned yet, do so
     if (mClassWithPackage == null) {
+      alert("************ No qualified class name explicitly set for:", getClass().getSimpleName());
       setQualifiedClassName(
           ParseTools.updateForPython(ParseTools.parseQualifiedName(provideQualifiedClassNameExpr(), null)));
     }

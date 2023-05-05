@@ -37,9 +37,9 @@ import js.json.JSMap;
 
 public final class JavaFileDataType extends JavaDataType {
 
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "java.io.File";
+  // Initializer block
+  {
+    setQualifiedClassName("java.io.File");
   }
 
   @Override
@@ -51,8 +51,7 @@ public final class JavaFileDataType extends JavaDataType {
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
     String text = json.get("");
     classSpecificSource.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = new File(",
-        DataUtil.escapeChars(text, true)
-        , ");", CR);
+        DataUtil.escapeChars(text, true), ");", CR);
     return fieldDef.constantName();
   }
 

@@ -180,7 +180,7 @@ public final class JavaSourceGen extends SourceGen {
       if (f.deprecated())
         s.a("@Deprecated", CR);
 
-      if (sDebugSet.add(f.dataType().typeName())) {
+      if (false && alert("tracking type names") && sDebugSet.add(f.dataType().typeName())) {
         pr("typeName:", f.dataType().typeName(), "qual:", INDENT, f.dataType().qualifiedClassName());
       }
       
