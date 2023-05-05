@@ -106,14 +106,14 @@ final class DataDefinitionParser extends BaseObject {
   private void prepareHandlers() {
     mHandlers = hashMap();
 
-    mHandlers.put(EXTERN, () -> processExternalReference(DataTypeManager.constructContractDataType()));
-    mHandlers.put(FIELDS, () -> procDataType(false));
-    mHandlers.put(CLASS, () -> procDataType(true));
-    mHandlers.put(ENUM, () -> procEnum());
+    mHandlers.put("extern", () -> processExternalReference(DataTypeManager.constructContractDataType()));
+    mHandlers.put("fields", () -> procDataType(false));
+    mHandlers.put("class", () -> procDataType(true));
+    mHandlers.put("enum", () -> procEnum());
   }
 
   private Runnable handler(Token token) {
-    Runnable r = mHandlers.get(token.id());
+    Runnable r = mHandlers.get(token.text());
     if (r == null)
       throw token.fail("No handler for", quote(token.text()), "id:", token.id());
     return r;
@@ -234,9 +234,9 @@ final class DataDefinitionParser extends BaseObject {
         optional = true;
       if (readIf(REPEATED))
         structure = TypeStructure.LIST;
-      else if (readIf(MAP))
+      else if (readIf("map"))
         structure = TypeStructure.KEY_VALUE_MAP;
-      else if (readIf(SET))
+      else if (readIf("set"))
         structure = TypeStructure.VALUE_SET;
       else
         structure = TypeStructure.SCALAR;
@@ -328,7 +328,7 @@ final class DataDefinitionParser extends BaseObject {
 
   private PartialType parsePartialType() {
     PartialType.Builder t = PartialType.newBuilder();
-    if (readIf(ENUM))
+    if (readIf("enum"))
       t.enumFlag(true);
     t.name(read(ID));
     return t.build();
@@ -399,6 +399,6 @@ final class DataDefinitionParser extends BaseObject {
   private Scanner mScanner;
   private Token mLastReadToken;
   private String mPackageName;
-  private Map<Integer, Runnable> mHandlers;
+  private Map<String, Runnable> mHandlers;
 
 }

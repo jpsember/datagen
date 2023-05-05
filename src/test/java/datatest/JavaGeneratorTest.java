@@ -534,7 +534,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void ipointsOld() { 
+  public void ipointsOld() {
     p().pr("fields {", INDENT, //
         "IPoint a;", CR, //
         "?IPoint b;", CR, //
@@ -750,7 +750,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void external() { 
+  public void external() {
     classMode();
     externalOld();
   }
@@ -1053,6 +1053,22 @@ public class JavaGeneratorTest extends GenBaseTest {
         "?set File set2;", CR, //
         "set Bah set3;", CR, //
         "set string set4;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void reservedWords() {
+    p().pr("fields {", INDENT, //
+
+        "int fields;", CR, //
+        "int class;", CR, //
+        "int enum;", CR, //
+        "int map;", CR, //
+        "int set;", CR, //
+        "int extern;", CR, //
+        "int unsafe;", CR, //
+
         OUTDENT, "}");
     compile();
   }

@@ -25,16 +25,19 @@ COLON: \:
 BOOL: (false|true)
 EXCLAIM: \!
 
-FIELDS: fields
-CLASS: class
-ENUM: enum
+
+# Some tokens are commented out, but are still 'used', to avoid them being reserved words.
+
+
+#FIELDS: fields
+#CLASS: class
+#ENUM: enum
 OPTIONAL: \?
 REPEATED: \*
-MAP: map
-SET: set
-EXTERN: extern
+#MAP: map
+#SET: set
+#EXTERN: extern
 DEPRECATION: \-
-# We want to be able to name some user fields 'unsafe', (like datagen's option itself),
-# so let's not make this a reserved word
 #UNSAFE: unsafe
+
 

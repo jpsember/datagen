@@ -33,6 +33,7 @@
             "optCommentsOld" : 1080,
         "qualifiedReference" : 4747,
      "qualifiedReferenceOld" : 8651,
+             "reservedWords" : 3319,
        "secondEnumReference" : 3373,
          "singleLineComment" : 1170,
       "singleLineCommentOld" : 1555,
