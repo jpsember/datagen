@@ -33,7 +33,7 @@ import datagen.SourceBuilder;
 public class JavaShortArrayDataType extends JavaContractDataType {
 
   {
-    setQualifiedClassName("java.lang.short[]");
+    with("java.lang.short[]");
     todo("make this a singleton");
   }
 

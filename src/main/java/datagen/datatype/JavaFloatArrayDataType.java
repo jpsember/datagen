@@ -33,7 +33,7 @@ import datagen.SourceBuilder;
 public class JavaFloatArrayDataType extends JavaContractDataType {
 
   {
-    setQualifiedClassName("java.lang.float[]");
+    with("java.lang.float[]");
     todo("make this a singleton");
   }
 

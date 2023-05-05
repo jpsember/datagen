@@ -36,7 +36,7 @@ import js.json.JSMap;
 public class JavaDoubleArrayDataType extends JavaContractDataType {
 
   {
-    setQualifiedClassName("java.lang.double[]");
+    with("java.lang.double[]");
     todo("make this a singleton");
   }
 

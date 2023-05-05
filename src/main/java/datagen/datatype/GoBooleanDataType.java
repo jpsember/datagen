@@ -34,7 +34,7 @@ import js.json.JSMap;
 public final class GoBooleanDataType extends GoDataType {
 
   {
-    setQualifiedClassName("bool");
+    with("bool");
     todo("make this a singleton");
   }
 

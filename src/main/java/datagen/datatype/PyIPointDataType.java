@@ -34,7 +34,7 @@ import js.json.JSMap;
 public class PyIPointDataType extends PythonContractDataType {
 
   {
-    setQualifiedClassName("pycore.ipoint.IPoint");
+    with("pycore.ipoint.IPoint");
     todo("make this a singleton");
   }
 

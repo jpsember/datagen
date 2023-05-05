@@ -38,7 +38,7 @@ import js.json.JSMap;
 public final class JavaFileDataType extends JavaDataType {
 
   {
-    setQualifiedClassName("java.io.File");
+    with("java.io.File");
   }
 
   @Override

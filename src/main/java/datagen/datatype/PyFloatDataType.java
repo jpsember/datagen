@@ -34,7 +34,7 @@ import js.json.JSMap;
 public class PyFloatDataType extends PythonDataType {
 
   {
-    setQualifiedClassName("float");
+    with("float");
     todo("make this a singleton");
   }
 

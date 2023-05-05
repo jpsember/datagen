@@ -34,7 +34,7 @@ import js.json.JSMap;
 public class PyIntDataType extends PythonDataType {
 
   {
-    setQualifiedClassName("int");
+    with("int");
     todo("make this a singleton");
   }
 

@@ -35,7 +35,7 @@ import js.json.JSMap;
 public final class GoStringDataType extends GoDataType {
 
   {
-    setQualifiedClassName("string");
+    with("string");
     todo("make this a singleton");
   }
 

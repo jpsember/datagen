@@ -38,7 +38,7 @@ import js.json.JSMap;
 public final class JavaStringDataType extends JavaDataType {
 
   {
-    setQualifiedClassName("java.lang.String");
+    with("java.lang.String");
   }
 
   @Override

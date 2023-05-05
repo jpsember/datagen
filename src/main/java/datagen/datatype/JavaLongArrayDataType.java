@@ -33,7 +33,7 @@ import datagen.SourceBuilder;
 public class JavaLongArrayDataType extends JavaContractDataType {
 
   {
-    setQualifiedClassName("java.lang.long[]");
+    with("java.lang.long[]");
     todo("make this a singleton");
   }
 

@@ -48,20 +48,11 @@ public final class GoFloatDataType extends GoDataType {
 
     case 32:
     case 64:
-      mTypeName = "float" + nbits;
+      with("float" + nbits);
       break;
     default:
       throw badArg("nbits:", nbits);
     }
-    //mBits = nbits;
-  }
-
-  //private final int mBits;
-  private final String mTypeName;
-
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return mTypeName;
   }
 
   @Override

@@ -40,7 +40,6 @@ public class JavaPrimitiveIntegerDataType extends JavaDataType {
 
   private JavaPrimitiveIntegerDataType() {
   }
-  
 
   @Override
   public final String compilerInitialValue() {
@@ -68,11 +67,6 @@ public class JavaPrimitiveIntegerDataType extends JavaDataType {
   }
 
   private static class Boxed extends JavaPrimitiveIntegerDataType {
-
-    @Override
-    protected String provideQualifiedClassNameExpr() {
-      return "java.lang.Integer";
-    }
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {

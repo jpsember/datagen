@@ -50,7 +50,7 @@ public final class GoIntDataType extends GoDataType {
     case 16:
     case 32:
     case 64:
-      setQualifiedClassName("int" + nbits);
+      with("int" + nbits);
       break;
     default:
       throw badArg("nbits:", nbits);

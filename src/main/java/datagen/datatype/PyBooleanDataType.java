@@ -35,7 +35,7 @@ import js.json.JSMap;
 public class PyBooleanDataType extends PythonDataType {
 
   {
-    setQualifiedClassName("bool");
+    with("bool");
     todo("make this a singleton");
   }
   @Override

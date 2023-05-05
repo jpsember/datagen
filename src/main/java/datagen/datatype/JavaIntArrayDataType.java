@@ -33,7 +33,7 @@ import datagen.SourceBuilder;
 public class JavaIntArrayDataType extends JavaContractDataType {
 
   {
-    setQualifiedClassName("java.lang.int[]");
+    with("java.lang.int[]");
     todo("make this a singleton");
   }
 

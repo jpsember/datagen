@@ -69,11 +69,6 @@ public class JavaPrimitiveDoubleDataType extends JavaDataType {
   private static class Boxed extends JavaPrimitiveDoubleDataType {
 
     @Override
-    protected String provideQualifiedClassNameExpr() {
-      return "java.lang.Double";
-    }
-
-    @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
       s.a(f.instanceName(), " = m.optDouble(", f.nameStringConstantQualified(), ");");
     }

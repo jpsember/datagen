@@ -44,10 +44,10 @@ public class PythonListDataType extends PythonDataType {
     mWrappedType = wrappedType;
   }
 
-  @Override
-  protected String provideTypeName() {
-    return PKGPY_LIST + "[" + ParseTools.importExprWithClassName(wrappedType().qualifiedClassName()) + "]";
-  }
+    @Override
+    protected String provideTypeName() {
+      return PKGPY_LIST + "[" + ParseTools.importExprWithClassName(wrappedType().qualifiedClassName()) + "]";
+    }
 
   @Override
   public String provideSourceDefaultValue() {

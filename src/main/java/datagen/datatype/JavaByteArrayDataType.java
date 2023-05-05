@@ -33,7 +33,7 @@ import datagen.SourceBuilder;
 public class JavaByteArrayDataType extends JavaContractDataType {
 
   {
-    setQualifiedClassName("java.lang.byte[]");
+    with("java.lang.byte[]");
     todo("make this a singleton");
   }
 

@@ -38,32 +38,8 @@ public abstract class DataType implements DefaultValueParser {
   // Naming
   // ------------------------------------------------------------------
 
-  public final DataType with(String qualClassNameExpr) {
-    setQualifiedClassName(qualClassNameExpr);
-    return this;
-  }
-
-  public void setQualifiedClassName(QualifiedName qualifiedName) {
-    checkState(mClassWithPackage == null);
-    mClassWithPackage = qualifiedName;
-  }
-
-  public final void setQualifiedClassName(String expr) {
-    setQualifiedClassName(ParseTools.updateForPython(ParseTools.parseQualifiedName(expr, null)));
-  }
-
-  public final QualifiedName qualifiedClassName() {
-    // If no QualifiedName assigned yet, do so
-    if (mClassWithPackage == null) {
-      alert("************ No qualified class name explicitly set for:", getClass().getSimpleName());
-      setQualifiedClassName(
-          ParseTools.updateForPython(ParseTools.parseQualifiedName(provideQualifiedClassNameExpr(), null)));
-    }
-    return mClassWithPackage;
-  }
-
   /**
-   * Provide a qualified class name
+   * Set a qualified class name
    * 
    * <pre>
    * 
@@ -79,8 +55,20 @@ public abstract class DataType implements DefaultValueParser {
    * 
    * </pre>
    */
-  protected String provideQualifiedClassNameExpr() {
-    throw notSupported("no qualified class name expression provided;", getClass().getName());
+  public final DataType with(String qualClassNameExpr) {
+    // TODO: rename this method later, after refactoring done
+    setQualifiedClassName(ParseTools.updateForPython(ParseTools.parseQualifiedName(qualClassNameExpr, null)));
+    return this;
+  }
+
+  public void setQualifiedClassName(QualifiedName qualifiedName) {
+    checkState(mClassWithPackage == null);
+    mClassWithPackage = qualifiedName;
+  }
+
+  public final QualifiedName qualifiedClassName() {
+    checkNotNull(mClassWithPackage);
+    return mClassWithPackage;
   }
 
   /**
@@ -91,7 +79,7 @@ public abstract class DataType implements DefaultValueParser {
    * Can be overridden for compound types (maps, lists) to ensure the other
    * types are wrapped in import expressions as well
    */
-  protected String provideTypeName() {
+  protected   String provideTypeName() {
     todo(
         "Explicitly set qualified name, with appropriate wrapping; typeName() should just refer to that variable");
     if (isPrimitive())
@@ -101,13 +89,17 @@ public abstract class DataType implements DefaultValueParser {
     // we ensure it is imported
     // The assumption is that import expressions are needed iff type is not primitive
     //
+//    if (true)
+//      return qualifiedClassName().combined();
     return ParseTools.importedClassExpr(null, qualifiedClassName().combined());
+    
   }
 
   /**
    * Get type name, by calling provideTypeName() if necessary
    */
   public final String typeName() {
+    alert("what's the difference between typeName and qualifiedClassName?");
     if (mTypeName == null) {
       mTypeName = provideTypeName();
     }

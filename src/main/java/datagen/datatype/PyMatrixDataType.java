@@ -28,7 +28,7 @@ import static js.base.Tools.*;
 public class PyMatrixDataType extends PythonContractDataType {
 
   {
-    setQualifiedClassName("pycore.matrix.Matrix");
+    with("pycore.matrix.Matrix");
     todo("make this a singleton");
   }
 
