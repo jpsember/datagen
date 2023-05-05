@@ -27,6 +27,7 @@ package datagen.datatype;
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
@@ -37,9 +38,9 @@ import js.json.JSMap;
 
 public class JavaJsonListDataType extends JavaDataType {
 
-  {
-    setQualifiedClassName("js.json.JSList");
-    todo("make this a singleton");
+  public static final DataType TYPE = new JavaJsonListDataType().with("js.json.JSList");
+
+  private JavaJsonListDataType() {
   }
 
   @Override

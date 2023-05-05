@@ -24,8 +24,6 @@
  **/
 package datagen.datatype;
 
-import static js.base.Tools.*;
-
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
@@ -34,10 +32,10 @@ import js.json.JSMap;
 
 public class JavaPrimitiveFloatDataType extends JavaDataType {
 
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    loadTools();
-    return "java.lang.float";
+  public static final DataType PRIM_TYPE = new JavaPrimitiveFloatDataType().with("java.lang.float");
+  private static final DataType BOXED_TYPE = new Boxed().with("java.lang.Float");
+
+  private JavaPrimitiveFloatDataType() {
   }
 
   @Override
@@ -60,7 +58,7 @@ public class JavaPrimitiveFloatDataType extends JavaDataType {
 
   @Override
   public DataType optionalVariant() {
-    return new Boxed();
+    return BOXED_TYPE;
   }
 
   @Override
@@ -69,11 +67,6 @@ public class JavaPrimitiveFloatDataType extends JavaDataType {
   }
 
   private static class Boxed extends JavaPrimitiveFloatDataType {
-
-    @Override
-    protected String provideQualifiedClassNameExpr() {
-      return "java.lang.Float";
-    }
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {

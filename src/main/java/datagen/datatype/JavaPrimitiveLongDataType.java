@@ -35,9 +35,10 @@ import js.json.JSMap;
  */
 public class JavaPrimitiveLongDataType extends JavaDataType {
 
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "java.lang.long";
+  public static final DataType PRIM_TYPE = new JavaPrimitiveLongDataType().with("java.lang.long");
+  private static final DataType BOXED_TYPE = new Boxed().with("java.lang.Long");
+
+  private JavaPrimitiveLongDataType() {
   }
 
   @Override
@@ -60,7 +61,7 @@ public class JavaPrimitiveLongDataType extends JavaDataType {
 
   @Override
   public DataType optionalVariant() {
-    return new Boxed();
+    return BOXED_TYPE;
   }
 
   @Override
@@ -69,11 +70,6 @@ public class JavaPrimitiveLongDataType extends JavaDataType {
   }
 
   private static class Boxed extends JavaPrimitiveLongDataType {
-
-    @Override
-    protected String provideQualifiedClassNameExpr() {
-      return "java.lang.Long";
-    }
 
     @Override
     public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {

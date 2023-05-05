@@ -27,6 +27,7 @@ package datagen.datatype;
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
@@ -41,9 +42,9 @@ import js.json.JSMap;
  */
 public final class JavaJsonMapDataType extends JavaDataType {
 
-  @Override
-  protected String provideQualifiedClassNameExpr() {
-    return "js.json.JSMap";
+  public static final DataType TYPE = new JavaJsonMapDataType().with("js.json.JSMap");
+
+  private JavaJsonMapDataType() {
   }
 
   @Override
