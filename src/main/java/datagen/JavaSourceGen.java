@@ -28,6 +28,7 @@ import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
 import java.util.List;
+import java.util.Set;
 
 import datagen.datatype.EnumDataType;
 import js.file.Files;
@@ -168,19 +169,24 @@ public final class JavaSourceGen extends SourceGen {
     return content();
   }
 
+  private static Set<String> sDebugSet = hashSet();
+
   @Override
   protected final String generateGetters() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
-    //    s.in(0);
     for (FieldDef f : def.fields()) {
       s.br();
       if (f.deprecated())
         s.a("@Deprecated", CR);
+
+      if (sDebugSet.add(f.dataType().typeName())) {
+        pr("typeName:", f.dataType().typeName(), "qual:", INDENT, f.dataType().qualifiedClassName());
+      }
+      
       s.a("public ", f.dataType().typeName(), " ", f.getterName(), "()", OPEN, //
           "return ", f.instanceName(), ";", CLOSE);
     }
-    //    s.out();
     return content();
   }
 
@@ -303,7 +309,7 @@ public final class JavaSourceGen extends SourceGen {
 
   @Override
   protected void generateEnumValues(EnumDataType dt) {
-   s.setIndent(2);
+    s.setIndent(2);
     int i = INIT_INDEX;
     for (String label : dt.labels()) {
       i++;

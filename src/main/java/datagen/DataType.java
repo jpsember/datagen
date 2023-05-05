@@ -82,6 +82,8 @@ public abstract class DataType implements DefaultValueParser {
    * types are wrapped in import expressions as well
    */
   protected String provideTypeName() {
+    todo(
+        "Explicitly set qualified name, with appropriate wrapping; typeName() should just refer to that variable");
     if (isPrimitive())
       return qualifiedClassName().className();
 
