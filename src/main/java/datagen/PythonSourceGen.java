@@ -150,7 +150,7 @@ public class PythonSourceGen extends SourceGen {
 
     todo("try to eliminate the complication here");
     for (String cn : qualifiedClassNames) {
-      QualifiedName q = QualifiedName.parse(cn, null);
+      QualifiedName q = QualifiedName.parse(cn);
       checkNonEmpty(q.packagePath(), "no package:", q);
       s.a("from ", q.packagePath(), " import ", q.className()).cr();
     }
