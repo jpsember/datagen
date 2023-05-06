@@ -174,8 +174,7 @@ final class DataDefinitionParser extends BaseObject {
   private void processExternalReference(DataType dataType) {
     String nameExpression = read(ID);
     read(SEMI);
-
-    QualifiedName q = QualifiedName.parse(nameExpression, packageName(), Utils.language());
+    QualifiedName q = QualifiedName.parse(nameExpression, packageName() );
     dataType.setQualifiedClassName(q);
     dataType.setDeclaredFlag();
     Context.dataTypeManager.add(q.className(), dataType);
@@ -348,7 +347,7 @@ final class DataDefinitionParser extends BaseObject {
     String className2 = chomp(new File(Context.datWithSource.datRelPath()).getName(),
         DOT_EXT_DATA_DEFINITION);
     enumName = DataUtil.convertUnderscoresToCamelCase(className2);
-    QualifiedName className = QualifiedName.parse(enumName, packageName(), Utils.language());
+    QualifiedName className = QualifiedName.parse(enumName, packageName() );
     enumDataType.setQualifiedClassName(className);
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType, false));
 

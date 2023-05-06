@@ -5,8 +5,6 @@ import js.json.JSMap;
 
 import static js.base.Tools.*;
 
-import datagen.gen.Language;
-
 public final class QualifiedName extends BaseObject {
 
   public static QualifiedName parse(String expr) {
@@ -20,8 +18,8 @@ public final class QualifiedName extends BaseObject {
     return new QualifiedName(packagePath, className);
   }
 
-  public static QualifiedName parse(String expr, String defaultPackage, Language language) {
-    alertWithSkip(1, "parsing " + expr + ":", expr);
+  public static QualifiedName parse(String expr, String defaultPackage) {
+    //alertWithSkip(1, "parsing " + expr + ":", expr);
     int nameStartPos = expr.lastIndexOf('.');
     if (nameStartPos == 0 || nameStartPos == expr.length() - 1)
       throw badArg("from expr:", quote(expr));
@@ -37,7 +35,7 @@ public final class QualifiedName extends BaseObject {
     //
     todo("We can't use Utils.language() here because of init problems");
 
-    if (language == Language.PYTHON) {
+    if (Utils.python()) {
       if (split(packagePath, '.').contains("gen")) {
         String suffix = "." + convertCamelToUnderscore(className);
         if (!packagePath.endsWith(suffix))

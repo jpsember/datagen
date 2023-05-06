@@ -149,29 +149,10 @@ public class PythonSourceGen extends SourceGen {
     // if the package includes 'gen'.
     //
 
-    final boolean db = true;
-
     todo("try to eliminate the complication here");
-
-    if (false && db) {
-      DataTypeManager m = Context.dataTypeManager;
-      for (Map.Entry<String, DataType> ent : m.debugMap().entrySet()) {
-        if (ent.getValue().qualifiedClassName().packagePath().isEmpty())
-          continue;
-        pr(ent.getKey(), "=>", ent.getValue().qualifiedClassName().brief());
-      }
-    }
-
     for (String cn : qualifiedClassNames) {
-      if (db) {
-        pr("qualifiedClassName:", cn);
-      }
-      QualifiedName q = QualifiedName.parse(cn
-          , null, Utils.language()
-          );
+      QualifiedName q = QualifiedName.parse(cn, null);
       checkNonEmpty(q.packagePath(), "no package:", q);
-      if (db)
-        pr("from ", q.packagePath(), " import ", q.className());
       s.a("from ", q.packagePath(), " import ", q.className()).cr();
     }
     return content();

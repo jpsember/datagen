@@ -37,7 +37,6 @@ import datagen.datatype.JavaSetDataType;
 import datagen.datatype.PythonListDataType;
 import datagen.datatype.EnumDataType;
 import datagen.datatype.GoListDataType;
-import datagen.gen.Language;
 import datagen.gen.PartialType;
 import datagen.gen.TypeStructure;
 import js.base.BaseObject;
@@ -223,9 +222,8 @@ public final class GeneratedTypeDef extends BaseObject {
     DataTypeManager dataTypes = Context.dataTypeManager;
     DataType dataType = dataTypes.get(partialType.name());
     if (dataType == null) {
-      todo("why explicit java arg?");
-      QualifiedName className = QualifiedName.parse(partialType.name() //
-          ,          Context.generatedTypeDef.packageName(), Language.JAVA//
+     m QualifiedName className = QualifiedName.parse(partialType.name() 
+          ,          Context.generatedTypeDef.packageName()  
           );
       
       dataType = dataTypes.get(className.className());
