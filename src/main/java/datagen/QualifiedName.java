@@ -8,6 +8,7 @@ import static js.base.Tools.*;
 public final class QualifiedName extends BaseObject {
 
   public static QualifiedName parse(String expr) {
+    //alertWithSkip(1, "(1)parsing " + expr);
     int nameStartPos = expr.lastIndexOf('.');
     if (nameStartPos == 0 || nameStartPos == expr.length() - 1)
       throw badArg("from expr:", quote(expr));
@@ -19,7 +20,7 @@ public final class QualifiedName extends BaseObject {
   }
 
   public static QualifiedName parse(String expr, String defaultPackage) {
-    //alertWithSkip(1, "parsing " + expr + ":", expr);
+   // alertWithSkip(1, "(2)parsing " + expr);
     int nameStartPos = expr.lastIndexOf('.');
     if (nameStartPos == 0 || nameStartPos == expr.length() - 1)
       throw badArg("from expr:", quote(expr));
@@ -27,22 +28,51 @@ public final class QualifiedName extends BaseObject {
     packagePath = ifNullOrEmpty(packagePath, nullToEmpty(defaultPackage));
     String className = expr.substring(1 + nameStartPos);
 
+    QualifiedName result = new QualifiedName(packagePath, className);
+   
     // Special rules for Python:
     //
     // For class name "Foo", if package contains "gen" and 
-    // package doesn't already end with "gen.foo", add ".foo" to it
+    // package doesn't already end with ".foo", add ".foo" to it
     //
     //
-    todo("We can't use Utils.language() here because of init problems");
+    result =result.convertToPython();
+   return result;
+//    todo("We can't use Utils.language() here because of init problems");
+//
+//    if (Utils.python()) {
+//      if (split(packagePath, '.').contains("gen")) {
+//        String suffix = "." + convertCamelToUnderscore(className);
+//        if (!packagePath.endsWith(suffix)) {
+//          pr("...added suffix:", quote(suffix), "package path now:", packagePath);
+//          packagePath += suffix;
+//        }
+//      }
+//    }
+//    return new QualifiedName(packagePath, className);
+  }
 
+  public QualifiedName convertToPython() {
     if (Utils.python()) {
-      if (split(packagePath, '.').contains("gen")) {
-        String suffix = "." + convertCamelToUnderscore(className);
-        if (!packagePath.endsWith(suffix))
-          packagePath += suffix;
+      if (split(mPackagePath, '.').contains("gen")) {
+        String suffix = "." + convertCamelToUnderscore(mClassName);
+        if (!mPackagePath.endsWith(suffix)) {
+          return withPackageName(mPackagePath + suffix);
+        }
+//        else
+//          alert("ALREADY ended with suffix:", suffix, INDENT, this);
       }
     }
-    return new QualifiedName(packagePath, className);
+    return this;
+  }
+
+  public QualifiedName convertFromPython() {
+    if (Utils.python()) {
+      String suffix = "." + convertCamelToUnderscore(mClassName);
+      checkState(mPackagePath.endsWith(suffix));
+      return withPackageName(chomp(mPackagePath, suffix));
+    }
+    return this;
   }
 
   public String packagePath() {

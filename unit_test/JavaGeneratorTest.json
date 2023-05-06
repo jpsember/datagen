@@ -28,6 +28,8 @@
                    "listOpt" : 5648,
                 "listOptOld" : 4537,
             "misspelledBool" : 9396,
+           "misspelledBool2" : 6266,
+          "misspelledString" : 9068,
           "multiLineComment" : 4877,
        "multiLineCommentOld" : 2855,
                "optComments" : 4894,
