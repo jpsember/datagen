@@ -39,7 +39,7 @@ public final class Utils {
     throw notSupported(insertStringToFront("Language not supported:", messages));
   }
 
-  private static DebugCounter crCounter = new DebugCounter("crs",0);
+  private static DebugCounter crCounter = new DebugCounter("crs", 0);
 
   public static void addCr(StringBuilder dest) {
     crCounter.event(dest);
@@ -85,16 +85,6 @@ public final class Utils {
     case GO:
       return "nil";
     }
-  }
-
-  @Deprecated
-  public static boolean packageContainsElement(String packagePath, String element) {
-    return ("." + packagePath + ".").contains("." + element + ".");
-  }
-
-  @Deprecated
-  public static boolean packageContainsGen(String packagePath) {
-    return packageContainsElement(packagePath, GEN_SUBDIR_NAME);
   }
 
   public static final String verboseVariant(String succinctOption, String verboseOption) {
