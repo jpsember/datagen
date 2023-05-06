@@ -141,9 +141,9 @@ public abstract class FieldDef extends BaseObject {
    * If field is optional, return 'null' (or 'None'); else, the provided
    * expression
    */
-  public String nullIfOptional(String nonNullExpr) {
+  public String nullIfOptional(Object nonNullExpr) {
     if (!optional())
-      return nonNullExpr;
+      return nonNullExpr.toString();
     return Utils.nullExpr();
   }
 

@@ -199,7 +199,6 @@ public class PythonGeneratorTest extends GenBaseTest {
 
   @Test
   public void externType() {
-    depr(); // This unit test fails, unrelated to path problems?
     p().pr("fields {", INDENT, //
         "*foo.gen.Layer layers;", CR, //
         OUTDENT, "}");

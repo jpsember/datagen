@@ -95,7 +95,7 @@ public abstract class DataType implements DefaultValueParser {
     // we ensure it is imported
     // The assumption is that import expressions are needed iff type is not primitive
     //
-    return ParseTools.importedClassExpr(null, qualifiedClassName().combined());
+    return ParseTools.importedClassExpr(null, qualifiedClassName().combined()).toString();
   }
 
   /**

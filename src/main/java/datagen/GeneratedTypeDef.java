@@ -24,7 +24,6 @@
  **/
 package datagen;
 
-import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -222,49 +221,17 @@ public final class GeneratedTypeDef extends BaseObject {
     DataTypeManager dataTypes = Context.dataTypeManager;
     DataType dataType = dataTypes.get(partialType.name());
     if (dataType == null) {
-      QualifiedName className = QualifiedName.parse(partialType.name(),
+      QualifiedName qualName = QualifiedName.parse(partialType.name(),
           Context.generatedTypeDef.packageName());
-      dataType = dataTypes.get(className.className());
+      dataType = dataTypes.get(qualName.className());
       if (dataType == null) {
-    
+
         if (partialType.enumFlag()) {
           dataType = EnumDataType.construct();
         } else
           dataType = DataTypeManager.constructContractDataType();
-        
-        // If package path contains a "gen" component, verify that a matching ".dat" file exists.
-        
-       // if (
-       // pr("set qualified class name to:",INDENT,className);
-         
-//      if (false && !className.combined().equals(partialType.name())) {
-//      //
-//      // Verify that a .dat file exists matching this type, in the same directory as the one we're compiling
-//      //
-//
-//      // If python, we must remove the last package component, which will equal the name of the
-//      // class (but with a lowered first letter)
-//      //
-//      QualifiedName adj = className.convertFromPython();
-//      alert("but adj isn't used anywhere");
-//      String datFilename = convertCamelToUnderscore(partialType.name())
-//          + ParseTools.DOT_EXT_DATA_DEFINITION;
-//      File currentDatFile = new File(Context.config.datPath(), Context.datWithSource.datRelPath());
-//      File datFile = new File(currentDatFile.getParentFile(), datFilename);
-//       
-//      if (!datFile.exists()) {
-//        alert("looking for datFile: " + datFile, CR,"current:", currentDatFile,CR,
-//            "qualified class name", INDENT, adj);
-//      pr("partialType name:",partialType.name());
-//       pr("className:",INDENT,className);
-//       pr("datFilename:",datFilename);
-//       pr("datFile:",datFile);
-//        badArg("No definition file found at", datFile, INDENT, "...use 'extern' to declare its location");
-//      }
-//    }
 
-        dataType.setQualifiedClassName(className);
-        
+        dataType.setQualifiedClassName(qualName);
         dataTypes.add(dataType.qualifiedClassName().className(), dataType);
       }
 

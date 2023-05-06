@@ -74,7 +74,7 @@ public final class JavaFileDataType extends JavaDataType {
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a(OPEN, //
-        PKG_LIST, "<", typeName(), "> result = ", f.nullIfOptional(PKG_MUTABLELIST), ";", CR, //
+        PKG_LIST, "<", typeName(), "> result = ", f.nullIfOptional("new " + PKG_ARRAYLIST + "<>()"), ";", CR, //
         ParseTools.PKG_JSLIST, " j = m.optJSList(", f.nameStringConstantQualified(), ");", CR);
     sourceIfNotNull(s, "j");
     s.a("result = ", ParseTools.PKG_DATAUTIL, ".parseFileListFrom(j);");
