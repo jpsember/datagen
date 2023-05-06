@@ -8,21 +8,11 @@ import static js.base.Tools.*;
 public final class QualifiedName extends BaseObject {
 
   public static QualifiedName parse(String expr) {
-m    
-    if (true) return parse(expr, null);
-    //alertWithSkip(1, "(1)parsing " + expr);
-    int nameStartPos = expr.lastIndexOf('.');
-    if (nameStartPos == 0 || nameStartPos == expr.length() - 1)
-      throw badArg("from expr:", quote(expr));
-    String packagePath = expr.substring(0, Math.max(0, nameStartPos));
-    if (false)
-      checkNonEmpty(packagePath);
-    String className = expr.substring(1 + nameStartPos);
-    return new QualifiedName(packagePath, className);
+    return parse(expr, null);
   }
 
   public static QualifiedName parse(String expr, String defaultPackage) {
-    // alertWithSkip(1, "(2)parsing " + expr);
+    // alertWithSkip(1, "parsing " + expr);
     int nameStartPos = expr.lastIndexOf('.');
     if (nameStartPos == 0 || nameStartPos == expr.length() - 1)
       throw badArg("from expr:", quote(expr));
@@ -41,7 +31,7 @@ m
     return result.convertToPython();
   }
 
-  public QualifiedName convertToPython() {
+  private QualifiedName convertToPython() {
     if (Utils.python()) {
       if (split(mPackagePath, '.').contains("gen")) {
         String suffix = "." + convertCamelToUnderscore(mClassName);
@@ -53,7 +43,9 @@ m
     return this;
   }
 
-  public QualifiedName convertFromPython() {
+  @Deprecated
+  // Unused
+  /* private */ QualifiedName convertFromPython() {
     if (Utils.python()) {
       String suffix = "." + convertCamelToUnderscore(mClassName);
       checkState(mPackagePath.endsWith(suffix));
