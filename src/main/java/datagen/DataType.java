@@ -59,7 +59,10 @@ public abstract class DataType implements DefaultValueParser {
     todo("have version of method that accepts interface, static, and builder versions");
     todo("unify the QualifiedClassName with the typeName somehow");
     // TODO: rename this method later, after refactoring done
-    setQualifiedClassName(QualifiedName.parse(qualClassNameExpr, null, Utils.language()));
+    setQualifiedClassName(
+       QualifiedName.parse(qualClassNameExpr //
+          // , null, Utils.language() //
+        ));
     return this;
   }
 

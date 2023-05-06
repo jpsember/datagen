@@ -223,8 +223,11 @@ public final class GeneratedTypeDef extends BaseObject {
     DataTypeManager dataTypes = Context.dataTypeManager;
     DataType dataType = dataTypes.get(partialType.name());
     if (dataType == null) {
-      QualifiedName className = QualifiedName.parse(partialType.name(),
-          Context.generatedTypeDef.packageName(), Language.JAVA);
+      todo("why explicit java arg?");
+      QualifiedName className = QualifiedName.parse(partialType.name() //
+          ,          Context.generatedTypeDef.packageName(), Language.JAVA//
+          );
+      
       dataType = dataTypes.get(className.className());
       if (dataType == null) {
         // If a package was specified, treat as if it was defined using 'extern'

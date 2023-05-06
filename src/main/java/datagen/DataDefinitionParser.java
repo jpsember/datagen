@@ -174,10 +174,11 @@ final class DataDefinitionParser extends BaseObject {
   private void processExternalReference(DataType dataType) {
     String nameExpression = read(ID);
     read(SEMI);
-    QualifiedName qualifiedClassName = QualifiedName.parse(nameExpression, packageName(), Utils.language());
-    dataType.setQualifiedClassName(qualifiedClassName);
+
+    QualifiedName q = QualifiedName.parse(nameExpression, packageName(), Utils.language());
+    dataType.setQualifiedClassName(q);
     dataType.setDeclaredFlag();
-    Context.dataTypeManager.add(qualifiedClassName.className(), dataType);
+    Context.dataTypeManager.add(q.className(), dataType);
   }
 
   private static boolean sOldStyleWarningIssued;

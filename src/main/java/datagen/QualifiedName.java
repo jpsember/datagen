@@ -3,14 +3,25 @@ package datagen;
 import js.base.BaseObject;
 import js.json.JSMap;
 
-import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 import datagen.gen.Language;
 
 public final class QualifiedName extends BaseObject {
 
+  public static QualifiedName parse(String expr) {
+    int nameStartPos = expr.lastIndexOf('.');
+    if (nameStartPos == 0 || nameStartPos == expr.length() - 1)
+      throw badArg("from expr:", quote(expr));
+    String packagePath = expr.substring(0, Math.max(0, nameStartPos));
+    if (false)
+      checkNonEmpty(packagePath);
+    String className = expr.substring(1 + nameStartPos);
+    return new QualifiedName(packagePath, className);
+  }
+
   public static QualifiedName parse(String expr, String defaultPackage, Language language) {
+    alertWithSkip(1, "parsing " + expr + ":", expr);
     int nameStartPos = expr.lastIndexOf('.');
     if (nameStartPos == 0 || nameStartPos == expr.length() - 1)
       throw badArg("from expr:", quote(expr));
@@ -18,26 +29,22 @@ public final class QualifiedName extends BaseObject {
     packagePath = ifNullOrEmpty(packagePath, nullToEmpty(defaultPackage));
     String className = expr.substring(1 + nameStartPos);
 
-    // Do some language-specific things
+    // Special rules for Python:
+    //
+    // For class name "Foo", if package contains "gen" and 
+    // package doesn't already end with "gen.foo", add ".foo" to it
+    //
+    //
+    todo("We can't use Utils.language() here because of init problems");
 
-    switch (language) {
-    case PYTHON: {
-      // See PythonSourceGen.generateImports() for more info.
-      if (("." + packagePath + ".").contains("." + GEN_SUBDIR_NAME + ".")) {
+    if (language == Language.PYTHON) {
+      if (split(packagePath, '.').contains("gen")) {
         String suffix = "." + convertCamelToUnderscore(className);
-        if (!packagePath.endsWith(suffix)) {
-          packagePath = packagePath + suffix;
-        }
+        if (!packagePath.endsWith(suffix))
+          packagePath += suffix;
       }
     }
-      break;
-
-    default:
-      break;
-    }
-
-    QualifiedName result = new QualifiedName(packagePath, className);
-    return result;
+    return new QualifiedName(packagePath, className);
   }
 
   public String packagePath() {
@@ -86,5 +93,9 @@ public final class QualifiedName extends BaseObject {
   private final String mPackagePath;
   private final String mClassName;
   private String mCachedCombined;
+
+  public String brief() {
+    return "[" + packagePath() + " : " + className() + "]";
+  }
 
 }

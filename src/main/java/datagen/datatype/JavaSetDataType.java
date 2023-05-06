@@ -33,14 +33,15 @@ import datagen.JavaDataType;
 import datagen.ParseTools;
 import datagen.QualifiedName;
 import datagen.SourceBuilder;
-import datagen.gen.Language;
 
 public class JavaSetDataType extends JavaDataType {
 
   public JavaSetDataType(JavaDataType wrappedValueType) {
     mWrappedValueType = wrappedValueType;
     setQualifiedClassName(QualifiedName.parse(
-        "java.util.Set<" + wrappedValueType.qualifiedClassName().className() + ">", null, Language.JAVA));
+        "java.util.Set<" + wrappedValueType.qualifiedClassName().className() + ">"
+     //   , null, Language.JAVA
+        ));
   }
 
   public JavaDataType wrappedValueType() {

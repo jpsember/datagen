@@ -27,7 +27,6 @@ package datagen;
 import java.util.Map;
 
 import datagen.datatype.*;
-import datagen.gen.Language;
 import js.base.BaseObject;
 import js.data.AbstractData;
 import js.geometry.FPoint;
@@ -164,7 +163,9 @@ public final class DataTypeManager extends BaseObject {
    */
   private void add(AbstractData defaultInstance, DefaultValueParser parser) {
     DataType dataType = constructContractDataType();
-    dataType.setQualifiedClassName(QualifiedName.parse(defaultInstance.getClass().getName(), null, Language.JAVA));
+    dataType.setQualifiedClassName(QualifiedName.parse(defaultInstance.getClass().getName() //
+        //, null, Language.JAVA //
+        ));
     add(dataType.qualifiedClassName().className(), dataType, parser);
   }
 
@@ -183,6 +184,8 @@ public final class DataTypeManager extends BaseObject {
     }
   };
 
+  public Map<String,DataType> debugMap() {return mTypeMap;}
+  
   private final Map<String, DataType> mTypeMap;
   private final Map<String, DefaultValueParser> mDefaultValueParserMap;
 

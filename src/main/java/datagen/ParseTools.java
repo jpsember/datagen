@@ -185,7 +185,9 @@ public final class ParseTools {
     if (language == null)
       language = language();
     try {
-      QualifiedName qn = QualifiedName.parse(qualifiedClassName, null, language);
+      QualifiedName qn = QualifiedName.parse(qualifiedClassName //
+//          , null, language //
+          );
       checkState(nonEmpty(qn.packagePath()));
       String className = qn.className();
       return importExprWithCode(qualifiedClassName, className);
@@ -251,12 +253,6 @@ public final class ParseTools {
     if (Context.debugMode())
       result += debugComment();
     return result;
-  }
-
-  public static QualifiedName assertHasPackage(QualifiedName q) {
-    if (q.packagePath().isEmpty())
-      throw badArg("Package is empty:", q);
-    return q;
   }
 
   public static Object assignToListExpr(String expr) {

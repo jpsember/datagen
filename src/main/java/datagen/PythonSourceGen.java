@@ -26,6 +26,7 @@ package datagen;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -132,7 +133,7 @@ public class PythonSourceGen extends SourceGen {
     //  File path:         <path> . <filename> 
     //  Import statement:  <package> . <ClassName>
     //
-    // Python have this:
+    // Python classes have this:
     //
     //  File path:        <path> . <filename>
     //  Import statement: <package> . <filename> . <ClassName>
@@ -148,8 +149,29 @@ public class PythonSourceGen extends SourceGen {
     // if the package includes 'gen'.
     //
 
+    final boolean db = true;
+
+    todo("try to eliminate the complication here");
+
+    if (false && db) {
+      DataTypeManager m = Context.dataTypeManager;
+      for (Map.Entry<String, DataType> ent : m.debugMap().entrySet()) {
+        if (ent.getValue().qualifiedClassName().packagePath().isEmpty())
+          continue;
+        pr(ent.getKey(), "=>", ent.getValue().qualifiedClassName().brief());
+      }
+    }
+
     for (String cn : qualifiedClassNames) {
-      QualifiedName q = ParseTools.assertHasPackage(QualifiedName.parse(cn, null,   Utils.language()));
+      if (db) {
+        pr("qualifiedClassName:", cn);
+      }
+      QualifiedName q = QualifiedName.parse(cn
+          , null, Utils.language()
+          );
+      checkNonEmpty(q.packagePath(), "no package:", q);
+      if (db)
+        pr("from ", q.packagePath(), " import ", q.className());
       s.a("from ", q.packagePath(), " import ", q.className()).cr();
     }
     return content();
