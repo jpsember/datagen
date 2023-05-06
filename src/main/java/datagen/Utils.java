@@ -87,10 +87,12 @@ public final class Utils {
     }
   }
 
+  @Deprecated
   public static boolean packageContainsElement(String packagePath, String element) {
     return ("." + packagePath + ".").contains("." + element + ".");
   }
 
+  @Deprecated
   public static boolean packageContainsGen(String packagePath) {
     return packageContainsElement(packagePath, GEN_SUBDIR_NAME);
   }

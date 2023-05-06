@@ -14,33 +14,29 @@ public final class QualifiedName extends BaseObject {
     int nameStartPos = expr.lastIndexOf('.');
     if (nameStartPos == 0 || nameStartPos == expr.length() - 1)
       throw badArg("from expr:", quote(expr));
-    String pkg = expr.substring(0, Math.max(0, nameStartPos));
-    pkg = ifNullOrEmpty(pkg, nullToEmpty(defaultPackage));
+    String packagePath = expr.substring(0, Math.max(0, nameStartPos));
+    packagePath = ifNullOrEmpty(packagePath, nullToEmpty(defaultPackage));
     String className = expr.substring(1 + nameStartPos);
-    QualifiedName result =  new QualifiedName(pkg, className);
-    if (alert("experiment")) {
-    
 
-//        QualifiedName result = qualifiedName;
-        do {
-          if (language != Language.PYTHON)
-            break;
+    // Do some language-specific things
 
-          if (!packageContainsGen(result.packagePath()))
-            break;
-
-          String pkgElement = "." + convertCamelToUnderscore(result.className());
-          if (result.packagePath().endsWith(pkgElement)) {
-            pr("*** package path seems to already include class name, which is unexpected:", INDENT,
-                result);
-            break;
-          }
-          result = result.withPackageName(result.packagePath() + pkgElement);
-        } while (false);
-
-      
-     // result = ParseTools.extraUpdateForPython(result);
+    switch (language) {
+    case PYTHON: {
+      // See PythonSourceGen.generateImports() for more info.
+      if (("." + packagePath + ".").contains("." + GEN_SUBDIR_NAME + ".")) {
+        String suffix = "." + convertCamelToUnderscore(className);
+        if (!packagePath.endsWith(suffix)) {
+          packagePath = packagePath + suffix;
+        }
+      }
     }
+      break;
+
+    default:
+      break;
+    }
+
+    QualifiedName result = new QualifiedName(packagePath, className);
     return result;
   }
 
@@ -54,7 +50,6 @@ public final class QualifiedName extends BaseObject {
 
   public String combined() {
     if (mCachedCombined == null) {
-      //String packagePath = q.packagePath();
       String combined = className();
       if (!packagePath().isEmpty())
         combined = packagePath() + "." + className();

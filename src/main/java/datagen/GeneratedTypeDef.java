@@ -29,7 +29,6 @@ import java.util.List;
 import java.util.Set;
 
 import static js.base.Tools.*;
-import static datagen.ParseTools.*;
 import static datagen.Utils.*;
 
 import datagen.datatype.JavaListDataType;
@@ -246,8 +245,6 @@ public final class GeneratedTypeDef extends BaseObject {
           dataType = EnumDataType.construct();
         } else
           dataType = DataTypeManager.constructContractDataType();
-
-        className = updateForPython(className);
         dataType.setQualifiedClassName(className);
         dataTypes.add(dataType.qualifiedClassName().className(), dataType);
       }

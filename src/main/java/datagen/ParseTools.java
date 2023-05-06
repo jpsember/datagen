@@ -259,60 +259,6 @@ public final class ParseTools {
     return q;
   }
 
-  
- 
-  public static QualifiedName extraUpdateForPython(QualifiedName qualifiedName) {
-
-    QualifiedName result = qualifiedName;
-    do {
-      if (!python())
-        break;
-
-      if (!packageContainsGen(qualifiedName.packagePath()))
-        break;
-
-      String pkgElement = "." + convertCamelToUnderscore(qualifiedName.className());
-      if (qualifiedName.packagePath().endsWith(pkgElement)) {
-        pr("*** package path seems to already include class name, which is unexpected:", INDENT,
-            qualifiedName);
-        break;
-      }
-      result = qualifiedName.withPackageName(qualifiedName.packagePath() + pkgElement);
-    } while (false);
-
-    return result;
-  }
-  
-  /**
-   * Append filename to package if appropriate (Python only); see
-   * PythonSourceGen.generateImports() for a discussion.
-   */
-  @Deprecated
-  public static QualifiedName updateForPython(QualifiedName qualifiedName) {
-if (true) return qualifiedName;
-
-    QualifiedName result = qualifiedName;
-    do {
-      if (!python())
-        break;
-
-      if (!packageContainsGen(qualifiedName.packagePath()))
-        break;
-
-      String pkgElement = "." + convertCamelToUnderscore(qualifiedName.className());
-      if (qualifiedName.packagePath().endsWith(pkgElement)) {
-        pr("*** package path seems to already include class name, which is unexpected:", INDENT,
-            qualifiedName);
-        break;
-      }
-      result = qualifiedName.withPackageName(qualifiedName.packagePath() + pkgElement);
-
-      die("replaced:", INDENT, qualifiedName, CR, "with:", CR, result);
-    } while (false);
-
-    return result;
-  }
-
   public static Object assignToListExpr(String expr) {
     if (Context.generatedTypeDef.isUnsafe())
       return expr;

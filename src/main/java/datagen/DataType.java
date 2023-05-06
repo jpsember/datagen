@@ -26,8 +26,6 @@ package datagen;
 
 import static js.base.Tools.*;
 
-import datagen.gen.Language;
-
 import static datagen.Utils.*;
 
 /**
@@ -60,9 +58,8 @@ public abstract class DataType implements DefaultValueParser {
   public final DataType with(String qualClassNameExpr) {
     todo("have version of method that accepts interface, static, and builder versions");
     todo("unify the QualifiedClassName with the typeName somehow");
-
     // TODO: rename this method later, after refactoring done
-    setQualifiedClassName(ParseTools.updateForPython(QualifiedName.parse(qualClassNameExpr, null, Language.JAVA)));
+    setQualifiedClassName(QualifiedName.parse(qualClassNameExpr, null, Utils.language()));
     return this;
   }
 
