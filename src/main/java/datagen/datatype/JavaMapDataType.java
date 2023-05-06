@@ -36,14 +36,15 @@ import datagen.SourceBuilder;
 
 public class JavaMapDataType extends JavaDataType {
 
-  public JavaMapDataType(JavaDataType wrappedKeyType, JavaDataType wrappedValueType) {
-    mWrappedKeyType = wrappedKeyType;
-    mWrappedValueType = wrappedValueType;
-    setQualifiedClassName(
-        QualifiedName.parse("java.util.Map<" + wrappedKeyType.qualifiedClassName().className() + ", "
-            + wrappedValueType.qualifiedClassName().className() + ">" //
-//            , null, Language.JAVA //
-            ));
+  public JavaMapDataType(JavaDataType keyType, JavaDataType valueType) {
+    mWrappedKeyType = keyType;
+    mWrappedValueType = valueType;
+    setQualifiedClassName(QualifiedName.parse("java.util.Map<" + keyType.qualifiedClassName().className()
+        + ", " + valueType.qualifiedClassName().className() + ">"));
+    QualifiedName keyName = keyType.qualifiedClassName();
+    QualifiedName valName = valueType.qualifiedClassName();
+    setTypeName(ParseTools.PKG_MAP + "<" + ParseTools.importExprWithClassName(keyName) + ", "
+        + ParseTools.importExprWithClassName(valName) + ">");
   }
 
   public JavaDataType wrappedKeyType() {
@@ -52,14 +53,6 @@ public class JavaMapDataType extends JavaDataType {
 
   public JavaDataType wrappedValueType() {
     return mWrappedValueType;
-  }
-
-  @Override
-  protected String provideTypeName() {
-    QualifiedName keyName = wrappedKeyType().qualifiedClassName();
-    QualifiedName valName = wrappedValueType().qualifiedClassName();
-    return ParseTools.PKG_MAP + "<" + ParseTools.importExprWithClassName(keyName) + ", "
-        + ParseTools.importExprWithClassName(valName) + ">";
   }
 
   @Override

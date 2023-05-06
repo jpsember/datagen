@@ -36,22 +36,16 @@ import datagen.SourceBuilder;
 
 public class JavaSetDataType extends JavaDataType {
 
-  public JavaSetDataType(JavaDataType wrappedValueType) {
-    mWrappedValueType = wrappedValueType;
-    setQualifiedClassName(QualifiedName.parse(
-        "java.util.Set<" + wrappedValueType.qualifiedClassName().className() + ">"
-     //   , null, Language.JAVA
-        ));
+  public JavaSetDataType(JavaDataType wrappedType) {
+    mWrappedValueType = wrappedType;
+    setQualifiedClassName(
+        QualifiedName.parse("java.util.Set<" + wrappedType.qualifiedClassName().className() + ">"));
+    setTypeName(ParseTools.PKG_SET + "<"
+        + ParseTools.importExprWithClassName(wrappedValueType().qualifiedClassName()) + ">");
   }
 
   public JavaDataType wrappedValueType() {
     return mWrappedValueType;
-  }
-
-  @Override
-  protected String provideTypeName() {
-    QualifiedName valName = wrappedValueType().qualifiedClassName();
-    return ParseTools.PKG_SET + "<" + ParseTools.importExprWithClassName(valName) + ">";
   }
 
   @Override
@@ -79,7 +73,7 @@ public class JavaSetDataType extends JavaDataType {
       return;
     }
     if (Context.debugMode()) {
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfSet(valueExpression) );
+      s.a(targetExpression, " = ", ParseTools.immutableCopyOfSet(valueExpression));
       return;
     }
     super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);

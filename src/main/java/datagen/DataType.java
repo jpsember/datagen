@@ -59,11 +59,13 @@ public abstract class DataType implements DefaultValueParser {
     todo("have version of method that accepts interface, static, and builder versions");
     todo("unify the QualifiedClassName with the typeName somehow");
     // TODO: rename this method later, after refactoring done
-    setQualifiedClassName(
-       QualifiedName.parse(qualClassNameExpr //
-          // , null, Utils.language() //
-        ));
+    setQualifiedClassName(QualifiedName.parse(qualClassNameExpr));
     return this;
+  }
+
+  protected final void setTypeName(String typeName) {
+    checkState(mTypeName == null, "type name already set");
+    mTypeName = typeName;
   }
 
   public void setQualifiedClassName(QualifiedName qualifiedName) {
@@ -77,34 +79,20 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   /**
-   * Construct name of type, wrapped if necessary within an "import expression"
-   * so that we are sure to generate import statements if the type appears in
-   * the source.
-   * 
-   * Can be overridden for compound types (maps, lists) to ensure the other
-   * types are wrapped in import expressions as well
-   */
-  @Deprecated
-  protected String provideTypeName() {
-    todo(
-        "Explicitly set qualified name, with appropriate wrapping; typeName() should just refer to that variable");
-    if (isPrimitive())
-      return qualifiedClassName().className();
-
-    // Wrap the type name within an import expression so that whenever it is used,
-    // we ensure it is imported
-    // The assumption is that import expressions are needed iff type is not primitive
-    //
-    return ParseTools.importedClassExpr(null, qualifiedClassName().combined()).toString();
-  }
-
-  /**
    * Get type name, by calling provideTypeName() if necessary
    */
   public final String typeName() {
     alert("what's the difference between typeName and qualifiedClassName?");
     if (mTypeName == null) {
-      mTypeName = provideTypeName();
+      if (isPrimitive())
+        mTypeName = qualifiedClassName().className();
+      else {
+        // Wrap the type name within an import expression so that whenever it is used,
+        // we ensure it is imported
+        // The assumption is that import expressions are needed iff type is not primitive
+        //
+        mTypeName = ParseTools.importedClassExpr(null, qualifiedClassName().combined()).toString();
+      }
     }
     return mTypeName;
   }

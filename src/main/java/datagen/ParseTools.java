@@ -194,10 +194,7 @@ public final class ParseTools {
         if (mLanguage == null)
           mLanguage = language();
         try {
-          QualifiedName qn = QualifiedName.parse(mQualifiedClassName //
-          //          , null, language //
-          );
-          checkState(nonEmpty(qn.packagePath()));
+          QualifiedName qn = QualifiedName.parse(mQualifiedClassName);
           String className = qn.className();
           mString = importExprWithCode(mQualifiedClassName, className);
         } catch (Throwable t) {

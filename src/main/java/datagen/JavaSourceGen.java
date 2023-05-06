@@ -179,11 +179,9 @@ public final class JavaSourceGen extends SourceGen {
       s.br();
       if (f.deprecated())
         s.a("@Deprecated", CR);
-
       if (false && alert("tracking type names") && sDebugSet.add(f.dataType().typeName())) {
         pr("typeName:", f.dataType().typeName(), "qual:", INDENT, f.dataType().qualifiedClassName());
       }
-      
       s.a("public ", f.dataType().typeName(), " ", f.getterName(), "()", OPEN, //
           "return ", f.instanceName(), ";", CLOSE);
     }
@@ -229,11 +227,9 @@ public final class JavaSourceGen extends SourceGen {
   protected String generateInstanceFields() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
-
     for (FieldDef f : def.fields())
       s.a("protected ", f.dataType().typeName(), " ", f.instanceName(), ";", CR);
     s.a("protected int m__hashcode;");
-
     return content();
   }
 

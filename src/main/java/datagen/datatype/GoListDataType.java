@@ -5,25 +5,23 @@ import static datagen.SourceBuilder.*;
 
 import datagen.DataType;
 import datagen.FieldDef;
-import datagen.JavaDataType;
+import datagen.GoDataType;
 import datagen.QualifiedName;
 import datagen.SourceBuilder;
 import js.json.JSList;
 import js.json.JSMap;
 import js.json.JSUtils;
 
-public class GoListDataType extends JavaDataType {
+public class GoListDataType extends GoDataType {
 
   public GoListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
-    setQualifiedClassName(QualifiedName.parse("[]" + wrappedType.qualifiedClassName().className() //
-   //  , null, Language.JAVA  //
-        )); 
+    setQualifiedClassName(QualifiedName.parse("[]" + wrappedType.qualifiedClassName().className()));
   }
 
   @Override
-  protected String provideTypeName() {
-    return qualifiedClassName().className();
+  public boolean isPrimitive() {
+    return true;
   }
 
   @Override
