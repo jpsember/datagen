@@ -32,6 +32,7 @@
           "misspelledString" : 9068,
           "multiLineComment" : 4877,
        "multiLineCommentOld" : 2855,
+     "multipleContractTypes" : 2193,
                "optComments" : 4894,
             "optCommentsOld" : 1080,
         "qualifiedReference" : 4747,

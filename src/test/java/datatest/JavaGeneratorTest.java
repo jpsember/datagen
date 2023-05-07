@@ -330,6 +330,7 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
+
   /**
    * Fields of type 'string' must not be declared as 'String'
    */

@@ -56,10 +56,21 @@ public abstract class DataType implements DefaultValueParser {
    * </pre>
    */
   public final DataType with(String qualClassNameExpr) {
-    todo("have version of method that accepts interface, static, and builder versions");
-    todo("unify the QualifiedClassName with the typeName somehow");
-    // TODO: rename this method later, after refactoring done
-    setQualifiedClassName(QualifiedName.parse(qualClassNameExpr));
+    return withQualifiedName(QualifiedName.parse(qualClassNameExpr));
+  }
+
+  /**
+   * Set the 'alternate' type name
+   * 
+   * For the Go language, when manipulating contract data types (e.g. dog.dat),
+   * we will usually refer to the type by its interface: IDog. The alternate
+   * form will be the non-interface, built form: "Dog".
+   *
+   * Languages that don't need this feature need not call this method
+   */
+  public final DataType withAlt(String qualClassNameExpr) {
+    checkState(mAltClassWithPackage == null);
+    mAltClassWithPackage = QualifiedName.parse(qualClassNameExpr);
     return this;
   }
 
@@ -68,14 +79,22 @@ public abstract class DataType implements DefaultValueParser {
     mTypeName = typeName;
   }
 
-  public void setQualifiedClassName(QualifiedName qualifiedName) {
+  public DataType withQualifiedName(QualifiedName qualifiedName) {
     checkState(mClassWithPackage == null);
     mClassWithPackage = qualifiedName;
+    return this;
   }
 
   public final QualifiedName qualifiedClassName() {
     checkNotNull(mClassWithPackage);
     return mClassWithPackage;
+  }
+
+  public final QualifiedName altQualifiedClassName() {
+    if (mAltClassWithPackage == null) {
+      mAltClassWithPackage = qualifiedClassName();
+    }
+    return mAltClassWithPackage;
   }
 
   /**
@@ -97,24 +116,9 @@ public abstract class DataType implements DefaultValueParser {
     return mTypeName;
   }
 
-  /**
-   * Get the 'alternate' type name, calling provideAlternateTypeName() if
-   * necessary.
-   * 
-   * For the Go language, when manipulating contract data types (e.g. dog.dat),
-   * we will usually refer to the type by its interface: IDog. The alternate
-   * form will be the non-interface, built form: "Dog"; this method can be
-   * overridden to make this distinction.
-   *
-   * Languages that don't need this feature should not override this method.
-   */
-  protected String provideAlternateTypeName() {
-    return typeName();
-  }
-
   public final String alternateTypeName() {
     if (mAlternateTypeName == null) {
-      mAlternateTypeName = provideAlternateTypeName();
+      mAlternateTypeName = ParseTools.importedClassExpr(null, altQualifiedClassName().combined()).toString();
     }
     return mAlternateTypeName;
   }
@@ -122,6 +126,7 @@ public abstract class DataType implements DefaultValueParser {
   private String mTypeName;
   private String mAlternateTypeName;
   private QualifiedName mClassWithPackage;
+  private QualifiedName mAltClassWithPackage;
 
   //------------------------------------------------------------------
 

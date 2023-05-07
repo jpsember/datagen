@@ -175,7 +175,7 @@ final class DataDefinitionParser extends BaseObject {
     String nameExpression = read(ID);
     read(SEMI);
     QualifiedName q = QualifiedName.parse(nameExpression, packageName());
-    dataType.setQualifiedClassName(q);
+    dataType.withQualifiedName(q);
     dataType.setDeclaredFlag();
     Context.dataTypeManager.add(q.className(), dataType);
   }
@@ -351,7 +351,7 @@ final class DataDefinitionParser extends BaseObject {
         DOT_EXT_DATA_DEFINITION);
     enumName = DataUtil.convertUnderscoresToCamelCase(className2);
     QualifiedName className = QualifiedName.parse(enumName, packageName());
-    enumDataType.setQualifiedClassName(className);
+    enumDataType.withQualifiedName(className);
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType, false));
 
     Context.generatedTypeDef.setDeprecated(readIf(DEPRECATION));

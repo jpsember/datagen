@@ -74,13 +74,16 @@ public class GoGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void contractTypes() {
-    p().pr("class {", INDENT, //
-        "string name = \"kirby\";", CR, //
-        "*string children = [\"winken\",\"blinken\",\"nod\"];", CR, //
-        "*int lucky_numbers = [9, 14 ];", CR, OUTDENT, "}");
+  public void contract() {
+    rv();
+    p().pr("extern abc.Crow;", CR,  //
+        "class {", INDENT, //
+        "Crow boss;",CR, //
+        "*Crow henchmen;",CR //
+         , OUTDENT, "}");
     compile();
   }
+
 
   @Test
   public void externalRepeated() {

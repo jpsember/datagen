@@ -1,5 +1,6 @@
 package datagen.datatype;
 
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
@@ -17,8 +18,12 @@ import datagen.QualifiedName;
 public class GoContractDataType extends GoDataType {
 
   @Override
-  public void setQualifiedClassName(QualifiedName qualifiedName) {
-    super.setQualifiedClassName(qualifiedName.withClassName("I" + qualifiedName.className()));
+  public DataType withQualifiedName(QualifiedName qualifiedName) {
+    // Have the 'main' type name be the interface, e.g. ICat
+    super.withQualifiedName(qualifiedName.withClassName("I" + qualifiedName.className()));
+    // Have the 'alternate' type name be the static name, e.g. Cat
+    withAlt(qualifiedName.combined());
+    return this;
   }
 
   @Override
@@ -26,36 +31,9 @@ public class GoContractDataType extends GoDataType {
     throw notFinished("add default values for contract types");
   }
 
-  private QualifiedName alternateQualifiedClassName() {
-    if (mAlternateClassWithPackage == null) {
-      String alt = alternateTypeName();
-      // If this looks like an import expression, just use the class name
-      // (this stuff is getting complicated... refactor at some point)
-      if (alt.startsWith("{{")) {
-        int i = alt.indexOf('|');
-        alt = alt.substring(i + 1, alt.length() - 2);
-      }
-      mAlternateClassWithPackage = qualifiedClassName().withClassName(alt);
-    }
-    return mAlternateClassWithPackage;
-  }
-
   @Override
   public String provideSourceDefaultValue() {
-    return "Default" + ParseTools.importExprWithClassName(alternateQualifiedClassName());
-  }
-
-  @Override
-  protected String provideAlternateTypeName() {
-    String n = typeName();
-
-    // Delete any occurrences of 'OrBuilder' if they are followed by | or }
-    //
-    // i.e., an example is: "{{exp.ICat|ICat}}"
-    //
-    n = n.replace("OrBuilder|", "|");
-    n = n.replace("OrBuilder}", "}");
-    return n;
+    return "Default" + ParseTools.importExprWithClassName(altQualifiedClassName());
   }
 
   // Make this final for now to avoid unintended overriding
@@ -65,7 +43,7 @@ public class GoContractDataType extends GoDataType {
     // and store that parsed value.
     // Otherwise, if there is no value, leave the current value alone (which may be None, e.g. if value is optional)
     //
-    s.a(OPEN, "var x = s.OptMap(\"", f.name(), "\")", CR, //
+     s.a(OPEN, "var x = s.OptMap(\"", f.name(), "\")", CR, //
         "if x != nil ", OPEN, //
         "n.", f.instanceName(), " = Default", alternateTypeName(), ".Parse(x).(", typeName(), ")", //
         CLOSE, //
@@ -99,7 +77,5 @@ public class GoContractDataType extends GoDataType {
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
     return "Default" + alternateTypeName() + ".Parse(" + jsentityExpression + ").(" + typeName() + ")";
   }
-
-  private QualifiedName mAlternateClassWithPackage;
 
 }

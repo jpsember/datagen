@@ -39,8 +39,8 @@ public class JavaMapDataType extends JavaDataType {
   public JavaMapDataType(JavaDataType keyType, JavaDataType valueType) {
     mWrappedKeyType = keyType;
     mWrappedValueType = valueType;
-    setQualifiedClassName(QualifiedName.parse("java.util.Map<" + keyType.qualifiedClassName().className()
-        + ", " + valueType.qualifiedClassName().className() + ">"));
+    with("java.util.Map<" + keyType.qualifiedClassName().className()
+        + ", " + valueType.qualifiedClassName().className() + ">");
     QualifiedName keyName = keyType.qualifiedClassName();
     QualifiedName valName = valueType.qualifiedClassName();
     setTypeName(ParseTools.PKG_MAP + "<" + ParseTools.importExprWithClassName(keyName) + ", "

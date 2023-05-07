@@ -163,9 +163,7 @@ public final class DataTypeManager extends BaseObject {
    */
   private void add(AbstractData defaultInstance, DefaultValueParser parser) {
     DataType dataType = constructContractDataType();
-    dataType.setQualifiedClassName(QualifiedName.parse(defaultInstance.getClass().getName() //
-        //, null, Language.JAVA //
-        ));
+    dataType.with(defaultInstance.getClass().getName());
     add(dataType.qualifiedClassName().className(), dataType, parser);
   }
 
@@ -184,8 +182,10 @@ public final class DataTypeManager extends BaseObject {
     }
   };
 
-  public Map<String,DataType> debugMap() {return mTypeMap;}
-  
+  public Map<String, DataType> debugMap() {
+    return mTypeMap;
+  }
+
   private final Map<String, DataType> mTypeMap;
   private final Map<String, DefaultValueParser> mDefaultValueParserMap;
 

@@ -231,7 +231,7 @@ public final class GeneratedTypeDef extends BaseObject {
         } else
           dataType = DataTypeManager.constructContractDataType();
 
-        dataType.setQualifiedClassName(qualName);
+        dataType.withQualifiedName(qualName);
         dataTypes.add(dataType.qualifiedClassName().className(), dataType);
       }
 

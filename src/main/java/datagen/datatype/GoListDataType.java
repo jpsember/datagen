@@ -6,7 +6,6 @@ import static datagen.SourceBuilder.*;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.GoDataType;
-import datagen.QualifiedName;
 import datagen.SourceBuilder;
 import js.json.JSList;
 import js.json.JSMap;
@@ -16,7 +15,7 @@ public class GoListDataType extends GoDataType {
 
   public GoListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
-    setQualifiedClassName(QualifiedName.parse("[]" + wrappedType.qualifiedClassName().className()));
+    with("[]" + wrappedType.qualifiedClassName().className());
   }
 
   @Override

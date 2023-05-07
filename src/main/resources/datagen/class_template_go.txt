@@ -18,13 +18,13 @@ import (
 }
 
 // ---------------------------------------------------------------------------------------
-// [!class] interface
+// [!interface_name] interface
 // ---------------------------------------------------------------------------------------
 
 type [!interface_name] interface {
   DataClass
 [!class_getter_declaration]
-  Build() *[!class]
+  Build() [!interface_name]
   ToBuilder() *[!builder_name]
 }
 
@@ -36,7 +36,7 @@ func New[!class]() *[!builder_name] {
 }
 
 // Construct a new static object, with fields initialized appropriately
-func new[!class]() *[!class] {
+func new[!class]() [!interface_name] {
   var m = [!class]{}
 [!class_init_fields_to_defaults]
   return &m
@@ -49,7 +49,7 @@ func new[!class]() *[!class] {
 
 [!class_getter_implementation]
 
-func (v *[!class]) Build() *[!class] {
+func (v *[!class]) Build() [!interface_name] {
   // This is already the immutable (built) version.
   return v
 }
@@ -69,7 +69,7 @@ func (v *[!class]) ToJson() any {
 
 func (v *[!class]) Parse(source any) DataClass {
   var s = source.(*JSMap)
-  var n = new[!class]()
+  var n = new[!class]().(*[!class])
 [!parse]
   return n
 }
@@ -88,9 +88,9 @@ func (v *[!class]) String() string {
 
 [!setters]
 
-func (v *[!builder_name]) Build() *[!class] {
+func (v *[!builder_name]) Build() [!interface_name] {
   var b = new([!class])
-  var s = &v.m
+  var s = v.m
 [!copyfield_from_builder]
   return b
 }
