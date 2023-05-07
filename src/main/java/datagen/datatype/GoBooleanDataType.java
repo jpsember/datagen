@@ -24,18 +24,17 @@
  **/
 package datagen.datatype;
 
-import static js.base.Tools.*;
-
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
 import js.json.JSMap;
 
 public final class GoBooleanDataType extends GoDataType {
+  
+  public static final DataType TYPE = new GoBooleanDataType().with("bool");
 
-  {
-    with("bool");
-    todo("make this a singleton");
+  private GoBooleanDataType() {
   }
 
   @Override

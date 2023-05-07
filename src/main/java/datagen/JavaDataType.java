@@ -20,7 +20,7 @@ public class JavaDataType extends DataType {
     // e.g. int, double, boolean
     // vs File, Integer, Double, Boolean
     //
-    return qualifiedClassName().className().charAt(0) >= 'a';
+    return qualifiedName().className().charAt(0) >= 'a';
   }
 
   @Override

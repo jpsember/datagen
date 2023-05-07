@@ -55,8 +55,8 @@ public abstract class DataType implements DefaultValueParser {
    * 
    * </pre>
    */
-  public final DataType with(String qualClassNameExpr) {
-    return withQualifiedName(QualifiedName.parse(qualClassNameExpr));
+  public final DataType with(String qualNameExpr) {
+    return withQualifiedName(QualifiedName.parse(qualNameExpr));
   }
 
   /**
@@ -66,11 +66,13 @@ public abstract class DataType implements DefaultValueParser {
    * we will usually refer to the type by its interface: IDog. The alternate
    * form will be the non-interface, built form: "Dog".
    *
-   * Languages that don't need this feature need not call this method
+   * Languages that don't need this feature need not call this method; in that
+   * case, the alternate qualified name will be set equal to the main qualified
+   * name.
    */
-  public final DataType withAlt(String qualClassNameExpr) {
-    checkState(mAltClassWithPackage == null);
-    mAltClassWithPackage = QualifiedName.parse(qualClassNameExpr);
+  public final DataType withAlt(String qualNameExpr) {
+    checkState(mAltQualifiedName == null);
+    mAltQualifiedName = QualifiedName.parse(qualNameExpr);
     return this;
   }
 
@@ -80,53 +82,56 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   public DataType withQualifiedName(QualifiedName qualifiedName) {
-    checkState(mClassWithPackage == null);
-    mClassWithPackage = qualifiedName;
+    checkState(mQualifiedName == null);
+    mQualifiedName = qualifiedName;
     return this;
   }
 
-  public final QualifiedName qualifiedClassName() {
-    checkNotNull(mClassWithPackage);
-    return mClassWithPackage;
+  public final QualifiedName qualifiedName() {
+    checkNotNull(mQualifiedName);
+    return mQualifiedName;
   }
 
-  public final QualifiedName altQualifiedClassName() {
-    if (mAltClassWithPackage == null) {
-      mAltClassWithPackage = qualifiedClassName();
+  public final QualifiedName altQualifiedName() {
+    if (mAltQualifiedName == null) {
+      mAltQualifiedName = qualifiedName();
     }
-    return mAltClassWithPackage;
+    return mAltQualifiedName;
   }
 
   /**
-   * Get type name, by calling provideTypeName() if necessary
+   * Get the type name. If not explicitly set previously, it is set to the
+   * qualifiedClassName.combined() value, wrapped within an import expression so
+   * that whenever it is used, it ensures that an appropriate import statement
+   * is added to the generated source file.
    */
   public final String typeName() {
-    alert("what's the difference between typeName and qualifiedClassName?");
     if (mTypeName == null) {
       if (isPrimitive())
-        mTypeName = qualifiedClassName().className();
+        setTypeName(qualifiedName().className());
       else {
-        // Wrap the type name within an import expression so that whenever it is used,
-        // we ensure it is imported
-        // The assumption is that import expressions are needed iff type is not primitive
-        //
-        mTypeName = ParseTools.importedClassExpr(null, qualifiedClassName().combined()).toString();
+        setTypeName(ParseTools.importedClassExpr(null, qualifiedName().combined()).toString());
       }
     }
     return mTypeName;
   }
 
+  /**
+   * Get the alternate type name. As with the main type name, if it has not been
+   * set previously, it is set to the wrapped altQualifiedClassName().combined()
+   * value.
+   */
   public final String alternateTypeName() {
     if (mAlternateTypeName == null) {
-      mAlternateTypeName = ParseTools.importedClassExpr(null, altQualifiedClassName().combined()).toString();
+      mAlternateTypeName = ParseTools.importedClassExpr(null, altQualifiedName().combined()).toString();
     }
     return mAlternateTypeName;
   }
 
   private String mTypeName;
   private String mAlternateTypeName;
-  private QualifiedName mClassWithPackage;
-  private QualifiedName mAltClassWithPackage;
+  private QualifiedName mQualifiedName;
+  private QualifiedName mAltQualifiedName;
 
   //------------------------------------------------------------------
 

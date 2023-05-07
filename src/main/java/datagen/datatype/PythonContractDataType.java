@@ -39,7 +39,7 @@ public class PythonContractDataType extends PythonDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return ParseTools.importExprWithClassName(qualifiedClassName()) + ".default_instance";
+    return ParseTools.importExprWithClassName(qualifiedName()) + ".default_instance";
   }
 
   public String getConstructFromX() {

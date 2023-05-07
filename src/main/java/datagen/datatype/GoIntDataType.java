@@ -44,7 +44,6 @@ public final class GoIntDataType extends GoDataType {
   }
 
   public GoIntDataType(int nbits) {
-
     switch (nbits) {
     case 8:
     case 16:
@@ -56,7 +55,6 @@ public final class GoIntDataType extends GoDataType {
       throw badArg("nbits:", nbits);
     }
     mBits = nbits;
-    todo("make this a singleton");
   }
 
   private final int mBits;

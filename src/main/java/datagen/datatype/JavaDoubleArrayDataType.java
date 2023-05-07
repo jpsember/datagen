@@ -28,6 +28,7 @@ import static js.base.Tools.*;
 
 import java.util.List;
 
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
@@ -35,9 +36,9 @@ import js.json.JSMap;
 
 public class JavaDoubleArrayDataType extends JavaContractDataType {
 
-  {
-    with("java.lang.double[]");
-    todo("make this a singleton");
+  public static final DataType TYPE = new JavaDoubleArrayDataType().with("java.lang.double[]");
+
+  private JavaDoubleArrayDataType() {
   }
 
   @Override

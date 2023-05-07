@@ -59,26 +59,26 @@ public final class DataTypeManager extends BaseObject {
       add("long", new GoIntDataType(64));
       add("float", new GoFloatDataType(32));
       add("double", new GoFloatDataType(64));
-      add("bool", new GoBooleanDataType());
-      add("string", new GoStringDataType());
+      add("bool", GoBooleanDataType.TYPE);
+      add("string", GoStringDataType.TYPE);
     }
       break;
     case PYTHON:
-      tmp = new PyIntDataType();
+      tmp = PyIntDataType.TYPE;
       add("byte", tmp);
       add("short", tmp);
       add("int", tmp);
       add("long", tmp);
       // There is no distinction between floats and doubles in Python 
-      tmp = new PyFloatDataType();
+      tmp = PyFloatDataType.TYPE;
       add("float", tmp);
       add("double", tmp);
-      add("File", new PyStringDataType());
-      add("IPoint", new PyIPointDataType());
-      add("bool", new PyBooleanDataType());
-      add("string", new PyStringDataType());
-      add("JSMap", new PythonJsonMapDataType());
-      add("Matrix", new PyMatrixDataType());
+      add("File", PyStringDataType.TYPE);
+      add("IPoint", PyIPointDataType.TYPE);
+      add("bool", PyBooleanDataType.TYPE);
+      add("string", PyStringDataType.TYPE);
+      add("JSMap", PythonJsonMapDataType.TYPE);
+      add("Matrix", PyMatrixDataType.TYPE);
       break;
     case JAVA:
       add("byte", JavaPrimitiveByteDataType.PRIM_TYPE);
@@ -134,7 +134,7 @@ public final class DataTypeManager extends BaseObject {
         if (sb.length() == 0)
           sb.append("Unused references:\n");
         sb.append("  ");
-        sb.append(x.qualifiedClassName().combined());
+        sb.append(x.qualifiedName().combined());
       }
     }
     return sb.toString();
@@ -164,7 +164,7 @@ public final class DataTypeManager extends BaseObject {
   private void add(AbstractData defaultInstance, DefaultValueParser parser) {
     DataType dataType = constructContractDataType();
     dataType.with(defaultInstance.getClass().getName());
-    add(dataType.qualifiedClassName().className(), dataType, parser);
+    add(dataType.qualifiedName().className(), dataType, parser);
   }
 
   private void add(AbstractData defaultInstance) {

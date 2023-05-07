@@ -63,7 +63,7 @@ public class JavaPrimitiveDoubleDataType extends JavaDataType {
 
   @Override
   public DataType listVariant() {
-    return new JavaDoubleArrayDataType();
+    return JavaDoubleArrayDataType.TYPE;
   }
 
   private static class Boxed extends JavaPrimitiveDoubleDataType {

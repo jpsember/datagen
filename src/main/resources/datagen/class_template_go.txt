@@ -1,15 +1,12 @@
-// ---------------------------------------------------------------------------------------
-// Generated code: DO NOT MODIFY
-// ---------------------------------------------------------------------------------------
-
+@@// ---------------------------------------------------------------------------------------
+@@// Generated code: DO NOT MODIFY
+@@// ---------------------------------------------------------------------------------------
+@@
 [!package_decl]
 
 import (
 [!imports])
 
-@@//
-@@// Generated Go data class (do not edit!)
-@@//
 [!deprecated]type [!class] struct {
 [!instance_fields]}
 
@@ -75,9 +72,8 @@ func (v *[!class]) Parse(source any) DataClass {
 }
 
 func (v *[!class]) String() string {
-  var x = v.ToJson()
-  var x2 = x.(*JSMap)
-  return PrintJSEntity(x2, true)
+  var x = v.ToJson().(*JSMap)
+  return PrintJSEntity(x, true)
 }
 
 // ---------------------------------------------------------------------------------------

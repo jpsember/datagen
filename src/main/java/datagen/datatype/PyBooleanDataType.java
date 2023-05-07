@@ -26,6 +26,7 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
@@ -34,15 +35,16 @@ import js.json.JSMap;
 
 public class PyBooleanDataType extends PythonDataType {
 
-  {
-    with("bool");
-    todo("make this a singleton");
+  public static final DataType TYPE = new PyBooleanDataType().with("bool");
+
+  private PyBooleanDataType() {
   }
+
   @Override
   public final String compilerInitialValue() {
     return "False";
   }
- 
+
   @Override
   public String parseDefaultValue(SourceBuilder sb, FieldDef fieldDef, JSMap json) {
     Boolean b = json.getBoolean("");

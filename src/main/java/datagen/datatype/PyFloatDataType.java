@@ -24,8 +24,7 @@
  **/
 package datagen.datatype;
 
-import static js.base.Tools.*;
-
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
@@ -33,9 +32,9 @@ import js.json.JSMap;
 
 public class PyFloatDataType extends PythonDataType {
 
-  {
-    with("float");
-    todo("make this a singleton");
+  public static final DataType TYPE = new PyFloatDataType().with("float");
+
+  private PyFloatDataType() {
   }
 
   @Override

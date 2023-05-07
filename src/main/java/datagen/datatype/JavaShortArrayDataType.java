@@ -26,15 +26,16 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
 
 public class JavaShortArrayDataType extends JavaContractDataType {
 
-  {
-    with("java.lang.short[]");
-    todo("make this a singleton");
+  public static final DataType TYPE = new JavaShortArrayDataType().with("java.lang.short[]");
+
+  private JavaShortArrayDataType() {
   }
 
   @Override

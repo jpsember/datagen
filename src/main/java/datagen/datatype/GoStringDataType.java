@@ -24,8 +24,7 @@
  **/
 package datagen.datatype;
 
-import static js.base.Tools.*;
-
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
@@ -34,9 +33,9 @@ import js.json.JSMap;
 
 public final class GoStringDataType extends GoDataType {
 
-  {
-    with("string");
-    todo("make this a singleton");
+  public static final DataType TYPE = new GoStringDataType().with("string");
+
+  private GoStringDataType() {
   }
 
   @Override

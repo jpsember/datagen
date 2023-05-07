@@ -66,7 +66,7 @@ public class JavaPrimitiveByteDataType extends JavaDataType {
 
   @Override
   public DataType listVariant() {
-    return new JavaByteArrayDataType();
+    return JavaByteArrayDataType.TYPE;
   }
 
   private static class Boxed extends JavaPrimitiveByteDataType {

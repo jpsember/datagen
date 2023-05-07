@@ -23,13 +23,14 @@
  * 
  **/
 package datagen.datatype;
-import static js.base.Tools.*;
+
+import datagen.DataType;
 
 public class PyMatrixDataType extends PythonContractDataType {
 
-  {
-    with("pycore.matrix.Matrix");
-    todo("make this a singleton");
+  public static final DataType TYPE = new PyMatrixDataType().with("pycore.matrix.Matrix");
+
+  private PyMatrixDataType() {
   }
 
   public String getConstructFromX() {

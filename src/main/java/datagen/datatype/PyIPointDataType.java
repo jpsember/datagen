@@ -26,16 +26,17 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
 import js.json.JSList;
 import js.json.JSMap;
 
 public class PyIPointDataType extends PythonContractDataType {
+ 
+  public static final DataType TYPE = new PyIPointDataType().with("pycore.ipoint.IPoint");
 
-  {
-    with("pycore.ipoint.IPoint");
-    todo("make this a singleton");
+  private PyIPointDataType() {
   }
 
   public String getConstructFromX() {

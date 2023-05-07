@@ -31,16 +31,15 @@ import datagen.Context;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
-import datagen.QualifiedName;
 import datagen.SourceBuilder;
 
 public class JavaSetDataType extends JavaDataType {
 
   public JavaSetDataType(JavaDataType wrappedType) {
     mWrappedValueType = wrappedType;
-    with("java.util.Set<" + wrappedType.qualifiedClassName().className() + ">");
+    with("java.util.Set<" + wrappedType.qualifiedName().className() + ">");
     setTypeName(ParseTools.PKG_SET + "<"
-        + ParseTools.importExprWithClassName(wrappedValueType().qualifiedClassName()) + ">");
+        + ParseTools.importExprWithClassName(wrappedValueType().qualifiedName()) + ">");
   }
 
   public JavaDataType wrappedValueType() {

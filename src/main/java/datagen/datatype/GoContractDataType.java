@@ -33,7 +33,7 @@ public class GoContractDataType extends GoDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return "Default" + ParseTools.importExprWithClassName(altQualifiedClassName());
+    return "Default" + ParseTools.importExprWithClassName(altQualifiedName());
   }
 
   // Make this final for now to avoid unintended overriding

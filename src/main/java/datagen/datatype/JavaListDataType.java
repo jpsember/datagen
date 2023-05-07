@@ -32,7 +32,6 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
-import datagen.QualifiedName;
 import datagen.SourceBuilder;
 import js.json.JSList;
 import js.json.JSMap;
@@ -42,9 +41,9 @@ public class JavaListDataType extends JavaDataType {
 
   public JavaListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
-    with("java.util.List<" + wrappedType.qualifiedClassName().className() + ">");
-    setTypeName(ParseTools.PKG_LIST + "<"
-        + ParseTools.importExprWithClassName(wrappedType().qualifiedClassName()) + ">");
+    with("java.util.List<" + wrappedType.qualifiedName().className() + ">");
+    setTypeName(
+        ParseTools.PKG_LIST + "<" + ParseTools.importExprWithClassName(wrappedType().qualifiedName()) + ">");
   }
 
   @Override
@@ -105,8 +104,6 @@ public class JavaListDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    todo(
-        "the sourceDeserializeFromList method seems to be misnamed, as it is actually reading a list from a JSMap first");
     wrappedType().sourceDeserializeFromList(s, f);
   }
 

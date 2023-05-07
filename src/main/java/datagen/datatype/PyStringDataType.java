@@ -27,6 +27,7 @@ package datagen.datatype;
 import static js.base.Tools.*;
 import static datagen.SourceBuilder.*;
 
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
@@ -35,9 +36,9 @@ import js.json.JSMap;
 
 public final class PyStringDataType extends PythonDataType {
 
-  {
-    with("str");
-    todo("make this a singleton");
+  public static final DataType TYPE = new PyStringDataType().with("str");
+
+  private PyStringDataType() {
   }
 
   @Override

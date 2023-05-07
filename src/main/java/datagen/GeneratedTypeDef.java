@@ -232,7 +232,7 @@ public final class GeneratedTypeDef extends BaseObject {
           dataType = DataTypeManager.constructContractDataType();
 
         dataType.withQualifiedName(qualName);
-        dataTypes.add(dataType.qualifiedClassName().className(), dataType);
+        dataTypes.add(dataType.qualifiedName().className(), dataType);
       }
 
       if (partialType.enumFlag())

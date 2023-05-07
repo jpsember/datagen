@@ -46,7 +46,7 @@ public class JavaContractDataType extends JavaDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return ParseTools.importExprWithClassName(qualifiedClassName()) + ".DEFAULT_INSTANCE";
+    return ParseTools.importExprWithClassName(qualifiedName()) + ".DEFAULT_INSTANCE";
   }
 
   public String getConstructFromX() {

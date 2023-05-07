@@ -26,6 +26,7 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
@@ -37,9 +38,9 @@ import datagen.SourceBuilder;
  */
 public final class PythonJsonMapDataType extends PythonDataType {
 
-  {
-    with("dict");
-    todo("make this a singleton");
+  public static final DataType TYPE = new PythonJsonMapDataType().with("dict");
+
+  private PythonJsonMapDataType() {
   }
 
   @Override

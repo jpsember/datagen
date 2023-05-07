@@ -15,7 +15,7 @@ public class GoListDataType extends GoDataType {
 
   public GoListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
-    with("[]" + wrappedType.qualifiedClassName().className());
+    with("[]" + wrappedType.qualifiedName().className());
   }
 
   @Override

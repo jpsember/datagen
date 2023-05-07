@@ -26,15 +26,16 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
 
 public class JavaFloatArrayDataType extends JavaContractDataType {
 
-  {
-    with("java.lang.float[]");
-    todo("make this a singleton");
+  public static final DataType TYPE = new JavaFloatArrayDataType().with("java.lang.float[]");
+
+  private JavaFloatArrayDataType() {
   }
 
   @Override

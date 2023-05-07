@@ -63,7 +63,7 @@ public class JavaPrimitiveIntegerDataType extends JavaDataType {
 
   @Override
   public DataType listVariant() {
-    return new JavaIntArrayDataType();
+    return JavaIntArrayDataType.TYPE;
   }
 
   private static class Boxed extends JavaPrimitiveIntegerDataType {

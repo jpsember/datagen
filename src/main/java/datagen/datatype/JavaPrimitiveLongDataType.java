@@ -66,7 +66,7 @@ public class JavaPrimitiveLongDataType extends JavaDataType {
 
   @Override
   public DataType listVariant() {
-    return new JavaLongArrayDataType();
+    return JavaLongArrayDataType.TYPE;
   }
 
   private static class Boxed extends JavaPrimitiveLongDataType {

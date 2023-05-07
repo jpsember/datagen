@@ -63,7 +63,7 @@ public class JavaPrimitiveShortDataType extends JavaDataType {
 
   @Override
   public DataType listVariant() {
-    return new JavaShortArrayDataType();
+    return JavaShortArrayDataType.TYPE;
   }
 
   private static class Boxed extends JavaPrimitiveShortDataType {

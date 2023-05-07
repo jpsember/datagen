@@ -26,15 +26,16 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.SourceBuilder;
 
 public class JavaByteArrayDataType extends JavaContractDataType {
 
-  {
-    with("java.lang.byte[]");
-    todo("make this a singleton");
+  public static final DataType TYPE = new JavaByteArrayDataType().with("java.lang.byte[]");
+
+  private JavaByteArrayDataType() {
   }
 
   @Override
