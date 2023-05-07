@@ -31,7 +31,6 @@ import datagen.Context;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
-import datagen.QualifiedName;
 import datagen.SourceBuilder;
 
 public class JavaMapDataType extends JavaDataType {
@@ -41,10 +40,12 @@ public class JavaMapDataType extends JavaDataType {
     mWrappedValueType = valueType;
     with("java.util.Map<" + keyType.qualifiedName().className()
         + ", " + valueType.qualifiedName().className() + ">");
-    QualifiedName keyName = keyType.qualifiedName();
-    QualifiedName valName = valueType.qualifiedName();
-    setTypeName(ParseTools.PKG_MAP + "<" + ParseTools.importExprWithClassName(keyName) + ", "
-        + ParseTools.importExprWithClassName(valName) + ">");
+//    
+//    
+//    QualifiedName keyName = keyType.qualifiedName();
+//    QualifiedName valName = valueType.qualifiedName();
+//    setTypeName(ParseTools.PKG_MAP + "<" + ParseTools.importExprWithClassName(keyName) + ", "
+//        + ParseTools.importExprWithClassName(valName) + ">");
   }
 
   public JavaDataType wrappedKeyType() {

@@ -38,8 +38,8 @@ public class JavaSetDataType extends JavaDataType {
   public JavaSetDataType(JavaDataType wrappedType) {
     mWrappedValueType = wrappedType;
     with("java.util.Set<" + wrappedType.qualifiedName().className() + ">");
-    setTypeName(ParseTools.PKG_SET + "<"
-        + ParseTools.importExprWithClassName(wrappedValueType().qualifiedName()) + ">");
+//    setTypeName(ParseTools.PKG_SET + "<"
+//        + ParseTools.importExprWithClassName(wrappedValueType().qualifiedName()) + ">");
   }
 
   public JavaDataType wrappedValueType() {

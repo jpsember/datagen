@@ -90,12 +90,11 @@ public final class GeneratedTypeDef extends BaseObject {
     return mUnsafe;
   }
 
-  @Deprecated
+  
   public final QualifiedName qualifiedName() {
     return mDataType.qualifiedName();
   }
 
-  @Deprecated
   public final QualifiedName altQualifiedName() {
     return mDataType.altQualifiedName();
   }

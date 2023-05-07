@@ -55,7 +55,7 @@ public class GoContractDataType extends GoDataType {
     //
     s.a(OPEN, "var x = s.OptMap(\"", f.name(), "\")", CR, //
         "if x != nil ", OPEN, //
-        "n.", f.instanceName(), " = Default", alternateTypeName(), ".Parse(x).(", typeName(), ")", //
+        "n.", f.instanceName(), " = Default", altQualifiedName().combined(), ".Parse(x).(", typeName(), ")", //
         CLOSE, //
         CLOSE);
   }
@@ -73,7 +73,7 @@ public class GoContractDataType extends GoDataType {
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String arg = f.instanceName();
     s.a("if ", arg, " == nil ", OPEN, //
-        "v.m.", f.instanceName(), " = Default", alternateTypeName(), //
+        "v.m.", f.instanceName(), " = Default", altQualifiedName().className(), //
         CR, "} else {", CR, "v.m.", f.instanceName(), " = ", arg, ".Build()", //,
         CLOSE);
   }
@@ -85,7 +85,7 @@ public class GoContractDataType extends GoDataType {
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-    return "Default" + alternateTypeName() + ".Parse(" + jsentityExpression + ").(" + typeName() + ")";
+    return "Default" + altQualifiedName().combined() + ".Parse(" + jsentityExpression + ").(" + typeName() + ")";
   }
 
 }

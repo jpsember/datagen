@@ -46,7 +46,7 @@ public final class GoSourceGen extends SourceGen {
   @Override
   protected String generatePackageDecl() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    String pkgName = def.packageName();
+    String pkgName = def.qualifiedName().packagePath();
     checkArgument(!pkgName.isEmpty(), "Package name is empty");
     return "package " + pkgName;
   }
@@ -109,7 +109,7 @@ public final class GoSourceGen extends SourceGen {
       // We also don't need to import anything from the local package
       // Assumes the class name includes a package
       String packageName = cn.substring(0, cn.lastIndexOf('.'));
-      if (packageName.equals(Context.generatedTypeDef.packageName()))
+      if (packageName.equals(Context.generatedTypeDef.qualifiedName().packagePath()))
         continue;
 
       s.a("import ", cn, ";").cr();
@@ -121,7 +121,8 @@ public final class GoSourceGen extends SourceGen {
   protected final String generateGetters() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
-      s.a("func (v *", def.wrappedType().alternateTypeName(), ") ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
+      s.a("func (v *", def.wrappedType().altQualifiedName().combined(), ") ", f.getterName(), "() ",
+          f.dataType().typeName(), " ", OPEN, //
           "return v.", f.instanceName(), CLOSE);
       s.br();
     }
@@ -219,7 +220,7 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected void addAdditionalTemplateValues(JSMap m) {
-    m.put("static_class", "s"+Context.generatedTypeDef.name());
+    m.put("static_class", "s" + Context.generatedTypeDef.name());
     m.put("class_init_fields_to_defaults", generateInitFieldsToDefaults());
     m.put("class_getter_declaration", generateClassGetterDeclaration());
     m.put("go_builder_getter_implementation", generateBuilderGetterImplementation());

@@ -42,8 +42,8 @@ public class JavaListDataType extends JavaDataType {
   public JavaListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
     with("java.util.List<" + wrappedType.qualifiedName().className() + ">");
-    setTypeName(
-        ParseTools.PKG_LIST + "<" + ParseTools.importExprWithClassName(wrappedType().qualifiedName()) + ">");
+//    setTypeName(
+//        ParseTools.PKG_LIST + "<" + ParseTools.importExprWithClassName(wrappedType().qualifiedName()) + ">");
   }
 
   @Override

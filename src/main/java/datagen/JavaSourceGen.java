@@ -46,9 +46,7 @@ public final class JavaSourceGen extends SourceGen {
   @Override
   protected String generatePackageDecl() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    String pkgName = def.packageName();
-    checkArgument(!pkgName.isEmpty(), "Package name is empty");
-    return "package " + pkgName + ";";
+    return "package " + def.qualifiedName().packagePath() + ";";
   }
 
   @Override
@@ -144,7 +142,7 @@ public final class JavaSourceGen extends SourceGen {
       // We also don't need to import anything from the local package
       // Assumes the class name includes a package
       String packageName = cn.substring(0, cn.lastIndexOf('.'));
-      if (packageName.equals(Context.generatedTypeDef.packageName()))
+      if (packageName.equals(Context.generatedTypeDef.qualifiedName().packagePath()))
         continue;
 
       s.a("import ", cn, ";").cr();

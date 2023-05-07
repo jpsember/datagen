@@ -70,10 +70,10 @@ public abstract class DataType implements DefaultValueParser {
     if (index == NAME_MAIN) {
       String typeName;
       todo("get rid of isPrimitive check here; constructor should somehow pass it in");
-//      if (isPrimitive())
-//        typeName = q.className();
-//      else
-        typeName = ParseTools.importedClassExpr(null, q.combined()).toString();
+      //      if (isPrimitive())
+      //        typeName = q.className();
+      //      else
+      typeName = ParseTools.importedClassExpr(null, q.combined()).toString();
       q.withEmbeddedName(typeName);
     }
     return with(index, q);
@@ -110,12 +110,10 @@ public abstract class DataType implements DefaultValueParser {
     return with(NAME_MAIN, qualifiedName);
   }
 
-   @Deprecated
   public final QualifiedName qualifiedName() {
     return qualifiedName(NAME_MAIN);
   }
 
-   @Deprecated
   public final QualifiedName altQualifiedName() {
     return qualifiedName(NAME_ALT);
   }
