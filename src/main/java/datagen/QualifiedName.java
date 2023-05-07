@@ -62,6 +62,12 @@ public final class QualifiedName extends BaseObject {
     return mClassName;
   }
 
+  public String embeddedName() {
+    if (mEmbeddedName == null)
+      throw badState("no embedded name yet for:", INDENT, this);
+    return mEmbeddedName;
+  }
+
   public String combined() {
     if (mCachedCombined == null) {
       String combined = className();
@@ -94,11 +100,20 @@ public final class QualifiedName extends BaseObject {
   public JSMap toJson() {
     JSMap m = map();
     m.put("class_name", className()).put("package_path", packagePath()).put("combined", combined());
+    if (mEmbeddedName != null)
+      m.put("embedded_name", mEmbeddedName);
     return m;
+  }
+
+  public QualifiedName withEmbeddedName(String typeName) {
+    checkState(mEmbeddedName == null, "already set to:", mEmbeddedName);
+    mEmbeddedName = typeName;
+    return this;
   }
 
   private final String mPackagePath;
   private final String mClassName;
+  private String mEmbeddedName;
   private String mCachedCombined;
 
   public String brief() {

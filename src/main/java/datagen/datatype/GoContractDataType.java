@@ -28,7 +28,7 @@ public class GoContractDataType extends GoDataType {
     String x = qualifiedName.combined();
     int i = x.lastIndexOf('.');
     checkArgument(i > 0, qualifiedName);
-    withAlt(x.substring(0, i + 1) + "s" + x.substring(i + 1));
+    with(NAME_ALT, x.substring(0, i + 1) + "s" + x.substring(i + 1));
     return this;
   }
 

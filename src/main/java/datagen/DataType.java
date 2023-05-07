@@ -26,12 +26,18 @@ package datagen;
 
 import static js.base.Tools.*;
 
+import java.util.Map;
+
 import static datagen.Utils.*;
 
 /**
  * Abstract base class for generating source code for a data type
  */
 public abstract class DataType implements DefaultValueParser {
+
+  public static final int NAME_MAIN = 0;
+  public static final int NAME_ALT = 1;
+  public static final int NAME_HUMAN = 2;
 
   // ------------------------------------------------------------------
   // Naming
@@ -56,7 +62,28 @@ public abstract class DataType implements DefaultValueParser {
    * </pre>
    */
   public final DataType with(String qualNameExpr) {
-    return withQualifiedName(QualifiedName.parse(qualNameExpr));
+    return with(0, qualNameExpr);
+  }
+
+  public final DataType with(int index, String qualNameExpr) {
+    QualifiedName q = QualifiedName.parse(qualNameExpr);
+    if (index == NAME_MAIN) {
+      String typeName;
+      todo("get rid of isPrimitive check here; constructor should somehow pass it in");
+//      if (isPrimitive())
+//        typeName = q.className();
+//      else
+        typeName = ParseTools.importedClassExpr(null, q.combined()).toString();
+      q.withEmbeddedName(typeName);
+    }
+    return with(index, q);
+  }
+
+  public final DataType with(int index, QualifiedName qualName) {
+    QualifiedName qOld = mQualNameMap.put(index, qualName);
+    if (qOld != null)
+      badState("duplicate qualified name for index", index, ":", INDENT, qualName, "was:", qOld);
+    return this;
   }
 
   /**
@@ -70,34 +97,45 @@ public abstract class DataType implements DefaultValueParser {
    * case, the alternate qualified name will be set equal to the main qualified
    * name.
    */
+  @Deprecated
   public final DataType withAlt(String qualNameExpr) {
-    checkState(mAltQualifiedName == null);
-    mAltQualifiedName = QualifiedName.parse(qualNameExpr);
-    return this;
+    return with(NAME_ALT, qualNameExpr);
   }
 
+  @Deprecated
   protected final void setTypeName(String typeName) {
-    checkState(mTypeName == null, "type name already set");
-    mTypeName = typeName;
   }
 
   public DataType withQualifiedName(QualifiedName qualifiedName) {
-    checkState(mQualifiedName == null);
-    mQualifiedName = qualifiedName;
-    return this;
+    return with(NAME_MAIN, qualifiedName);
   }
 
+   @Deprecated
   public final QualifiedName qualifiedName() {
-    checkNotNull(mQualifiedName);
-    return mQualifiedName;
+    return qualifiedName(NAME_MAIN);
   }
 
+   @Deprecated
   public final QualifiedName altQualifiedName() {
-    if (mAltQualifiedName == null) {
-      mAltQualifiedName = qualifiedName();
-    }
-    return mAltQualifiedName;
+    return qualifiedName(NAME_ALT);
   }
+
+  public QualifiedName qualifiedName(int index) {
+    QualifiedName q = optName(index);
+    if (q == null) {
+      if (index == NAME_MAIN)
+        throw badState("no qualified name with index", index, "for", getClass().getSimpleName());
+      q = qualifiedName(NAME_MAIN);
+      with(index, q);
+    }
+    return q;
+  }
+
+  private QualifiedName optName(int index) {
+    return mQualNameMap.get(index);
+  }
+
+  private Map<Integer, QualifiedName> mQualNameMap = hashMap();
 
   /**
    * Get the type name. If not explicitly set previously, it is set to the
@@ -106,14 +144,7 @@ public abstract class DataType implements DefaultValueParser {
    * is added to the generated source file.
    */
   public final String typeName() {
-    if (mTypeName == null) {
-      if (isPrimitive())
-        setTypeName(qualifiedName().className());
-      else {
-        setTypeName(ParseTools.importedClassExpr(null, qualifiedName().combined()).toString());
-      }
-    }
-    return mTypeName;
+    return qualifiedName(NAME_MAIN).className();
   }
 
   /**
@@ -121,17 +152,10 @@ public abstract class DataType implements DefaultValueParser {
    * set previously, it is set to the wrapped altQualifiedClassName().combined()
    * value.
    */
+  @Deprecated
   public final String alternateTypeName() {
-    if (mAlternateTypeName == null) {
-      mAlternateTypeName = ParseTools.importedClassExpr(null, altQualifiedName().combined()).toString();
-    }
-    return mAlternateTypeName;
+    return qualifiedName(NAME_ALT).combined();
   }
-
-  private String mTypeName;
-  private String mAlternateTypeName;
-  private QualifiedName mQualifiedName;
-  private QualifiedName mAltQualifiedName;
 
   //------------------------------------------------------------------
 
