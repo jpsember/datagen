@@ -167,6 +167,8 @@ public class PythonGeneratorTest extends GenBaseTest {
 
   @Test
   public void alternateSourcePath() {
+    rv();   
+    alert("was failing, not sure");
     addArg("python_source_path", sourceDir().toString() + "/alt");
     p().pr("fields {", INDENT, //
         "Foo delta;", CR, //

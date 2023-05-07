@@ -181,6 +181,8 @@ public abstract class SourceGen extends BaseObject {
    * </pre>
    */
   private String extractImportStatements(String template) {
+ //   halt("extractImportStatements from:", INDENT, template);
+
     Set<String> statementSet = hashSet();
     MacroParser parser = new MacroParser();
     parser.withPattern(ParseTools.IMPORT_REGEXP);

@@ -33,13 +33,15 @@ import static datagen.Utils.*;
 import datagen.datatype.JavaListDataType;
 import datagen.datatype.JavaMapDataType;
 import datagen.datatype.JavaSetDataType;
+import datagen.datatype.PythonContractDataType;
 import datagen.datatype.PythonListDataType;
 import datagen.datatype.EnumDataType;
+import datagen.datatype.GoContractDataType;
 import datagen.datatype.GoListDataType;
+import datagen.datatype.JavaContractDataType;
 import datagen.gen.PartialType;
 import datagen.gen.TypeStructure;
 import js.base.BaseObject;
-import js.json.JSMap;
 
 /**
  * Encapsulates a generated data type or enum
@@ -47,10 +49,29 @@ import js.json.JSMap;
 public final class GeneratedTypeDef extends BaseObject {
 
   public GeneratedTypeDef(String name, String packageName, DataType enumTypeOrNull, boolean classMode) {
-    setName(name);
-    mPackageName = nullToEmpty(packageName);
+
     mEnumDataType = (EnumDataType) enumTypeOrNull;
     mClassMode = classMode;
+
+    QualifiedName qn = QualifiedName.parse(packageName + "." + name);
+    DataType dataType;
+
+    switch (Utils.language()) {
+    case GO:
+      dataType = new GoContractDataType();
+      break;
+    case JAVA:
+      dataType = new JavaContractDataType();
+      break;
+    case PYTHON:
+      dataType = new PythonContractDataType();
+      break;
+    default:
+      throw notFinished();
+    }
+    dataType.withQualifiedName(qn);
+    mDataType = dataType;
+    setName(qn.className());
   }
 
   public void setDeprecated(boolean f) {
@@ -69,11 +90,21 @@ public final class GeneratedTypeDef extends BaseObject {
     return mUnsafe;
   }
 
+  public final QualifiedName qualifiedName() {
+    return mDataType.qualifiedName();
+  }
+
+  public final QualifiedName altQualifiedName() {
+    return mDataType.altQualifiedName();
+  }
+
+  private DataType mDataType;
   private boolean mDeprecated;
   private boolean mUnsafe;
 
   public String packageName() {
-    return mPackageName;
+    return qualifiedName().packagePath();
+    //    return mPackageName;
   }
 
   public List<FieldDef> fields() {
@@ -96,16 +127,16 @@ public final class GeneratedTypeDef extends BaseObject {
     return mEnumDataType;
   }
 
-  @Override
-  public JSMap toJson() {
-    JSMap m = super.toJson();
-    checkState(!isEnum(), "not supported yet");
-    for (FieldDef f : mFields)
-      m.put(f.name(), f.toJson());
-    if (nonEmpty(mPackageName))
-      m.put("java_package_name", mPackageName);
-    return m;
-  }
+  //  @Override
+  //  public JSMap toJson() {
+  //    JSMap m = super.toJson();
+  //    checkState(!isEnum(), "not supported yet");
+  //    for (FieldDef f : mFields)
+  //      m.put(f.name(), f.toJson());
+  //    if (nonEmpty(packageName()))
+  //      m.put("java_package_name", packageName());
+  //    return m;
+  //  }
 
   /**
    * Add a field to this data type
@@ -242,11 +273,15 @@ public final class GeneratedTypeDef extends BaseObject {
     return dataType;
   }
 
-  private final String mPackageName;
+  //private final String mPackageName;
   private final EnumDataType mEnumDataType;
   private final List<FieldDef> mFields = arrayList();
   private final Set<String> mFieldNames = hashSet();
   private final boolean mClassMode;
   private SourceBuilder mClassSpecificSourceBuilder;
   private String mClassSpecificSource;
+
+  public DataType wrappedType() {
+    return mDataType;
+  }
 }

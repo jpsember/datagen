@@ -27,6 +27,7 @@ package datagen.datatype;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
+import datagen.Context;
 import datagen.FieldDef;
 import datagen.ParseTools;
 import datagen.PythonDataType;
@@ -39,14 +40,22 @@ public class PythonContractDataType extends PythonDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return ParseTools.importExprWithClassName(qualifiedName()) + ".default_instance";
+    alert("This never seems to be necessary");
+    // Don't wrap the name into an import expression if this is the type we are generating
+    Object x = qualifiedName();
+    if (Context.generatedTypeDef.wrappedType() != this)
+      x = ParseTools.importExprWithClassName(qualifiedName());
+    else {
+      pr("************** didn't wrap it");
+      halt("unexpected");
+    }
+    return x + ".default_instance";
   }
 
   public String getConstructFromX() {
     todo("!this won't work for non-primitive data types");
     return "x.copy()";
   }
-
 
   // Make this final for now to avoid unintended overriding
   @Override

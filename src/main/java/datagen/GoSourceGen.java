@@ -121,7 +121,7 @@ public final class GoSourceGen extends SourceGen {
   protected final String generateGetters() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
-      s.a("func (v *", def.name(), ") ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
+      s.a("func (v *", def.wrappedType().alternateTypeName(), ") ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
           "return v.", f.instanceName(), CLOSE);
       s.br();
     }
@@ -219,11 +219,14 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected void addAdditionalTemplateValues(JSMap m) {
+    m.put("static_class", "s"+Context.generatedTypeDef.name());
     m.put("class_init_fields_to_defaults", generateInitFieldsToDefaults());
     m.put("class_getter_declaration", generateClassGetterDeclaration());
     m.put("go_builder_getter_implementation", generateBuilderGetterImplementation());
     m.put("builder_name", Context.generatedTypeDef.name() + "Builder");
     m.put("interface_name", "I" + Context.generatedTypeDef.name());
+    todo("change the default name to the 'plain' name");
+    m.put("default_var_name", "Default" + Context.generatedTypeDef.name());
   }
 
   private String generateInitFieldsToDefaults() {

@@ -19,12 +19,20 @@ public class GoContractDataType extends GoDataType {
 
   @Override
   public DataType withQualifiedName(QualifiedName qualifiedName) {
+    mOriginalQualifiedName = qualifiedName;
+
     // Have the 'main' type name be the interface, e.g. ICat
     super.withQualifiedName(qualifiedName.withClassName("I" + qualifiedName.className()));
     // Have the 'alternate' type name be the static name, e.g. Cat
-    withAlt(qualifiedName.combined());
+    // ...but preceded by a small s, so it is not exported?
+    String x = qualifiedName.combined();
+    int i = x.lastIndexOf('.');
+    checkArgument(i > 0, qualifiedName);
+    withAlt(x.substring(0, i + 1) + "s" + x.substring(i + 1));
     return this;
   }
+
+  private QualifiedName mOriginalQualifiedName;
 
   @Override
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap map) {
@@ -33,7 +41,9 @@ public class GoContractDataType extends GoDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return "Default" + ParseTools.importExprWithClassName(altQualifiedName());
+    String result = "Default" + ParseTools.importExprWithClassName(mOriginalQualifiedName);
+    pr("src default:", result);
+    return result;
   }
 
   // Make this final for now to avoid unintended overriding
@@ -43,7 +53,7 @@ public class GoContractDataType extends GoDataType {
     // and store that parsed value.
     // Otherwise, if there is no value, leave the current value alone (which may be None, e.g. if value is optional)
     //
-     s.a(OPEN, "var x = s.OptMap(\"", f.name(), "\")", CR, //
+    s.a(OPEN, "var x = s.OptMap(\"", f.name(), "\")", CR, //
         "if x != nil ", OPEN, //
         "n.", f.instanceName(), " = Default", alternateTypeName(), ".Parse(x).(", typeName(), ")", //
         CLOSE, //

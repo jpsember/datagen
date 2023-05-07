@@ -7,11 +7,11 @@
 import (
 [!imports])
 
-[!deprecated]type [!class] struct {
+[!deprecated]type [!static_class] struct {
 [!instance_fields]}
 
 [!deprecated]type [!builder_name] struct {
-  m [!class]
+  m [!static_class]
 }
 
 // ---------------------------------------------------------------------------------------
@@ -25,16 +25,16 @@ type [!interface_name] interface {
   ToBuilder() *[!builder_name]
 }
 
-var Default[!class] = new[!class]()
+var [!default_var_name] = new[!class]()
 
 // Convenience method to get a fresh builder.
 func New[!class]() *[!builder_name] {
-  return Default[!class].ToBuilder()
+  return [!default_var_name].ToBuilder()
 }
 
 // Construct a new static object, with fields initialized appropriately
 func new[!class]() [!interface_name] {
-  var m = [!class]{}
+  var m = [!static_class]{}
 [!class_init_fields_to_defaults]
   return &m
 }
@@ -46,32 +46,32 @@ func new[!class]() [!interface_name] {
 
 [!class_getter_implementation]
 
-func (v *[!class]) Build() [!interface_name] {
+func (v *[!static_class]) Build() [!interface_name] {
   // This is already the immutable (built) version.
   return v
 }
 
-func (v *[!class]) ToBuilder() *[!builder_name] {
+func (v *[!static_class]) ToBuilder() *[!builder_name] {
   var b = new([!builder_name])
   var d = &b.m
 [!copy_to_builder]
   return b
 }
 
-func (v *[!class]) ToJson() any {
+func (v *[!static_class]) ToJson() any {
   var m = NewJSMap()
 [!to_json]
   return m
 }
 
-func (v *[!class]) Parse(source any) DataClass {
+func (v *[!static_class]) Parse(source any) DataClass {
   var s = source.(*JSMap)
-  var n = new[!class]().(*[!class])
+  var n = new[!class]().(*[!static_class])
 [!parse]
   return n
 }
 
-func (v *[!class]) String() string {
+func (v *[!static_class]) String() string {
   var x = v.ToJson().(*JSMap)
   return PrintJSEntity(x, true)
 }
@@ -85,7 +85,7 @@ func (v *[!class]) String() string {
 [!setters]
 
 func (v *[!builder_name]) Build() [!interface_name] {
-  var b = new([!class])
+  var b = new([!static_class])
   var s = v.m
 [!copyfield_from_builder]
   return b
@@ -100,7 +100,7 @@ func (v *[!builder_name]) ToJson() any {
 }
 
 func (v *[!builder_name]) Parse(source any) DataClass {
-  return Default[!class].Parse(source)
+  return [!default_var_name].Parse(source)
 }
 
 func (v *[!builder_name]) String() string {
