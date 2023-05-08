@@ -38,18 +38,13 @@ import datagen.SourceBuilder;
  */
 public class PythonContractDataType extends PythonDataType {
 
+  public PythonContractDataType() {
+    alertVerbose();
+  }
+
   @Override
   public String provideSourceDefaultValue() {
-    alert("This never seems to be necessary");
-    // Don't wrap the name into an import expression if this is the type we are generating
-    Object x = qualifiedName();
-    if (Context.generatedTypeDef.wrappedType() != this)
-      x = ParseTools.importExprWithClassName(qualifiedName());
-    else {
-      pr("************** didn't wrap it");
-      halt("unexpected");
-    }
-    return x + ".default_instance";
+    return ParseTools.importExprWithClassName(qualifiedName()) + ".default_instance";
   }
 
   public String getConstructFromX() {

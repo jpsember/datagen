@@ -102,12 +102,12 @@ public final class GeneratedTypeDef extends BaseObject {
   private DataType mDataType;
   private boolean mDeprecated;
   private boolean mUnsafe;
-
-  @Deprecated
-  public String packageName() {
-    return qualifiedName().packagePath();
-    //    return mPackageName;
-  }
+//
+//  @Deprecated
+//  public String packageName() {
+//    return qualifiedName().packagePath();
+//    //    return mPackageName;
+//  }
 
   public List<FieldDef> fields() {
     return mFields;
@@ -255,7 +255,7 @@ public final class GeneratedTypeDef extends BaseObject {
     DataType dataType = dataTypes.get(partialType.name());
     if (dataType == null) {
       QualifiedName qualName = QualifiedName.parse(partialType.name(),
-          Context.generatedTypeDef.packageName());
+          Context.generatedTypeDef.qualifiedName().packagePath());
       dataType = dataTypes.get(qualName.className());
       if (dataType == null) {
 

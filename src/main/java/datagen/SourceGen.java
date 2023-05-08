@@ -97,7 +97,10 @@ public abstract class SourceGen extends BaseObject {
       parser.withTemplate(content).withMapper(m);
       content = parser.content();
     }
-
+    
+    pr(content);
+    halt();
+    
     // Pass 2: strip package names, add to set for import statements
     //
     content = extractImportStatements(content);

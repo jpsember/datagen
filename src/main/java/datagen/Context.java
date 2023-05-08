@@ -72,12 +72,7 @@ public final class Context {
   public static boolean debugMode() {
     return classMode() && !generatedTypeDef.isUnsafe();
   }
-
-  @Deprecated // debugMode suffices
-  public static boolean debugClassMode() {
-    return generatedTypeDef.classMode() && debugMode();
-  }
-
+ 
   /**
    * Discard some old elements
    */

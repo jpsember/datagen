@@ -28,12 +28,14 @@ import static js.base.Tools.*;
 
 import java.util.Map;
 
+import js.base.BaseObject;
+
 import static datagen.Utils.*;
 
 /**
  * Abstract base class for generating source code for a data type
  */
-public abstract class DataType implements DefaultValueParser {
+public abstract class DataType extends BaseObject implements DefaultValueParser {
 
   public static final int NAME_MAIN = 0;
   public static final int NAME_ALT = 1;
@@ -67,6 +69,10 @@ public abstract class DataType implements DefaultValueParser {
 
   public final DataType with(int index, String qualNameExpr) {
     QualifiedName q = QualifiedName.parse(qualNameExpr);
+    q.setVerbose(verbose());
+    if (verbose())
+      log("with", index, "QualifiedName:", INDENT, q);
+
     if (index == NAME_MAIN) {
       String typeName;
       todo("get rid of isPrimitive check here; constructor should somehow pass it in");
@@ -84,26 +90,6 @@ public abstract class DataType implements DefaultValueParser {
     if (qOld != null)
       badState("duplicate qualified name for index", index, ":", INDENT, qualName, "was:", qOld);
     return this;
-  }
-
-  /**
-   * Set the 'alternate' type name
-   * 
-   * For the Go language, when manipulating contract data types (e.g. dog.dat),
-   * we will usually refer to the type by its interface: IDog. The alternate
-   * form will be the non-interface, built form: "Dog".
-   *
-   * Languages that don't need this feature need not call this method; in that
-   * case, the alternate qualified name will be set equal to the main qualified
-   * name.
-   */
-  @Deprecated
-  public final DataType withAlt(String qualNameExpr) {
-    return with(NAME_ALT, qualNameExpr);
-  }
-
-  @Deprecated
-  protected final void setTypeName(String typeName) {
   }
 
   public DataType withQualifiedName(QualifiedName qualifiedName) {
@@ -143,16 +129,6 @@ public abstract class DataType implements DefaultValueParser {
    */
   public final String typeName() {
     return qualifiedName(NAME_MAIN).className();
-  }
-
-  /**
-   * Get the alternate type name. As with the main type name, if it has not been
-   * set previously, it is set to the wrapped altQualifiedClassName().combined()
-   * value.
-   */
-  @Deprecated
-  public final String alternateTypeName() {
-    return qualifiedName(NAME_ALT).combined();
   }
 
   //------------------------------------------------------------------

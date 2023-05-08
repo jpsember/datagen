@@ -160,6 +160,13 @@ public final class ParseTools {
    * imported, and the source code is generated (which can be an empty string)
    */
   public static String importExprWithCode(String qualifiedClassName, String sourceCode) {
+    // If the qualified class name already starts with "{{", we're attempting to nest them; that's bad
+    if (qualifiedClassName.startsWith("{{")) {
+      pr("attempting to nest importExprWithCode; qualifiedClassName:", INDENT, qualifiedClassName, CR,
+          "sourceCode:", INDENT, sourceCode);
+      badArg("attempting to nest importExprWithCode; qualifiedClassName:", INDENT, qualifiedClassName, CR,
+          "sourceCode:", INDENT, sourceCode);
+    }
     return "{{" + qualifiedClassName + "|" + sourceCode + "}}";
   }
 

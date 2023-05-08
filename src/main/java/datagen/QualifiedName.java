@@ -43,17 +43,6 @@ public final class QualifiedName extends BaseObject {
     return this;
   }
 
-  @Deprecated
-  // Unused
-  /* private */ QualifiedName convertFromPython() {
-    if (Utils.python()) {
-      String suffix = "." + convertCamelToUnderscore(mClassName);
-      checkState(mPackagePath.endsWith(suffix));
-      return withPackageName(chomp(mPackagePath, suffix));
-    }
-    return this;
-  }
-
   public String packagePath() {
     return mPackagePath;
   }
@@ -107,6 +96,7 @@ public final class QualifiedName extends BaseObject {
 
   public QualifiedName withEmbeddedName(String typeName) {
     checkState(mEmbeddedName == null, "already set to:", mEmbeddedName);
+    log("withEmbeddedName:", typeName);
     mEmbeddedName = typeName;
     return this;
   }

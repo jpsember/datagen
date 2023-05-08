@@ -41,9 +41,7 @@ public class GoContractDataType extends GoDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    String result = "Default" + ParseTools.importExprWithClassName(mOriginalQualifiedName);
-    pr("src default:", result);
-    return result;
+    return "Default" + ParseTools.importExprWithClassName(mOriginalQualifiedName);
   }
 
   // Make this final for now to avoid unintended overriding
@@ -85,7 +83,8 @@ public class GoContractDataType extends GoDataType {
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-    return "Default" + altQualifiedName().combined() + ".Parse(" + jsentityExpression + ").(" + typeName() + ")";
+    return "Default" + altQualifiedName().combined() + ".Parse(" + jsentityExpression + ").(" + typeName()
+        + ")";
   }
 
 }
