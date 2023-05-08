@@ -222,6 +222,7 @@ public final class ParseTools {
    * name (without its package) is generated
    */
   public static Object importedClassExpr(Language language, String qualifiedClassName) {
+    todo("why this lazy stuff? seems complicated, esp. since we know the language here");
     return new LazyClassExpr(language, qualifiedClassName);
   }
 
