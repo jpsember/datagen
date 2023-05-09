@@ -147,14 +147,13 @@ public class PythonSourceGen extends SourceGen {
     // When referring to such classes within generated Python code, we will derive and insert a filename
     // if the package includes 'gen'.
     //
-
-    pr("generate imports, qualifiedClassNames:",INDENT, qualifiedClassNames);
-    
     for (String cn : qualifiedClassNames) {
-      
-      QualifiedName q = QualifiedName.parse(cn);
-      checkNonEmpty(q.packagePath(), "no package:", q);
-      s.a("from ", q.packagePath(), " import ", q.className()).cr();
+      int i = cn.lastIndexOf('.');
+      if (i < 0)
+        continue;
+      String packageName = cn.substring(0, i);
+      String className = cn.substring(i + 1);
+      s.a("from ", packageName, " import ", className).cr();
     }
     return content();
   }

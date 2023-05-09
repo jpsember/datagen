@@ -12,14 +12,13 @@ public final class QualifiedName extends BaseObject {
   }
 
   public static QualifiedName parse(String expr, String defaultPackage) {
-    // alertWithSkip(1, "parsing " + expr);
+    //alertWithSkip(1, "parsing " + expr);
     int nameStartPos = expr.lastIndexOf('.');
     if (nameStartPos == 0 || nameStartPos == expr.length() - 1)
       throw badArg("from expr:", quote(expr));
     String packagePath = expr.substring(0, Math.max(0, nameStartPos));
     packagePath = ifNullOrEmpty(packagePath, nullToEmpty(defaultPackage));
     String className = expr.substring(1 + nameStartPos);
-
     QualifiedName result = new QualifiedName(packagePath, className);
 
     // Special rules for Python:
@@ -53,8 +52,6 @@ public final class QualifiedName extends BaseObject {
   public String embeddedName() {
     // If no embedded name is defined yet, set it to the default: {{combined|class_name}}
     if (mEmbeddedName == null) {
-      //withEmbeddedName(ParseTools.importExprWithClassName(this));
-
       String arg = combined();
       String prefix = arg;
       String suffix = "";
@@ -70,11 +67,18 @@ public final class QualifiedName extends BaseObject {
       }
         break;
       case PYTHON:
+      // Handle list types
+      {
+        int i = arg.indexOf('[');
+        if (i >= 0) {
+          prefix = arg.substring(0, i);
+          suffix = arg.substring(i);
+        }
+      }
         break;
       default:
         break;
       }
-      pr("imported class expr, prefix:", quote(prefix), "suffix:", quote(suffix));
       String typeName = ParseTools.importedClassExpr(prefix).toString();
       withEmbeddedName(typeName + suffix);
     }

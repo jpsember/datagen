@@ -24,7 +24,6 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
@@ -41,8 +40,7 @@ public class PythonListDataType extends PythonDataType {
 
   public PythonListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
-    mark("what does the embedded result look like?");
-    with("typing.list[" // 
+    with("typing.List[" // 
         + wrappedType().qualifiedName().className() //
         + "]");
   }

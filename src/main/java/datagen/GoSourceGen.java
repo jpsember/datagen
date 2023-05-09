@@ -106,6 +106,11 @@ public final class GoSourceGen extends SourceGen {
     s.a(". \"js/json\"").cr();
 
     for (String cn : qualifiedClassNames) {
+      pr("cn:", cn);
+      int i = cn.lastIndexOf('.');
+      if (i < 0)
+        continue;
+
       // We also don't need to import anything from the local package
       // Assumes the class name includes a package
       String packageName = cn.substring(0, cn.lastIndexOf('.'));

@@ -37,10 +37,6 @@ import datagen.SourceBuilder;
  */
 public class PythonContractDataType extends PythonDataType {
 
-  public PythonContractDataType() {
-    alertVerbose();
-  }
-
   @Override
   public String provideSourceDefaultValue() {
     return ParseTools.importExprWithClassName(qualifiedName()) + ".default_instance";

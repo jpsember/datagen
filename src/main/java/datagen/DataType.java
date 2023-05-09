@@ -28,14 +28,12 @@ import static js.base.Tools.*;
 
 import java.util.Map;
 
-import js.base.BaseObject;
-
 import static datagen.Utils.*;
 
 /**
  * Abstract base class for generating source code for a data type
  */
-public abstract class DataType extends BaseObject implements DefaultValueParser {
+public abstract class DataType implements DefaultValueParser {
 
   public static final int NAME_MAIN = 0;
   public static final int NAME_ALT = 1;
@@ -69,32 +67,6 @@ public abstract class DataType extends BaseObject implements DefaultValueParser 
 
   public final DataType with(int index, String qualNameExpr) {
     QualifiedName q = QualifiedName.parse(qualNameExpr);
-    q.setVerbose(verbose());
-    if (verbose())
-      log("with", index, "QualifiedName:", INDENT, q);
-
-    if (false && index == NAME_MAIN) {
-      String arg = q.combined();
-      String prefix = arg;
-      String suffix = "";
-      switch (Utils.language()) {
-      case JAVA:
-      // If there's a type parameter <xxx>, use only the text preceding it as the embedded type expression
-      {
-        int i = arg.indexOf('<');
-        if (i >= 0) {
-          prefix = arg.substring(0, i);
-          suffix = arg.substring(i);
-        }
-      }
-        break;
-      default:
-        break;
-      }
-      pr("imported class expr, prefix:",quote(prefix),"suffix:",quote(suffix));
-      String typeName = ParseTools.importedClassExpr(prefix).toString();
-      q.withEmbeddedName(typeName + suffix);
-    }
     return with(index, q);
   }
 
