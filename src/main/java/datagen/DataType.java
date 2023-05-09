@@ -77,6 +77,10 @@ public abstract class DataType implements DefaultValueParser {
     return this;
   }
 
+  /**
+   * This is the method that subclasses should override to use alternate naming
+   * conventions
+   */
   public DataType withQualifiedName(QualifiedName qualifiedName) {
     return with(NAME_MAIN, qualifiedName);
   }
@@ -102,12 +106,6 @@ public abstract class DataType implements DefaultValueParser {
 
   private Map<Integer, QualifiedName> mQualNameMap = hashMap();
 
-  /**
-   * Get the type name. If not explicitly set previously, it is set to the
-   * qualifiedClassName.combined() value, wrapped within an import expression so
-   * that whenever it is used, it ensures that an appropriate import statement
-   * is added to the generated source file.
-   */
   public final String typeName() {
     return qualifiedName(NAME_MAIN).embeddedName();
   }

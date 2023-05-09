@@ -153,6 +153,7 @@ public class PythonSourceGen extends SourceGen {
         continue;
       String packageName = cn.substring(0, i);
       String className = cn.substring(i + 1);
+      todo("omit imports of self");
       s.a("from ", packageName, " import ", className).cr();
     }
     return content();

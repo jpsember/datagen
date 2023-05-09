@@ -68,10 +68,11 @@ public final class GeneratedTypeDef extends BaseObject {
     default:
       throw notFinished();
     }
+
     QualifiedName qn = QualifiedName.parse(packageName + "." + name);
     dataType.withQualifiedName(qn);
     mDataType = dataType;
-    setName(qn.className());
+    setName(dataType.typeName());
   }
 
   public void setDeprecated(boolean f) {
@@ -90,8 +91,12 @@ public final class GeneratedTypeDef extends BaseObject {
     return mUnsafe;
   }
 
-  public final QualifiedName qualifiedName() {
+  public QualifiedName qualifiedName() {
     return mDataType.qualifiedName();
+  }
+
+  public DataType wrappedType() {
+    return mDataType;
   }
 
   private DataType mDataType;
@@ -117,17 +122,6 @@ public final class GeneratedTypeDef extends BaseObject {
     checkState(isEnum());
     return mEnumDataType;
   }
-
-  //  @Override
-  //  public JSMap toJson() {
-  //    JSMap m = super.toJson();
-  //    checkState(!isEnum(), "not supported yet");
-  //    for (FieldDef f : mFields)
-  //      m.put(f.name(), f.toJson());
-  //    if (nonEmpty(packageName()))
-  //      m.put("java_package_name", packageName());
-  //    return m;
-  //  }
 
   /**
    * Add a field to this data type
@@ -269,7 +263,4 @@ public final class GeneratedTypeDef extends BaseObject {
   private SourceBuilder mClassSpecificSourceBuilder;
   private String mClassSpecificSource;
 
-  public DataType wrappedType() {
-    return mDataType;
-  }
 }
