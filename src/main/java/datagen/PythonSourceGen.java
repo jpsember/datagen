@@ -148,7 +148,10 @@ public class PythonSourceGen extends SourceGen {
     // if the package includes 'gen'.
     //
 
+    pr("generate imports, qualifiedClassNames:",INDENT, qualifiedClassNames);
+    
     for (String cn : qualifiedClassNames) {
+      
       QualifiedName q = QualifiedName.parse(cn);
       checkNonEmpty(q.packagePath(), "no package:", q);
       s.a("from ", q.packagePath(), " import ", q.className()).cr();

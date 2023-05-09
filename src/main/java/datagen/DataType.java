@@ -73,7 +73,7 @@ public abstract class DataType extends BaseObject implements DefaultValueParser 
     if (verbose())
       log("with", index, "QualifiedName:", INDENT, q);
 
-    if (index == NAME_MAIN) {
+    if (false && index == NAME_MAIN) {
       String arg = q.combined();
       String prefix = arg;
       String suffix = "";

@@ -53,7 +53,30 @@ public final class QualifiedName extends BaseObject {
   public String embeddedName() {
     // If no embedded name is defined yet, set it to the default: {{combined|class_name}}
     if (mEmbeddedName == null) {
-      withEmbeddedName(ParseTools.importExprWithClassName(this));
+      //withEmbeddedName(ParseTools.importExprWithClassName(this));
+
+      String arg = combined();
+      String prefix = arg;
+      String suffix = "";
+      switch (Utils.language()) {
+      case JAVA:
+      // If there's a type parameter <xxx>, use only the text preceding it as the embedded type expression
+      {
+        int i = arg.indexOf('<');
+        if (i >= 0) {
+          prefix = arg.substring(0, i);
+          suffix = arg.substring(i);
+        }
+      }
+        break;
+      case PYTHON:
+        break;
+      default:
+        break;
+      }
+      pr("imported class expr, prefix:", quote(prefix), "suffix:", quote(suffix));
+      String typeName = ParseTools.importedClassExpr(prefix).toString();
+      withEmbeddedName(typeName + suffix);
     }
     return mEmbeddedName;
   }
