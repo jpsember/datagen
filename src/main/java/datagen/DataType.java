@@ -91,6 +91,7 @@ public abstract class DataType extends BaseObject implements DefaultValueParser 
       default:
         break;
       }
+      pr("imported class expr, prefix:",quote(prefix),"suffix:",quote(suffix));
       String typeName = ParseTools.importedClassExpr(prefix).toString();
       q.withEmbeddedName(typeName + suffix);
     }

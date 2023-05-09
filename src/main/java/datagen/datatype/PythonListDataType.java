@@ -41,10 +41,17 @@ public class PythonListDataType extends PythonDataType {
 
   public PythonListDataType(DataType wrappedType) {
     mWrappedType = wrappedType;
-    with(PKGPY_LIST + "["   // 
-       + wrappedType().qualifiedName().combined() //
-       //+  ParseTools.importExprWithClassName(wrappedType().qualifiedName()) //
+
+    pr("python list data type; wrapped type:", INDENT, wrappedType);
+    pr("PKGPY_LIST:", PKGPY_LIST);
+    pr("wrapped type qual name:", wrappedType.qualifiedName());
+
+    mark("what does the embedded result look like?");
+    with(PKGPY_LIST + "[" // 
+        + wrappedType().qualifiedName().className() //
         + "]");
+    qualifiedName().withEmbeddedName(typeName());
+    pr(qualifiedName().embeddedName());
   }
 
   @Override
