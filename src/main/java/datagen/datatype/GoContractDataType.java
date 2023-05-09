@@ -31,11 +31,11 @@ public class GoContractDataType extends GoDataType {
       pr("GoContractDataType withQualifiedName,", mK, ":", INDENT, qualifiedName);
     //mOriginalQualifiedName = qualifiedName;
 
-    // Have the 'main' type name be the interface, e.g. ICat
+    // Have the 'main' type name be the interface, e.g. Cat
     if (db)
       pr("setting NAME_MAIN to:", qualifiedName.withClassName("I" + qualifiedName.className()));
 
-    with(NAME_MAIN, qualifiedName.withClassName("I" + qualifiedName.className()));
+    with(NAME_MAIN, qualifiedName);
 
     // Have the 'alternate' type name be the static name, e.g. Cat
     // ...but preceded by a small s, so it is not exported?
