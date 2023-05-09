@@ -47,12 +47,14 @@ public final class Utils {
     dest.append('\n');
   }
 
+  @Deprecated
   public static Language language() {
     return Context.config.language();
   }
 
+  @Deprecated
   public static boolean python() {
-    return language() == Language.PYTHON;
+    return Context.pt.language() == Language.PYTHON;
   }
 
   public static String sourceFileExtension() {

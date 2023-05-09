@@ -26,7 +26,7 @@ public final class QualifiedName extends BaseObject {
     // For class name "Foo", if package contains "gen" and 
     // package doesn't already end with ".foo", add ".foo" to it
     //
-    if (Utils.python())
+    if (Context.pt.python())
       result = result.convertToPython();
     return result;
   }

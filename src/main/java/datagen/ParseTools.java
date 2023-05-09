@@ -42,6 +42,36 @@ public final class ParseTools {
     mLanguage = language;
   }
 
+  /**
+   * The 'constants' PKG_xxx call various things, including (indirectly) other
+   * ParseTools methods via the Context.pt field; so we defer the initialization
+   * of these constants until *after* the ParseTools constructor has run (so the
+   * Context.pt field has been given a value).
+   */
+  public void prepare() {
+    PKG_TOOLS = javaClassExpr("js.base.Tools");
+    PKG_DATAUTIL = javaClassExpr("js.data.DataUtil");
+    PKG_JSMAP = javaClassExpr("js.json.JSMap");
+    PKG_JSLIST = javaClassExpr("js.json.JSList");
+    PKG_FILES = javaClassExpr("js.file.Files");
+    PKG_LIST = javaClassExpr("java.util.List");
+    PKG_MAP = javaClassExpr("java.util.Map");
+    PKG_SET = javaClassExpr("java.util.Set");
+    PKG_HASH_SET = javaClassExpr("java.util.HashSet");
+    PKG_CONCURRENT_MAP = javaClassExpr("java.util.concurrent.ConcurrentHashMap");
+    PKG_STRING = javaClassExpr("java.lang.String");
+    PKG_OBJECT = javaClassExpr("java.lang.Object");
+    PKG_ARRAYS = javaClassExpr("java.util.Arrays");
+    PKG_ARRAYLIST = javaClassExpr("java.util.ArrayList");
+    PKG_JSOBJECT = javaClassExpr("js.json.JSObject");
+    PKG_SHORT_ARRAY = javaClassExpr("js.data.ShortArray");
+    PKG_FLOAT_ARRAY = javaClassExpr("js.data.FloatArray");
+    PKG_DOUBLE_ARRAY = javaClassExpr("js.data.DoubleArray");
+
+    PKGPY_DATAUTIL = pythonClassExpr("pycore.datautil.DataUtil");
+    PKGPY_LIST = pythonClassExpr("typing.List");
+  }
+
   public static final boolean SHOW_STACK_TRACES = true && alert("showing full stack traces");
 
   public static final String EXT_DATA_DEFINITION = "dat";
@@ -201,29 +231,11 @@ public final class ParseTools {
     return importExprWithCode(qn.combined(), qn.className());
   }
 
-  // Qualified class names for some of my data types (and Java's), in case they change or get substituted in future
-  //
-  public final Object PKG_TOOLS = javaClassExpr("js.base.Tools");
-  public final Object PKG_DATAUTIL = javaClassExpr("js.data.DataUtil");
-  public final Object PKG_JSMAP = javaClassExpr("js.json.JSMap");
-  public final Object PKG_JSLIST = javaClassExpr("js.json.JSList");
-  public final Object PKG_FILES = javaClassExpr("js.file.Files");
-  public final Object PKG_LIST = javaClassExpr("java.util.List");
-  public final Object PKG_MAP = javaClassExpr("java.util.Map");
-  public final Object PKG_SET = javaClassExpr("java.util.Set");
-  public final Object PKG_HASH_SET = javaClassExpr("java.util.HashSet");
-  public final Object PKG_CONCURRENT_MAP = javaClassExpr("java.util.concurrent.ConcurrentHashMap");
-  public final Object PKG_STRING = javaClassExpr("java.lang.String");
-  public final Object PKG_OBJECT = javaClassExpr("java.lang.Object");
-  public final Object PKG_ARRAYS = javaClassExpr("java.util.Arrays");
-  public final Object PKG_ARRAYLIST = javaClassExpr("java.util.ArrayList");
-  public final Object PKG_JSOBJECT = javaClassExpr("js.json.JSObject");
-  public final Object PKG_SHORT_ARRAY = javaClassExpr("js.data.ShortArray");
-  public final Object PKG_FLOAT_ARRAY = javaClassExpr("js.data.FloatArray");
-  public final Object PKG_DOUBLE_ARRAY = javaClassExpr("js.data.DoubleArray");
+  public Object PKG_TOOLS, PKG_DATAUTIL, PKG_JSMAP, PKG_JSLIST, PKG_FILES, PKG_LIST, PKG_MAP, PKG_SET,
+      PKG_HASH_SET, PKG_CONCURRENT_MAP, PKG_STRING, PKG_OBJECT, PKG_ARRAYS, PKG_ARRAYLIST, PKG_JSOBJECT,
+      PKG_SHORT_ARRAY, PKG_FLOAT_ARRAY, PKG_DOUBLE_ARRAY;
 
-  public final Object PKGPY_DATAUTIL = pythonClassExpr("pycore.datautil.DataUtil");
-  public final Object PKGPY_LIST = pythonClassExpr("typing.List");
+  public Object PKGPY_DATAUTIL, PKGPY_LIST;
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 
@@ -268,6 +280,14 @@ public final class ParseTools {
     if (Context.debugMode())
       return " /*DEBUG*/ ";
     return "";
+  }
+
+  public Language language() {
+    return mLanguage;
+  }
+
+  public boolean python() {
+    return language() == Language.PYTHON;
   }
 
   private final Language mLanguage;
