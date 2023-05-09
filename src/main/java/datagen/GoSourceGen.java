@@ -125,8 +125,18 @@ public final class GoSourceGen extends SourceGen {
   protected final String generateGetters() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
-      s.a("func (v *", def.wrappedType().altQualifiedName().combined(), ") ", f.getterName(), "() ",
-          f.dataType().typeName(), " ", OPEN, //
+
+      if (false) {
+        DataType d = def.wrappedType();
+        pr("DataType qualNames:");
+        pr(d.qualifiedName(0));
+        pr(d.qualifiedName(1));
+        pr(d.qualifiedName(2));
+        halt();
+      }
+
+      s.a("func (v *", def.wrappedType().qualifiedName(DataType.NAME_ALT).className(), ") ", f.getterName(),
+          "() ", f.dataType().typeName(), " ", OPEN, //
           "return v.", f.instanceName(), CLOSE);
       s.br();
     }

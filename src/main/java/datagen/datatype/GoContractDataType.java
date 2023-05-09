@@ -1,6 +1,5 @@
 package datagen.datatype;
 
-import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.GoDataType;
@@ -17,22 +16,48 @@ import datagen.QualifiedName;
  */
 public class GoContractDataType extends GoDataType {
 
+  static int k = 100;
+  private int mK;
+
+  public GoContractDataType() {
+    mK = k++;
+    pr("constructing GoContractDataType:", mK);
+  }
+
   @Override
   public DataType withQualifiedName(QualifiedName qualifiedName) {
-    mOriginalQualifiedName = qualifiedName;
+    boolean db = true;
+    if (db)
+      pr("GoContractDataType withQualifiedName,", mK, ":", INDENT, qualifiedName);
+    //mOriginalQualifiedName = qualifiedName;
 
     // Have the 'main' type name be the interface, e.g. ICat
-    super.withQualifiedName(qualifiedName.withClassName("I" + qualifiedName.className()));
+    if (db)
+      pr("setting NAME_MAIN to:", qualifiedName.withClassName("I" + qualifiedName.className()));
+
+    with(NAME_MAIN, qualifiedName.withClassName("I" + qualifiedName.className()));
+
     // Have the 'alternate' type name be the static name, e.g. Cat
     // ...but preceded by a small s, so it is not exported?
     String x = qualifiedName.combined();
     int i = x.lastIndexOf('.');
     checkArgument(i > 0, qualifiedName);
+    if (db)
+      pr("setting NAME_ALT to:", x.substring(0, i + 1) + "s" + x.substring(i + 1));
+
     with(NAME_ALT, x.substring(0, i + 1) + "s" + x.substring(i + 1));
+
+    if (db)
+      pr("setting NAME_HUMAN to:", qualifiedName);
+
+    with(NAME_HUMAN, qualifiedName);
+
+    dumpNames("after withQualifiedName call", mK);
+
     return this;
   }
 
-  private QualifiedName mOriginalQualifiedName;
+  //private QualifiedName mOriginalQualifiedName;
 
   @Override
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap map) {
@@ -41,7 +66,8 @@ public class GoContractDataType extends GoDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return "Default" + Context.pt.importExprWithClassName(mOriginalQualifiedName);
+    dumpNames("provideSourceDef", mK);
+    return "Default" + qualifiedName(NAME_HUMAN).className();
   }
 
   // Make this final for now to avoid unintended overriding
@@ -53,7 +79,8 @@ public class GoContractDataType extends GoDataType {
     //
     s.a(OPEN, "var x = s.OptMap(\"", f.name(), "\")", CR, //
         "if x != nil ", OPEN, //
-        "n.", f.instanceName(), " = Default", altQualifiedName().combined(), ".Parse(x).(", typeName(), ")", //
+        "n.", f.instanceName(), " = Default", qualifiedName(NAME_HUMAN).className(), ".Parse(x).(",
+        typeName(), ")", //
         CLOSE, //
         CLOSE);
   }
@@ -71,7 +98,7 @@ public class GoContractDataType extends GoDataType {
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String arg = f.instanceName();
     s.a("if ", arg, " == nil ", OPEN, //
-        "v.m.", f.instanceName(), " = Default", altQualifiedName().className(), //
+        "v.m.", f.instanceName(), " = Default", qualifiedName(NAME_HUMAN).className(), //
         CR, "} else {", CR, "v.m.", f.instanceName(), " = ", arg, ".Build()", //,
         CLOSE);
   }
@@ -83,8 +110,10 @@ public class GoContractDataType extends GoDataType {
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-    return "Default" + altQualifiedName().combined() + ".Parse(" + jsentityExpression + ").(" + typeName()
-        + ")";
+
+    dumpNames("parseElementFromJSONValue", mK);
+    return "Default" + qualifiedName(NAME_HUMAN).className() + ".Parse(" + jsentityExpression + ").("
+        + typeName() + ")";
   }
 
 }

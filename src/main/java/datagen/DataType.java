@@ -318,4 +318,13 @@ public abstract class DataType implements DefaultValueParser {
   private boolean mDeclared;
   private boolean mUsedFlag;
 
+  public void dumpNames(Object...messages) {
+    pr(insertStringToFront("Names:", messages));
+    for (int i = 0; i < 8; i++) {
+      QualifiedName q = mQualNameMap.get(i);
+      if (q == null) continue;
+      pr(INDENT,i,INDENT,q);
+    }
+  }
+
 }
