@@ -39,12 +39,6 @@ import static datagen.Utils.*;
 
 public final class ParseTools {
 
-  m
-  static {
-    pr("who is loading me?");
-    pr(stackTraceToList(new Throwable()));
-  }
-
   public static final boolean SHOW_STACK_TRACES = true && alert("showing full stack traces");
 
   public static final String EXT_DATA_DEFINITION = "dat";

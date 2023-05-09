@@ -51,7 +51,7 @@ public final class QualifiedName extends BaseObject {
   }
 
   public String embeddedName() {
-    if (mEmbeddedName == null)
+    if (mEmbeddedName == null)  
       throw badState("no embedded name yet for:", INDENT, this);
     return mEmbeddedName;
   }

@@ -90,7 +90,6 @@ public final class GeneratedTypeDef extends BaseObject {
     return mUnsafe;
   }
 
-  
   public final QualifiedName qualifiedName() {
     return mDataType.qualifiedName();
   }
@@ -102,12 +101,6 @@ public final class GeneratedTypeDef extends BaseObject {
   private DataType mDataType;
   private boolean mDeprecated;
   private boolean mUnsafe;
-//
-//  @Deprecated
-//  public String packageName() {
-//    return qualifiedName().packagePath();
-//    //    return mPackageName;
-//  }
 
   public List<FieldDef> fields() {
     return mFields;
@@ -258,12 +251,12 @@ public final class GeneratedTypeDef extends BaseObject {
           Context.generatedTypeDef.qualifiedName().packagePath());
       dataType = dataTypes.get(qualName.className());
       if (dataType == null) {
-
         if (partialType.enumFlag()) {
           dataType = EnumDataType.construct();
         } else
           dataType = DataTypeManager.constructContractDataType();
-
+        alert("q is calling method that takes an argument that takes q as an argument");
+        qualName.withEmbeddedName(ParseTools.importExprWithClassName(qualName));
         dataType.withQualifiedName(qualName);
         dataTypes.add(dataType.qualifiedName().className(), dataType);
       }

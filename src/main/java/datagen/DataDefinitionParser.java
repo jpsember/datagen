@@ -176,6 +176,10 @@ final class DataDefinitionParser extends BaseObject {
     read(SEMI);
     QualifiedName q = QualifiedName.parse(nameExpression, packageName());
     dataType.withQualifiedName(q);
+
+    alert("q.method(x.method(x))");
+    q.withEmbeddedName(ParseTools.importExprWithClassName(q));
+
     dataType.setDeclaredFlag();
     Context.dataTypeManager.add(q.className(), dataType);
   }
