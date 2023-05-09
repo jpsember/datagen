@@ -51,7 +51,7 @@ public final class DataTypeManager extends BaseObject {
 
     DataType tmp;
 
-    switch (language()) {
+    switch (Context.pt.language()) {
     default: {
       add("byte", new GoIntDataType(8));
       add("short", new GoIntDataType(16));
@@ -145,7 +145,7 @@ public final class DataTypeManager extends BaseObject {
   }
 
   public static DataType constructContractDataType() {
-    switch (language()) {
+    switch (Context.pt.language()) {
     default:
       throw languageNotSupported();
     case JAVA:

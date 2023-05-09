@@ -43,7 +43,7 @@ import datagen.datatype.EnumDataType;
 public abstract class SourceGen extends BaseObject {
 
   public static SourceGen construct() {
-    switch (language()) {
+    switch (Context.pt.language()) {
     default:
       throw languageNotSupported();
     case JAVA:
@@ -162,14 +162,14 @@ public abstract class SourceGen extends BaseObject {
     return Context.datWithSource.sourceRelPath();
   }
 
-  protected SourceBuilder s = new SourceBuilder(language());
+  protected SourceBuilder s = new SourceBuilder(Context.pt.language());
 
   /**
    * Get content of SourceBuilder, and reset the SourceBuilder
    */
   protected final String content() {
     String content = s.getContent();
-    s = new SourceBuilder(language());
+    s = new SourceBuilder(Context.pt.language());
     return content;
   }
 

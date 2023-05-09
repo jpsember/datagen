@@ -56,7 +56,7 @@ public final class GeneratedTypeDef extends BaseObject {
     QualifiedName qn = QualifiedName.parse(packageName + "." + name);
     DataType dataType;
 
-    switch (Utils.language()) {
+    switch (Context.pt.language()) {
     case GO:
       dataType = new GoContractDataType();
       break;
@@ -166,7 +166,7 @@ public final class GeneratedTypeDef extends BaseObject {
       // Convert list to particular scalar types in special cases
       complexType = dataType.getListVariant();
       if (complexType == null) {
-        switch (language()) {
+        switch (Context.pt.language()) {
         default:
           throw notSupported();
         case JAVA:
@@ -182,7 +182,7 @@ public final class GeneratedTypeDef extends BaseObject {
       }
       break;
     case KEY_VALUE_MAP: {
-      switch (language()) {
+      switch (Context.pt.language()) {
       default:
         throw languageNotSupported();
       case JAVA:
@@ -192,7 +192,7 @@ public final class GeneratedTypeDef extends BaseObject {
     }
       break;
     case VALUE_SET: {
-      switch (language()) {
+      switch (Context.pt.language()) {
       default:
         throw languageNotSupported();
       case JAVA:
@@ -227,7 +227,7 @@ public final class GeneratedTypeDef extends BaseObject {
   public SourceBuilder classSpecificSourceBuilder() {
     if (mClassSpecificSourceBuilder == null) {
       checkState(mClassSpecificSource == null, "source already retrieved");
-      mClassSpecificSourceBuilder = new SourceBuilder(language());
+      mClassSpecificSourceBuilder = new SourceBuilder(Context.pt.language());
     }
     return mClassSpecificSourceBuilder;
   }

@@ -55,7 +55,7 @@ public final class QualifiedName extends BaseObject {
       String arg = combined();
       String prefix = arg;
       String suffix = "";
-      switch (Utils.language()) {
+      switch (Context.pt.language()) {
       case JAVA:
       // If there's a type parameter <xxx>, use only the text preceding it as the embedded type expression
       {

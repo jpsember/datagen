@@ -28,6 +28,7 @@ import static datagen.Utils.*;
 
 import java.util.List;
 
+import datagen.Context;
 import datagen.DataType;
 
 public interface EnumDataType {
@@ -35,9 +36,9 @@ public interface EnumDataType {
   void addLabel(String label);
 
   List<String> labels();
-  
+
   static DataType construct() {
-    switch (language()) {
+    switch (Context.pt.language()) {
     default:
       throw languageNotSupported();
     case JAVA:

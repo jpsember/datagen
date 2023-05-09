@@ -47,18 +47,8 @@ public final class Utils {
     dest.append('\n');
   }
 
-  @Deprecated
-  public static Language language() {
-    return Context.config.language();
-  }
-
-  @Deprecated
-  public static boolean python() {
-    return Context.pt.language() == Language.PYTHON;
-  }
-
   public static String sourceFileExtension() {
-    return sourceFileExtension(language());
+    return sourceFileExtension(Context.pt.language());
   }
 
   public static String sourceFileExtension(Language language) {

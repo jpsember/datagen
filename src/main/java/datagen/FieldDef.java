@@ -35,7 +35,7 @@ import static js.base.Tools.*;
 public abstract class FieldDef extends BaseObject {
 
   public static FieldDef construct() {
-    switch (language()) {
+    switch (Context.pt.language()) {
     default:
       throw languageNotSupported();
      case JAVA:
