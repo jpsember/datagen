@@ -255,8 +255,6 @@ public final class GeneratedTypeDef extends BaseObject {
           dataType = EnumDataType.construct();
         } else
           dataType = DataTypeManager.constructContractDataType();
-        alert("q is calling method that takes an argument that takes q as an argument");
-        qualName.withEmbeddedName(ParseTools.importExprWithClassName(qualName));
         dataType.withQualifiedName(qualName);
         dataTypes.add(dataType.qualifiedName().className(), dataType);
       }
@@ -268,7 +266,6 @@ public final class GeneratedTypeDef extends BaseObject {
     return dataType;
   }
 
-  //private final String mPackageName;
   private final EnumDataType mEnumDataType;
   private final List<FieldDef> mFields = arrayList();
   private final Set<String> mFieldNames = hashSet();

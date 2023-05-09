@@ -98,7 +98,7 @@ public abstract class SourceGen extends BaseObject {
       content = parser.content();
     }
 
-    if (alert("showing content")) {
+    if (false && alert("showing content")) {
       pr(DASHES, CR, "Content after pass 1:", CR, DASHES, CR, content);
     }
 

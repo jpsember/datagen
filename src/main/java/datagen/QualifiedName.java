@@ -51,8 +51,10 @@ public final class QualifiedName extends BaseObject {
   }
 
   public String embeddedName() {
-    if (mEmbeddedName == null)  
-      throw badState("no embedded name yet for:", INDENT, this);
+    // If no embedded name is defined yet, set it to the default: {{combined|class_name}}
+    if (mEmbeddedName == null) {
+      withEmbeddedName(ParseTools.importExprWithClassName(this));
+    }
     return mEmbeddedName;
   }
 

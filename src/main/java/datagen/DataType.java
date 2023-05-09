@@ -74,11 +74,6 @@ public abstract class DataType extends BaseObject implements DefaultValueParser 
       log("with", index, "QualifiedName:", INDENT, q);
 
     if (index == NAME_MAIN) {
-      todo("get rid of isPrimitive check here; constructor should somehow pass it in");
-      //      if (isPrimitive())
-      //        typeName = q.className();
-      //      else
-
       String arg = q.combined();
       String prefix = arg;
       String suffix = "";
@@ -97,7 +92,7 @@ public abstract class DataType extends BaseObject implements DefaultValueParser 
         break;
       }
       String typeName = ParseTools.importedClassExpr(prefix).toString();
-      q.withEmbeddedName(typeName  + suffix);
+      q.withEmbeddedName(typeName + suffix);
     }
     return with(index, q);
   }
