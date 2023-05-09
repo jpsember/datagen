@@ -75,9 +75,19 @@ public final class JavaFileDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+   
+    
+    pr("context.pt:",Context.pt);
+    pr("context.pt:",Context.pt.PKG_LIST);
+    
     s.a(OPEN, //
-        Context.pt.PKG_LIST, "<", typeName(), "> result = ", f.nullIfOptional("new " +Context.pt. PKG_ARRAYLIST + "<>()"), ";", CR, //
-        Context.pt.PKG_JSLIST, " j = m.optJSList(", f.nameStringConstantQualified(), ");", CR);
+        Context.pt.PKG_LIST, "<", typeName(), "> result = "); //
+   
+    
+    
+    s.a( //
+        f.nullIfOptional("new " + Context.pt.PKG_ARRAYLIST + "<>()"), ";", CR ); //
+     s.a(   Context.pt.PKG_JSLIST, " j = m.optJSList(", f.nameStringConstantQualified(), ");", CR);
     sourceIfNotNull(s, "j");
     s.a("result = ", Context.pt.PKG_DATAUTIL, ".parseFileListFrom(j);");
     s.a(CLOSE);

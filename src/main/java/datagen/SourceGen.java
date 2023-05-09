@@ -126,7 +126,7 @@ public abstract class SourceGen extends BaseObject {
     //         For Python, lines starting with "\\[n]" indicate that n blank lines are to be placed between 
     //         the neighboring (non-blank) lines
     //
-    content = Context.pt.adjustLinefeeds(content, language());
+    content = Context.pt.adjustLinefeeds(content);
     File target = sourceFile();
     Context.files.mkdirs(Files.parent(target));
     boolean wrote = Context.files.writeIfChanged(target, content);

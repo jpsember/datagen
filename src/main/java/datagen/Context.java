@@ -48,6 +48,7 @@ public final class Context {
 
   public static void prepare(Files files, DatagenConfig config) {
     discard();
+    pr("============== prepare context with language:",config.language());
     Context.pt = new ParseTools(config.language());
     Context.files = files;
     Context.config = config.build();
@@ -55,7 +56,8 @@ public final class Context {
   }
 
   public static void prepare(DatWithSource entry) {
-    discard();
+    pr("-------------- prepare context for DatWithSourceEntry:",entry);
+     discard();
     Context.datWithSource = entry;
     Context.dataTypeManager = new DataTypeManager();
   }

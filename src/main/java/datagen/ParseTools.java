@@ -30,7 +30,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import datagen.gen.Language;
-import js.base.BasePrinter;
 import js.json.JSMap;
 import js.parsing.DFA;
 import js.parsing.MacroParser;
@@ -85,7 +84,7 @@ public final class ParseTools {
    * For Python, lines starting with \\n are interpreted as a request for n
    * blank lines (if n is omitted, it is assumed n = 1)
    */
-  public String adjustLinefeeds(String content, Language language) {
+  public String adjustLinefeeds(String content) {
     List<String> lines = arrayList();
     int cursor = 0;
     while (cursor < content.length()) {
@@ -100,7 +99,7 @@ public final class ParseTools {
 
     StringBuilder sb = new StringBuilder();
 
-    switch (language) {
+    switch (mLanguage) {
     default:
       throw languageNotSupported();
 
@@ -182,13 +181,13 @@ public final class ParseTools {
   }
 
   private Object javaClassExpr(String qualifiedClassName) {
-    if (language() != Language.JAVA)
+    if (mLanguage != Language.JAVA)
       return null;
     return importedClassExpr(qualifiedClassName);
   }
 
   private Object pythonClassExpr(String qualifiedClassName) {
-    if (language() != Language.PYTHON)
+    if (mLanguage != Language.PYTHON)
       return null;
     return importedClassExpr(qualifiedClassName);
   }
