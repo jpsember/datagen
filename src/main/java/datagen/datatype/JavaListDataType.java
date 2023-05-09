@@ -31,7 +31,6 @@ import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
-import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.json.JSList;
 import js.json.JSMap;
@@ -46,7 +45,7 @@ public class JavaListDataType extends JavaDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return ParseTools.PKG_DATAUTIL + ".emptyList()";
+    return Context.pt.PKG_DATAUTIL + ".emptyList()";
   }
 
   /**
@@ -59,7 +58,7 @@ public class JavaListDataType extends JavaDataType {
   @Override
   public String sourceExpressionToMutable(String valueExpression) {
     if (!Context.generatedTypeDef.classMode())
-      return ParseTools.mutableCopyOfList(valueExpression);
+      return Context.pt.mutableCopyOfList(valueExpression);
     // In debug mode, this is already in immutable form; no need to modify it
     return valueExpression;
   }
@@ -68,12 +67,12 @@ public class JavaListDataType extends JavaDataType {
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
     if (!Context.generatedTypeDef.classMode()) {
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
+      s.a(targetExpression, " = ", Context.pt.immutableCopyOfList(valueExpression));
       return;
     }
 
     if (Context.debugMode()) {
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfList(valueExpression));
+      s.a(targetExpression, " = ", Context.pt.immutableCopyOfList(valueExpression));
       return;
     }
     super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
@@ -87,7 +86,7 @@ public class JavaListDataType extends JavaDataType {
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     sourceIfNotNull(s, f);
     s.a(OPEN, //
-        ParseTools.PKG_JSLIST, " j = new ", ParseTools.PKG_JSLIST, "();", CR, //
+        Context.pt.PKG_JSLIST, " j = new ", Context.pt.PKG_JSLIST, "();", CR, //
         "for (", wrappedType().typeName(), " x : ", f.instanceName(), ")", IN, //
         "j.add(", wrappedType().sourceGenerateSerializeToObjectExpression("x"), ");", OUT, //
         "m.put(", f.nameStringConstantQualified(), ", j);", //
@@ -119,7 +118,7 @@ public class JavaListDataType extends JavaDataType {
     JSList parsedExpressions = json.getList("");
 
     SourceBuilder sb = classSpecificSource;
-    sb.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = ", ParseTools.PKG_TOOLS,
+    sb.a("  private static final ", typeName(), " ", fieldDef.constantName(), " = ", Context.pt.PKG_TOOLS,
         ".arrayList(");
     for (int index = 0; index < parsedExpressions.size(); index++) {
       Object expr = parsedExpressions.getUnsafe(index);

@@ -27,6 +27,7 @@ package datagen;
 import static js.base.Tools.*;
 
 import datagen.gen.Language;
+import js.base.BasePrinter;
 
 public final class Utils {
 
@@ -89,6 +90,28 @@ public final class Utils {
 
   public static final String verboseVariant(String succinctOption, String verboseOption) {
     return Context.config.verboseNames() ? verboseOption : succinctOption;
+  }
+
+  public static String notSupportedMessage(Object... messages) {
+    StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+    StackTraceElement elem = stackTrace[2];
+
+    StringBuilder sb = new StringBuilder();
+    sb.append("!!!=== Not supported yet");
+    if (messages.length > 0) {
+      sb.append(": ");
+      sb.append(BasePrinter.toString(messages));
+    } else {
+      sb.append("!");
+    }
+    sb.append(" (");
+    sb.append(elem.getFileName());
+    sb.append("(");
+    sb.append(elem.getLineNumber());
+    sb.append("): ");
+    sb.append(elem.getMethodName());
+    sb.append(") ===!!!");
+    return sb.toString();
   }
 
 }

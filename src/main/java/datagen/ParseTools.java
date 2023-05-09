@@ -39,6 +39,10 @@ import static datagen.Utils.*;
 
 public final class ParseTools {
 
+  public ParseTools(Language language) {
+    mLanguage = language;
+  }
+
   public static final boolean SHOW_STACK_TRACES = true && alert("showing full stack traces");
 
   public static final String EXT_DATA_DEFINITION = "dat";
@@ -81,7 +85,7 @@ public final class ParseTools {
    * For Python, lines starting with \\n are interpreted as a request for n
    * blank lines (if n is omitted, it is assumed n = 1)
    */
-  public static String adjustLinefeeds(String content, Language language) {
+  public String adjustLinefeeds(String content, Language language) {
     List<String> lines = arrayList();
     int cursor = 0;
     while (cursor < content.length()) {
@@ -170,20 +174,20 @@ public final class ParseTools {
     return "{{" + qualifiedClassName + "|" + sourceCode + "}}";
   }
 
-  public static String importExprWithClassName(QualifiedName qualifiedName) {
+  public String importExprWithClassName(QualifiedName qualifiedName) {
     // Python primitive types (e.g. int) won't have packages, so don't wrap them in import expressions
     if (qualifiedName.packagePath().isEmpty())
       return qualifiedName.className();
     return importExprWithCode(qualifiedName.combined(), qualifiedName.className());
   }
 
-  private static Object javaClassExpr(String qualifiedClassName) {
+  private Object javaClassExpr(String qualifiedClassName) {
     if (language() != Language.JAVA)
       return null;
     return importedClassExpr(qualifiedClassName);
   }
 
-  private static Object pythonClassExpr(String qualifiedClassName) {
+  private Object pythonClassExpr(String qualifiedClassName) {
     if (language() != Language.PYTHON)
       return null;
     return importedClassExpr(qualifiedClassName);
@@ -200,65 +204,65 @@ public final class ParseTools {
 
   // Qualified class names for some of my data types (and Java's), in case they change or get substituted in future
   //
-  public static final Object PKG_TOOLS = javaClassExpr("js.base.Tools");
-  public static final Object PKG_DATAUTIL = javaClassExpr("js.data.DataUtil");
-  public static final Object PKG_JSMAP = javaClassExpr("js.json.JSMap");
-  public static final Object PKG_JSLIST = javaClassExpr("js.json.JSList");
-  public static final Object PKG_FILES = javaClassExpr("js.file.Files");
-  public static final Object PKG_LIST = javaClassExpr("java.util.List");
-  public static final Object PKG_MAP = javaClassExpr("java.util.Map");
-  public static final Object PKG_SET = javaClassExpr("java.util.Set");
-  public static final Object PKG_HASH_SET = javaClassExpr("java.util.HashSet");
-  public static final Object PKG_CONCURRENT_MAP = javaClassExpr("java.util.concurrent.ConcurrentHashMap");
-  public static final Object PKG_STRING = javaClassExpr("java.lang.String");
-  public static final Object PKG_OBJECT = javaClassExpr("java.lang.Object");
-  public static final Object PKG_ARRAYS = javaClassExpr("java.util.Arrays");
-  public static final Object PKG_ARRAYLIST = javaClassExpr("java.util.ArrayList");
-  public static final Object PKG_JSOBJECT = javaClassExpr("js.json.JSObject");
-  public static final Object PKG_SHORT_ARRAY = javaClassExpr("js.data.ShortArray");
-  public static final Object PKG_FLOAT_ARRAY = javaClassExpr("js.data.FloatArray");
-  public static final Object PKG_DOUBLE_ARRAY = javaClassExpr("js.data.DoubleArray");
+  public final Object PKG_TOOLS = javaClassExpr("js.base.Tools");
+  public final Object PKG_DATAUTIL = javaClassExpr("js.data.DataUtil");
+  public final Object PKG_JSMAP = javaClassExpr("js.json.JSMap");
+  public final Object PKG_JSLIST = javaClassExpr("js.json.JSList");
+  public final Object PKG_FILES = javaClassExpr("js.file.Files");
+  public final Object PKG_LIST = javaClassExpr("java.util.List");
+  public final Object PKG_MAP = javaClassExpr("java.util.Map");
+  public final Object PKG_SET = javaClassExpr("java.util.Set");
+  public final Object PKG_HASH_SET = javaClassExpr("java.util.HashSet");
+  public final Object PKG_CONCURRENT_MAP = javaClassExpr("java.util.concurrent.ConcurrentHashMap");
+  public final Object PKG_STRING = javaClassExpr("java.lang.String");
+  public final Object PKG_OBJECT = javaClassExpr("java.lang.Object");
+  public final Object PKG_ARRAYS = javaClassExpr("java.util.Arrays");
+  public final Object PKG_ARRAYLIST = javaClassExpr("java.util.ArrayList");
+  public final Object PKG_JSOBJECT = javaClassExpr("js.json.JSObject");
+  public final Object PKG_SHORT_ARRAY = javaClassExpr("js.data.ShortArray");
+  public final Object PKG_FLOAT_ARRAY = javaClassExpr("js.data.FloatArray");
+  public final Object PKG_DOUBLE_ARRAY = javaClassExpr("js.data.DoubleArray");
 
-  public static final Object PKGPY_DATAUTIL = pythonClassExpr("pycore.datautil.DataUtil");
-  public static final Object PKGPY_LIST = pythonClassExpr("typing.List");
+  public final Object PKGPY_DATAUTIL = pythonClassExpr("pycore.datautil.DataUtil");
+  public final Object PKGPY_LIST = pythonClassExpr("typing.List");
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 
-  public static final String immutableCopyOfList(String expr) {
+  public final String immutableCopyOfList(String expr) {
     String result = PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
     if (Context.debugMode())
       result += debugComment();
     return result;
   }
 
-  public static final String mutableCopyOfList(String expr) {
+  public final String mutableCopyOfList(String expr) {
     checkState(!Context.generatedTypeDef.classMode());
     return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
   }
 
-  public static final String mutableCopyOfMap(String expr) {
+  public final String mutableCopyOfMap(String expr) {
     checkState(!Context.generatedTypeDef.classMode());
     return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
   }
 
-  public static final String immutableCopyOfMap(String expr) {
+  public final String immutableCopyOfMap(String expr) {
     String result = PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
     if (Context.debugMode())
       result += debugComment();
     return result;
   }
 
-  public static final String immutableCopyOfSet(String expr) {
+  public final String immutableCopyOfSet(String expr) {
     String result = PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
     if (Context.debugMode())
       result += debugComment();
     return result;
   }
 
-  public static Object assignToListExpr(String expr) {
+  public Object assignToListExpr(String expr) {
     if (Context.generatedTypeDef.isUnsafe())
       return expr;
-    return ParseTools.immutableCopyOfList(expr);
+    return immutableCopyOfList(expr);
   }
 
   public static Object debugComment() {
@@ -267,26 +271,6 @@ public final class ParseTools {
     return "";
   }
 
-  public static String notSupportedMessage(Object... messages) {
-    StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-    StackTraceElement elem = stackTrace[2];
-
-    StringBuilder sb = new StringBuilder();
-    sb.append("!!!=== Not supported yet");
-    if (messages.length > 0) {
-      sb.append(": ");
-      sb.append(BasePrinter.toString(messages));
-    } else {
-      sb.append("!");
-    }
-    sb.append(" (");
-    sb.append(elem.getFileName());
-    sb.append("(");
-    sb.append(elem.getLineNumber());
-    sb.append("): ");
-    sb.append(elem.getMethodName());
-    sb.append(") ===!!!");
-    return sb.toString();
-  }
+  private final Language mLanguage;
 
 }

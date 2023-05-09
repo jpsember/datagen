@@ -30,7 +30,6 @@ import static js.base.Tools.*;
 import datagen.Context;
 import datagen.FieldDef;
 import datagen.JavaDataType;
-import datagen.ParseTools;
 import datagen.SourceBuilder;
 
 public class JavaSetDataType extends JavaDataType {
@@ -38,8 +37,6 @@ public class JavaSetDataType extends JavaDataType {
   public JavaSetDataType(JavaDataType wrappedType) {
     mWrappedValueType = wrappedType;
     with("java.util.Set<" + wrappedType.qualifiedName().className() + ">");
-//    setTypeName(ParseTools.PKG_SET + "<"
-//        + ParseTools.importExprWithClassName(wrappedValueType().qualifiedName()) + ">");
   }
 
   public JavaDataType wrappedValueType() {
@@ -48,7 +45,7 @@ public class JavaSetDataType extends JavaDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return ParseTools.PKG_DATAUTIL + ".emptySet()";
+    return Context.pt.PKG_DATAUTIL + ".emptySet()";
   }
 
   /**
@@ -59,7 +56,7 @@ public class JavaSetDataType extends JavaDataType {
   @Override
   public String sourceExpressionToMutable(String valueExpression) {
     if (!Context.generatedTypeDef.classMode())
-      return ParseTools.mutableCopyOfList(valueExpression);
+      return Context.pt.mutableCopyOfList(valueExpression);
     return valueExpression;
   }
 
@@ -67,11 +64,11 @@ public class JavaSetDataType extends JavaDataType {
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
     if (!Context.generatedTypeDef.classMode()) {
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfSet(valueExpression));
+      s.a(targetExpression, " = ", Context.pt.immutableCopyOfSet(valueExpression));
       return;
     }
     if (Context.debugMode()) {
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfSet(valueExpression));
+      s.a(targetExpression, " = ", Context.pt.immutableCopyOfSet(valueExpression));
       return;
     }
     super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
@@ -81,7 +78,7 @@ public class JavaSetDataType extends JavaDataType {
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     sourceIfNotNull(s, f);
     s.a(OPEN, //
-        ParseTools.PKG_JSLIST, " j = new ", ParseTools.PKG_JSLIST, "();", CR, //
+        Context.pt.PKG_JSLIST, " j = new ", Context.pt.PKG_JSLIST, "();", CR, //
         "for (", wrappedValueType().typeName(), " e : ", f.instanceName(), ")", IN, //
         "j.add(", wrappedValueType().sourceGenerateSerializeToObjectExpression("e"), ");", OUT, //
         "m.put(", f.nameStringConstantQualified(), ", j);", //
@@ -103,12 +100,12 @@ public class JavaSetDataType extends JavaDataType {
     s.a(OPEN, //
         "JSList m2 = m.optJSList(", QUOTE, f.name(), ");", CR, //
         "if (m2 != null && !m2.isEmpty())", OPEN, //
-        "Set<", wrappedValueType().typeName(), "> mp = new ", ParseTools.PKG_HASH_SET, "<>();", CR, //
+        "Set<", wrappedValueType().typeName(), "> mp = new ", Context.pt.PKG_HASH_SET, "<>();", CR, //
         "for (Object e : m2.wrappedList())", IN, //
         "mp.add(", wrappedValueType().deserializeJsonToMapValue("e"), ");", OUT);
     String expr = "mp";
     if (Context.debugMode())
-      expr = ParseTools.immutableCopyOfSet(expr);
+      expr = Context.pt.immutableCopyOfSet(expr);
     s.a(f.instanceName(), " = ", expr, ";", CLOSE, //
         CLOSE);
     s.close();

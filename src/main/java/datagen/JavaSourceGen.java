@@ -122,7 +122,7 @@ public final class JavaSourceGen extends SourceGen {
     s.a("@Override", CR, //
         "public JSMap toJson()", OPEN);
 
-    s.a(ParseTools.PKG_JSMAP, " m = new ", ParseTools.PKG_JSMAP, "();", CR);
+    s.a(Context.pt.PKG_JSMAP, " m = new ", Context.pt.PKG_JSMAP, "();", CR);
 
     for (FieldDef fieldDef : def.fields())
       fieldDef.dataType().sourceSerializeToObject(s, fieldDef);

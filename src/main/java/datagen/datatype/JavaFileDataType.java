@@ -24,14 +24,13 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
-import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.json.JSMap;
@@ -46,7 +45,7 @@ public final class JavaFileDataType extends JavaDataType {
 
   @Override
   public final String provideSourceDefaultValue() {
-    return PKG_FILES + ".DEFAULT";
+    return Context.pt.PKG_FILES + ".DEFAULT";
   }
 
   @Override
@@ -77,12 +76,12 @@ public final class JavaFileDataType extends JavaDataType {
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a(OPEN, //
-        PKG_LIST, "<", typeName(), "> result = ", f.nullIfOptional("new " + PKG_ARRAYLIST + "<>()"), ";", CR, //
-        ParseTools.PKG_JSLIST, " j = m.optJSList(", f.nameStringConstantQualified(), ");", CR);
+        Context.pt.PKG_LIST, "<", typeName(), "> result = ", f.nullIfOptional("new " +Context.pt. PKG_ARRAYLIST + "<>()"), ";", CR, //
+        Context.pt.PKG_JSLIST, " j = m.optJSList(", f.nameStringConstantQualified(), ");", CR);
     sourceIfNotNull(s, "j");
-    s.a("result = ", ParseTools.PKG_DATAUTIL, ".parseFileListFrom(j);");
+    s.a("result = ", Context.pt.PKG_DATAUTIL, ".parseFileListFrom(j);");
     s.a(CLOSE);
-    s.a(f.instanceName(), " = ", ParseTools.assignToListExpr("result"), ";");
+    s.a(f.instanceName(), " = ", Context.pt.assignToListExpr("result"), ";");
     sourceEndIf(s);
   }
 

@@ -27,8 +27,8 @@ package datagen.datatype;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
+import datagen.Context;
 import datagen.FieldDef;
-import datagen.ParseTools;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
 
@@ -39,7 +39,7 @@ public class PythonContractDataType extends PythonDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return ParseTools.importExprWithClassName(qualifiedName()) + ".default_instance";
+    return Context.pt.importExprWithClassName(qualifiedName()) + ".default_instance";
   }
 
   public String getConstructFromX() {
@@ -69,7 +69,7 @@ public class PythonContractDataType extends PythonDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("inst.", f.instanceName(), " = ", ParseTools.PKGPY_DATAUTIL, ".parse_list_of_objects(", typeName(),
+    s.a("inst.", f.instanceName(), " = ", Context.pt.PKGPY_DATAUTIL, ".parse_list_of_objects(", typeName(),
         ".default_instance, obj.get(", f.nameStringConstantQualified(), "), ",
         f.optional() ? "True" : "False", ")");
   }

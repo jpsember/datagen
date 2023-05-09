@@ -44,9 +44,11 @@ public final class Context {
   public static DataTypeManager dataTypeManager;
   public static DatWithSource datWithSource;
   public static Set<File> generatedFilesSet;
+  public static ParseTools pt;
 
   public static void prepare(Files files, DatagenConfig config) {
     discard();
+    Context.pt = new ParseTools(config.language());
     Context.files = files;
     Context.config = config.build();
     Context.generatedFilesSet = hashSet();
@@ -72,7 +74,7 @@ public final class Context {
   public static boolean debugMode() {
     return classMode() && !generatedTypeDef.isUnsafe();
   }
- 
+
   /**
    * Discard some old elements
    */

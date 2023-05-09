@@ -106,7 +106,6 @@ public final class GoSourceGen extends SourceGen {
     s.a(". \"js/json\"").cr();
 
     for (String cn : qualifiedClassNames) {
-      pr("cn:", cn);
       int i = cn.lastIndexOf('.');
       if (i < 0)
         continue;

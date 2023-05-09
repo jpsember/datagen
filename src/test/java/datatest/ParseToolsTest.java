@@ -29,7 +29,6 @@ import static js.base.Tools.*;
 import org.junit.Test;
 
 import datagen.Context;
-import datagen.ParseTools;
 import datagen.gen.DatagenConfig;
 import datagen.gen.Language;
 import js.testutil.MyTestCase;
@@ -53,7 +52,7 @@ public class ParseToolsTest extends MyTestCase {
     loadTools();
     // We have to prepare a context before calling ParseTools
     Context.prepare(files(), DatagenConfig.newBuilder().language(Language.JAVA));
-    assertMessage(ParseTools.adjustLinefeeds(mBuffer.toString(), Language.JAVA));
+    assertMessage(Context.pt.adjustLinefeeds(mBuffer.toString(), Language.JAVA));
   }
 
   private StringBuilder mBuffer = new StringBuilder();

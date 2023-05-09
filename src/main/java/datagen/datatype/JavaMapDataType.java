@@ -30,7 +30,6 @@ import static js.base.Tools.*;
 import datagen.Context;
 import datagen.FieldDef;
 import datagen.JavaDataType;
-import datagen.ParseTools;
 import datagen.SourceBuilder;
 
 public class JavaMapDataType extends JavaDataType {
@@ -38,14 +37,8 @@ public class JavaMapDataType extends JavaDataType {
   public JavaMapDataType(JavaDataType keyType, JavaDataType valueType) {
     mWrappedKeyType = keyType;
     mWrappedValueType = valueType;
-    with("java.util.Map<" + keyType.qualifiedName().className()
-        + ", " + valueType.qualifiedName().className() + ">");
-//    
-//    
-//    QualifiedName keyName = keyType.qualifiedName();
-//    QualifiedName valName = valueType.qualifiedName();
-//    setTypeName(ParseTools.PKG_MAP + "<" + ParseTools.importExprWithClassName(keyName) + ", "
-//        + ParseTools.importExprWithClassName(valName) + ">");
+    with("java.util.Map<" + keyType.qualifiedName().className() + ", " + valueType.qualifiedName().className()
+        + ">");
   }
 
   public JavaDataType wrappedKeyType() {
@@ -58,7 +51,7 @@ public class JavaMapDataType extends JavaDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return ParseTools.PKG_DATAUTIL + ".emptyMap()";
+    return Context.pt.PKG_DATAUTIL + ".emptyMap()";
   }
 
   /**
@@ -69,7 +62,7 @@ public class JavaMapDataType extends JavaDataType {
   @Override
   public String sourceExpressionToMutable(String valueExpression) {
     if (!Context.generatedTypeDef.classMode())
-      return ParseTools.mutableCopyOfMap(valueExpression);
+      return Context.pt.mutableCopyOfMap(valueExpression);
     return valueExpression;
   }
 
@@ -77,11 +70,11 @@ public class JavaMapDataType extends JavaDataType {
   public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
       String valueExpression) {
     if (!Context.generatedTypeDef.classMode()) {
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
+      s.a(targetExpression, " = ", Context.pt.immutableCopyOfMap(valueExpression));
       return;
     }
     if (Context.debugMode()) {
-      s.a(targetExpression, " = ", ParseTools.immutableCopyOfMap(valueExpression));
+      s.a(targetExpression, " = ", Context.pt.immutableCopyOfMap(valueExpression));
       return;
     }
     super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
@@ -91,7 +84,7 @@ public class JavaMapDataType extends JavaDataType {
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     sourceIfNotNull(s, f);
     s.a(OPEN, //
-        ParseTools.PKG_JSMAP, " j = new ", ParseTools.PKG_JSMAP, "();", CR, //
+        Context.pt.PKG_JSMAP, " j = new ", Context.pt.PKG_JSMAP, "();", CR, //
         "for (Map.Entry<", wrappedKeyType().typeName(), ", ", wrappedValueType().typeName(), "> e : ",
         f.instanceName(), ".entrySet())", IN, //
         "j.put(", wrappedKeyType().sourceGenerateSerializeToObjectExpression("e.getKey()"), ", ",
@@ -116,14 +109,14 @@ public class JavaMapDataType extends JavaDataType {
         "JSMap m2 = m.optJSMap(", QUOTE, f.name(), ");", CR, //
         "if (m2 != null && !m2.isEmpty())", OPEN, //
         "Map<", wrappedKeyType().typeName(), ", ", wrappedValueType().typeName(), "> mp = new ",
-        ParseTools.PKG_CONCURRENT_MAP, "<>();", CR, //
+        Context.pt.PKG_CONCURRENT_MAP, "<>();", CR, //
         "for (Map.Entry<String, Object> e : m2.wrappedMap().entrySet())", IN, //
         "mp.put(", wrappedKeyType().deserializeStringToMapKey("e.getKey()"), ", ",
         wrappedValueType().deserializeJsonToMapValue("e.getValue()"), ");", OUT //
     );
     String expr = "mp";
     if (Context.debugMode())
-      expr = ParseTools.immutableCopyOfMap(expr);
+      expr = Context.pt.immutableCopyOfMap(expr);
     s.a(f.instanceName(), " = ", expr, ";", CLOSE, //
         CLOSE);
 

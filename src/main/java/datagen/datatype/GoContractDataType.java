@@ -1,5 +1,6 @@
 package datagen.datatype;
 
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.GoDataType;
@@ -9,7 +10,6 @@ import js.json.JSMap;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
-import datagen.ParseTools;
 import datagen.QualifiedName;
 
 /**
@@ -41,7 +41,7 @@ public class GoContractDataType extends GoDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return "Default" + ParseTools.importExprWithClassName(mOriginalQualifiedName);
+    return "Default" + Context.pt.importExprWithClassName(mOriginalQualifiedName);
   }
 
   // Make this final for now to avoid unintended overriding

@@ -26,9 +26,9 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
-import datagen.ParseTools;
 import datagen.SourceBuilder;
 
 public class JavaShortArrayDataType extends JavaContractDataType {
@@ -40,12 +40,12 @@ public class JavaShortArrayDataType extends JavaContractDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return ParseTools.PKG_DATAUTIL + ".EMPTY_SHORT_ARRAY";
+    return Context.pt.PKG_DATAUTIL + ".EMPTY_SHORT_ARRAY";
   }
 
   @Override
   public String getSerializeToJSONValue(String value) {
-    return ParseTools.PKG_DATAUTIL + ".encodeBase64Maybe(" + value + ")";
+    return Context.pt.PKG_DATAUTIL + ".encodeBase64Maybe(" + value + ")";
   }
 
   @Override
@@ -55,7 +55,7 @@ public class JavaShortArrayDataType extends JavaContractDataType {
 
   @Override
   public String getConstructFromX() {
-    return ParseTools.PKG_DATAUTIL + ".parseShortsFromArrayOrBase64(x)";
+    return Context.pt.PKG_DATAUTIL + ".parseShortsFromArrayOrBase64(x)";
   }
 
   @Override
@@ -70,12 +70,12 @@ public class JavaShortArrayDataType extends JavaContractDataType {
 
   @Override
   public void sourceGenerateEquals(SourceBuilder s, String a, String b) {
-    s.a(ParseTools.PKG_ARRAYS, ".equals(", a, ", ", b, ")");
+    s.a(Context.pt.PKG_ARRAYS, ".equals(", a, ", ", b, ")");
   }
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a("r = r * 37 + ", ParseTools.PKG_ARRAYS, ".hashCode(", f.instanceName(), ");");
+    s.a("r = r * 37 + ", Context.pt.PKG_ARRAYS, ".hashCode(", f.instanceName(), ");");
   }
 
 }

@@ -26,9 +26,9 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
+import datagen.Context;
 import datagen.FieldDef;
 import datagen.JavaDataType;
-import datagen.ParseTools;
 import datagen.SourceBuilder;
 
 /**
@@ -47,7 +47,7 @@ public class JavaContractDataType extends JavaDataType {
   @Override
   public String provideSourceDefaultValue() {
     todo("can we wrap the qualified name in an import statement when it is constructed?");
-    return ParseTools.importExprWithClassName(qualifiedName()) + ".DEFAULT_INSTANCE";
+    return Context.pt.importExprWithClassName(qualifiedName()) + ".DEFAULT_INSTANCE";
   }
 
   public String getConstructFromX() {
@@ -60,7 +60,7 @@ public class JavaContractDataType extends JavaDataType {
     s.open();
     if (!f.optional())
       s.a(f.instanceName(), " = ", f.defaultValueOrNull(), ";", CR);
-    s.a(ParseTools.PKG_OBJECT, " x = m.optUnsafe(", f.nameStringConstantQualified(), ");", CR);
+    s.a(Context.pt.PKG_OBJECT, " x = m.optUnsafe(", f.nameStringConstantQualified(), ");", CR);
     sourceIfNotNull(s, "x");
     s.a(f.instanceName(), " = ", getConstructFromX(), ";");
     sourceEndIf(s);
@@ -76,7 +76,7 @@ public class JavaContractDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a(f.instanceName(), " = ", ParseTools.PKG_DATAUTIL, ".parseListOfObjects(", typeName(),
+    s.a(f.instanceName(), " = ", Context.pt.PKG_DATAUTIL, ".parseListOfObjects(", typeName(),
         ".DEFAULT_INSTANCE, m.optJSList(", f.nameStringConstantQualified(), "), ", f.optional(), ");");
   }
 

@@ -24,13 +24,12 @@
  **/
 package datagen.datatype;
 
-import static datagen.ParseTools.*;
 import static js.base.Tools.*;
 
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
-import datagen.ParseTools;
 import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.json.JSList;
@@ -45,7 +44,7 @@ public class JavaJsonListDataType extends JavaDataType {
 
   @Override
   public final String provideSourceDefaultValue() {
-    return ParseTools.PKG_JSLIST + ".DEFAULT_INSTANCE";
+    return Context.pt.PKG_JSLIST + ".DEFAULT_INSTANCE";
   }
 
   @Override
@@ -70,7 +69,7 @@ public class JavaJsonListDataType extends JavaDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a(f.instanceName(), " = ", PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(",
+    s.a(f.instanceName(), " = ", Context.pt.PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(",
         f.nameStringConstantQualified(), "), ", f.optional(), ");", CR);
   }
 
