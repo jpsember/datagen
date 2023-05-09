@@ -12,7 +12,6 @@ public final class QualifiedName extends BaseObject {
   }
 
   public static QualifiedName parse(String expr, String defaultPackage) {
-    //alertWithSkip(1, "parsing " + expr);
     int nameStartPos = expr.lastIndexOf('.');
     if (nameStartPos == 0 || nameStartPos == expr.length() - 1)
       throw badArg("from expr:", quote(expr));
@@ -132,9 +131,5 @@ public final class QualifiedName extends BaseObject {
   private final String mClassName;
   private String mEmbeddedName;
   private String mCachedCombined;
-
-  public String brief() {
-    return "[" + packagePath() + " : " + className() + "]";
-  }
 
 }

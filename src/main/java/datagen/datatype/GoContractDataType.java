@@ -16,48 +16,23 @@ import datagen.QualifiedName;
  */
 public class GoContractDataType extends GoDataType {
 
-  static int k = 100;
-  private int mK;
-
-  public GoContractDataType() {
-    mK = k++;
-    pr("constructing GoContractDataType:", mK);
-  }
-
   @Override
   public DataType withQualifiedName(QualifiedName qualifiedName) {
-    boolean db = true;
-    if (db)
-      pr("GoContractDataType withQualifiedName,", mK, ":", INDENT, qualifiedName);
-    //mOriginalQualifiedName = qualifiedName;
 
     // Have the 'main' type name be the interface, e.g. Cat
-    if (db)
-      pr("setting NAME_MAIN to:", qualifiedName.withClassName("I" + qualifiedName.className()));
-
     with(NAME_MAIN, qualifiedName);
 
     // Have the 'alternate' type name be the static name, e.g. Cat
-    // ...but preceded by a small s, so it is not exported?
+    // ...but preceded by a small s, so it is not exported
     String x = qualifiedName.combined();
     int i = x.lastIndexOf('.');
     checkArgument(i > 0, qualifiedName);
-    if (db)
-      pr("setting NAME_ALT to:", x.substring(0, i + 1) + "s" + x.substring(i + 1));
-
     with(NAME_ALT, x.substring(0, i + 1) + "s" + x.substring(i + 1));
 
-    if (db)
-      pr("setting NAME_HUMAN to:", qualifiedName);
-
-    with(NAME_HUMAN, qualifiedName);
-
-    dumpNames("after withQualifiedName call", mK);
-
+    // The human name can be the same as the main name
+    //  with(NAME_HUMAN, qualifiedName);
     return this;
   }
-
-  //private QualifiedName mOriginalQualifiedName;
 
   @Override
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap map) {
@@ -66,7 +41,6 @@ public class GoContractDataType extends GoDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    dumpNames("provideSourceDef", mK);
     return "Default" + qualifiedName(NAME_HUMAN).className();
   }
 
@@ -110,8 +84,6 @@ public class GoContractDataType extends GoDataType {
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-
-    dumpNames("parseElementFromJSONValue", mK);
     return "Default" + qualifiedName(NAME_HUMAN).className() + ".Parse(" + jsentityExpression + ").("
         + typeName() + ")";
   }

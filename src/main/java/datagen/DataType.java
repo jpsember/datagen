@@ -62,7 +62,7 @@ public abstract class DataType implements DefaultValueParser {
    * </pre>
    */
   public final DataType with(String qualNameExpr) {
-    return with(0, qualNameExpr);
+    return with(NAME_MAIN, qualNameExpr);
   }
 
   public final DataType with(int index, String qualNameExpr) {
@@ -83,10 +83,6 @@ public abstract class DataType implements DefaultValueParser {
 
   public final QualifiedName qualifiedName() {
     return qualifiedName(NAME_MAIN);
-  }
-
-  public final QualifiedName altQualifiedName() {
-    return qualifiedName(NAME_ALT);
   }
 
   public QualifiedName qualifiedName(int index) {
@@ -113,9 +109,7 @@ public abstract class DataType implements DefaultValueParser {
    * is added to the generated source file.
    */
   public final String typeName() {
-    if (true)
-      return qualifiedName(NAME_MAIN).embeddedName();
-    return qualifiedName(NAME_MAIN).className();
+    return qualifiedName(NAME_MAIN).embeddedName();
   }
 
   //------------------------------------------------------------------
@@ -318,12 +312,13 @@ public abstract class DataType implements DefaultValueParser {
   private boolean mDeclared;
   private boolean mUsedFlag;
 
-  public void dumpNames(Object...messages) {
+  public void dumpNames(Object... messages) {
     pr(insertStringToFront("Names:", messages));
     for (int i = 0; i < 8; i++) {
       QualifiedName q = mQualNameMap.get(i);
-      if (q == null) continue;
-      pr(INDENT,i,INDENT,q);
+      if (q == null)
+        continue;
+      pr(INDENT, i, INDENT, q);
     }
   }
 

@@ -53,7 +53,6 @@ public final class GeneratedTypeDef extends BaseObject {
     mEnumDataType = (EnumDataType) enumTypeOrNull;
     mClassMode = classMode;
 
-    QualifiedName qn = QualifiedName.parse(packageName + "." + name);
     DataType dataType;
 
     switch (Context.pt.language()) {
@@ -69,6 +68,7 @@ public final class GeneratedTypeDef extends BaseObject {
     default:
       throw notFinished();
     }
+    QualifiedName qn = QualifiedName.parse(packageName + "." + name);
     dataType.withQualifiedName(qn);
     mDataType = dataType;
     setName(qn.className());
@@ -92,10 +92,6 @@ public final class GeneratedTypeDef extends BaseObject {
 
   public final QualifiedName qualifiedName() {
     return mDataType.qualifiedName();
-  }
-
-  public final QualifiedName altQualifiedName() {
-    return mDataType.altQualifiedName();
   }
 
   private DataType mDataType;
