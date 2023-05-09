@@ -27,17 +27,16 @@ public final class QualifiedName extends BaseObject {
     // For class name "Foo", if package contains "gen" and 
     // package doesn't already end with ".foo", add ".foo" to it
     //
-    //
-    return result.convertToPython();
+    if (Utils.python())
+      result = result.convertToPython();
+    return result;
   }
 
   private QualifiedName convertToPython() {
-    if (Utils.python()) {
-      if (split(mPackagePath, '.').contains("gen")) {
-        String suffix = "." + convertCamelToUnderscore(mClassName);
-        if (!mPackagePath.endsWith(suffix)) {
-          return withPackageName(mPackagePath + suffix);
-        }
+    if (split(mPackagePath, '.').contains("gen")) {
+      String suffix = "." + convertCamelToUnderscore(mClassName);
+      if (!mPackagePath.endsWith(suffix)) {
+        return withPackageName(mPackagePath + suffix);
       }
     }
     return this;
@@ -96,7 +95,6 @@ public final class QualifiedName extends BaseObject {
 
   public QualifiedName withEmbeddedName(String typeName) {
     checkState(mEmbeddedName == null, "already set to:", mEmbeddedName);
-    log("withEmbeddedName:", typeName);
     mEmbeddedName = typeName;
     return this;
   }

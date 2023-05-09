@@ -74,13 +74,30 @@ public abstract class DataType extends BaseObject implements DefaultValueParser 
       log("with", index, "QualifiedName:", INDENT, q);
 
     if (index == NAME_MAIN) {
-      String typeName;
       todo("get rid of isPrimitive check here; constructor should somehow pass it in");
       //      if (isPrimitive())
       //        typeName = q.className();
       //      else
-      typeName = ParseTools.importedClassExpr(null, q.combined()).toString();
-      q.withEmbeddedName(typeName);
+
+      String arg = q.combined();
+      String prefix = arg;
+      String suffix = "";
+      switch (Utils.language()) {
+      case JAVA:
+      // If there's a type parameter <xxx>, use only the text preceding it as the embedded type expression
+      {
+        int i = arg.indexOf('<');
+        if (i >= 0) {
+          prefix = arg.substring(0, i);
+          suffix = arg.substring(i);
+        }
+      }
+        break;
+      default:
+        break;
+      }
+      String typeName = ParseTools.importedClassExpr(prefix).toString();
+      q.withEmbeddedName(typeName  + suffix);
     }
     return with(index, q);
   }
@@ -128,6 +145,8 @@ public abstract class DataType extends BaseObject implements DefaultValueParser 
    * is added to the generated source file.
    */
   public final String typeName() {
+    if (true)
+      return qualifiedName(NAME_MAIN).embeddedName();
     return qualifiedName(NAME_MAIN).className();
   }
 

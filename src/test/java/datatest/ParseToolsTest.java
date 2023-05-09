@@ -28,7 +28,9 @@ import static js.base.Tools.*;
 
 import org.junit.Test;
 
+import datagen.Context;
 import datagen.ParseTools;
+import datagen.gen.DatagenConfig;
 import datagen.gen.Language;
 import js.testutil.MyTestCase;
 
@@ -49,6 +51,8 @@ public class ParseToolsTest extends MyTestCase {
 
   private void perform() {
     loadTools();
+    // We have to prepare a context before calling ParseTools
+    Context.prepare(files(), DatagenConfig.newBuilder().language(Language.JAVA));
     assertMessage(ParseTools.adjustLinefeeds(mBuffer.toString(), Language.JAVA));
   }
 

@@ -97,10 +97,11 @@ public abstract class SourceGen extends BaseObject {
       parser.withTemplate(content).withMapper(m);
       content = parser.content();
     }
-    
-    pr(content);
-    halt();
-    
+
+    if (alert("showing content")) {
+      pr(DASHES, CR, "Content after pass 1:", CR, DASHES, CR, content);
+    }
+
     // Pass 2: strip package names, add to set for import statements
     //
     content = extractImportStatements(content);
@@ -184,7 +185,7 @@ public abstract class SourceGen extends BaseObject {
    * </pre>
    */
   private String extractImportStatements(String template) {
- //   halt("extractImportStatements from:", INDENT, template);
+    //   halt("extractImportStatements from:", INDENT, template);
 
     Set<String> statementSet = hashSet();
     MacroParser parser = new MacroParser();

@@ -28,6 +28,7 @@ import static datagen.ParseTools.*;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.ParseTools;
@@ -37,7 +38,9 @@ import js.json.JSMap;
 
 public final class JavaFileDataType extends JavaDataType {
 
-  {
+  public static final DataType TYPE = new JavaFileDataType();
+
+  private JavaFileDataType() {
     with("java.io.File");
   }
 

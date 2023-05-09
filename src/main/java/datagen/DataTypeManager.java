@@ -87,7 +87,7 @@ public final class DataTypeManager extends BaseObject {
       add("long", JavaPrimitiveLongDataType.PRIM_TYPE);
       add("float", JavaPrimitiveFloatDataType.PRIM_TYPE);
       add("double", JavaPrimitiveDoubleDataType.PRIM_TYPE);
-      add("File", new JavaFileDataType());
+      add("File", JavaFileDataType.TYPE);
       add(IPoint.DEFAULT_INSTANCE, IPOINT_PARSER);
       add("bool", JavaPrimitiveBooleanDataType.PRIM_TYPE);
       add("string", new JavaStringDataType());

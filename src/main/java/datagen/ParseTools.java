@@ -39,7 +39,13 @@ import static datagen.Utils.*;
 
 public final class ParseTools {
 
-  public static final boolean SHOW_STACK_TRACES = false && alert("showing full stack traces");
+  m
+  static {
+    pr("who is loading me?");
+    pr(stackTraceToList(new Throwable()));
+  }
+
+  public static final boolean SHOW_STACK_TRACES = true && alert("showing full stack traces");
 
   public static final String EXT_DATA_DEFINITION = "dat";
   public static final String DOT_EXT_DATA_DEFINITION = "." + EXT_DATA_DEFINITION;
@@ -178,52 +184,24 @@ public final class ParseTools {
   }
 
   private static Object javaClassExpr(String qualifiedClassName) {
-    return importedClassExpr(Language.JAVA, qualifiedClassName);
+    if (language() != Language.JAVA)
+      return null;
+    return importedClassExpr(qualifiedClassName);
   }
 
   private static Object pythonClassExpr(String qualifiedClassName) {
-    return importedClassExpr(Language.PYTHON, qualifiedClassName);
-  }
-
-  /**
-   * This is a class that is lazy initialized, so it doesn't call certain
-   * methods before the classes are loaded
-   */
-  private static class LazyClassExpr {
-    LazyClassExpr(Language language, String qualifiedClassName) {
-      mLanguage = language;
-      mQualifiedClassName = qualifiedClassName;
-    }
-
-    @Override
-    public String toString() {
-      if (mString == null) {
-        if (mLanguage == null)
-          mLanguage = language();
-        try {
-          QualifiedName qn = QualifiedName.parse(mQualifiedClassName);
-          String className = qn.className();
-          mString = importExprWithCode(mQualifiedClassName, className);
-        } catch (Throwable t) {
-          throw badArg("Failed to parse imported class expression:", quote(mQualifiedClassName),
-              "for language", mLanguage);
-        }
-      }
-      return mString;
-    }
-
-    private String mString;
-    private Language mLanguage;
-    private String mQualifiedClassName;
+    if (language() != Language.PYTHON)
+      return null;
+    return importedClassExpr(qualifiedClassName);
   }
 
   /**
    * Wrap a class name in delimeters so the class is imported, and the class
    * name (without its package) is generated
    */
-  public static Object importedClassExpr(Language language, String qualifiedClassName) {
-    todo("why this lazy stuff? seems complicated, esp. since we know the language here");
-    return new LazyClassExpr(language, qualifiedClassName);
+  public static Object importedClassExpr(String classExpression) {
+    QualifiedName qn = QualifiedName.parse(classExpression);
+    return importExprWithCode(qn.combined(), qn.className());
   }
 
   // Qualified class names for some of my data types (and Java's), in case they change or get substituted in future

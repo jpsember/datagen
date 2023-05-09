@@ -31,7 +31,6 @@ import static js.base.Tools.*;
 import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
-import datagen.ParseTools;
 import datagen.PythonDataType;
 import datagen.SourceBuilder;
 import js.data.DataUtil;

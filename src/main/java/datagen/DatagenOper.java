@@ -58,9 +58,13 @@ public class DatagenOper extends AppOper {
 
   @Override
   public void perform() {
+    pw();
+    pr("perform");
     DatagenConfig config = datagenConfig();
+    pw();
     Context.prepare(files(), config);
-
+    pw();
+     
     List<DatWithSource> entriesToFreshen = constructFileEntries(); 
 
     if (entriesToFreshen.isEmpty())

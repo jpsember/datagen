@@ -35,11 +35,12 @@ import js.json.JSMap;
  */
 public class JavaPrimitiveByteDataType extends JavaDataType {
 
+  private JavaPrimitiveByteDataType() {
+  }
+
   public static final DataType PRIM_TYPE = new JavaPrimitiveByteDataType().with("java.lang.byte");
   public static final DataType BOXED_TYPE = new Boxed().with("java.lang.Byte");
 
-  private JavaPrimitiveByteDataType() {
-  }
 
   @Override
   public final String compilerInitialValue() {
