@@ -87,8 +87,8 @@ public final class GoSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
       DataType d = f.dataType();
-      s.a("func (v *", def.name(), "Builder) ", f.setterName(), "(", f.instanceName(), " ", d.typeName(),
-          ") *", def.name(), "Builder", OPEN);
+      s.a("func (v *", builderName(), ") ", f.setterName(), "(", f.instanceName(), " ", d.typeName(), ") *",
+          builderName(), OPEN);
       String targetExpr = "v.m." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "return v", CLOSE);
@@ -234,14 +234,16 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected void addAdditionalTemplateValues(JSMap m) {
-    m.put("static_class", "s" + Context.generatedTypeDef.name());
+
+    DataType type = Context.generatedTypeDef.wrappedType();
+
+    m.put("static_class", type.qualifiedName(DataType.NAME_ALT).className());
     m.put("class_init_fields_to_defaults", generateInitFieldsToDefaults());
     m.put("class_getter_declaration", generateClassGetterDeclaration());
     m.put("go_builder_getter_implementation", generateBuilderGetterImplementation());
-    m.put("builder_name", Context.generatedTypeDef.name() + "Builder");
-    m.put("interface_name", "I" + Context.generatedTypeDef.name());
-    todo("change the default name to the 'plain' name");
-    m.put("default_var_name", "Default" + Context.generatedTypeDef.name());
+    m.put("builder_name", type.qualifiedName(DataType.NAME_HUMAN).className() + "Builder");
+    m.put("interface_name", type.qualifiedName(DataType.NAME_MAIN).className());
+    m.put("default_var_name", "Default" + type.qualifiedName(DataType.NAME_HUMAN).className());
   }
 
   private String generateInitFieldsToDefaults() {
@@ -271,11 +273,16 @@ public final class GoSourceGen extends SourceGen {
   private String generateBuilderGetterImplementation() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
-      s.a("func (v *", def.name(), "Builder) ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
+      s.a("func (v *", builderName(), ") ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
           "return v.m.", f.instanceName(), CLOSE);
       s.br();
     }
     return content();
+  }
+
+  private String builderName() {
+    GeneratedTypeDef def = Context.generatedTypeDef;
+    return def.wrappedType().qualifiedName(DataType.NAME_HUMAN).className() + "Builder";
   }
 
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template_go.txt");
