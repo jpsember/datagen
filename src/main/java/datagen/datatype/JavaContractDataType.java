@@ -24,12 +24,15 @@
  **/
 package datagen.datatype;
 
+import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
 import datagen.Context;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
+import js.data.DataUtil;
+import js.json.JSMap;
 
 /**
  * DataType that wraps objects that implement the DataType interface
@@ -98,47 +101,20 @@ public class JavaContractDataType extends JavaDataType {
     return provideSourceDefaultValue() + ".parse((JSMap) " + jsonValue + ")";
   }
 
-  //  @Override
-  //  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
-  //   // String text = json.get("");
-  ////  @Override
-  ////  public String parseDefaultValue(Scanner scanner, SourceBuilder sb, FieldDef fieldDef) {
-  //
-  //    // Attempt to infer from the tokens how to parse a default value
-  //
-  ////    Token t = scanner.peek();
-  //
-  //    // If it looks like [ ...., ...]
-  //    //
-  //    // then scan a sequence of comma-delimited strings, and pass as arguments to a constructor
-  //    // 
-  //    if (t.id(SQOP)) {
-  //      scanner.read();
-  //      List<String> exprs = arrayList();
-  //      boolean commaExp = false;
-  //      while (scanner.readIf(SQCL) == null) {
-  //        if (commaExp) {
-  //          scanner.read(COMMA);
-  //          commaExp = false;
-  //          continue;
-  //        }
-  //        exprs.add(scanner.read().text());
-  //        commaExp = true;
-  //      }
-  //
-  //      sb.a("  private static final ", fieldDef.dataType().typeName(), " ", fieldDef.constantName(),
-  //          "  = new ", typeName(), "(");
-  //      int i = INIT_INDEX;
-  //      for (String expr : exprs) {
-  //        i++;
-  //        if (i > 0)
-  //          sb.a(", ");
-  //        sb.a(expr);
-  //      }
-  //      sb.a(");", CR);
-  //      return fieldDef.constantName();
-  //    }
-  //    throw notSupported("can't parse default value for token:", t);
-  //  }
+  @Override
+  public String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDefOrNull, JSMap json) {
+    FieldDef fieldDef = fieldDefOrNull;
+    SourceBuilder s = classSpecificSource;
+    s.in();
+    s.a("private static final ", typeName(), fieldDef.constantName(), ";", CR, //
+        BR, //
+        OPEN, //
+        "JSMap m = new JSMap(", DataUtil.escapeChars(json.toString(), true), ");", CR, //
+        fieldDef.constantName(), " = ", sourceDefaultValue() + ".parse(m)", ";", //
+        CLOSE //
+    );
+    s.out();
+    return fieldDef.constantName();
+  }
 
 }

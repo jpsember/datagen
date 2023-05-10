@@ -330,7 +330,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
-
   /**
    * Fields of type 'string' must not be declared as 'String'
    */
@@ -1073,8 +1072,7 @@ public class JavaGeneratorTest extends GenBaseTest {
         OUTDENT, "}");
     compile();
   }
-  
-  
+
   @Test
   public void defaultValuesMap() {
     p().pr(//
@@ -1086,4 +1084,11 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
+  @Test
+  public void defaultValuesDataType() {
+    p().pr("extern z.Bah;");
+    p().pr("fields {", INDENT, //
+        "Bah x = {\"hey\":19};", CR, OUTDENT, "}");
+    compile();
+  }
 }
