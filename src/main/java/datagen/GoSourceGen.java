@@ -105,17 +105,32 @@ public final class GoSourceGen extends SourceGen {
     s.a(". \"js/json\"").cr();
 
     for (String cn : qualifiedClassNames) {
+      
+      // Don't import anything if there is no package info
+      
+      pr("generateImport, qualname:",cn);
       int i = cn.lastIndexOf('.');
       if (i < 0)
         continue;
 
-      // We also don't need to import anything from the local package
-      // Assumes the class name includes a package
-      String packageName = cn.substring(0, cn.lastIndexOf('.'));
-      if (packageName.equals(Context.generatedTypeDef.qualifiedName().packagePath()))
+      QualifiedName qn = QualifiedName.parse(cn);
+      pr("Parsed qual name:",INDENT,qn);
+      
+      // If the package name is the same as that of the file being generated, no import necessary.
+      
+      if (qn.packagePath().equals(Context.generatedTypeDef.qualifiedName().packagePath()))
         continue;
-
-      s.a(". \"", cn.replace('.', '/'),"\"").cr();
+      i = qn.packagePath().lastIndexOf('.');
+      checkArgument(i > 0,"expected more than one component in package path:",INDENT,qn);
+      
+      String packageName = qn.packagePath().substring(i+1);
+      checkArgument(nonEmpty(packageName) && !packageName.equals("gen"), "unexpected package name:", quote(packageName),"derived from:",INDENT,qn);
+      
+      
+      String importString = qn.packagePath().replace('.', '/');
+      pr("============> importing:",importString);
+      
+      s.a(". \"", importString,"\"").cr();
     }
     return content();
   }
