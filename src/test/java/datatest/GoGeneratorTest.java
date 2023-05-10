@@ -75,7 +75,7 @@ public class GoGeneratorTest extends GenBaseTest {
 
   @Test
   public void contract() {
-    p().pr("extern abc.Crow;", CR,  //
+    p().pr("extern gen.abc.Crow;", CR,  //
         "class {", INDENT, //
         "Crow boss;",CR, //
         "*Crow henchmen;",CR //
