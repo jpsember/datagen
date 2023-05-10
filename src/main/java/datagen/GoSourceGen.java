@@ -102,7 +102,6 @@ public final class GoSourceGen extends SourceGen {
   protected String generateImports(List<String> qualifiedClassNames) {
     s.setIndent(2);
     s.a(". \"js/base\"").cr();
-    //s.comment("Add the fancy qualified stuff to automatically determine which imports are necessary");
     s.a(". \"js/json\"").cr();
 
     for (String cn : qualifiedClassNames) {
@@ -116,7 +115,7 @@ public final class GoSourceGen extends SourceGen {
       if (packageName.equals(Context.generatedTypeDef.qualifiedName().packagePath()))
         continue;
 
-      s.a("import ", cn, ";").cr();
+      s.a(". \"", cn.replace('.', '/'),"\"").cr();
     }
     return content();
   }
