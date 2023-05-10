@@ -31,6 +31,6 @@ import js.json.JSMap;
 public interface DefaultValueParser {
 
   default String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDefOrNull, JSMap json) {
-    throw notSupported("parseDefaultValue");
+    throw notSupported("parseDefaultValue; class:" , getClass());
   }
 }

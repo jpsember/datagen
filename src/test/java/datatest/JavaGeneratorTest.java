@@ -1073,5 +1073,17 @@ public class JavaGeneratorTest extends GenBaseTest {
         OUTDENT, "}");
     compile();
   }
+  
+  
+  @Test
+  public void defaultValuesMap() {
+    p().pr(//
+        "class {", INDENT, //
+        "* string str_array;", CR, //
+        "map string int str_map = {\"a\" : 42, \"b\" : 17,};", CR, //
+        "set string str_set;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
 
 }

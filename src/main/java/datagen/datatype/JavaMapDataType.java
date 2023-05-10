@@ -31,6 +31,8 @@ import datagen.Context;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
+import js.data.DataUtil;
+import js.json.JSMap;
 
 public class JavaMapDataType extends JavaDataType {
 
@@ -126,6 +128,25 @@ public class JavaMapDataType extends JavaDataType {
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
     s.a("r = r * 37 + ", f.instanceName(), ".hashCode();");
+  }
+
+  @Override
+  public String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDefOrNull, JSMap json) {
+    FieldDef fieldDef = fieldDefOrNull;
+    SourceBuilder s = classSpecificSource;
+    s.in();
+    s.a("private static final ", typeName(), " ", fieldDef.constantName(), " = new ",
+        Context.pt.PKG_CONCURRENT_MAP, "<>();", CR, BR);
+    s.a("static ", OPEN, //
+        "JSMap m = new JSMap(", DataUtil.escapeChars(json.toString(), true), ");", CR, //
+        "for (Map.Entry<String, Object> e : m.wrappedMap().entrySet())", IN, //
+        fieldDef.constantName(), ".put(", wrappedKeyType().deserializeStringToMapKey("e.getKey()"), ", ",
+        wrappedValueType().deserializeJsonToMapValue("e.getValue()"), ");", OUT, //
+        "// will the cast to (Integer) always work?", CR, //
+        CLOSE //
+    );
+    s.out();
+    return fieldDef.constantName();
   }
 
   private final JavaDataType mWrappedKeyType;
