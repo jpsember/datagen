@@ -100,37 +100,43 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected String generateImports(List<String> qualifiedClassNames) {
+
+    log("generating golang imports");
+
     s.setIndent(2);
     s.a(". \"js/base\"").cr();
     s.a(". \"js/json\"").cr();
 
     for (String cn : qualifiedClassNames) {
-      
-      // Don't import anything if there is no package info
-      
-      pr("generateImport, qualname:",cn);
-      int i = cn.lastIndexOf('.');
-      if (i < 0)
-        continue;
+      log("... expression:", cn);
 
       QualifiedName qn = QualifiedName.parse(cn);
-      pr("Parsed qual name:",INDENT,qn);
-      
-      // If the package name is the same as that of the file being generated, no import necessary.
-      
-      if (qn.packagePath().equals(Context.generatedTypeDef.qualifiedName().packagePath()))
+      log(INDENT, "QualifiedName:", INDENT, qn);
+
+      // Don't import anything if there is no package info
+      if (qn.packagePath().isEmpty()) {
+        log("...package path is empty; skipping");
         continue;
-      i = qn.packagePath().lastIndexOf('.');
-      checkArgument(i > 0,"expected more than one component in package path:",INDENT,qn);
-      
-      String packageName = qn.packagePath().substring(i+1);
-      checkArgument(nonEmpty(packageName) && !packageName.equals("gen"), "unexpected package name:", quote(packageName),"derived from:",INDENT,qn);
-      
-      
+      }
+
+      // If the package name is the same as that of the file being generated, no import necessary.
+
+      if (qn.packagePath().equals(Context.generatedTypeDef.qualifiedName().packagePath())) {
+        log("...same package as the generated type; skipping");
+        continue;
+      }
+
+      {
+        int i = qn.packagePath().lastIndexOf('.');
+        checkArgument(i > 0, "expected more than one component in package path:", INDENT, qn);
+        String packageName = qn.packagePath().substring(i + 1);
+        checkArgument(nonEmpty(packageName) && !packageName.equals("gen"), "unexpected package name:",
+            quote(packageName), "derived from:", INDENT, qn);
+      }
+
       String importString = qn.packagePath().replace('.', '/');
-      pr("============> importing:",importString);
-      
-      s.a(". \"", importString,"\"").cr();
+      log("...------------------------------> importing:", importString);
+      s.a(". \"", importString, "\"").cr();
     }
     return content();
   }

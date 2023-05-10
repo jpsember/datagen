@@ -72,7 +72,7 @@ public final class ParseTools {
     PKGPY_LIST = pythonClassExpr("typing.List");
   }
 
-  public static final boolean SHOW_STACK_TRACES = true && alert("showing full stack traces");
+  public static final boolean SHOW_STACK_TRACES = false && alert("showing full stack traces");
 
   public static final String EXT_DATA_DEFINITION = "dat";
   public static final String DOT_EXT_DATA_DEFINITION = "." + EXT_DATA_DEFINITION;
