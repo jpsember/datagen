@@ -281,6 +281,12 @@ final class DataDefinitionParser extends BaseObject {
    * A boolean or number
    * 
    * If the resulting json value is not a JSMap, wrap it in a JSMap with key ""
+   * 
+   * Be forgiving of incorrect json, specifically:
+   * 
+   * 1) allow (one) extra comma at the end of a map or list
+   * 
+   * 2) allow unquoted strings
    */
   private JSMap parseDefaultValueAsJsonMap() {
     StringBuilder sb = new StringBuilder();
@@ -310,8 +316,21 @@ final class DataDefinitionParser extends BaseObject {
         break;
       default:
         checkState(!stack.isEmpty());
+        // If not ',' ':' or boolean, wrap in quotes
+        if (!(t.id(COLON) || t.id(COMMA) || t.id(BOOL))) {
+          t = withText(t, quote(t.text()));
+        }
         break;
       }
+
+      // If we're appending } or ], and previous character is ',', remove previous character (extra comma)
+      if (t.id(BRCL) || t.id(SQCL)) {
+        int x = sb.length();
+        if (x > 0 && sb.charAt(x - 1) == ',') {
+          sb.setLength(x - 1);
+        }
+      }
+
       sb.append(t.text());
     }
     String result = sb.toString();
@@ -323,6 +342,10 @@ final class DataDefinitionParser extends BaseObject {
     }
 
     return new JSMap(result);
+  }
+
+  private static Token withText(Token t, String text) {
+    return new Token(t.source(), t.id(), t.name(), text, t.row(), t.column());
   }
 
   private PartialType parsePartialType() {

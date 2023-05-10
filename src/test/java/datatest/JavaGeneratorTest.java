@@ -1091,4 +1091,12 @@ public class JavaGeneratorTest extends GenBaseTest {
         "Bah x = {\"hey\":19};", CR, OUTDENT, "}");
     compile();
   }
+
+  @Test
+  public void defaultValuesForgiving() {
+    p().pr("extern z.Bah;");
+    p().pr("fields {", INDENT, //
+        "Bah x = { hey :19,  blue : 42, };", CR, OUTDENT, "}");
+    compile();
+  }
 }

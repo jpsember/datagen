@@ -106,7 +106,7 @@ public class JavaContractDataType extends JavaDataType {
     FieldDef fieldDef = fieldDefOrNull;
     SourceBuilder s = classSpecificSource;
     s.in();
-    s.a("private static final ", typeName(), fieldDef.constantName(), ";", CR, //
+    s.a("private static final ", typeName(), " ", fieldDef.constantName(), ";", CR, //
         BR, //
         OPEN, //
         "JSMap m = new JSMap(", DataUtil.escapeChars(json.toString(), true), ");", CR, //
