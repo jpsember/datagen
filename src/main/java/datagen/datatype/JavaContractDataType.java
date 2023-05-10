@@ -46,8 +46,7 @@ public class JavaContractDataType extends JavaDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    todo("can we wrap the qualified name in an import statement when it is constructed?");
-    return Context.pt.importExprWithClassName(qualifiedName()) + ".DEFAULT_INSTANCE";
+    return typeName() + ".DEFAULT_INSTANCE";
   }
 
   public String getConstructFromX() {

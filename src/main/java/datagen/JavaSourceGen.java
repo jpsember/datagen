@@ -141,8 +141,7 @@ public final class JavaSourceGen extends SourceGen {
 
       // We also don't need to import anything from the local package
       // Assumes the class name includes a package
-      String packageName = cn.substring(0, cn.lastIndexOf('.'));
-      if (packageName.equals(Context.generatedTypeDef.qualifiedName().packagePath()))
+      if (cn.equals(Context.generatedTypeDef.qualifiedName().packagePath()))
         continue;
 
       s.a("import ", cn, ";").cr();
