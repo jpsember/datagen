@@ -105,15 +105,8 @@ public class JavaContractDataType extends JavaDataType {
   public String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDefOrNull, JSMap json) {
     FieldDef fieldDef = fieldDefOrNull;
     SourceBuilder s = classSpecificSource;
-    s.in();
-    s.a("private static final ", typeName(), " ", fieldDef.constantName(), ";", CR, //
-        BR, //
-        OPEN, //
-        "JSMap m = new JSMap(", DataUtil.escapeChars(json.toString(), true), ");", CR, //
-        fieldDef.constantName(), " = ", sourceDefaultValue() + ".parse(m)", ";", //
-        CLOSE //
-    );
-    s.out();
+    s.a(IN, "private static final ", typeName(), " ", fieldDef.constantName(), " = ", sourceDefaultValue(),
+        ".parse(new JSMap(", DataUtil.escapeChars(json.toString(), true), "));", OUT);
     return fieldDef.constantName();
   }
 
