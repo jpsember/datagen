@@ -53,15 +53,6 @@ public abstract class GoDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    //    var jslist = s.OptList("kids")
-    //    if jslist != nil {
-    //      var length = jslist.Length()
-    //      var z = make([]string, length)
-    //      for i := 0; i < length; i++ {
-    //        z[i] = jslist.Get(i).ToString()
-    //      }
-    //      n.kids = z
-    //    }
     s.a(OPEN, //
         "var jslist = s.OptList(\"", f.instanceName(), "\")", CR, //
         "if jslist != nil ", OPEN, //

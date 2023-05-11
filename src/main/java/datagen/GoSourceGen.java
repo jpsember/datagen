@@ -103,9 +103,10 @@ public final class GoSourceGen extends SourceGen {
 
     log("generating golang imports");
 
+    String goCoreHost = "github.com/jpsember/golang-base";
     s.setIndent(2);
-    s.a(". \"js/base\"").cr();
-    s.a(". \"js/json\"").cr();
+    s.a(". ",quote(goCoreHost + "/base")).cr();
+    s.a(". ",quote(goCoreHost + "/json")).cr();
 
     for (String cn : qualifiedClassNames) {
       log("... expression:", cn);
