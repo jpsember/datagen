@@ -53,15 +53,7 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected final String generateCopyFromBuilderToImmutable() {
-    s.setIndent(2);
-    GeneratedTypeDef def = Context.generatedTypeDef;
-    for (FieldDef f : def.fields()) {
-      s.cr();
-      String targetExpression = "b." + f.instanceName();
-      String valueExpression = "s." + f.instanceName();
-      s.a(targetExpression, " = ", valueExpression);
-    }
-    return content();
+    return "!!! not required !!!";
   }
 
   @Override
@@ -89,7 +81,7 @@ public final class GoSourceGen extends SourceGen {
       DataType d = f.dataType();
       s.a("func (v *", builderName(), ") ", f.setterName(), "(", f.instanceName(), " ", d.typeName(), ") *",
           builderName(), OPEN);
-      String targetExpr = "v.m." + f.instanceName();
+      String targetExpr = "v." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "return v", CLOSE);
       s.br();
@@ -105,8 +97,8 @@ public final class GoSourceGen extends SourceGen {
 
     String goCoreHost = "github.com/jpsember/golang-base";
     s.setIndent(2);
-    s.a(". ",quote(goCoreHost + "/base")).cr();
-    s.a(". ",quote(goCoreHost + "/json")).cr();
+    s.a(". ", quote(goCoreHost + "/base")).cr();
+    s.a(". ", quote(goCoreHost + "/json")).cr();
 
     for (String cn : qualifiedClassNames) {
       log("... expression:", cn);
@@ -166,29 +158,12 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected final String generateImmutableToBuilder() {
-    GeneratedTypeDef def = Context.generatedTypeDef;
-    s.setIndent(2);
-    for (FieldDef f : def.fields()) {
-      String expr = "v." + f.instanceName();
-      if (Context.debugMode()) {
-        f.dataType().sourceExpressionToImmutable(s, f, "d." + f.instanceName(), expr);
-      } else {
-        s.a("d." + f.instanceName(), " = ", expr);
-      }
-      s.a(CR);
-    }
-    return chomp(content());
+    return "!!! not required !!!";
   }
 
   @Override
   protected String generateStringConstants() {
-    s.a("**GenerateStringConstants");
-    GeneratedTypeDef def = Context.generatedTypeDef;
-    for (FieldDef f : def.fields()) {
-      s.br();
-      s.a("protected static final String ", f.nameStringConstantQualified(), " = \"", f.name(), "\";");
-    }
-    return content();
+    return NOT_SUPPORTED;
   }
 
   @Override
@@ -295,7 +270,7 @@ public final class GoSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
       s.a("func (v *", builderName(), ") ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
-          "return v.m.", f.instanceName(), CLOSE);
+          "return v.", f.instanceName(), CLOSE);
       s.br();
     }
     return content();

@@ -72,8 +72,8 @@ public class GoContractDataType extends GoDataType {
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String arg = f.instanceName();
     s.a("if ", arg, " == nil ", OPEN, //
-        "v.m.", f.instanceName(), " = Default", qualifiedName(NAME_HUMAN).className(), //
-        CR, "} else {", CR, "v.m.", f.instanceName(), " = ", arg, ".Build()", //,
+        targetExpr, " = Default", qualifiedName(NAME_HUMAN).className(), //
+        CR, OUT, "} else {", IN, CR, targetExpr, " = ", arg, ".Build()", //,
         CLOSE);
   }
 

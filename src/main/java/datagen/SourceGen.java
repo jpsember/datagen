@@ -224,7 +224,7 @@ public abstract class SourceGen extends BaseObject {
 
   private List<String> mImportedClassNames;
 
-  private static final String NOT_SUPPORTED = "<<not supported>>";
+  public static final String NOT_SUPPORTED = "<<not supported>>";
 
   protected abstract String getTemplate();
 

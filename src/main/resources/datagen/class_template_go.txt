@@ -11,7 +11,8 @@ import (
 [!instance_fields]}
 
 [!deprecated]type [!builder_name] struct {
-  m [!static_class]
+  // We embed the static struct
+  [!static_class]
 }
 
 // ---------------------------------------------------------------------------------------
@@ -52,10 +53,7 @@ func (v *[!static_class]) Build() [!interface_name] {
 }
 
 func (v *[!static_class]) ToBuilder() *[!builder_name] {
-  var b = new([!builder_name])
-  var d = &b.m
-[!copy_to_builder]
-  return b
+  return &[!builder_name]{ [!static_class]: *v}
 }
 
 func (v *[!static_class]) ToJson() any {
@@ -85,10 +83,9 @@ func (v *[!static_class]) String() string {
 [!setters]
 
 func (v *[!builder_name]) Build() [!interface_name] {
-  var b = new([!static_class])
-  var s = v.m
-[!copyfield_from_builder]
-  return b
+  // Construct a copy of the embedded static struct
+  var b = v.[!static_class]
+  return &b
 }
 
 func (v *[!builder_name]) ToBuilder() *[!builder_name] {
@@ -96,7 +93,7 @@ func (v *[!builder_name]) ToBuilder() *[!builder_name] {
 }
 
 func (v *[!builder_name]) ToJson() any {
-  return v.m.ToJson()
+  return v.ToJson()
 }
 
 func (v *[!builder_name]) Parse(source any) DataClass {
@@ -104,7 +101,7 @@ func (v *[!builder_name]) Parse(source any) DataClass {
 }
 
 func (v *[!builder_name]) String() string {
-  return v.m.String()
+  return v.String()
 }
 
 [!class_specific]
