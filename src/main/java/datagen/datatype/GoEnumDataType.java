@@ -42,24 +42,13 @@ public class GoEnumDataType extends GoDataType implements EnumDataType {
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    return valueExpression + " // !!! Must have convert_camel_case_to_underscore somewhere"; //.toString().toLowerCase()";
+    return valueExpression + ".String()"; 
   }
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("n.", f.instanceName()," = ",sourceDefaultValue(),".ParseFrom(s, ", f.nameStringConstantQualified() ,")",CR);
-//    
-//    s.a(OPEN, //
-//        "var x = s.OptString(", f.nameStringConstantQualified(), ", \"\")",CR, //
-//        "if x == \"\" ",OPEN, //
-//        f.instanceName()," = ", sourceDefaultValue(),  CLOSE, //
-//        " else ",OPEN, //
-//        "v, err := ",sourceDefaultValue(),".Info().ValueOf(x)", CR, //
-//        "if err ",OPEN, //
-//        "Die(err)",CLOSE, //
-//        f.instanceName()," = v.(wtf)", CR, //
-//        CLOSE //
-//        );
+    s.a("n.", f.instanceName(), " = ", sourceDefaultValue(), ".ParseFrom(s, ",
+        f.nameStringConstantQualified(), ")", CR);
   }
 
   @Override

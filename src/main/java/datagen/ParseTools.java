@@ -70,6 +70,10 @@ public final class ParseTools {
 
     PKGPY_DATAUTIL = pythonClassExpr("pycore.datautil.DataUtil");
     PKGPY_LIST = pythonClassExpr("typing.List");
+
+    PKGGO_TOOLS = goClassExpr("!. \"github.com/jpsember/golang-base/base\"");
+    PKGGO_DATA = goClassExpr("!. \"github.com/jpsember/golang-base/data\"");
+    PKGGO_JSON = goClassExpr("!. \"github.com/jpsember/golang-base/json\"");
   }
 
   public static final boolean SHOW_STACK_TRACES = false && alert("showing full stack traces");
@@ -222,11 +226,21 @@ public final class ParseTools {
     return importedClassExpr(qualifiedClassName);
   }
 
+  private Object goClassExpr(String qualifiedClassName) {
+    if (mLanguage != Language.GO)
+      return null;
+    return importedClassExpr(qualifiedClassName);
+  }
+
   /**
    * Wrap a class name in delimeters so the class is imported, and the class
    * name (without its package) is generated
    */
   public static Object importedClassExpr(String classExpression) {
+    if (classExpression.startsWith("!")) {
+      return importExprWithCode(classExpression, "");
+    }
+
     QualifiedName qn = QualifiedName.parse(classExpression);
     return importExprWithCode(qn.combined(), qn.className());
   }
@@ -236,6 +250,8 @@ public final class ParseTools {
       PKG_SHORT_ARRAY, PKG_FLOAT_ARRAY, PKG_DOUBLE_ARRAY;
 
   public Object PKGPY_DATAUTIL, PKGPY_LIST;
+
+  public Object PKGGO_TOOLS, PKGGO_JSON, PKGGO_DATA;
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 

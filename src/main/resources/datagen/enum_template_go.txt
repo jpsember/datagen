@@ -4,6 +4,9 @@
 @@
 [!package_decl]
 
+import (
+[!imports])
+
 // See https://www.sohamkamani.com/golang/enums/
 
 type [!class] int32

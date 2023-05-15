@@ -91,17 +91,21 @@ public final class GoSourceGen extends SourceGen {
   }
 
   @Override
-  protected String generateImports(List<String> qualifiedClassNames) {
+  protected String generateImports(List<String> expressions) {
 
     log("generating golang imports");
 
-    String goCoreHost = "github.com/jpsember/golang-base";
     s.setIndent(2);
-    s.a(". ", quote(goCoreHost + "/base")).cr();
-    s.a(". ", quote(goCoreHost + "/json")).cr();
 
-    for (String cn : qualifiedClassNames) {
+    for (String cn : expressions) {
       log("... expression:", cn);
+      String importString = chompPrefix(cn, "!");
+      if (importString != cn) {
+        // Import the (rest of the) expression verbatim
+        log("...------------------------------> importing:", importString);
+        s.a(importString).cr();
+        continue;
+      }
 
       QualifiedName qn = QualifiedName.parse(cn);
       log(INDENT, "QualifiedName:", INDENT, qn);
@@ -119,15 +123,7 @@ public final class GoSourceGen extends SourceGen {
         continue;
       }
 
-      {
-        int i = qn.packagePath().lastIndexOf('.');
-        checkArgument(i > 0, "expected more than one component in package path:", INDENT, qn);
-        String packageName = qn.packagePath().substring(i + 1);
-        checkArgument(nonEmpty(packageName) && !packageName.equals("gen"), "unexpected package name:",
-            quote(packageName), "derived from:", INDENT, qn);
-      }
-
-      String importString = qn.packagePath().replace('.', '/');
+      importString = qn.packagePath().replace('.', '/');
       log("...------------------------------> importing:", importString);
       s.a(". \"", importString, "\"").cr();
     }
@@ -235,6 +231,9 @@ public final class GoSourceGen extends SourceGen {
 
     if (Context.generatedTypeDef.isEnum()) {
       m.put("enum_specific", generateEnumSpecific());
+    } else {
+      SourceBuilder s = Context.generatedTypeDef.classSpecificSourceBuilder();
+      s.a(Context.pt.PKGGO_TOOLS, Context.pt.PKGGO_JSON);
     }
 
     m.put("static_class", type.qualifiedName(DataType.NAME_ALT).className());
@@ -288,54 +287,38 @@ public final class GoSourceGen extends SourceGen {
   private String generateEnumSpecific() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     EnumDataType enumType = def.enumDataType();
-    
-    s.a("var enumInfo = NewEnumInfo(\"", //);
-     convertCamelToUnderscore(String.join(" ", enumType.labels())) , //
-     "\")", CR, //
-     BR, //
-     "func (x *",def.name(),") Info() *EnumInfo ",OPEN, //
-     "// I'm not sure this function is useful yet",CR, //
-     "return enumInfo", CLOSE  //
-     );
-    
+
+    // Add some imports
+    s.a(Context.pt.PKGGO_TOOLS, Context.pt.PKGGO_JSON, Context.pt.PKGGO_DATA);
+
+    s.a("func (x ",def.name(),") String() string ",OPEN, //
+        "return x.Info().EnumNames[x]", CLOSE, BR, //
+        
+        
+        
+
+    "var enumInfo", def.name(), " = NewEnumInfo(\"", //);
+        convertCamelToUnderscore(String.join(" ", enumType.labels())), //
+        "\")", CR, //
+        BR, //
+        "func (x ", def.name(), ") Info() *EnumInfo ", OPEN, //
+        "// I'm not sure this function is useful yet", CR, //
+        "return enumInfo", def.name(), CLOSE //
+    );
+
     s.br();
-    
-    s.a("func (x *",def.name(),") ParseFrom(m *JSMap, key string) ",def.name()," ",OPEN, //
-        "var result = Default",def.name(),CR, //
-        "var val = m.OptString(key, \"\")",CR, //
-        "if val != \"\" ",OPEN, //
-        "if id, found := enumInfo.EnumIds[key]; found ",OPEN, //
-        "result = id.(",def.name(),")",CR, //
-        OUT,"} else {", IN, //
-        "Die(\"No such value for enum ",def.name(),":\", key)", CLOSE, //
+
+    s.a("func (x ", def.name(), ") ParseFrom(m *JSMap, key string) ", def.name(), " ", OPEN, //
+        "var result = Default", def.name(), CR, //
+        "var val = m.OptString(key, \"\")", CR, //
+        "if val != \"\" ", OPEN, //
+        "if id, found := enumInfo", def.name(), ".EnumIds[key]; found ", OPEN, //
+        "result = ",def.name(),"(id)", CR, //
+        OUT, "} else {", IN, //
+        "Die(\"No such value for enum ", def.name(), ":\", key)", CLOSE, //
         CLOSE, //
         "return result", CLOSE //
-        );
-        
-        /**
-         * 
-         * func (x *Hamster) ParseFrom(m *JSMap, key string) Hamster {
-  var result = DefaultHamster
-  var val = m.OptString(key, "")
-  if val != "" {
-    if id, found  := enumInfo.EnumIds[key]; found {
-      result = id.(Hamster)
-    } else {
-      Die("No such value for enum Hamster:", key)
-    }
-  }
-  return result
-}
-
-         * 
-         */
-    
-    
-    
-    
-    
-    
-    
+    );
     return content();
   }
 

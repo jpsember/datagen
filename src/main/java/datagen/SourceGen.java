@@ -103,15 +103,18 @@ public abstract class SourceGen extends BaseObject {
       pr(DASHES, CR, "Content after pass 1:", CR, DASHES, CR, content);
     }
 
-    // Pass 2: strip package names, add to set for import statements
+    // Pass 2: extract import expressions
     //
-    content = extractImportStatements(content);
+    content = extractImportExpressions(content);
+
+    if (false && alert("showing content 2")) {
+      pr(DASHES, CR, "Content after pass 2:", CR, DASHES, CR, content);
+    }
 
     // Pass 3: generate the import statements
     //
     m.clear();
-    m.put("imports", generateImports(mImportedClassNames));
-
+    m.put("imports", generateImports(mImportExpressions));
     {
       MacroParser parser = new MacroParser();
       parser.withTemplate(content).withMapper(m);
@@ -181,14 +184,13 @@ public abstract class SourceGen extends BaseObject {
    * We will look for expressions of the form "{{xxxx|yyyy}}" and then:
    * 
    * 1) replace that expression with "yyyy" within the source
-   * 2) generate an import statement for (fully qualified class name) "xxxx"
+   * 2) generate an import statement for the expression "xxxx", which might be
+   *    a fully qualified class name
    * 
    * </pre>
    */
-  private String extractImportStatements(String template) {
-    //   halt("extractImportStatements from:", INDENT, template);
-
-    Set<String> statementSet = hashSet();
+  private String extractImportExpressions(String template) {
+    Set<String> expressionSet = hashSet();
     MacroParser parser = new MacroParser();
     parser.withPattern(ParseTools.IMPORT_REGEXP);
     parser.withTemplate(template);
@@ -213,17 +215,17 @@ public abstract class SourceGen extends BaseObject {
       checkArgument(subExp.size() == 2, "can't parse key into subexpressions:", key, subExp);
       String s0 = subExp.get(0);
       String s1 = subExp.get(1);
-      statementSet.add(s0);
+      expressionSet.add(s0);
       return s1;
     });
     List<String> lst = arrayList();
-    lst.addAll(statementSet);
+    lst.addAll(expressionSet);
     lst.sort(null);
-    mImportedClassNames = lst;
+    mImportExpressions = lst;
     return result;
   }
 
-  private List<String> mImportedClassNames;
+  private List<String> mImportExpressions;
 
   public static final String NOT_SUPPORTED = "<<not supported>>";
 
@@ -247,7 +249,7 @@ public abstract class SourceGen extends BaseObject {
 
   protected abstract String generateToJson();
 
-  protected abstract String generateImports(List<String> imports);
+  protected abstract String generateImports(List<String> expressions);
 
   protected abstract String generateParse();
 
