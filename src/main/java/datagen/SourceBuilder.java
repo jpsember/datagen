@@ -192,6 +192,13 @@ public final class SourceBuilder {
    */
   public SourceBuilder out() {
     cr();
+    return outNoCr();
+  }
+
+  /**
+   * Tab margin to left (without a cr)
+   */
+  public SourceBuilder outNoCr() {
     setIndent(mIndent - mTabSize);
     return this;
   }

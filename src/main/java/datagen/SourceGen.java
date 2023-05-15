@@ -69,6 +69,7 @@ public abstract class SourceGen extends BaseObject {
       generateEnumValues(def.enumDataType());
       m.put("default_value", def.enumDataType().labels().get(0));
       m.put("enum_values", content());
+      addAdditionalTemplateValues(m);
     } else {
       m.put("class_getter_implementation", generateGetters());
       m.put("copy_to_builder", generateImmutableToBuilder());

@@ -75,20 +75,36 @@ public class GoGeneratorTest extends GenBaseTest {
 
   @Test
   public void contract() {
-    p().pr("extern gen.abc.Crow;", CR,  //
+    p().pr("extern gen.abc.Crow;", CR, //
         "class {", INDENT, //
-        "Crow boss;",CR, //
-        "*Crow henchmen;",CR //
-         , OUTDENT, "}");
+        "Crow boss;", CR, //
+        "*Crow henchmen;", CR //
+        , OUTDENT, "}");
     compile();
   }
-
 
   @Test
   public void externalRepeated() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "class {", INDENT, //
         "*Beaver b;", OUTDENT, //
+        "}");
+    compile();
+  }
+
+  @Test
+  public void enums() { 
+    p().pr("enum {", INDENT, //
+        "alpha, bravo, charlie;", OUTDENT, //
+        "}");
+    compile();
+  }
+  
+
+  @Test
+  public void enumField() { 
+    p().pr("class {", INDENT, //
+        "enum Level grad;", OUTDENT, //
         "}");
     compile();
   }

@@ -183,17 +183,17 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected void generateEnumValues(EnumDataType dt) {
-    s.a("**GenerateEnumValues");
     s.in();
     int i = INIT_INDEX;
     for (String label : dt.labels()) {
+      s.cr();
       i++;
-      if (i > 0)
-        s.a(", ");
-      s.a(label);
+      s.a(convertUnderscoreToCamel(label));
+      if (i == 0) {
+        s.a(" ", Context.generatedTypeDef.qualifiedName().className(), " = iota");
+      }
     }
-    s.a(";");
-    s.out();
+    s.outNoCr();
   }
 
   @Override
@@ -232,6 +232,10 @@ public final class GoSourceGen extends SourceGen {
   protected void addAdditionalTemplateValues(JSMap m) {
 
     DataType type = Context.generatedTypeDef.wrappedType();
+
+    if (Context.generatedTypeDef.isEnum()) {
+      m.put("enum_specific", generateEnumSpecific());
+    }
 
     m.put("static_class", type.qualifiedName(DataType.NAME_ALT).className());
     m.put("class_init_fields_to_defaults", generateInitFieldsToDefaults());
@@ -279,6 +283,60 @@ public final class GoSourceGen extends SourceGen {
   private String builderName() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     return def.wrappedType().qualifiedName(DataType.NAME_HUMAN).className() + "Builder";
+  }
+
+  private String generateEnumSpecific() {
+    GeneratedTypeDef def = Context.generatedTypeDef;
+    EnumDataType enumType = def.enumDataType();
+    
+    s.a("var enumInfo = NewEnumInfo(\"", //);
+     convertCamelToUnderscore(String.join(" ", enumType.labels())) , //
+     "\")", CR, //
+     BR, //
+     "func (x *",def.name(),") Info() *EnumInfo ",OPEN, //
+     "// I'm not sure this function is useful yet",CR, //
+     "return enumInfo", CLOSE  //
+     );
+    
+    s.br();
+    
+    s.a("func (x *",def.name(),") ParseFrom(m *JSMap, key string) ",def.name()," ",OPEN, //
+        "var result = Default",def.name(),CR, //
+        "var val = m.OptString(key, \"\")",CR, //
+        "if val != \"\" ",OPEN, //
+        "if id, found := enumInfo.EnumIds[key]; found ",OPEN, //
+        "result = id.(",def.name(),")",CR, //
+        OUT,"} else {", IN, //
+        "Die(\"No such value for enum ",def.name(),":\", key)", CLOSE, //
+        CLOSE, //
+        "return result", CLOSE //
+        );
+        
+        /**
+         * 
+         * func (x *Hamster) ParseFrom(m *JSMap, key string) Hamster {
+  var result = DefaultHamster
+  var val = m.OptString(key, "")
+  if val != "" {
+    if id, found  := enumInfo.EnumIds[key]; found {
+      result = id.(Hamster)
+    } else {
+      Die("No such value for enum Hamster:", key)
+    }
+  }
+  return result
+}
+
+         * 
+         */
+    
+    
+    
+    
+    
+    
+    
+    return content();
   }
 
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template_go.txt");

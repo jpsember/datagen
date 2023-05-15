@@ -45,6 +45,8 @@ public interface EnumDataType {
       return new JavaEnumDataType();
     case PYTHON:
       return new PythonEnumDataType();
+    case GO:
+      return new GoEnumDataType();
     }
   }
 }

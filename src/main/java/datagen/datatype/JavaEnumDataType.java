@@ -72,6 +72,7 @@ public class JavaEnumDataType extends JavaDataType implements EnumDataType {
 
   @Override
   public void addLabel(String label) {
+    label = label.toUpperCase();
     checkArgument(!mLabels.contains(label), "duplicate label:", label);
     mLabels.add(label);
   }

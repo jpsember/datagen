@@ -24,49 +24,56 @@
  **/
 package datagen.datatype;
 
-import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
 import java.util.List;
 
 import datagen.FieldDef;
-import datagen.PythonDataType;
+import datagen.GoDataType;
 import datagen.SourceBuilder;
+import static datagen.Utils.*;
 
-public class PythonEnumDataType extends PythonDataType implements EnumDataType {
+public class GoEnumDataType extends GoDataType implements EnumDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return typeName() + ".default_instance";
+    return "Default" + typeName();
+  }
+
+  @Override
+  public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
+    return valueExpression + " // !!! Must have convert_camel_case_to_underscore somewhere"; //.toString().toLowerCase()";
   }
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(), ")", CR);
-    if (f.optional()) {
-      s.a("if x is not None:", IN);
-    }
-    s.a("inst.", f.instanceName(), " = x", CR);
-    if (f.optional()) {
-      s.a(OUT);
-    }
+    s.a("n.", f.instanceName()," = ",sourceDefaultValue(),".ParseFrom(s, ", f.nameStringConstantQualified() ,")",CR);
+//    
+//    s.a(OPEN, //
+//        "var x = s.OptString(", f.nameStringConstantQualified(), ", \"\")",CR, //
+//        "if x == \"\" ",OPEN, //
+//        f.instanceName()," = ", sourceDefaultValue(),  CLOSE, //
+//        " else ",OPEN, //
+//        "v, err := ",sourceDefaultValue(),".Info().ValueOf(x)", CR, //
+//        "if err ",OPEN, //
+//        "Die(err)",CLOSE, //
+//        f.instanceName()," = v.(wtf)", CR, //
+//        CLOSE //
+//        );
   }
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR);
-    s.doIf(f.optional(), "if x is not None:", OPEN);
-    s.a("inst.", f.instanceName(), " = [", typeName(), "(z) for z in x]", CR);
-    s.endIf(CLOSE);
+    throw languageNotSupported("deserializing list of Go enums from list");
   }
 
-  // ------------------------------------------------------------------
+  //------------------------------------------------------------------
   // EnumDataType interface
   // ------------------------------------------------------------------
 
   @Override
   public void addLabel(String label) {
-    label = label.toUpperCase();
+    label = convertUnderscoreToCamel(label);
     checkArgument(!mLabels.contains(label), "duplicate label:", label);
     mLabels.add(label);
   }
@@ -78,4 +85,8 @@ public class PythonEnumDataType extends PythonDataType implements EnumDataType {
 
   private List<String> mLabels = arrayList();
 
+  @Override
+  public boolean isPrimitive() {
+    return true;
+  }
 }

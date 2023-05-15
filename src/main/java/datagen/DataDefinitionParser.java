@@ -386,7 +386,7 @@ final class DataDefinitionParser extends BaseObject {
       if (readIf(BRCL))
         break;
       String name = read(ID);
-      ((EnumDataType) enumDataType).addLabel(name.toUpperCase());
+      ((EnumDataType) enumDataType).addLabel(name);
       while (readIf(COMMA) || readIf(SEMI))
         continue;
     }
