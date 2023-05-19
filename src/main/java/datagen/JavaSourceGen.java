@@ -71,7 +71,6 @@ public final class JavaSourceGen extends SourceGen {
   protected final String generateInitInstanceFields() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(4);
-    //  s.in(2);
     for (FieldDef f : def.fields()) {
       if (f.optional())
         continue;
@@ -83,7 +82,6 @@ public final class JavaSourceGen extends SourceGen {
       s.a(f.instanceName(), " = ", initialValue, ";");
       s.cr();
     }
-    //s.out();
     return content();
   }
 
@@ -138,9 +136,10 @@ public final class JavaSourceGen extends SourceGen {
       QualifiedName qn = QualifiedName.parse(cn);
 
       // We don't need to import anything from java.lang
-      if (qn.packagePath().startsWith("java.lang."))
+      if (qn.combined().startsWith("java.lang."))
         continue;
 
+    //  pr("cn:",cn,CR,"qn:",qn,"gen:",Context.generatedTypeDef.qualifiedName().packagePath());
       // We also don't need to import anything from the local package
       // Assumes the class name includes a package
       if (qn.packagePath().equals(Context.generatedTypeDef.qualifiedName().packagePath()))
