@@ -135,13 +135,15 @@ public final class JavaSourceGen extends SourceGen {
   @Override
   protected String generateImports(List<String> qualifiedClassNames) {
     for (String cn : qualifiedClassNames) {
+      QualifiedName qn = QualifiedName.parse(cn);
+
       // We don't need to import anything from java.lang
-      if (cn.startsWith("java.lang."))
+      if (qn.packagePath().startsWith("java.lang."))
         continue;
 
       // We also don't need to import anything from the local package
       // Assumes the class name includes a package
-      if (cn.equals(Context.generatedTypeDef.qualifiedName().packagePath()))
+      if (qn.packagePath().equals(Context.generatedTypeDef.qualifiedName().packagePath()))
         continue;
 
       s.a("import ", cn, ";").cr();

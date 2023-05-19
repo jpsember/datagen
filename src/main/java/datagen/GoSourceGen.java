@@ -291,19 +291,12 @@ public final class GoSourceGen extends SourceGen {
     // Add some imports
     s.a(Context.pt.PKGGO_TOOLS, Context.pt.PKGGO_JSON, Context.pt.PKGGO_DATA);
 
-    s.a("func (x ",def.name(),") String() string ",OPEN, //
-        "return x.Info().EnumNames[x]", CLOSE, BR, //
-        
-        
-        
-
-    "var enumInfo", def.name(), " = NewEnumInfo(\"", //);
+    s.a("var ", def.name(), "EnumInfo = NewEnumInfo(\"", //);
         convertCamelToUnderscore(String.join(" ", enumType.labels())), //
-        "\")", CR, //
-        BR, //
-        "func (x ", def.name(), ") Info() *EnumInfo ", OPEN, //
-        "// I'm not sure this function is useful yet", CR, //
-        "return enumInfo", def.name(), CLOSE //
+        "\")", CR);
+    s.br();
+    s.a("func (x ", def.name(), ") String() string ", OPEN, //
+        "return ", def.name(), "EnumInfo", ".EnumNames[x]", CLOSE, CR //
     );
 
     s.br();
@@ -312,10 +305,10 @@ public final class GoSourceGen extends SourceGen {
         "var result = Default", def.name(), CR, //
         "var val = m.OptString(key, \"\")", CR, //
         "if val != \"\" ", OPEN, //
-        "if id, found := enumInfo", def.name(), ".EnumIds[key]; found ", OPEN, //
-        "result = ",def.name(),"(id)", CR, //
+        "if id, found := ", def.name(), "EnumInfo", ".EnumIds[key]; found ", OPEN, //
+        "result = ", def.name(), "(id)", CR, //
         OUT, "} else {", IN, //
-        "Die(\"No such value for enum ", def.name(), ":\", key)", CLOSE, //
+        "Die(\"No such value for enum ", def.qualifiedName().className(), ":\", key)", CLOSE, //
         CLOSE, //
         "return result", CLOSE //
     );
