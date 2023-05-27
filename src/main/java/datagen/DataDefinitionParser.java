@@ -405,10 +405,9 @@ final class DataDefinitionParser extends BaseObject {
         mPackageName = parentName.replace('/', '.');
         break;
       case GO: {
-        int c = parentName.indexOf('/');
-        if (c < 0)
-          c = parentName.length();
-        mPackageName = parentName.substring(0, c);
+        // I think we want to set the package name to the last component of the package name
+        int c = parentName.lastIndexOf('/');
+        mPackageName = parentName.substring(c+1);
       }
         break;
       }
