@@ -93,7 +93,7 @@ func (v *[!builder_name]) ToBuilder() *[!builder_name] {
 }
 
 func (v *[!builder_name]) ToJson() any {
-  return v.ToJson()
+  return v.Build().ToJson()
 }
 
 func (v *[!builder_name]) Parse(source any) DataClass {

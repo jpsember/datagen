@@ -207,10 +207,8 @@ public final class GoSourceGen extends SourceGen {
   @Override
   protected String generateParse() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.a("// generateParse for type def:",def.name(),"fields:",def.fields().size(),CR);
     s.setIndent(2);
     for (FieldDef f : def.fields()) {
-      s.a("// calling sourceDeserializeFromObject for",f.nameStringConstantUnqualified(),CR);
        f.dataType().sourceDeserializeFromObject(s, f);
       s.cr();
     }
