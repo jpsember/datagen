@@ -87,5 +87,9 @@ public class GoContractDataType extends GoDataType {
     return "Default" + qualifiedName(NAME_HUMAN).className() + ".Parse(" + jsentityExpression + ").("
         + typeName() + ")";
   }
-
+  
+  @Override
+  public String deserializeJsonToMapValue(String jsonValue) {
+    return provideSourceDefaultValue() + ".Parse("+jsonValue+").("+qualifiedName(NAME_HUMAN).className()+")";
+  }
 }

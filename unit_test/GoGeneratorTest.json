@@ -1,8 +1,9 @@
-{              "cat" : 9187,
-          "contract" : 6648,
-              "crow" : 4199,
-         "enumField" : 1211,
-             "enums" : 6264,
-  "externalRepeated" : 8804,
-           "session" : 9101
+{               "cat" : 9701,
+           "contract" : 5423,
+               "crow" : 3285,
+          "enumField" : 6657,
+              "enums" : 6264,
+   "externalRepeated" : 1483,
+  "persistSessionMap" : 6231,
+            "session" : 1837
 }

@@ -30,15 +30,7 @@ import java.util.Set;
 import static js.base.Tools.*;
 import static datagen.Utils.*;
 
-import datagen.datatype.JavaListDataType;
-import datagen.datatype.JavaMapDataType;
-import datagen.datatype.JavaSetDataType;
-import datagen.datatype.PythonContractDataType;
-import datagen.datatype.PythonListDataType;
-import datagen.datatype.EnumDataType;
-import datagen.datatype.GoContractDataType;
-import datagen.datatype.GoListDataType;
-import datagen.datatype.JavaContractDataType;
+import datagen.datatype.*;
 import datagen.gen.PartialType;
 import datagen.gen.TypeStructure;
 import js.base.BaseObject;
@@ -177,6 +169,9 @@ public final class GeneratedTypeDef extends BaseObject {
         throw languageNotSupported();
       case JAVA:
         complexType = new JavaMapDataType((JavaDataType) dataType, (JavaDataType) dataType2);
+        break;
+      case GO:
+        complexType = new GoMapDataType((GoDataType) dataType, (GoDataType)dataType2);
         break;
       }
     }

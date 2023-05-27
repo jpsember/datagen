@@ -19,7 +19,7 @@ public class GoFieldDef extends FieldDef {
 
   @Override
   public String provideNameStringConstantUnqualified() {
-    return  quote(name());
+    return quote(DataUtil.convertCamelCaseToUnderscores(name()));
   }
 
   @Override

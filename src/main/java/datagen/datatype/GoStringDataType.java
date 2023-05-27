@@ -24,6 +24,8 @@
  **/
 package datagen.datatype;
 
+import static js.base.Tools.*;
+
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.GoDataType;
@@ -40,6 +42,7 @@ public final class GoStringDataType extends GoDataType {
 
   @Override
   public boolean isPrimitive() {
+    loadTools();
     return true;
   }
 
@@ -67,6 +70,11 @@ public final class GoStringDataType extends GoDataType {
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
     return jsentityExpression + "." + "ToString()";
+  }
+
+  @Override
+  public  String deserializeStringToMapKey(String stringValueExpression) {
+    return stringValueExpression;
   }
 
 }

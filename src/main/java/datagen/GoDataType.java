@@ -75,4 +75,41 @@ public abstract class GoDataType extends DataType {
     s.a("m.Put(", f.nameStringConstantQualified(), ", ", //
         sourceGenerateSerializeToObjectExpression("v." + f.instanceName()), ")", CR);
   }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  // ------------------------------------------------------------------
+  // For supporting GoMapDataType
+  // ------------------------------------------------------------------
+
+  /**
+   * Generate source code to convert a string to a value to be used as a map key
+   */
+  public String deserializeStringToMapKey(String stringValueExpression) {
+//    if (isPrimitive())
+//      return typeName() + ".parse" + DataUtil.capitalizeFirst(typeName()) + "(" + stringValueExpression + ")";
+    throw notSupported("deserializeStringToMapKey for dataType:", getClass());
+  }
+
+  /**
+   * Generate source code to deserialize a JSON value to a value to be stored in
+   * a map
+   * 
+   * @param jsonValue
+   *          representation of a JSMap value (from a key/value pair), or a
+   *          JSList value
+   */
+  public String deserializeJsonToMapValue(String jsonValue) {
+    if (isPrimitive())
+      return jsonValue;
+    throw notSupported("deserializeJsonToMapValue for dataType:" + getClass());
+  }
+
+
 }

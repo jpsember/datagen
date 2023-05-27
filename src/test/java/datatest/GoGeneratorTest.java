@@ -115,4 +115,13 @@ public class GoGeneratorTest extends GenBaseTest {
         "string id;", CR, OUTDENT, "}");
     compile();
   }
+  
+  
+  @Test
+  public void persistSessionMap() { 
+    setDatSubdir("gen/webservgen");
+    p().pr("class {", INDENT, //
+        "map string gen.webservgen.Session sessionMap;", CR, OUTDENT, "}");
+    compile();
+  }
 }
