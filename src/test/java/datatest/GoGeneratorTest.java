@@ -93,19 +93,26 @@ public class GoGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void enums() { 
+  public void enums() {
     p().pr("enum {", INDENT, //
         "alpha, bravo, charlie;", OUTDENT, //
         "}");
     compile();
   }
-  
 
   @Test
-  public void enumField() { 
+  public void enumField() {
     p().pr("class {", INDENT, //
         "enum Level grad;", OUTDENT, //
         "}");
+    compile();
+  }
+
+  @Test
+  public void session() {
+    setDatSubdir("gen/webservgen");
+    p().pr("class {", INDENT, //
+        "string id;", CR, OUTDENT, "}");
     compile();
   }
 }

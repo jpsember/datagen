@@ -127,6 +127,11 @@ public final class QualifiedName extends BaseObject {
     return this;
   }
 
+  public static String lastComponent(String pkgName) {
+   int i = pkgName.lastIndexOf('/');
+   return pkgName.substring(i+1);
+  }
+
   private final String mPackagePath;
   private final String mClassName;
   private String mEmbeddedName;

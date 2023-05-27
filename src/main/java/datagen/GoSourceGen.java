@@ -48,6 +48,7 @@ public final class GoSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     String pkgName = def.qualifiedName().packagePath();
     checkArgument(!pkgName.isEmpty(), "Package name is empty");
+    pkgName = QualifiedName.lastComponent(pkgName);
     return "package " + pkgName;
   }
 
