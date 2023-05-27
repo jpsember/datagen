@@ -105,3 +105,9 @@ func (v *[!builder_name]) String() string {
 }
 
 [!class_specific]
+
+
+// Convenience method to parse a [!interface_name] from a JSMap
+func Parse[!interface_name](jsmap *JSMap) [!interface_name] {
+  return Default[!interface_name].Parse(jsmap).([!interface_name])
+}
