@@ -79,7 +79,9 @@ public final class GoSourceGen extends SourceGen {
   protected final String generateSetters() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
-      DataType d = f.dataType();
+      if (f.deprecated())
+        s.addSafe(getDeprecationSource());
+     DataType d = f.dataType();
       s.a("func (v *", builderName(), ") ", f.setterName(), "(", f.instanceName(), " ", d.typeName(), ") *",
           builderName(), OPEN);
       String targetExpr = "v." + f.instanceName();
@@ -145,6 +147,9 @@ public final class GoSourceGen extends SourceGen {
         halt();
       }
 
+      if (f.deprecated())
+        s.addSafe(getDeprecationSource());
+    
       s.a("func (v *", def.wrappedType().qualifiedName(DataType.NAME_ALT).className(), ") ", f.getterName(),
           "() ", f.dataType().typeName(), " ", OPEN, //
           "return v.", f.instanceName(), CLOSE);
@@ -316,6 +321,11 @@ public final class GoSourceGen extends SourceGen {
     return content();
   }
 
+@Override
+  protected String getDeprecationSource() {
+    return  "// Deprecated\n";
+  }
+  
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template_go.txt");
   private static String sEnumTemplate = Files.readString(SourceGen.class, "enum_template_go.txt");
 

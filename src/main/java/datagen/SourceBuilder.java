@@ -230,7 +230,7 @@ public final class SourceBuilder {
     addSafe(str);
   }
 
-  private void addSafe(String str) {
+  public void addSafe(String str) {
     mStringBuilder.append(str);
     mColumn += str.length();
   }

@@ -7,7 +7,7 @@
 import (
 [!imports])
 
-[!deprecated]type [!static_class] struct {
+type [!static_class] struct {
 [!instance_fields]}
 
 [!deprecated]type [!builder_name] struct {
@@ -19,17 +19,17 @@ import (
 // [!interface_name] interface
 // ---------------------------------------------------------------------------------------
 
-type [!interface_name] interface {
+[!deprecated]type [!interface_name] interface {
   DataClass
 [!class_getter_declaration]
   Build() [!interface_name]
   ToBuilder() *[!builder_name]
 }
 
-var [!default_var_name] = new[!class]()
+[!deprecated]var [!default_var_name] = new[!class]()
 
 // Convenience method to get a fresh builder.
-func New[!class]() *[!builder_name] {
+[!deprecated]func New[!class]() *[!builder_name] {
   return [!default_var_name].ToBuilder()
 }
 
@@ -108,6 +108,7 @@ func (v *[!builder_name]) String() string {
 
 
 // Convenience method to parse a [!interface_name] from a JSMap
-func Parse[!interface_name](jsmap *JSMap) [!interface_name] {
-  return Default[!interface_name].Parse(jsmap).([!interface_name])
+[!deprecated]func Parse[!interface_name](jsmap JSEntity) [!interface_name] {
+  m := jsmap.(*JSMap)
+  return Default[!interface_name].Parse(m).([!interface_name])
 }
