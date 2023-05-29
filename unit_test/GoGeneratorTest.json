@@ -1,11 +1,11 @@
-{               "cat" : 4622,
-           "contract" : 2763,
-               "crow" : 3809,
-              "depr1" : 6443,
-              "depr2" : 8553,
-          "enumField" : 2965,
+{               "cat" : 8741,
+           "contract" : 3116,
+               "crow" : 6489,
+              "depr1" : 7581,
+              "depr2" : 9357,
+          "enumField" : 5142,
               "enums" : 6264,
-   "externalRepeated" : 2635,
-  "persistSessionMap" : 5883,
-            "session" : 1552
+   "externalRepeated" : 3783,
+  "persistSessionMap" : 7878,
+            "session" : 9959
 }

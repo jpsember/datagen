@@ -10,10 +10,12 @@ import (
 type [!static_class] struct {
 [!instance_fields]}
 
-[!deprecated]type [!builder_name] struct {
+[!deprecated]type [!builder_name]Obj struct {
   // We embed the static struct
   [!static_class]
 }
+
+type [!builder_name] = *[!builder_name]Obj
 
 // ---------------------------------------------------------------------------------------
 // [!interface_name] interface
@@ -23,13 +25,13 @@ type [!static_class] struct {
   DataClass
 [!class_getter_declaration]
   Build() [!interface_name]
-  ToBuilder() *[!builder_name]
+  ToBuilder() [!builder_name]
 }
 
 [!deprecated]var [!default_var_name] = new[!class]()
 
 // Convenience method to get a fresh builder.
-[!deprecated]func New[!class]() *[!builder_name] {
+[!deprecated]func New[!class]() [!builder_name] {
   return [!default_var_name].ToBuilder()
 }
 
@@ -52,8 +54,8 @@ func (v *[!static_class]) Build() [!interface_name] {
   return v
 }
 
-func (v *[!static_class]) ToBuilder() *[!builder_name] {
-  return &[!builder_name]{ [!static_class]: *v}
+func (v *[!static_class]) ToBuilder() [!builder_name] {
+  return &[!builder_name]Obj{ [!static_class]: *v}
 }
 
 func (v *[!static_class]) ToJson() any {
@@ -82,25 +84,25 @@ func (v *[!static_class]) String() string {
 
 [!setters]
 
-func (v *[!builder_name]) Build() [!interface_name] {
+func (v [!builder_name]) Build() [!interface_name] {
   // Construct a copy of the embedded static struct
   var b = v.[!static_class]
   return &b
 }
 
-func (v *[!builder_name]) ToBuilder() *[!builder_name] {
+func (v [!builder_name]) ToBuilder() [!builder_name] {
   return v
 }
 
-func (v *[!builder_name]) ToJson() any {
+func (v [!builder_name]) ToJson() any {
   return v.Build().ToJson()
 }
 
-func (v *[!builder_name]) Parse(source any) DataClass {
+func (v [!builder_name]) Parse(source any) DataClass {
   return [!default_var_name].Parse(source)
 }
 
-func (v *[!builder_name]) String() string {
+func (v [!builder_name]) String() string {
   return v.Build().String()
 }
 

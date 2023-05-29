@@ -82,7 +82,7 @@ public final class GoSourceGen extends SourceGen {
       if (f.deprecated())
         s.addSafe(getDeprecationSource());
      DataType d = f.dataType();
-      s.a("func (v *", builderName(), ") ", f.setterName(), "(", f.instanceName(), " ", d.typeName(), ") *",
+      s.a("func (v ", builderName(), ") ", f.setterName(), "(", f.instanceName(), " ", d.typeName(), ") ",
           builderName(), OPEN);
       String targetExpr = "v." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
@@ -278,7 +278,7 @@ public final class GoSourceGen extends SourceGen {
   private String generateBuilderGetterImplementation() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
-      s.a("func (v *", builderName(), ") ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
+      s.a("func (v ", builderName(), ") ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
           "return v.", f.instanceName(), CLOSE);
       s.br();
     }
