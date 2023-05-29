@@ -107,10 +107,6 @@ public abstract class SourceGen extends BaseObject {
     //
     content = extractImportExpressions(content);
 
-    if (false && alert("showing content 2")) {
-      pr(DASHES, CR, "Content after pass 2:", CR, DASHES, CR, content);
-    }
-
     // Pass 3: generate the import statements
     //
     m.clear();

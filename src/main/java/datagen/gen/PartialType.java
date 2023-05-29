@@ -18,8 +18,8 @@ public class PartialType implements AbstractData {
     return new Builder(this);
   }
 
-  protected static final String NAME = "name";
-  protected static final String ENUM_FLAG = "enum_flag";
+  protected static final String _0 = "name";
+  protected static final String _1 = "enum_flag";
 
   @Override
   public String toString() {
@@ -29,8 +29,8 @@ public class PartialType implements AbstractData {
   @Override
   public JSMap toJson() {
     JSMap m = new JSMap();
-    m.putUnsafe(NAME, mName);
-    m.putUnsafe(ENUM_FLAG, mEnumFlag);
+    m.putUnsafe(_0, mName);
+    m.putUnsafe(_1, mEnumFlag);
     return m;
   }
 
@@ -45,8 +45,8 @@ public class PartialType implements AbstractData {
   }
 
   private PartialType(JSMap m) {
-    mName = m.opt(NAME, "");
-    mEnumFlag = m.opt(ENUM_FLAG, false);
+    mName = m.opt(_0, "");
+    mEnumFlag = m.opt(_1, false);
   }
 
   public static Builder newBuilder() {

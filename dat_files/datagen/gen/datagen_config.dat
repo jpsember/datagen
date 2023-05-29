@@ -31,4 +31,8 @@ class {
   // Suppress some output (to quiet unit tests)
   //
   bool quiet_mode;
+
+  // If true, performs gofmt step afterwards (go language only)
+  //
+  bool format;
 }

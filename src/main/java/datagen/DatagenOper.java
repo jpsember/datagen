@@ -36,6 +36,7 @@ import datagen.gen.DatWithSource;
 import datagen.gen.DatagenConfig;
 import datagen.gen.Language;
 import js.app.AppOper;
+import js.base.SystemCall;
 import js.data.DataUtil;
 import js.file.DirWalk;
 import js.file.Files;
@@ -95,8 +96,28 @@ public class DatagenOper extends AppOper {
       }
     }
 
+     if (config.language() == Language.GO && !files().dryRun() && config.format()) {
+       formatSourceFiles();
+     }
+     
     if (config.deleteOld())
       deleteOldSourceFiles(config.sourcePath());
+    
+  }
+
+  /**
+   * Use the gofmt tool to format the source files as a go ide would
+   */
+  private void formatSourceFiles() {
+    if (Context.generatedFilesSet.isEmpty()) return;
+    SystemCall sc = new SystemCall();
+    sc.arg("/usr/local/go/bin/gofmt","-w");
+    sc.arg("-d");
+     for (File f : Context.generatedFilesSet) {
+      sc.arg(f.toString());
+    }
+    sc.setVerbose();
+    sc.assertSuccess();
   }
 
   /**

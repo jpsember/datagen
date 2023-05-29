@@ -202,7 +202,7 @@ final class DataDefinitionParser extends BaseObject {
       mDeprecationToken = null;
     }
 
-    boolean unsafeMode = Context.config.unsafeMode();
+    boolean unsafeMode = Context.config.unsafe();
     if (mUnsafeToken != null) {
       unsafeMode = true;
       mUnsafeToken = null;
