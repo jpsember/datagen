@@ -61,8 +61,8 @@ public class DatagenOper extends AppOper {
   public void perform() {
     DatagenConfig config = datagenConfig();
     Context.prepare(files(), config);
-     
-    List<DatWithSource> entriesToFreshen = constructFileEntries(); 
+
+    List<DatWithSource> entriesToFreshen = constructFileEntries();
 
     if (entriesToFreshen.isEmpty())
       log("...all files up-to-date (rerun with 'clean' option to force rebuild)");
@@ -96,27 +96,26 @@ public class DatagenOper extends AppOper {
       }
     }
 
-     if (config.language() == Language.GO && !files().dryRun() && config.format()) {
-       formatSourceFiles();
-     }
-     
+    if (config.language() == Language.GO && !files().dryRun() && config.format()) {
+      formatSourceFiles();
+    }
+
     if (config.deleteOld())
       deleteOldSourceFiles(config.sourcePath());
-    
+
   }
 
   /**
    * Use the gofmt tool to format the source files as a go ide would
    */
   private void formatSourceFiles() {
-    if (Context.generatedFilesSet.isEmpty()) return;
+    if (Context.generatedFilesSet.isEmpty())
+      return;
     SystemCall sc = new SystemCall();
-    sc.arg("/usr/local/go/bin/gofmt","-w");
-    sc.arg("-d");
-     for (File f : Context.generatedFilesSet) {
+    sc.arg("/usr/local/go/bin/gofmt", "-w");
+    for (File f : Context.generatedFilesSet) {
       sc.arg(f.toString());
     }
-    sc.setVerbose();
     sc.assertSuccess();
   }
 
@@ -201,7 +200,7 @@ public class DatagenOper extends AppOper {
         sourceClassName = protoName;
         break;
       case GO:
-        sourceClassName = protoName;  
+        sourceClassName = protoName;
         break;
       }
       String relativeClassFile = relPathExpr + sourceClassName + "." + sourceFileExtension();

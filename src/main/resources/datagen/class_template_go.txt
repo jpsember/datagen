@@ -65,14 +65,14 @@ func (v *[!static_class]) ToJson() any {
 }
 
 func (v *[!static_class]) Parse(source any) DataClass {
-  var s = source.(*JSMap)
+  var s = source.(JSMap)
   var n = new[!class]().(*[!static_class])
 [!parse]
   return n
 }
 
 func (v *[!static_class]) String() string {
-  var x = v.ToJson().(*JSMap)
+  var x = v.ToJson().(JSMap)
   return PrintJSEntity(x, true)
 }
 
@@ -111,6 +111,6 @@ func (v [!builder_name]) String() string {
 
 // Convenience method to parse a [!interface_name] from a JSMap
 [!deprecated]func Parse[!interface_name](jsmap JSEntity) [!interface_name] {
-  m := jsmap.(*JSMap)
+  m := jsmap.(JSMap)
   return Default[!interface_name].Parse(m).([!interface_name])
 }

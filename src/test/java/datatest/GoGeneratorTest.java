@@ -43,25 +43,15 @@ public class GoGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void crow() {
+  public void crow() { 
     p().pr("class {", INDENT, //
         "string name;", CR, //
-        "int rage = 16;", CR, //
+        "int rage_level = 16;", CR, //
         "long timestamp;", CR, //
         "bool live;", CR, //
         "string zebra = \"frank\";", CR, //
         OUTDENT, "}");
     compile();
-
-    if (false) {
-      File target = new File("adj_crow.go");
-      if (true || !target.exists()) {
-        String s = Files.readString(new File("crow.go"));
-        StringBuilder sb = new StringBuilder();
-        DataUtil.convertTabsToSpaces(2, s, sb);
-        Files.S.writeString(target, sb.toString());
-      }
-    }
   }
 
   @Test

@@ -307,7 +307,7 @@ public final class GoSourceGen extends SourceGen {
 
     s.br();
 
-    s.a("func (x ", def.name(), ") ParseFrom(m *JSMap, key string) ", def.name(), " ", OPEN, //
+    s.a("func (x ", def.name(), ") ParseFrom(m JSMap, key string) ", def.name(), " ", OPEN, //
         "var result = Default", def.name(), CR, //
         "var val = m.OptString(key, \"\")", CR, //
         "if val != \"\" ", OPEN, //

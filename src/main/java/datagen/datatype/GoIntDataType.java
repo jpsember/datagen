@@ -71,7 +71,7 @@ public final class GoIntDataType extends GoDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("n.", f.instanceName(), " = s.OptInt", mBits, "(\"", f.instanceName(), "\", ", f.defaultValueOrNull(),
+    s.a("n.", f.instanceName(), " = s.OptInt", mBits, "(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(),
         ")", CR);
   }
 
