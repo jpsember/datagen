@@ -308,13 +308,14 @@ public final class GoSourceGen extends SourceGen {
     s.br();
 
     s.a("func (x ", def.name(), ") ParseFrom(m JSMap, key string) ", def.name(), " ", OPEN, //
+        "Todo(\"This could be in a utility function\")",CR,//
         "var result = Default", def.name(), CR, //
         "var val = m.OptString(key, \"\")", CR, //
         "if val != \"\" ", OPEN, //
-        "if id, found := ", def.name(), "EnumInfo", ".EnumIds[key]; found ", OPEN, //
+        "if id, found := ", def.name(), "EnumInfo", ".EnumIds[val]; found ", OPEN, //
         "result = ", def.name(), "(id)", CR, //
         OUT, "} else {", IN, //
-        "Die(\"No such value for enum ", def.qualifiedName().className(), ":\", key)", CLOSE, //
+        "Die(\"No such value for enum ", def.qualifiedName().className(), ":\", val)", CLOSE, //
         CLOSE, //
         "return result", CLOSE //
     );

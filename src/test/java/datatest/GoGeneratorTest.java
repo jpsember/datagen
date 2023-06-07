@@ -27,12 +27,8 @@ package datatest;
 import org.junit.Test;
 
 import datagen.gen.Language;
-import js.data.DataUtil;
-import js.file.Files;
 
 import static js.base.Tools.*;
-
-import java.io.File;
 
 public class GoGeneratorTest extends GenBaseTest {
 
