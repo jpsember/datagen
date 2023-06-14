@@ -52,7 +52,10 @@ public final class DataTypeManager extends BaseObject {
     DataType tmp;
 
     switch (Context.pt.language()) {
-    default: {
+    default:
+      throw languageNotSupported(Context.pt.language());
+    case GO:  
+    {
       add("byte", new GoIntDataType(8));
       add("short", new GoIntDataType(16));
       add("int", new GoIntDataType(32));
