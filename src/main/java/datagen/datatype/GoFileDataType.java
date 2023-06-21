@@ -24,57 +24,48 @@
  **/
 package datagen.datatype;
 
-import static js.base.Tools.*;
-
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.json.JSMap;
+import static js.base.Tools.*;
 
-public final class GoStringDataType extends GoDataType {
+public final class GoFileDataType extends GoDataType {
 
-  public static final DataType TYPE = new GoStringDataType().with("string");
+  public static final DataType TYPE = new GoFileDataType();
 
-  private GoStringDataType() {
+  private GoFileDataType() {
+    loadTools();
+    with("github.com/jpsember/golang-base/files.Path");
   }
 
   @Override
   public boolean isPrimitive() {
-    loadTools();
-    return true;
+    return false;
   }
 
   @Override
   public String compilerInitialValue() {
-    return "\"\"";
+    return Context.pt.PKGGO_FILE + ".EmptyPath";
   }
 
   @Override
   public final String provideSourceDefaultValue() {
-    return "\"\"";
+    return Context.pt.PKGGO_FILE + "EmptyPath";
   }
 
   @Override
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap map) {
-    return DataUtil.escapeChars(map.get(""), true);
+    return "NewPathOrEmptyM(" + DataUtil.escapeChars(map.get(""), true) + ")";
   }
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("n.", f.instanceName(), " = s.OptString(", f.nameStringConstantQualified(), ", ",
-        f.defaultValueOrNull(), ")");
-  }
-
-  @Override
-  protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-    return jsentityExpression + "." + "AsString()";
-  }
-
-  @Override
-  public  String deserializeStringToMapKey(String stringValueExpression) {
-    return stringValueExpression;
+    s.a("n.", f.instanceName(), " = ", Context.pt.PKGGO_FILE, "NewPathOrEmptyM(",
+        f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(), ")");
   }
 
 }

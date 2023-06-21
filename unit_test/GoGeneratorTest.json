@@ -1,4 +1,4 @@
-{               "cat" : 6528,
+{               "cat" : 7662,
            "contract" : 5018,
                "crow" : 2076,
               "depr1" : 6453,
@@ -6,6 +6,7 @@
           "enumField" : 3840,
               "enums" : 3701,
    "externalRepeated" : 4156,
+          "filesMisc" : 5367,
   "persistSessionMap" : 4760,
             "session" : 2172
 }

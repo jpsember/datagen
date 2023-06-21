@@ -74,6 +74,7 @@ public final class ParseTools {
     PKGGO_TOOLS = goClassExpr("!. \"github.com/jpsember/golang-base/base\"");
     PKGGO_DATA = goClassExpr("!. \"github.com/jpsember/golang-base/data\"");
     PKGGO_JSON = goClassExpr("!. \"github.com/jpsember/golang-base/json\"");
+    PKGGO_FILE = goClassExpr("!. \"github.com/jpsember/golang-base/files\"");
   }
 
   public static final boolean SHOW_STACK_TRACES = false && alert("showing full stack traces");
@@ -251,7 +252,7 @@ public final class ParseTools {
 
   public Object PKGPY_DATAUTIL, PKGPY_LIST;
 
-  public Object PKGGO_TOOLS, PKGGO_JSON, PKGGO_DATA;
+  public Object PKGGO_TOOLS, PKGGO_JSON, PKGGO_DATA, PKGGO_FILE;
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 

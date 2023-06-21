@@ -64,6 +64,7 @@ public final class DataTypeManager extends BaseObject {
       add("double", new GoFloatDataType(64));
       add("bool", GoBooleanDataType.TYPE);
       add("string", GoStringDataType.TYPE);
+      add("File", GoFileDataType.TYPE);
     }
       break;
     case PYTHON:

@@ -39,7 +39,7 @@ public class GoGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void crow() { 
+  public void crow() {
     p().pr("class {", INDENT, //
         "string name;", CR, //
         "int rage_level = 16;", CR, //
@@ -51,7 +51,7 @@ public class GoGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void cat() {
+  public void cat() { 
     p().pr("class {", INDENT, //
         "string name = \"kirby\";", CR, //
         "*string children = [\"winken\",\"blinken\",\"nod\"];", CR, //
@@ -66,6 +66,18 @@ public class GoGeneratorTest extends GenBaseTest {
         "Crow boss;", CR, //
         "*Crow henchmen;", CR //
         , OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void filesMisc() {
+    if (alert("File datatype not finished yet"))
+      return;
+    p().pr("class {", INDENT, //
+        "File a;", CR, //
+        "*File bs;", CR, //
+        "File c = \"hello.txt\";", CR, //
+        OUTDENT, "}");
     compile();
   }
 
@@ -111,16 +123,16 @@ public class GoGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void depr1() { 
+  public void depr1() {
     setDatSubdir("gen/webservgen");
     p().pr("class {", INDENT, //
         "- string id;", CR, //
         " int count;", OUTDENT, "}");
     compile();
   }
-  
+
   @Test
-  public void depr2() { 
+  public void depr2() {
     setDatSubdir("gen/webservgen");
     p().pr("- class {", INDENT, //
         " string id;", CR, //
