@@ -6,9 +6,10 @@ import static js.base.Tools.*;
 import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
+import datagen.GoDataType;
 import datagen.SourceBuilder;
 
-public class GoByteArrayDataType extends GoContractDataType {
+public class GoByteArrayDataType extends GoDataType {
 
   public static final DataType TYPE = new GoByteArrayDataType().with("[]byte");
 
@@ -16,14 +17,19 @@ public class GoByteArrayDataType extends GoContractDataType {
   }
 
   @Override
+  public boolean isPrimitive() {
+    alert("not sure");
+    return true;
+  }
+
+  @Override
   public String provideSourceDefaultValue() {
     return "[]byte{}";
   }
 
-  @Override
-  public String getSerializeToJSONValue(String value) {
-    return Context.pt.PKGGO_DATA + "EncodeBase64Maybe(" + value + ")";
-  }
+  
+  
+
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
@@ -35,10 +41,24 @@ public class GoByteArrayDataType extends GoContractDataType {
     s.a("n.", f.instanceName(), " = s.OptBytes(\"", f.name(), "\", ", f.defaultValueSource(), ")", CR);
   }
 
+
+  @Override
+  public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
+    s.a("m.Put(", f.nameStringConstantQualified(), ", ", //
+        Context.pt.PKGGO_DATA + "EncodeBase64Maybe(v." + f.instanceName() + "))", CR);
+  }
+  
+  
+  
+//
+//  @Override
+//  public String getSerializeToJSONValue(String value) {
+//    return Context.pt.PKGGO_DATA + "EncodeBase64Maybe(" + value + ")";
+//  }
+  
+  
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    //    String defaultValue = f.defaultValueOrNull();
-
     s.a("if ", f.instanceName(), " != nil", OPEN, //  
         "v.", f.instanceName(), " = ", f.instanceName(), OUT, //
         "} else {", IN, //
