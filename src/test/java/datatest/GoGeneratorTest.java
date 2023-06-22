@@ -51,7 +51,7 @@ public class GoGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void cat() { 
+  public void cat() {
     p().pr("class {", INDENT, //
         "string name = \"kirby\";", CR, //
         "*string children = [\"winken\",\"blinken\",\"nod\"];", CR, //
@@ -137,6 +137,22 @@ public class GoGeneratorTest extends GenBaseTest {
     p().pr("- class {", INDENT, //
         " string id;", CR, //
         " int count;", OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void ints() {
+    p().pr("class {", INDENT, //
+        "int x;", CR, //
+        "int y = 42;", CR, //
+        "short z;", CR, //
+        "short z1 = 19;", CR, //
+        "long u;", CR, //
+        "long u1 = 19000000000;", CR, //
+        "byte b;",CR,//
+        "byte b1 = 42;",CR,//
+        "*byte b2;",CR,//
+        "}");
     compile();
   }
 }

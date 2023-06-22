@@ -46,7 +46,7 @@ public class GoContractDataType extends GoDataType {
 
   // Make this final for now to avoid unintended overriding
   @Override
-  public final void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
+  public   void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     // If there is a value for this key, use the type's default instance to parse that value
     // and store that parsed value.
     // Otherwise, if there is no value, leave the current value alone (which may be None, e.g. if value is optional)

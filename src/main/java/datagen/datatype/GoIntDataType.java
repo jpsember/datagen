@@ -26,9 +26,11 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
+import datagen.DataType;
 import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
+import js.data.DataUtil;
 import js.json.JSMap;
 
 public final class GoIntDataType extends GoDataType {
@@ -43,9 +45,19 @@ public final class GoIntDataType extends GoDataType {
     return "0";
   }
 
+  @Override
+  public DataType listVariant() {
+    if (mBits == 8) {
+      return GoByteArrayDataType.TYPE;
+    }
+    return super.listVariant();
+  }
+
   public GoIntDataType(int nbits) {
     switch (nbits) {
     case 8:
+      with("byte");
+      break;
     case 16:
     case 32:
     case 64:
@@ -71,8 +83,8 @@ public final class GoIntDataType extends GoDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("n.", f.instanceName(), " = s.OptInt", mBits, "(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(),
-        ")", CR);
+    s.a("n.", f.instanceName(), " = s.Opt", DataUtil.capitalizeFirst(qualifiedName().className()), "(",
+        f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(), ")", CR);
   }
 
   @Override
