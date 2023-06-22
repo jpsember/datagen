@@ -249,6 +249,13 @@ final class DataDefinitionParser extends BaseObject {
 
       String fieldName = read(ID);
 
+      {
+        String asSnakeCase = DataUtil.convertCamelCaseToUnderscores(fieldName);
+        if (!(fieldName.equals(asSnakeCase))) {
+          badArg("field name", quote(fieldName), "isn't using 'snake case':", quote(asSnakeCase));
+        }
+      }
+
       FieldDef fieldDef = Context.generatedTypeDef.addField(deprecated, optional, structure, primaryType,
           auxType, fieldName);
 
@@ -407,7 +414,7 @@ final class DataDefinitionParser extends BaseObject {
       case GO: {
         // I think we want to set the package name to the last component of the package name
         int c = parentName.lastIndexOf('/');
-        mPackageName = parentName.substring(c+1);
+        mPackageName = parentName.substring(c + 1);
       }
         break;
       }
