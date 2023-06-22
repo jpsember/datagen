@@ -27,10 +27,6 @@ public class GoByteArrayDataType extends GoDataType {
     return "[]byte{}";
   }
 
-  
-  
-
-
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     throw notSupported();
@@ -41,22 +37,12 @@ public class GoByteArrayDataType extends GoDataType {
     s.a("n.", f.instanceName(), " = s.OptBytes(\"", f.name(), "\", ", f.defaultValueSource(), ")", CR);
   }
 
-
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     s.a("m.Put(", f.nameStringConstantQualified(), ", ", //
-        Context.pt.PKGGO_DATA + "EncodeBase64Maybe(v." + f.instanceName() + "))", CR);
+        Context.pt.PKGGO_JSON + "EncodeBase64Maybe(v." + f.instanceName() + "))", CR);
   }
-  
-  
-  
-//
-//  @Override
-//  public String getSerializeToJSONValue(String value) {
-//    return Context.pt.PKGGO_DATA + "EncodeBase64Maybe(" + value + ")";
-//  }
-  
-  
+
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     s.a("if ", f.instanceName(), " != nil", OPEN, //  
