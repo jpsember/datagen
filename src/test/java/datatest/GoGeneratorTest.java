@@ -155,4 +155,13 @@ public class GoGeneratorTest extends GenBaseTest {
         "}");
     compile();
   }
+  
+  @Test
+  public void maps() {
+    p().pr("class {", INDENT, //
+        "map string string s;", CR, //
+        "map string string q = \"{\\\"bar\\\":\\\"foo\\\"}\";", CR, //
+        "}");
+    compile();
+  }
 }

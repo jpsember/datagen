@@ -73,8 +73,13 @@ public final class GoStringDataType extends GoDataType {
   }
 
   @Override
-  public  String deserializeStringToMapKey(String stringValueExpression) {
+  public String deserializeStringToMapKey(String stringValueExpression) {
     return stringValueExpression;
+  }
+
+  @Override
+  public String deserializeJsonToMapValue(String jsonValue) {
+    return jsonValue + ".AsString()";
   }
 
 }

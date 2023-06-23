@@ -7,6 +7,7 @@ import datagen.Context;
 import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
+import js.data.DataUtil;
 import js.json.JSMap;
 
 public class GoMapDataType extends GoDataType {
@@ -65,7 +66,7 @@ public class GoMapDataType extends GoDataType {
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-    todo("this is a confusingly-named method; should be serializeToJson, or just toJson");
+      todo("this is a confusingly-named method; should be serializeToJson, or just toJson");
     s.a(OPEN, //
         "m2 := ", Context.pt.PKGGO_JSON, "NewJSMap()", CR, // 
         "for k, v := range v.", f.instanceName(), OPEN, //
@@ -94,6 +95,22 @@ public class GoMapDataType extends GoDataType {
   @Override
   public String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDefOrNull, JSMap json) {
     FieldDef fieldDef = fieldDefOrNull;
+    SourceBuilder s = classSpecificSource;
+
+    // Declare the constant that will hold our default value
+    s.a("var ", fieldDef.constantName(), " = ", typeName(), "{}", BR);
+
+    // Parse JSMap from a string literal, and add each of its key/value pairs to the constant we declared above
+    s.a("func init() ", OPEN);
+    s.a("var m = JSMapFromStringM(");
+    s.a(DataUtil.escapeChars(json.toString(), true));
+    s.a(")", CR);
+
+    s.a("for k, v := range m.WrappedMap()", OPEN);
+    s.a(fieldDef.constantName(), "[", wrappedKeyType().deserializeStringToMapKey("k"), "] = ",
+        wrappedValueType().deserializeJsonToMapValue("v"), CR);
+    s.a(CLOSE);
+    s.a(CLOSE);
     return fieldDef.constantName();
   }
 

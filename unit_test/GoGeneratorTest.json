@@ -6,8 +6,8 @@
           "enumField" : 3840,
               "enums" : 3701,
    "externalRepeated" : 4156,
-          "filesMisc" : 5367,
                "ints" : 1552,
+               "maps" : 4946,
   "persistSessionMap" : 2678,
             "session" : 2172
 }
