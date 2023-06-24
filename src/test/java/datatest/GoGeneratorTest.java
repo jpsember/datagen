@@ -85,7 +85,7 @@ public class GoGeneratorTest extends GenBaseTest {
   public void externalRepeated() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "class {", INDENT, //
-        "*Beaver b;", OUTDENT, //
+        "*Beaver beaver_list;", OUTDENT, //
         "}");
     compile();
   }
@@ -155,7 +155,7 @@ public class GoGeneratorTest extends GenBaseTest {
         "}");
     compile();
   }
-  
+
   @Test
   public void maps() {
     p().pr("class {", INDENT, //
