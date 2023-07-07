@@ -58,21 +58,21 @@ func (v *[!static_class]) ToBuilder() [!builder_name] {
   return &[!builder_name]Obj{ [!static_class]: *v}
 }
 
-func (v *[!static_class]) ToJson() any {
+func (v *[!static_class]) ToJson() JSEntity {
   var m = NewJSMap()
 [!to_json]
   return m
 }
 
-func (v *[!static_class]) Parse(source any) DataClass {
-  var s = source.(JSMap)
+func (v *[!static_class]) Parse(source JSEntity) DataClass {
+  var s = source.AsJSMap()
   var n = new[!class]().(*[!static_class])
 [!parse]
   return n
 }
 
 func (v *[!static_class]) String() string {
-  var x = v.ToJson().(JSMap)
+  var x = v.ToJson().AsJSMap()
   return PrintJSEntity(x, true)
 }
 
@@ -98,7 +98,7 @@ func (v [!builder_name]) ToJson() any {
   return v.Build().ToJson()
 }
 
-func (v [!builder_name]) Parse(source any) DataClass {
+func (v [!builder_name]) Parse(source JSEntity) DataClass {
   return [!default_var_name].Parse(source)
 }
 

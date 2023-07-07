@@ -72,9 +72,9 @@ public final class ParseTools {
     PKGPY_LIST = pythonClassExpr("typing.List");
 
     PKGGO_TOOLS = goClassExpr("!. \"github.com/jpsember/golang-base/base\"");
-    PKGGO_DATA = goClassExpr("!. \"github.com/jpsember/golang-base/data\"");
-    PKGGO_JSON = goClassExpr("!. \"github.com/jpsember/golang-base/json\"");
-    PKGGO_FILE = goClassExpr("!. \"github.com/jpsember/golang-base/files\"");
+    PKGGO_DATA = goClassExpr("!. \"github.com/jpsember/golang-base/base\"");
+    PKGGO_JSON = goClassExpr("!. \"github.com/jpsember/golang-base/base\"");
+    PKGGO_FILE = goClassExpr("!. \"github.com/jpsember/golang-base/base\"");
   }
 
   public static final boolean SHOW_STACK_TRACES = false && alert("showing full stack traces");
