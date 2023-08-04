@@ -94,7 +94,7 @@ func (v [!builder_name]) ToBuilder() [!builder_name] {
   return v
 }
 
-func (v [!builder_name]) ToJson() any {
+func (v [!builder_name]) ToJson() JSEntity {
   return v.Build().ToJson()
 }
 

@@ -66,7 +66,7 @@ public class GoMapDataType extends GoDataType {
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-      todo("this is a confusingly-named method; should be serializeToJson, or just toJson");
+     // todo("this is a confusingly-named method; should be serializeToJson, or just toJson");
     s.a(OPEN, //
         "m2 := ", Context.pt.PKGGO_JSON, "NewJSMap()", CR, // 
         "for k, v := range v.", f.instanceName(), OPEN, //
