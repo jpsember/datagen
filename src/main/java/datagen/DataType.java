@@ -28,6 +28,8 @@ import static js.base.Tools.*;
 
 import java.util.Map;
 
+import datagen.gen.TypeStructure;
+
 import static datagen.Utils.*;
 
 /**
@@ -318,6 +320,14 @@ public abstract class DataType implements DefaultValueParser {
         continue;
       pr(INDENT, i, INDENT, q);
     }
+  }
+
+  // ------------------------------------------------------------------
+  // Type substitution
+  // ------------------------------------------------------------------
+
+  public DataType modifyTypeFilter(TypeStructure structure) {
+    return this;
   }
 
 }

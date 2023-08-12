@@ -30,10 +30,19 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
+import datagen.gen.TypeStructure;
 import js.data.DataUtil;
 import js.json.JSMap;
 
 public final class GoIntDataType extends GoDataType {
+
+  public DataType modifyTypeFilter(TypeStructure structure) {
+    DataType type = this;
+    if (structure == TypeStructure.SCALAR && mBits == 32) {
+      type = GENERIC_INT;
+    }
+    return type;
+  }
 
   @Override
   public boolean isPrimitive() {
@@ -53,7 +62,13 @@ public final class GoIntDataType extends GoDataType {
     return super.listVariant();
   }
 
+  private static GoIntDataType GENERIC_INT = new GoIntDataType(64, true);
+
   public GoIntDataType(int nbits) {
+    this(nbits, false);
+  }
+
+  private GoIntDataType(int nbits, boolean generic) {
     switch (nbits) {
     case 8:
       with("byte");
@@ -61,7 +76,11 @@ public final class GoIntDataType extends GoDataType {
     case 16:
     case 32:
     case 64:
-      with("int" + nbits);
+      if (generic) {
+        with("int");
+      } else {
+        with("int" + nbits);
+      }
       break;
     default:
       throw badArg("nbits:", nbits);

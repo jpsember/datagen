@@ -125,10 +125,11 @@ public final class GeneratedTypeDef extends BaseObject {
     boolean added = mFieldNames.add(fieldName);
     checkState(added, "duplicate field name: " + fieldName);
 
-    DataType dataType = registerType(primaryType);
+    // Allow the golang code to replace 'int64' with 'int' in certain situations:
+    DataType dataType = registerType(primaryType).modifyTypeFilter(structure);
     DataType dataType2 = null;
     if (auxType != null)
-      dataType2 = registerType(auxType);
+      dataType2 = registerType(auxType).modifyTypeFilter(structure);
 
     if (structure == TypeStructure.KEY_VALUE_MAP || structure == TypeStructure.VALUE_SET) {
       dataType = dataType.getOptionalVariant();
@@ -171,7 +172,7 @@ public final class GeneratedTypeDef extends BaseObject {
         complexType = new JavaMapDataType((JavaDataType) dataType, (JavaDataType) dataType2);
         break;
       case GO:
-        complexType = new GoMapDataType((GoDataType) dataType, (GoDataType)dataType2);
+        complexType = new GoMapDataType((GoDataType) dataType, (GoDataType) dataType2);
         break;
       }
     }

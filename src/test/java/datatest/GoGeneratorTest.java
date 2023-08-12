@@ -145,6 +145,7 @@ public class GoGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "int x;", CR, //
         "int y = 42;", CR, //
+        "*int sizes;", CR, //
         "short z;", CR, //
         "short z1 = 19;", CR, //
         "long u;", CR, //
