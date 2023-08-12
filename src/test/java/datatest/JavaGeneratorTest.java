@@ -407,7 +407,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void enumExample() {
     p().pr("enum {", INDENT, //
-        "alpha, bravo, charlie;", OUTDENT, //
+        "alpha, bravo, charlie, delta_epsilon;", OUTDENT, //
         "}");
     compile();
   }

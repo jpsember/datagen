@@ -42,7 +42,7 @@ public class GoEnumDataType extends GoDataType implements EnumDataType {
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    return valueExpression + ".String()"; 
+    return "strings.ToLower("+valueExpression + ")"; 
   }
 
   @Override
@@ -62,7 +62,7 @@ public class GoEnumDataType extends GoDataType implements EnumDataType {
 
   @Override
   public void addLabel(String label) {
-    label = convertUnderscoreToCamel(label);
+    label = label.toUpperCase();
     checkArgument(!mLabels.contains(label), "duplicate label:", label);
     mLabels.add(label);
   }
