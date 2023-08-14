@@ -81,7 +81,7 @@ public final class GoSourceGen extends SourceGen {
     for (FieldDef f : def.fields()) {
       if (f.deprecated())
         s.addSafe(getDeprecationSource());
-     DataType d = f.dataType();
+      DataType d = f.dataType();
       s.a("func (v ", builderName(), ") ", f.setterName(), "(", f.instanceName(), " ", d.typeName(), ") ",
           builderName(), OPEN);
       String targetExpr = "v." + f.instanceName();
@@ -149,7 +149,6 @@ public final class GoSourceGen extends SourceGen {
 
       if (f.deprecated())
         s.addSafe(getDeprecationSource());
-    
       s.a("func (v *", def.wrappedType().qualifiedName(DataType.NAME_ALT).className(), ") ", f.getterName(),
           "() ", f.dataType().typeName(), " ", OPEN, //
           "return v.", f.instanceName(), CLOSE);
@@ -190,7 +189,7 @@ public final class GoSourceGen extends SourceGen {
     for (String label : dt.labels()) {
       s.cr();
       i++;
-      s.a(convertUnderscoreToCamel(label));
+      s.a(label);
       if (i == 0) {
         s.a(" ", Context.generatedTypeDef.qualifiedName().className(), " = iota");
       }
@@ -214,7 +213,7 @@ public final class GoSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
     for (FieldDef f : def.fields()) {
-       f.dataType().sourceDeserializeFromObject(s, f);
+      f.dataType().sourceDeserializeFromObject(s, f);
       s.cr();
     }
     return chomp(content());
@@ -308,7 +307,7 @@ public final class GoSourceGen extends SourceGen {
     s.br();
 
     s.a("func (x ", def.name(), ") ParseFrom(m JSMap, key string) ", def.name(), " ", OPEN, //
-        "Todo(\"This could be in a utility function\")",CR,//
+        "Todo(\"This could be in a utility function\")", CR, //
         "var result = Default", def.name(), CR, //
         "var val = m.OptString(key, \"\")", CR, //
         "if val != \"\" ", OPEN, //
@@ -322,11 +321,11 @@ public final class GoSourceGen extends SourceGen {
     return content();
   }
 
-@Override
+  @Override
   protected String getDeprecationSource() {
-    return  "// Deprecated\n";
+    return "// Deprecated\n";
   }
-  
+
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template_go.txt");
   private static String sEnumTemplate = Files.readString(SourceGen.class, "enum_template_go.txt");
 

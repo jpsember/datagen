@@ -42,7 +42,7 @@ public class GoEnumDataType extends GoDataType implements EnumDataType {
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    return "strings.ToLower(" + valueExpression + ")";
+    return valueExpression + ".String()"; 
   }
 
   @Override
