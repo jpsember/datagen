@@ -46,7 +46,7 @@ public final class Context {
   public static Set<File> generatedFilesSet;
   public static ParseTools pt;
   public static SqlGen sql;
-  
+
   public static void prepare(Files files, DatagenConfig config) {
     discard();
     Context.pt = new ParseTools(config.language());
@@ -54,13 +54,13 @@ public final class Context {
     Context.files = files;
     Context.config = config.build();
     Context.generatedFilesSet = hashSet();
-    Context.sql = new SqlGen();
   }
 
   public static void prepare(DatWithSource entry) {
     discard();
     Context.datWithSource = entry;
     Context.dataTypeManager = new DataTypeManager();
+    Context.sql = new SqlGen();
   }
 
   public static boolean classMode() {
@@ -85,6 +85,7 @@ public final class Context {
     generatedTypeDef = null;
     dataTypeManager = null;
     datWithSource = null;
+    sql = null;
   }
 
   private Context() {

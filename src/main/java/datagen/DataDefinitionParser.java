@@ -315,6 +315,9 @@ final class DataDefinitionParser extends BaseObject {
     boolean db = alert("verbosity");
     if (db)
       scanner().setVerbose();
+    
+    Context.sql.Active = true;
+        
     read(PAROP);
 
     while (!readIf(PARCL)) {
