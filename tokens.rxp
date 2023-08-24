@@ -21,6 +21,8 @@ BROP: \{
 BRCL: \}
 SQOP: \[
 SQCL: \]
+PAROP: \(
+PARCL: \)
 COMMA: \,
 COLON: \:
 BOOL: (false|true)

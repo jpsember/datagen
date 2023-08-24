@@ -9,5 +9,7 @@
                "ints" : 3994,
                "maps" : 4371,
   "persistSessionMap" : 5509,
-            "session" : 4752
+            "session" : 4752,
+                "sql" : 2524,
+             "sqlGen" : 4930
 }

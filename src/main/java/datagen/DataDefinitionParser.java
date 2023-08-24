@@ -40,6 +40,7 @@ import js.parsing.ScanException;
 import js.parsing.Scanner;
 import js.parsing.Token;
 import js.base.BaseObject;
+import js.base.BasePrinter;
 import js.data.DataUtil;
 
 /**
@@ -54,28 +55,49 @@ final class DataDefinitionParser extends BaseObject {
     try {
       prepareHandlers();
       startScanner();
+
+      // Start parsing the .dat file.  It can contain something like:
+      //
+      //  [-  | unsafe ] class {
+      //     ...fields...
+      //
+      //  }
+      //    
+      // Note, only one actual definition can appear in a .dat file.
+      //
+
       while (scanner().hasNext()) {
         if (readIf(DEPRECATION)) {
           if (mDeprecationToken != null)
-            mReadIfToken.fail("unexpected");
+            throw mReadIfToken.fail("unexpected");
           mDeprecationToken = mReadIfToken;
         }
+
         if (readIf("unsafe")) {
           if (mUnsafeToken != null)
-            mReadIfToken.fail("unexpected");
+            throw mReadIfToken.fail("unexpected");
           mUnsafeToken = mReadIfToken;
         }
 
         handler(read()).run();
+
         if (mDeprecationToken != null)
-          mDeprecationToken.fail("unused");
+          throw mDeprecationToken.fail("unused");
         if (mUnsafeToken != null)
-          mUnsafeToken.fail("unused");
+          throw mUnsafeToken.fail("unused");
       }
+      pr("done reading header");
 
       if (Context.generatedTypeDef == null)
-        badArg("No 'fields {...}' specified");
+        badArg("No 'class {...}' specified");
+
       reportUnusedReferences();
+
+      alert("looking at sql table flag:",Context.generatedTypeDef.sqlTableFlag);
+      if (Context.generatedTypeDef.sqlTableFlag) {
+        generateSqlTable();
+      }
+
     } catch (Throwable t) {
       if (t instanceof ScanException || SHOW_STACK_TRACES) {
         throw t;
@@ -133,8 +155,12 @@ final class DataDefinitionParser extends BaseObject {
     mPackageName = null;
   }
 
+  private Token peek() {
+    return scanner().peek();
+  }
+  
   private boolean readIf(String tokenText) {
-    Token t = scanner().peek();
+    Token t = peek();
     boolean result = (t != null && t.text().equals(tokenText));
     if (result)
       mReadIfToken = read();
@@ -142,7 +168,7 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private boolean readIf(int type) {
-    Token t = scanner().peek();
+    Token t =  peek();
     boolean result = (t != null && t.id(type));
     if (result)
       mReadIfToken = read();
@@ -183,8 +209,10 @@ final class DataDefinitionParser extends BaseObject {
   private static boolean sOldStyleWarningIssued;
 
   private void procDataType(boolean classMode) {
+
     if (Context.config.classMode())
       classMode = true;
+
     if (!classMode) {
       if (!sOldStyleWarningIssued && !testMode()) {
         sOldStyleWarningIssued = true;
@@ -209,6 +237,15 @@ final class DataDefinitionParser extends BaseObject {
     }
 
     Context.generatedTypeDef.setUnsafe(unsafeMode);
+    
+    // Process optional sql information:
+    //
+    // sql ( ...args... )
+    //
+    //
+    if (readIf("sql")) {
+      processSqlInfo();
+    }
 
     read(BROP);
 
@@ -275,6 +312,34 @@ final class DataDefinitionParser extends BaseObject {
 
       read(SEMI);
     }
+  }
+
+  private void processSqlInfo() {
+    boolean db = alert("verbosity");
+   if (db)
+     scanner().setVerbose(); 
+    read(PAROP);
+
+    while (!readIf(PARCL)) {
+      
+      if (readIf("table")) {
+        // Optionally has extra arguments (...)
+        if (readIf(PAROP)) {
+          while (!readIf(PARCL)) {
+            throw read().fail("unexpected token");
+          }
+        }
+
+        Context.generatedTypeDef.sqlTableFlag = true;
+
+        continue;
+      }
+
+      throw read().fail("unexpected token");
+    }
+    if (db)  
+      scanner().setVerbose(false);
+    
   }
 
   /**
@@ -360,7 +425,7 @@ final class DataDefinitionParser extends BaseObject {
     PartialType.Builder t = PartialType.newBuilder();
     if (readIf("enum"))
       t.enumFlag(true);
-    if (scanner().peek().id(RESERVEDWORD)) {
+    if ( peek().id(RESERVEDWORD)) {
       fail("Reserved word encountered:", read().text());
     }
     t.name(read(ID));
@@ -370,7 +435,7 @@ final class DataDefinitionParser extends BaseObject {
   private void procEnum() {
     DataType enumDataType = EnumDataType.construct();
     // If this is a declaration, an id followed by ;
-    if (scanner().peek().id(ID)) {
+    if (peek().id(ID)) {
       processExternalReference(enumDataType);
       return;
     }
@@ -433,4 +498,7 @@ final class DataDefinitionParser extends BaseObject {
   private String mPackageName;
   private Map<String, Runnable> mHandlers;
 
+  private void generateSqlTable() {
+    todo("move this into a separate class later, and clean up the public boolean flag");
+  }
 }

@@ -165,4 +165,17 @@ public class GoGeneratorTest extends GenBaseTest {
         "}");
     compile();
   }
+
+  @Test
+  public void sqlGen() {
+    rv();
+    p().pr("class sql(table) {", INDENT, //
+        "id int;", CR, //
+        "name string;", CR, //
+        "enum Level grad;", CR, //
+        "alive bool;", CR, //
+        "}");
+    compile();
+  }
+
 }
