@@ -9,7 +9,7 @@ import (
 
 // See https://www.sohamkamani.com/golang/enums/
 
-type [!class] int32
+type [!class] int
 
 const (
 [!enum_values]
