@@ -82,4 +82,8 @@ public final class GoStringDataType extends GoDataType {
     return jsonValue + ".AsString()";
   }
 
+  public String sqlType() {
+    return "VARCHAR NOT NULL";
+  }
+
 }

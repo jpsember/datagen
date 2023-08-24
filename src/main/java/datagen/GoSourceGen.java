@@ -95,7 +95,8 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected String generateImports(List<String> expressions) {
-
+    if (alert("disabling logging for now"))
+      setVerbose(false);
     log("generating golang imports");
 
     s.setIndent(2);
@@ -307,8 +308,9 @@ public final class GoSourceGen extends SourceGen {
     s.br();
 
     s.a("func (x ", def.name(), ") ParseFrom(m JSMap, key string) ", def.name(), " ", OPEN, //
-        "return ",def.name(),"(ParseEnumFromMap(",def.name(),"EnumInfo, m, key, int(Default",def.name(),")))",CLOSE //
-        );
+        "return ", def.name(), "(ParseEnumFromMap(", def.name(), "EnumInfo, m, key, int(Default", def.name(),
+        ")))", CLOSE //
+    );
     return content();
   }
 

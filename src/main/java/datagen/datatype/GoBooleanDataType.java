@@ -31,7 +31,7 @@ import datagen.SourceBuilder;
 import js.json.JSMap;
 
 public final class GoBooleanDataType extends GoDataType {
-  
+
   public static final DataType TYPE = new GoBooleanDataType().with("bool");
 
   private GoBooleanDataType() {
@@ -63,12 +63,10 @@ public final class GoBooleanDataType extends GoDataType {
         f.defaultValueOrNull(), ")");
   }
 
-  //  @Override
-  //  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-  //    s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR);
-  //    s.doIf(f.optional(), "if x is not None:", OPEN);
-  //    s.a("inst.", f.instanceName(), " = x.copy()");
-  //    s.endIf(CLOSE);
-  //  }
+  public String sqlType() {
+    // From https://www.sqlite.org/datatype3.html:
+    // "SQLite does not have a separate Boolean storage class. Instead, Boolean values are stored as integers 0 (false) and 1 (true)."
+    return "INTEGER";
+  }
 
 }

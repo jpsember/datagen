@@ -42,7 +42,7 @@ public class GoEnumDataType extends GoDataType implements EnumDataType {
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    return valueExpression + ".String()"; 
+    return valueExpression + ".String()";
   }
 
   @Override
@@ -78,4 +78,10 @@ public class GoEnumDataType extends GoDataType implements EnumDataType {
   public boolean isPrimitive() {
     return true;
   }
+
+  public String sqlType() {
+    // We will store enumerations by their numerical (not string) values, unlike their json serializations
+    return "INTEGER";
+  }
+
 }

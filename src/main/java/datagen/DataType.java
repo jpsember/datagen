@@ -330,4 +330,7 @@ public abstract class DataType implements DefaultValueParser {
     return this;
   }
 
+  public String sqlType() {
+    return "!!!UNKNOWN sqlType";
+  }
 }

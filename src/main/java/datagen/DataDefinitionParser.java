@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 import datagen.datatype.EnumDataType;
+import datagen.gen.Language;
 import datagen.gen.PartialType;
 import datagen.gen.TypeStructure;
 import js.file.Files;
@@ -40,7 +41,6 @@ import js.parsing.ScanException;
 import js.parsing.Scanner;
 import js.parsing.Token;
 import js.base.BaseObject;
-import js.base.BasePrinter;
 import js.data.DataUtil;
 
 /**
@@ -93,12 +93,13 @@ final class DataDefinitionParser extends BaseObject {
 
       reportUnusedReferences();
 
-      alert("looking at sql table flag:",Context.generatedTypeDef.sqlTableFlag);
+      alert("looking at sql table flag:", Context.generatedTypeDef.sqlTableFlag);
       if (Context.generatedTypeDef.sqlTableFlag) {
         generateSqlTable();
       }
 
     } catch (Throwable t) {
+      alert("Caught:", t.getMessage());
       if (t instanceof ScanException || SHOW_STACK_TRACES) {
         throw t;
       }
@@ -158,7 +159,7 @@ final class DataDefinitionParser extends BaseObject {
   private Token peek() {
     return scanner().peek();
   }
-  
+
   private boolean readIf(String tokenText) {
     Token t = peek();
     boolean result = (t != null && t.text().equals(tokenText));
@@ -168,7 +169,7 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private boolean readIf(int type) {
-    Token t =  peek();
+    Token t = peek();
     boolean result = (t != null && t.id(type));
     if (result)
       mReadIfToken = read();
@@ -237,7 +238,7 @@ final class DataDefinitionParser extends BaseObject {
     }
 
     Context.generatedTypeDef.setUnsafe(unsafeMode);
-    
+
     // Process optional sql information:
     //
     // sql ( ...args... )
@@ -316,12 +317,12 @@ final class DataDefinitionParser extends BaseObject {
 
   private void processSqlInfo() {
     boolean db = alert("verbosity");
-   if (db)
-     scanner().setVerbose(); 
+    if (db)
+      scanner().setVerbose();
     read(PAROP);
 
     while (!readIf(PARCL)) {
-      
+
       if (readIf("table")) {
         // Optionally has extra arguments (...)
         if (readIf(PAROP)) {
@@ -337,9 +338,9 @@ final class DataDefinitionParser extends BaseObject {
 
       throw read().fail("unexpected token");
     }
-    if (db)  
+    if (db)
       scanner().setVerbose(false);
-    
+
   }
 
   /**
@@ -425,7 +426,7 @@ final class DataDefinitionParser extends BaseObject {
     PartialType.Builder t = PartialType.newBuilder();
     if (readIf("enum"))
       t.enumFlag(true);
-    if ( peek().id(RESERVEDWORD)) {
+    if (peek().id(RESERVEDWORD)) {
       fail("Reserved word encountered:", read().text());
     }
     t.name(read(ID));
@@ -500,5 +501,72 @@ final class DataDefinitionParser extends BaseObject {
 
   private void generateSqlTable() {
     todo("move this into a separate class later, and clean up the public boolean flag");
+    tblSb = new StringBuilder();
+
+    GeneratedTypeDef d = Context.generatedTypeDef;
+
+    //   CREATE TABLE IF NOT EXISTS <tablename> (
+    //     id INTEGER PRIMARY KEY,
+    //     name VARCHAR(64) NOT NULL,
+    //     user_state VARCHAR(20) NOT NULL,
+    //     user_class VARCHAR(20) NOT NULL,
+    //     email VARCHAR(60) NOT NULL,
+    //     password VARCHAR(25) NOT NULL
+    //    )
+    //    
+    ap("CREATE TABLE IF NOT EXISTS ");
+
+    ap(DataUtil.convertCamelCaseToUnderscores(d.qualifiedName().className()));
+    ap(" (\n");
+
+    var i = INIT_INDEX;
+    for (FieldDef f : d.fields()) {
+      i++;
+      if (i != 0) {
+        ap(",");
+        cr();
+      }
+      ap(spaces(4));
+      var name = f.name();
+      String sqlType = f.dataType().sqlType();
+      boolean isId = name.equals("id");
+      if (isId) {
+        if (!sqlType.equals("INTEGER"))
+          badState("id doesn't look like an integer: ", f.name(), f.dataType().qualifiedName().className(),
+              sqlType);
+        checkState(i == 0, "'id' should be first field");
+      }
+      ap(name);
+      sp();
+      checkArgument(!sqlType.startsWith("!!!"), "no sql type for", f.name(), ";", f.dataType().getClass());
+      ap(sqlType);
+      if (isId) {
+        ap(" PRIMARY KEY");
+      }
+
+    }
+    cr();
+    ap(")");
+    cr();
+    pr(tblSb);
   }
+
+  private void ap(Object value) {
+    tblSb.append(value);
+  }
+
+  private void cr() {
+    addLF(tblSb);
+  }
+
+  private void sp() {
+    char last = ' ';
+    StringBuilder sb = tblSb;
+    if (sb.length() > 0)
+      last = sb.charAt(sb.length() - 1);
+    if (last > ' ')
+      sb.append(' ');
+  }
+
+  private StringBuilder tblSb;
 }

@@ -44,6 +44,7 @@ public final class GoIntDataType extends GoDataType {
     return type;
   }
 
+  
   @Override
   public boolean isPrimitive() {
     return true;
@@ -115,4 +116,7 @@ public final class GoIntDataType extends GoDataType {
     return expr;
   }
 
+  public String sqlType() {
+    return "INTEGER";
+  }
 }
