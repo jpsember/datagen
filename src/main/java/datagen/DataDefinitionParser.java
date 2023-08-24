@@ -86,18 +86,15 @@ final class DataDefinitionParser extends BaseObject {
         if (mUnsafeToken != null)
           throw mUnsafeToken.fail("unused");
       }
-      pr("done reading header");
 
       if (Context.generatedTypeDef == null)
         badArg("No 'class {...}' specified");
 
       reportUnusedReferences();
 
-      alert("looking at sql table flag:", Context.generatedTypeDef.sqlTableFlag);
-      if (Context.generatedTypeDef.sqlTableFlag) {
-        generateSqlTable();
-      }
-
+      Context.sql.generate();
+      
+      
     } catch (Throwable t) {
       alert("Caught:", t.getMessage());
       if (t instanceof ScanException || SHOW_STACK_TRACES) {
@@ -331,7 +328,7 @@ final class DataDefinitionParser extends BaseObject {
           }
         }
 
-        Context.generatedTypeDef.sqlTableFlag = true;
+        Context.sql.TableFlag = true;
 
         continue;
       }
@@ -340,7 +337,6 @@ final class DataDefinitionParser extends BaseObject {
     }
     if (db)
       scanner().setVerbose(false);
-
   }
 
   /**
@@ -499,74 +495,4 @@ final class DataDefinitionParser extends BaseObject {
   private String mPackageName;
   private Map<String, Runnable> mHandlers;
 
-  private void generateSqlTable() {
-    todo("move this into a separate class later, and clean up the public boolean flag");
-    tblSb = new StringBuilder();
-
-    GeneratedTypeDef d = Context.generatedTypeDef;
-
-    //   CREATE TABLE IF NOT EXISTS <tablename> (
-    //     id INTEGER PRIMARY KEY,
-    //     name VARCHAR(64) NOT NULL,
-    //     user_state VARCHAR(20) NOT NULL,
-    //     user_class VARCHAR(20) NOT NULL,
-    //     email VARCHAR(60) NOT NULL,
-    //     password VARCHAR(25) NOT NULL
-    //    )
-    //    
-    ap("CREATE TABLE IF NOT EXISTS ");
-
-    ap(DataUtil.convertCamelCaseToUnderscores(d.qualifiedName().className()));
-    ap(" (\n");
-
-    var i = INIT_INDEX;
-    for (FieldDef f : d.fields()) {
-      i++;
-      if (i != 0) {
-        ap(",");
-        cr();
-      }
-      ap(spaces(4));
-      var name = f.name();
-      String sqlType = f.dataType().sqlType();
-      boolean isId = name.equals("id");
-      if (isId) {
-        if (!sqlType.equals("INTEGER"))
-          badState("id doesn't look like an integer: ", f.name(), f.dataType().qualifiedName().className(),
-              sqlType);
-        checkState(i == 0, "'id' should be first field");
-      }
-      ap(name);
-      sp();
-      checkArgument(!sqlType.startsWith("!!!"), "no sql type for", f.name(), ";", f.dataType().getClass());
-      ap(sqlType);
-      if (isId) {
-        ap(" PRIMARY KEY");
-      }
-
-    }
-    cr();
-    ap(")");
-    cr();
-    pr(tblSb);
-  }
-
-  private void ap(Object value) {
-    tblSb.append(value);
-  }
-
-  private void cr() {
-    addLF(tblSb);
-  }
-
-  private void sp() {
-    char last = ' ';
-    StringBuilder sb = tblSb;
-    if (sb.length() > 0)
-      last = sb.charAt(sb.length() - 1);
-    if (last > ' ')
-      sb.append(' ');
-  }
-
-  private StringBuilder tblSb;
 }

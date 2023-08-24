@@ -35,4 +35,8 @@ class {
   // If true, performs gofmt step afterwards (go language only)
   //
   bool format;
+
+  // Where to store SQL products; if empty, all sql stuff is ignored
+  //
+  File sql_dir;
 }

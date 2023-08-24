@@ -259,8 +259,5 @@ public final class GeneratedTypeDef extends BaseObject {
   private final boolean mClassMode;
   private SourceBuilder mClassSpecificSourceBuilder;
   private String mClassSpecificSource;
-  
-  // Quick experiment
-  public boolean sqlTableFlag;
 
 }

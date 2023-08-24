@@ -168,7 +168,7 @@ public class GoGeneratorTest extends GenBaseTest {
 
   @Test
   public void sqlGen() {
-    rv();
+    addArg("sql_dir", generatedFile("sql"));
     p().pr("class sql(table) {", INDENT, //
         "int id;", CR, //
         "string name;", CR, //
