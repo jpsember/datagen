@@ -93,8 +93,7 @@ final class DataDefinitionParser extends BaseObject {
       reportUnusedReferences();
 
       Context.sql.generate();
-      
-      
+
     } catch (Throwable t) {
       alert("Caught:", t.getMessage());
       if (t instanceof ScanException || SHOW_STACK_TRACES) {
@@ -327,14 +326,13 @@ final class DataDefinitionParser extends BaseObject {
             throw read().fail("unexpected token");
           }
         }
-
         Context.sql.TableFlag = true;
-
         continue;
       }
 
       throw read().fail("unexpected token");
     }
+    todo("add support for generating sqlite statements for creating, reading, updating generated types");
     if (db)
       scanner().setVerbose(false);
   }

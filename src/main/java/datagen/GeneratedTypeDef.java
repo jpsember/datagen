@@ -41,8 +41,6 @@ import js.base.BaseObject;
 public final class GeneratedTypeDef extends BaseObject {
 
   public GeneratedTypeDef(String name, String packageName, DataType enumTypeOrNull, boolean classMode) {
-
-    alert("gen type def name:",name);
     mEnumDataType = (EnumDataType) enumTypeOrNull;
     mClassMode = classMode;
 
