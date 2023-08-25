@@ -22,6 +22,9 @@ public class SqlCreateRecord extends BaseObject {
    
     s.a("func Create", objNameGo, "(db *sql.DB, obj ", objNameGo, ") (", objNameGo, ", error)", OPEN);
     
+    s.a("Pr(`Create:`,obj)",CR)
+    ;
+    
     s.a("if ",stName," == nil ",OPEN, //
         stName," = CheckOkWith(db.Prepare(`INSERT INTO ", objName, " (");
 
@@ -63,11 +66,16 @@ public class SqlCreateRecord extends BaseObject {
       todo("we may need to convert getter output to something else, e.g. string or int");
     }
     s.a(")", CR);
+    
+    s.a("Pr(`execd, result:`,createdObj,`err:`,err1)",CR)
+    ;
+    
+    
     s.a("err = err1", CR, "if err == nil", OPEN);
     {
       s.a("id, err2 := result.LastInsertId()", CR, //
           "err = err2", CR, "if err == nil", OPEN, //
-          "createdObj = New", objNameGo, "().SetId(int(id)).Build()", CLOSE);
+          "createdObj = obj.ToBuilder().SetId(int(id)).Build()", CLOSE);
     }
     s.a(CLOSE);
     s.a("return createdObj, err", CLOSE);
