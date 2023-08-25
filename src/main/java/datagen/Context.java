@@ -54,13 +54,14 @@ public final class Context {
     Context.files = files;
     Context.config = config.build();
     Context.generatedFilesSet = hashSet();
+    Context.sql = new SqlGen( );
+    Context.sql.prepare(config);
   }
 
   public static void prepare(DatWithSource entry) {
     discard();
     Context.datWithSource = entry;
     Context.dataTypeManager = new DataTypeManager();
-    Context.sql = new SqlGen();
   }
 
   public static boolean classMode() {
@@ -85,7 +86,7 @@ public final class Context {
     generatedTypeDef = null;
     dataTypeManager = null;
     datWithSource = null;
-    sql = null;
+    // sql = null;
   }
 
   private Context() {

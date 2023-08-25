@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Map;
 
 import datagen.datatype.EnumDataType;
-import datagen.gen.Language;
 import datagen.gen.PartialType;
 import datagen.gen.TypeStructure;
 import js.file.Files;
@@ -92,7 +91,7 @@ final class DataDefinitionParser extends BaseObject {
 
       reportUnusedReferences();
 
-      Context.sql.generate();
+      Context.sql.generate(Context.generatedTypeDef);
 
     } catch (Throwable t) {
       alert("Caught:", t.getMessage());
@@ -315,21 +314,24 @@ final class DataDefinitionParser extends BaseObject {
     boolean db = alert("verbosity");
     if (db)
       scanner().setVerbose();
-    
+
     Context.sql.Active = true;
-        
+    
+    // Table is now implied, if sql exists
+    //
+    Context.sql.TableFlag = true;
+    
     read(PAROP);
 
     while (!readIf(PARCL)) {
 
-      if (readIf("table")) {
+       if (readIf("table")) {
         // Optionally has extra arguments (...)
         if (readIf(PAROP)) {
           while (!readIf(PARCL)) {
             throw read().fail("unexpected token");
           }
         }
-        Context.sql.TableFlag = true;
         continue;
       }
 
