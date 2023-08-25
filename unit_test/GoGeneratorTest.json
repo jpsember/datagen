@@ -10,6 +10,6 @@
                "maps" : 4371,
   "persistSessionMap" : 5509,
             "session" : 4752,
-                "sql" : 2524,
-             "sqlGen" : 7188
+             "sqlGen" : 1011,
+     "sqlGenInactive" : 3525
 }

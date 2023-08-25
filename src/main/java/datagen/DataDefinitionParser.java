@@ -93,6 +93,8 @@ final class DataDefinitionParser extends BaseObject {
 
       Context.sql.generate(Context.generatedTypeDef);
 
+      Context.sql.setActive(false);
+
     } catch (Throwable t) {
       alert("Caught:", t.getMessage());
       if (t instanceof ScanException || SHOW_STACK_TRACES) {
@@ -240,6 +242,7 @@ final class DataDefinitionParser extends BaseObject {
     //
     //
     if (readIf("sql")) {
+      Context.sql.setActive(true);
       processSqlInfo();
     }
 
@@ -315,17 +318,11 @@ final class DataDefinitionParser extends BaseObject {
     if (db)
       scanner().setVerbose();
 
-    Context.sql.Active = true;
-    
-    // Table is now implied, if sql exists
-    //
-    Context.sql.TableFlag = true;
-    
     read(PAROP);
 
     while (!readIf(PARCL)) {
 
-       if (readIf("table")) {
+      if (readIf("table")) {
         // Optionally has extra arguments (...)
         if (readIf(PAROP)) {
           while (!readIf(PARCL)) {

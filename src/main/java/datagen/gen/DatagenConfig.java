@@ -63,10 +63,6 @@ public class DatagenConfig implements AbstractData {
     return mFormat;
   }
 
-  public File sqlDir() {
-    return mSqlDir;
-  }
-
   @Override
   public Builder toBuilder() {
     return new Builder(this);
@@ -86,7 +82,6 @@ public class DatagenConfig implements AbstractData {
   protected static final String _11 = "unsafe";
   protected static final String _12 = "quiet_mode";
   protected static final String _13 = "format";
-  protected static final String _14 = "sql_dir";
 
   @Override
   public String toString() {
@@ -110,7 +105,6 @@ public class DatagenConfig implements AbstractData {
     m.putUnsafe(_11, mUnsafe);
     m.putUnsafe(_12, mQuietMode);
     m.putUnsafe(_13, mFormat);
-    m.putUnsafe(_14, mSqlDir.toString());
     return m;
   }
 
@@ -166,13 +160,6 @@ public class DatagenConfig implements AbstractData {
     mUnsafe = m.opt(_11, false);
     mQuietMode = m.opt(_12, false);
     mFormat = m.opt(_13, false);
-    {
-      mSqlDir = Files.DEFAULT;
-      String x = m.opt(_14, (String) null);
-      if (x != null) {
-        mSqlDir = new File(x);
-      }
-    }
   }
 
   public static Builder newBuilder() {
@@ -216,8 +203,6 @@ public class DatagenConfig implements AbstractData {
       return false;
     if (!(mFormat == other.mFormat))
       return false;
-    if (!(mSqlDir.equals(other.mSqlDir)))
-      return false;
     return true;
   }
 
@@ -240,7 +225,6 @@ public class DatagenConfig implements AbstractData {
       r = r * 37 + (mUnsafe ? 1 : 0);
       r = r * 37 + (mQuietMode ? 1 : 0);
       r = r * 37 + (mFormat ? 1 : 0);
-      r = r * 37 + mSqlDir.hashCode();
       m__hashcode = r;
     }
     return r;
@@ -260,7 +244,6 @@ public class DatagenConfig implements AbstractData {
   protected boolean mUnsafe;
   protected boolean mQuietMode;
   protected boolean mFormat;
-  protected File mSqlDir;
   protected int m__hashcode;
 
   public static final class Builder extends DatagenConfig {
@@ -280,7 +263,6 @@ public class DatagenConfig implements AbstractData {
       mUnsafe = m.mUnsafe;
       mQuietMode = m.mQuietMode;
       mFormat = m.mFormat;
-      mSqlDir = m.mSqlDir;
     }
 
     @Override
@@ -311,7 +293,6 @@ public class DatagenConfig implements AbstractData {
       r.mUnsafe = mUnsafe;
       r.mQuietMode = mQuietMode;
       r.mFormat = mFormat;
-      r.mSqlDir = mSqlDir;
       return r;
     }
 
@@ -385,11 +366,6 @@ public class DatagenConfig implements AbstractData {
       return this;
     }
 
-    public Builder sqlDir(File x) {
-      mSqlDir = (x == null) ? Files.DEFAULT : x;
-      return this;
-    }
-
   }
 
   private static final File _D1 = new File("dat_files");
@@ -402,7 +378,6 @@ public class DatagenConfig implements AbstractData {
     mLanguage = Language.DEFAULT_INSTANCE;
     mSourcePath = Files.DEFAULT;
     mPythonSourcePath = Files.DEFAULT;
-    mSqlDir = Files.DEFAULT;
   }
 
 }

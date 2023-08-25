@@ -168,7 +168,8 @@ public class GoGeneratorTest extends GenBaseTest {
 
   @Test
   public void sqlGen() {
-    addArg("sql_dir", generatedFile("sql"));
+    rv();
+   // addArg("sql_dir", generatedFile("sql"));
     p().pr("class sql(table) {", INDENT, //
         "int id;", CR, //
         "string name;", CR, //
@@ -177,5 +178,16 @@ public class GoGeneratorTest extends GenBaseTest {
         "}");
     compile();
   }
-
+  
+  @Test
+  public void sqlGenInactive() {
+  //  addArg("sql_dir", generatedFile("sql"));
+    p().pr("class /*sql(table)*/ {", INDENT, //
+        "int id;", CR, //
+        "string name;", CR, //
+        "enum Level grad;", CR, //
+        "bool alive;", CR, //
+        "}");
+    compile();
+  }
 }

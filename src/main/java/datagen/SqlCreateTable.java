@@ -4,13 +4,29 @@ import static js.base.Tools.*;
 
 import js.base.BaseObject;
 import js.data.DataUtil;
-import js.file.Files;
 
 public class SqlCreateTable extends BaseObject {
 
-  public void generate() {
+  public String generate(GeneratedTypeDef d)  {
 
-    GeneratedTypeDef d = Context.generatedTypeDef;
+    mSb = new StringBuilder();
+    
+    
+    
+    
+    
+    var tableNameGo =  d.qualifiedName().className() ;
+
+    
+    
+ap("func CreateTable"+tableNameGo+"(db *sql.DB) {")    .cr();
+ap("  _, err := db.Exec(`");
+    
+    
+    
+    
+    
+    //GeneratedTypeDef d = Context.generatedTypeDef;
 
     ap("CREATE TABLE IF NOT EXISTS ");
 
@@ -46,29 +62,33 @@ public class SqlCreateTable extends BaseObject {
 
     }
     cr();
-    ap(");");
-    cr();
-    
-    var f = Files.join(Context.sql.directory(), tableName + "_gen.txt");
-    Files.S.writeString(f, mSb.toString());
+
+    ap("  );");
+    ap("`)").cr();
+    ap("  CheckOk(err, \"failed to create table\")").cr();
+    ap("}").cr();
+   
+    return mSb.toString();
   }
 
-  private void ap(Object value) {
+  private SqlCreateTable ap(Object value)  {
     mSb.append(value);
+    return this;
   }
 
-  private void cr() {
+  private SqlCreateTable cr()  {
     addLF(mSb);
+    return this;
   }
 
-  private void sp() {
+  private SqlCreateTable sp() {
     char last = ' ';
     StringBuilder sb = mSb;
     if (sb.length() > 0)
       last = sb.charAt(sb.length() - 1);
     if (last > ' ')
       sb.append(' ');
-  }
+    return this;}
 
-  private StringBuilder mSb = new StringBuilder();
+  private StringBuilder mSb; // = new StringBuilder();
 }
