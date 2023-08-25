@@ -2,47 +2,30 @@ package datagen;
 
 import static js.base.Tools.*;
 
+import datagen.gen.Language;
 import js.base.BaseObject;
 import js.data.DataUtil;
 
+import static datagen.SourceBuilder.*;
+
 public class SqlCreateTable extends BaseObject {
 
-  public String generate(GeneratedTypeDef d)  {
+  public String generate(GeneratedTypeDef d) {
 
-    mSb = new StringBuilder();
-    
-    
-    
-    
-    
-    var tableNameGo =  d.qualifiedName().className() ;
+    var s = new SourceBuilder(Language.GO);
 
-    
-    
-ap("func CreateTable"+tableNameGo+"(db *sql.DB) {")    .cr();
-ap("  _, err := db.Exec(`");
-    
-    
-    
-    
-    
-    //GeneratedTypeDef d = Context.generatedTypeDef;
+    var tableNameGo = d.qualifiedName().className();
+    var tableName = DataUtil.convertCamelCaseToUnderscores(tableNameGo);
 
-    ap("CREATE TABLE IF NOT EXISTS ");
-
-    var tableName = DataUtil.convertCamelCaseToUnderscores(d.qualifiedName().className());
-
-    ap(tableName);
-    ap(" (\n");
+    s.a("func CreateTable", tableNameGo, "(db *sql.DB)", OPEN, //
+        " _, err := db.Exec(`CREATE TABLE IF NOT EXISTS ", tableName, " (", CR);
 
     var i = INIT_INDEX;
     for (FieldDef f : d.fields()) {
       i++;
       if (i != 0) {
-        ap(",");
-        cr();
+        s.a(",", CR);
       }
-      ap(spaces(4));
       var name = f.name();
       String sqlType = f.dataType().sqlType();
       boolean isId = name.equals("id");
@@ -52,43 +35,19 @@ ap("  _, err := db.Exec(`");
               sqlType);
         checkState(i == 0, "'id' should be first field");
       }
-      ap(name);
-      sp();
+      s.a(name, " ");
       checkArgument(!sqlType.startsWith("!!!"), "no sql type for", f.name(), ";", f.dataType().getClass());
-      ap(sqlType);
+      s.a(sqlType);
       if (isId) {
-        ap(" PRIMARY KEY");
+        s.a(" PRIMARY KEY");
       }
 
     }
-    cr();
-
-    ap("  );");
-    ap("`)").cr();
-    ap("  CheckOk(err, \"failed to create table\")").cr();
-    ap("}").cr();
-   
-    return mSb.toString();
+    s.cr();
+    s.a(");`)").cr();
+    s.a("  CheckOk(err, \"failed to create table\")", CR, //
+        CLOSE);
+    return s.getContent();
   }
 
-  private SqlCreateTable ap(Object value)  {
-    mSb.append(value);
-    return this;
-  }
-
-  private SqlCreateTable cr()  {
-    addLF(mSb);
-    return this;
-  }
-
-  private SqlCreateTable sp() {
-    char last = ' ';
-    StringBuilder sb = mSb;
-    if (sb.length() > 0)
-      last = sb.charAt(sb.length() - 1);
-    if (last > ' ')
-      sb.append(' ');
-    return this;}
-
-  private StringBuilder mSb; // = new StringBuilder();
 }

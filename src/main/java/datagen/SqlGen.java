@@ -67,6 +67,8 @@ public class SqlGen extends BaseObject {
     //var g = new SqlCreateTable();
     mCode.append(new SqlCreateTable().generate(typeDef));
     mCode.append("\n");
+    mCode.append(new SqlCreateRecord().generate(typeDef));
+    mCode.append("\n");
   }
 
   public File directory() {
