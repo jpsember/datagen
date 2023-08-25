@@ -10,7 +10,7 @@ import static datagen.SourceBuilder.*;
 
 public class SqlCreateTable extends BaseObject {
 
-  public String generate(GeneratedTypeDef d) {
+  public static String generate(GeneratedTypeDef d) {
 
     var s = new SourceBuilder(Language.GO);
 
@@ -47,7 +47,7 @@ public class SqlCreateTable extends BaseObject {
     s.a(");`)").cr();
     s.a("  CheckOk(err, \"failed to create table\")", CR, //
         CLOSE);
-    return s.getContent();
+    return s.getContent() + "\n";
   }
 
 }

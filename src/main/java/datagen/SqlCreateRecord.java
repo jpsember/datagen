@@ -11,7 +11,7 @@ import static datagen.SourceBuilder.*;
 
 public class SqlCreateRecord extends BaseObject {
 
-  public String generate(GeneratedTypeDef d) {
+  public static String generate(GeneratedTypeDef d) {
     var s = new SourceBuilder(Language.GO);
 
     var objNameGo = d.qualifiedName().className();
@@ -80,6 +80,6 @@ public class SqlCreateRecord extends BaseObject {
     s.a(CLOSE);
     s.a("return createdObj, err", CLOSE);
 
-    return s.getContent();
+    return s.getContent() + "\n";
   }
 }
