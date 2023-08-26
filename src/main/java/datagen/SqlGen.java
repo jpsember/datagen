@@ -7,6 +7,7 @@ import java.util.Set;
 import datagen.gen.DatagenConfig;
 import datagen.gen.Language;
 import js.base.BaseObject;
+import js.base.BasePrinter;
 import js.data.DataUtil;
 import js.file.Files;
 import js.json.JSMap;
@@ -491,21 +492,28 @@ public class SqlGen extends BaseObject {
   }
 
   private SourceBuilder varCode() {
-    if (mMiscVarSourceBuilder == null) {
-      mMiscVarSourceBuilder = sourceBuilder();
-    }
-    return mMiscVarSourceBuilder;
+    return mMiscVar;
+  }
+
+
+  private SourceBuilder dbInitCode() {
+    return mDbInitCode;
   }
 
   private SourceBuilder initCode() {
-    if (mMiscInitCodeSourceBuilder == null) {
-      mMiscInitCodeSourceBuilder = sourceBuilder();
-    }
-    return mMiscInitCodeSourceBuilder;
+    return mInitCode;
   }
 
-  private SourceBuilder mMiscVarSourceBuilder;
-  private SourceBuilder mMiscInitCodeSourceBuilder;
+//  private SourceBuilder mCreateTable = sourceBuilder();
+//  private SourceBuilder mCreateIndex = sourceBuilder();
+
+  private SourceBuilder mMiscVar = sourceBuilder();
+  private SourceBuilder mInitCode = sourceBuilder();
+  private SourceBuilder mDbInitCode = sourceBuilder();
+
+  
+  //  private SourceBuilder mMiscVarSourceBuilder;
+  //private SourceBuilder mMiscInitCodeSourceBuilder;
 
   private String uniqueVar(String prefix) {
     mUniqueVarCounter++;
@@ -553,103 +561,68 @@ public class SqlGen extends BaseObject {
       s.endComma().a(")`");
       var goStatement = s.cr().getContent();
       varCode().addSafe(goStatement);
-      todo("how do we ensure tables are created before indexes?");
-      //      
-      //      
-      //      
-      //      var objNameGo = d.qualifiedName().className();
-      //      var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
-      //      var stName = "stmtCreate" + objNameGo;
-      //
-      //      s.a("var ", stName, " *sql.Stmt", CR);
-      //
-      //      s.a("func Create", objNameGo, "(db *sql.DB, obj ", objNameGo, ") (", objNameGo, ", error)", OPEN);
-      //
-      //      s.a("Pr(`Create:`,obj)", CR);
-      //
-      //      s.a("if ", stName, " == nil ", OPEN, //
-      //          stName, " = CheckOkWith(db.Prepare(`INSERT INTO ", objName, " (");
-      //
-      //      boolean needComma = false;
-      //
-      //      List<FieldDef> filtFields = arrayList();
-      //
-      //      for (var fieldDef : d.fields()) {
-      //        if (fieldDef.name().equals("id"))
-      //          continue;
-      //        filtFields.add(fieldDef);
-      //        if (needComma) {
-      //          s.a(", ");
-      //        }
-      //        needComma = true;
-      //        s.a(fieldDef.name());
-      //      }
-      //      s.a(") VALUES(");
-      //      for (int i = 0; i < filtFields.size(); i++) {
-      //        if (i > 0)
-      //          s.a(",");
-      //        s.a("?");
-      //      }
-      //      s.a(")`))", CLOSE);
-      //
-      //      s.a("var err error", CR, //
-      //          "var createdObj ", objNameGo, CR, //
-      //
-      //          "result, err1 := ", stName, ".Exec(");
-      //
-      //      needComma = false;
-      //      for (var f : filtFields) {
-      //        if (needComma) {
-      //          s.a(", ");
-      //        }
-      //        needComma = true;
-      //        s.a("obj.");
-      //        s.a(f.getterName(), "()");
-      //        todo("we may need to convert getter output to something else, e.g. string or int");
-      //      }
-      //      s.a(")", CR);
-      //
-      //      s.a("Pr(`execd, result:`,createdObj,`err:`,err1)", CR);
-      //
-      //      s.a("err = err1", CR, "if err == nil", OPEN);
-      //      {
-      //        s.a("id, err2 := result.LastInsertId()", CR, //
-      //            "err = err2", CR, "if err == nil", OPEN, //
-      //            "createdObj = obj.ToBuilder().SetId(int(id)).Build()", CLOSE);
-      //      }
-      //      s.a(CLOSE);
-      //      s.a("return createdObj, err", CLOSE);
-      //      addChunk(s);
+      
+      s = dbInitCode();
+      s.a("_,err = database.Exec(",sqlString,")",CR, //
+          "CheckOk(err)",CR
+          );
     }
   }
 
   private void includeVars() {
-    var s2 = mMiscVarSourceBuilder;
-    if (s2 == null)
-      return;
+    append(mCode,varCode(),"Variables");
+  }
 
-    var s = sourceBuilder();
-    s.a("@@// Variables", CR);
-    var c = s2.getContent();
-    alert("includeVars:",INDENT,c);
-    s.addSafe(c);
-    s.br();
-    todo("clarify cr vs br");
+  private String auxAppend(SourceBuilder source, Object... comments) {
+//    pr("aux append, source empty:",source.isEmpty(),"comments:",BasePrinter.toString(comments));
+    if (source.isEmpty())
+      return "";
+    StringBuilder sb = new StringBuilder();
+    if (comments.length > 0) {
+      var s = BasePrinter.toString(comments);
+      var lines = split(s, '\n');
+      for (var ln : lines) {
+        sb.append("@@// ");
+        sb.append(ln);
+        sb.append('\n');
+      }
+    }
+    sb.append(source.getContent());
+    addLF(sb);
+    sb.append('\n');
+   
+    return sb.toString();
+  }
+
+  private void append(StringBuilder target, SourceBuilder source, Object... comments) {
+    var c = auxAppend(source, comments);
+    if (c.isEmpty())
+      return;
+    target.append(c);
+  }
+
+  private void append(SourceBuilder target, SourceBuilder source, Object... comments) {
+    var c = auxAppend(source, comments);
+    if (c.isEmpty())
+      return;
+    target.addSafe(c);
   }
 
   private void includeMiscCode() {
-    var s2 = mMiscInitCodeSourceBuilder;
-    if (s2 == null)
-      return;
-
-    checkNotNull(s2);
-    s2.wtf();
-    var s = sourceBuilder();
-    s.a("@@// Miscellaneous code", CR);
+//    append(initCode(), mCreateTable,"Table creation");
+//    append(initCode(), mCreateIndex,"Index creation");
+    append(mCode,initCode() );
     
-    s.addSafe(s2.getContent());
-    s.br();
-    mCode.append(s.getContent());
+    if (!mDbInitCode.isEmpty()) {
+      var s = sourceBuilder();
+      s.a("func PrepareDatabase(db *sql.DB)",OPEN, //
+          "var err error",CR //
+          );
+      
+      append(s,mDbInitCode);
+      s.a(CLOSE);
+      append(mCode,s);
+    }
   }
 
   private Set<String> unique = hashSet();

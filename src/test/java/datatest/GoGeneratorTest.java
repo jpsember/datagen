@@ -182,6 +182,8 @@ public class GoGeneratorTest extends GenBaseTest {
    */
   @Test
   public void alpha() {
+    addArg("comments");
+    rv();
     p().pr("class sql(index name;) {", INDENT, //
         "int id;", CR, //
         "string name;", CR, //

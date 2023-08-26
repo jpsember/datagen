@@ -282,8 +282,8 @@ public final class SourceBuilder {
     return this;
   }
 
-  public void wtf() {
-    checkNotNull(mStringBuilder);
+  public boolean isEmpty() {
+    return mStringBuilder.length() == 0;
   }
 
 }
