@@ -176,9 +176,12 @@ public class GoGeneratorTest extends GenBaseTest {
         "}");
     compile();
   }
-  
+
+  /**
+   * Generating SQL code for a data type that includes an index
+   */
   @Test
-  public void sqlIndex() {
+  public void alpha() {
     p().pr("class sql(index name;) {", INDENT, //
         "int id;", CR, //
         "string name;", CR, //

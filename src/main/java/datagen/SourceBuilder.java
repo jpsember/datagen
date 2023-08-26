@@ -42,6 +42,7 @@ public final class SourceBuilder {
   public static final Object OPEN = new Object();
   public static final Object CLOSE = new Object();
   public static final Object QUOTE = new Object();
+  public static final Object COMMA = new Object();
 
   public SourceBuilder(Language language) {
     mLanguage = language;
@@ -100,7 +101,10 @@ public final class SourceBuilder {
         close();
         continue;
       }
-
+      if (msg == COMMA) {
+        comma();
+        continue;
+      }
       if (msg == QUOTE) {
         quoteNextObject();
         continue;
@@ -145,6 +149,7 @@ public final class SourceBuilder {
    * this is called)
    */
   public String getContent() {
+    //pw("getContent, non null:",mStringBuilder != null);
     String content = mStringBuilder.toString();
     mStringBuilder = null;
     return content;
@@ -253,5 +258,32 @@ public final class SourceBuilder {
   private boolean mQuotePending;
   private StringBuilder mStringBuilder = new StringBuilder();
   private List<Boolean> mConditionalStack = arrayList();
+  private int mCommaState;
+
+  public SourceBuilder startComma() {
+    checkState(mCommaState == 0, "comma nesting problem");
+    mCommaState = 1;
+    return this;
+  }
+
+  public SourceBuilder endComma() {
+    checkState(mCommaState > 0, "endComma without startComma");
+    mCommaState = 0;
+    return this;
+  }
+
+  public SourceBuilder comma() {
+    checkState(mCommaState != 0, "no startComma() was made");
+    if (mCommaState > 1) {
+      a(", ");
+    } else {
+      mCommaState = 1;
+    }
+    return this;
+  }
+
+  public void wtf() {
+    checkNotNull(mStringBuilder);
+  }
 
 }

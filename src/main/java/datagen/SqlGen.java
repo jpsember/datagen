@@ -35,16 +35,16 @@ public class SqlGen extends BaseObject {
     return mActive;
   }
 
-  private String determinePackage(GeneratedTypeDef def) {
-    String pkgName = def.qualifiedName().packagePath();
+  private String determinePackage() {
+    String pkgName = mGeneratedTypeDef.qualifiedName().packagePath();
     checkArgument(!pkgName.isEmpty(), "Package name is empty");
     pkgName = QualifiedName.lastComponent(pkgName);
     return "package " + pkgName;
   }
 
-  private void setTypeDef(GeneratedTypeDef typeDef) {
-
-    var pkg = determinePackage(typeDef);
+  private void setTypeDef(GeneratedTypeDef typeDe) {
+    mGeneratedTypeDef = typeDe;
+    var pkg = determinePackage();
     if (mPackageExpr == null) {
       mPackageExpr = pkg;
       log("package expr:", pkg);
@@ -53,18 +53,24 @@ public class SqlGen extends BaseObject {
     checkState(pkg.equals(mPackageExpr));
   }
 
-  public void generate(GeneratedTypeDef typeDef) {
+  public void generate(GeneratedTypeDef generatedTypeDef) {
     log("generate, active:", mActive);
     assertState(1);
     if (!mActive)
       return;
 
-    setTypeDef(typeDef);
+    setTypeDef(generatedTypeDef);
 
-    createTable(typeDef);
-    createRecord(typeDef);
-    updateRecord(typeDef);
-    readRecord(typeDef);
+    createTable();
+    createRecord();
+    updateRecord();
+    readRecord();
+    createIndexes();
+
+    includeVars();
+    includeMiscCode();
+
+    generatedTypeDef = null;
   }
 
   public File directory() {
@@ -174,8 +180,9 @@ public class SqlGen extends BaseObject {
 
   }
 
-  private void updateRecord(GeneratedTypeDef d) {
+  private void updateRecord() {
     var s = sourceBuilder();
+    var d = mGeneratedTypeDef;
 
     createConstantOnce(s, "var ObjectNotFoundError = errors.New(`object with requested id not found`)");
 
@@ -236,7 +243,8 @@ public class SqlGen extends BaseObject {
     return new SourceBuilder(Language.GO);
   }
 
-  private void readRecord(GeneratedTypeDef d) {
+  private void readRecord() {
+    var d = mGeneratedTypeDef;
     var s = sourceBuilder();
 
     createConstantOnce(s, "var ObjectNotFoundError = errors.New(`object with requested id not found`)");
@@ -345,8 +353,28 @@ public class SqlGen extends BaseObject {
     return unique.add(object);
   }
 
-  private void createTable(GeneratedTypeDef d) {
+  private String tableNameSql() {
+    if (mCachedTableNameSql == null) {
+      mCachedTableNameSql = DataUtil.convertCamelCaseToUnderscores(tableNameGo());
+    }
+    return mCachedTableNameSql;
+  }
+
+  private String mCachedTableNameSql;
+
+  private String tableNameGo() {
+    if (mCachedTableNameGo == null) {
+      mCachedTableNameGo = mGeneratedTypeDef.qualifiedName().className();
+    }
+    return mCachedTableNameGo;
+  }
+
+  private String mCachedTableNameGo;
+
+  private void createTable() {
     var s = sourceBuilder();
+
+    var d = mGeneratedTypeDef;
 
     var tableNameGo = d.qualifiedName().className();
     var tableName = DataUtil.convertCamelCaseToUnderscores(tableNameGo);
@@ -384,7 +412,8 @@ public class SqlGen extends BaseObject {
     addChunk(s);
   }
 
-  private void createRecord(GeneratedTypeDef d) {
+  private void createRecord() {
+    var d = mGeneratedTypeDef;
     var s = sourceBuilder();
 
     var objNameGo = d.qualifiedName().className();
@@ -461,6 +490,168 @@ public class SqlGen extends BaseObject {
     mIndexes.add(fields);
   }
 
+  private SourceBuilder varCode() {
+    if (mMiscVarSourceBuilder == null) {
+      mMiscVarSourceBuilder = sourceBuilder();
+    }
+    return mMiscVarSourceBuilder;
+  }
+
+  private SourceBuilder initCode() {
+    if (mMiscInitCodeSourceBuilder == null) {
+      mMiscInitCodeSourceBuilder = sourceBuilder();
+    }
+    return mMiscInitCodeSourceBuilder;
+  }
+
+  private SourceBuilder mMiscVarSourceBuilder;
+  private SourceBuilder mMiscInitCodeSourceBuilder;
+
+  private String uniqueVar(String prefix) {
+    mUniqueVarCounter++;
+    return prefix + mUniqueVarCounter;
+  }
+
+  private int mUniqueVarCounter;
+
+  private String objName() {
+    if (mObjName == null) {
+      mObjName = DataUtil.convertCamelCaseToUnderscores(objNameGo());
+    }
+    return mObjName;
+  }
+
+  private String mObjName;
+
+  private String objNameGo() {
+    if (objNameGo == null) {
+      objNameGo = mGeneratedTypeDef.qualifiedName().className();
+    }
+    return objNameGo;
+  }
+
+  private String objNameGo;
+
+  private Set<String> mUniqueIndexNames = hashSet();
+
+  private void createIndexes() {
+
+    for (var fields : mIndexes) {
+
+      var indexName = "index_" + objName() + "_" + String.join("_", fields);
+      checkState(mUniqueIndexNames.add(indexName), "duplicate index:", indexName);
+
+      var s = sourceBuilder();
+
+      var sqlString = uniqueVar("createIndexStatement");
+      s.a("var ", sqlString, " = `CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", tableNameSql(),
+          " (");
+      s.startComma();
+      for (var fn : fields) {
+        s.a(COMMA, fn);
+      }
+      s.endComma().a(")`");
+      var goStatement = s.cr().getContent();
+      varCode().addSafe(goStatement);
+      todo("how do we ensure tables are created before indexes?");
+      //      
+      //      
+      //      
+      //      var objNameGo = d.qualifiedName().className();
+      //      var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
+      //      var stName = "stmtCreate" + objNameGo;
+      //
+      //      s.a("var ", stName, " *sql.Stmt", CR);
+      //
+      //      s.a("func Create", objNameGo, "(db *sql.DB, obj ", objNameGo, ") (", objNameGo, ", error)", OPEN);
+      //
+      //      s.a("Pr(`Create:`,obj)", CR);
+      //
+      //      s.a("if ", stName, " == nil ", OPEN, //
+      //          stName, " = CheckOkWith(db.Prepare(`INSERT INTO ", objName, " (");
+      //
+      //      boolean needComma = false;
+      //
+      //      List<FieldDef> filtFields = arrayList();
+      //
+      //      for (var fieldDef : d.fields()) {
+      //        if (fieldDef.name().equals("id"))
+      //          continue;
+      //        filtFields.add(fieldDef);
+      //        if (needComma) {
+      //          s.a(", ");
+      //        }
+      //        needComma = true;
+      //        s.a(fieldDef.name());
+      //      }
+      //      s.a(") VALUES(");
+      //      for (int i = 0; i < filtFields.size(); i++) {
+      //        if (i > 0)
+      //          s.a(",");
+      //        s.a("?");
+      //      }
+      //      s.a(")`))", CLOSE);
+      //
+      //      s.a("var err error", CR, //
+      //          "var createdObj ", objNameGo, CR, //
+      //
+      //          "result, err1 := ", stName, ".Exec(");
+      //
+      //      needComma = false;
+      //      for (var f : filtFields) {
+      //        if (needComma) {
+      //          s.a(", ");
+      //        }
+      //        needComma = true;
+      //        s.a("obj.");
+      //        s.a(f.getterName(), "()");
+      //        todo("we may need to convert getter output to something else, e.g. string or int");
+      //      }
+      //      s.a(")", CR);
+      //
+      //      s.a("Pr(`execd, result:`,createdObj,`err:`,err1)", CR);
+      //
+      //      s.a("err = err1", CR, "if err == nil", OPEN);
+      //      {
+      //        s.a("id, err2 := result.LastInsertId()", CR, //
+      //            "err = err2", CR, "if err == nil", OPEN, //
+      //            "createdObj = obj.ToBuilder().SetId(int(id)).Build()", CLOSE);
+      //      }
+      //      s.a(CLOSE);
+      //      s.a("return createdObj, err", CLOSE);
+      //      addChunk(s);
+    }
+  }
+
+  private void includeVars() {
+    var s2 = mMiscVarSourceBuilder;
+    if (s2 == null)
+      return;
+
+    var s = sourceBuilder();
+    s.a("@@// Variables", CR);
+    var c = s2.getContent();
+    alert("includeVars:",INDENT,c);
+    s.addSafe(c);
+    s.br();
+    todo("clarify cr vs br");
+  }
+
+  private void includeMiscCode() {
+    var s2 = mMiscInitCodeSourceBuilder;
+    if (s2 == null)
+      return;
+
+    checkNotNull(s2);
+    s2.wtf();
+    var s = sourceBuilder();
+    s.a("@@// Miscellaneous code", CR);
+    
+    s.addSafe(s2.getContent());
+    s.br();
+    mCode.append(s.getContent());
+  }
+
   private Set<String> unique = hashSet();
 
   private int mState;
@@ -471,6 +662,7 @@ public class SqlGen extends BaseObject {
   private File mCachedDir;
   private StringBuilder mCode = new StringBuilder();
   private List<List<String>> mIndexes = arrayList();
+  private GeneratedTypeDef mGeneratedTypeDef;
 
   /* private */ DatagenConfig mConfig;
 
