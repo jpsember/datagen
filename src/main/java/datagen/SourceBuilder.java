@@ -236,8 +236,6 @@ public final class SourceBuilder {
   }
 
   public void addSafe(String str) {
-    if (mStringBuilder == null)
-      throw badState();
     mStringBuilder.append(str);
     mColumn += str.length();
   }

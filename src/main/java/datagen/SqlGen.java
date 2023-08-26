@@ -20,11 +20,11 @@ public class SqlGen extends BaseObject {
 
   public SqlGen(DatagenConfig config) {
     mConfig = config;
-    alertVerbose();
+    //alertVerbose();
   }
 
   public void prepare() {
-    log(VERT_SP, "prepare");
+    log("prepare");
     incState(1);
   }
 
@@ -59,7 +59,7 @@ public class SqlGen extends BaseObject {
   }
 
   public void generate(GeneratedTypeDef generatedTypeDef) {
-    log(VERT_SP, "generate, active:", mActive);
+    log("generate, active:", mActive);
     assertState(1);
     if (!mActive)
       return;
@@ -97,7 +97,7 @@ public class SqlGen extends BaseObject {
   }
 
   public void complete() {
-    log(VERT_SP, "complete, was active:", mWasActive);
+    log("complete, was active:", mWasActive);
     incState(2);
     if (!mWasActive)
       return;
@@ -196,9 +196,7 @@ public class SqlGen extends BaseObject {
     var objNameGo = d.qualifiedName().className();
     var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
     var stName = uniqueVar("stmtUpdate");
-    //    var stName = "stmtUpdate" + objNameGo;
-    pr("updaterecord");
-    varCode2().a("var ", stName, " *sql.Stmt", CR);
+    varCode().a("var ", stName, " *sql.Stmt", CR);
 
     // createConstantOnce(s, "var " + stName + " *sql.Stmt");
 
@@ -207,7 +205,7 @@ public class SqlGen extends BaseObject {
     List<FieldDef> filtFields = arrayList();
 
     {
-      var t = dbInitCode();
+      var t = miscCode();
       t.a(stName, " = CheckOkWith(db.Prepare(`UPDATE ", objName, " SET ");
 
       t.startComma();
@@ -392,9 +390,6 @@ public class SqlGen extends BaseObject {
     s.startComma();
     for (FieldDef f : d.fields()) {
       i++;
-      //      if (i != 0) {
-      //        s.a(",", CR);
-      //      }
       s.comma();
       var name = f.name();
       String sqlType = f.dataType().sqlType();
@@ -503,21 +498,16 @@ public class SqlGen extends BaseObject {
     mIndexes.add(info);
   }
 
-  private SourceBuilder varCode2() {
-    return mMiscVar2;
+  private SourceBuilder varCode() {
+    return mMiscVar;
   }
 
-  private SourceBuilder dbInitCode() {
-    return mDbInitCode;
+  private SourceBuilder miscCode() {
+    return mMiscCode;
   }
 
-  private SourceBuilder initCode() {
-    return mInitCode;
-  }
-
-  private SourceBuilder mMiscVar2 = sourceBuilder();
-  private SourceBuilder mInitCode = sourceBuilder();
-  private SourceBuilder mDbInitCode = sourceBuilder();
+  private SourceBuilder mMiscVar = sourceBuilder();
+  private SourceBuilder mMiscCode = sourceBuilder();
 
   private String uniqueVar(String prefix) {
     mUniqueVarCounter++;
@@ -550,7 +540,7 @@ public class SqlGen extends BaseObject {
     for (var fields : mIndexes) {
       var indexName = fields.typeName + "_" + String.join("_", fields.mFieldNames);
       checkState(mUniqueIndexNames.add(indexName), "duplicate index:", indexName);
-      var s = dbInitCode();
+      var s = miscCode();
       s.a("CheckOkWith(db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", tableNameSql(), " (");
       s.startComma();
       for (var fn : fields.mFieldNames) {
@@ -561,8 +551,7 @@ public class SqlGen extends BaseObject {
   }
 
   private void includeVars() {
-    pr("include vars");
-    append(mCode, varCode2(), "Variables");
+    append(mCode, varCode(), "Variables");
   }
 
   private String auxAppend(SourceBuilder source, Object... comments) {
@@ -602,13 +591,11 @@ public class SqlGen extends BaseObject {
   }
 
   private void includeMiscCode() {
-    append(mCode, initCode());
-
-    var t = dbInitCode();
+    var t = miscCode();
     if (!t.isEmpty()) {
       var s = sourceBuilder();
       s.a("func PrepareDatabase(db *sql.DB)", OPEN);
-      append(s, mDbInitCode);
+      append(s, mMiscCode);
       s.a(CLOSE);
       append(mCode, s);
     }
