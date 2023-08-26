@@ -200,8 +200,11 @@ public class SqlGen extends BaseObject {
 
     // createConstantOnce(s, "var " + stName + " *sql.Stmt");
 
-    s.a("func Update", objNameGo, "(db *sql.DB, obj ", objNameGo, ") error", OPEN);
+    s.a("func Update", objNameGo, "(database webapp.Database, obj ", objNameGo, ") error", OPEN);
 
+    s.a("database.Lock()",CR, //
+        "defer database.Unlock()",CR);
+    
     List<FieldDef> filtFields = arrayList();
 
     {
@@ -265,8 +268,10 @@ public class SqlGen extends BaseObject {
       generateScanFunc(d, s, objNameGo, objName, scanFuncName);
     }
 
-    s.a("func Read", objNameGo, "(db *sql.DB, objId int) (", objNameGo, ", error)", OPEN);
+    s.a("func Read", objNameGo, "(database webapp.Database, objId int) (", objNameGo, ", error)", OPEN);
 
+    s.a("db := database.Db",CR);
+    
     s.a("if ", stName, " == nil ", OPEN, //
         stName, " = CheckOkWith(db.Prepare(`SELECT * FROM ", objName, " WHERE id = ?`))", CLOSE);
 
