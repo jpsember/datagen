@@ -243,7 +243,7 @@ final class DataDefinitionParser extends BaseObject {
     //
     if (readIf("sql")) {
       Context.sql.setActive(true);
-      processSqlInfo();
+      processSqlInfo( Context.sql);
     }
 
     read(BROP);
@@ -313,7 +313,7 @@ final class DataDefinitionParser extends BaseObject {
     }
   }
 
-  private void processSqlInfo() {
+  private void processSqlInfo(SqlGen sql) {
     boolean db = alert("verbosity");
     if (db)
       scanner().setVerbose();
@@ -332,6 +332,16 @@ final class DataDefinitionParser extends BaseObject {
         continue;
       }
 
+      if (readIf("index")) {
+        List<String> fields = arrayList();
+        while (!readIf(SEMI)) {
+          var fieldName = read().text();
+          fields.add(fieldName);
+        }
+        sql.addIndex(fields);
+        continue;
+      }
+      
       throw read().fail("unexpected token");
     }
     todo("add support for generating sqlite statements for creating, reading, updating generated types");

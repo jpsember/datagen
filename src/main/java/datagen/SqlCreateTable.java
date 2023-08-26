@@ -8,6 +8,7 @@ import js.data.DataUtil;
 
 import static datagen.SourceBuilder.*;
 
+@Deprecated
 public class SqlCreateTable extends BaseObject {
 
   public static String generate(GeneratedTypeDef d) {

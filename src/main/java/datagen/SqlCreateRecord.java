@@ -9,6 +9,7 @@ import js.base.BaseObject;
 import js.data.DataUtil;
 import static datagen.SourceBuilder.*;
 
+@Deprecated
 public class SqlCreateRecord extends BaseObject {
 
   public static String generate(GeneratedTypeDef d) {

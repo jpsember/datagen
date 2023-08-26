@@ -51,4 +51,8 @@ public class GoByteArrayDataType extends GoDataType {
         "v.", f.instanceName(), " = ", f.defaultValueSource(), CLOSE);
   }
 
+
+  public String sqlType() {
+    return "BLOB";
+  }
 }
