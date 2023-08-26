@@ -102,6 +102,7 @@ public class SqlGen extends BaseObject {
     if (!mWasActive)
       return;
 
+    constructTables();
     createIndexes();
 
     includeVars();
@@ -196,19 +197,20 @@ public class SqlGen extends BaseObject {
     var objNameGo = d.qualifiedName().className();
     var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
     var stName = uniqueVar("stmtUpdate");
+    
     varCode().a("var ", stName, " *sql.Stmt", CR);
 
     // createConstantOnce(s, "var " + stName + " *sql.Stmt");
 
     s.a("func Update", objNameGo, "(database webapp.Database, obj ", objNameGo, ") error", OPEN);
 
-    s.a("database.Lock()",CR, //
-        "defer database.Unlock()",CR);
-    
+    s.a("database.Lock()", CR, //
+        "defer database.Unlock()", CR);
+
     List<FieldDef> filtFields = arrayList();
 
     {
-      var t = miscCode();
+      var t = miscCode2();
       t.a(stName, " = CheckOkWith(db.Prepare(`UPDATE ", objName, " SET ");
 
       t.startComma();
@@ -270,8 +272,8 @@ public class SqlGen extends BaseObject {
 
     s.a("func Read", objNameGo, "(database webapp.Database, objId int) (", objNameGo, ", error)", OPEN);
 
-    s.a("db := database.Db",CR);
-    
+    s.a("db := database.Db", CR);
+
     s.a("if ", stName, " == nil ", OPEN, //
         stName, " = CheckOkWith(db.Prepare(`SELECT * FROM ", objName, " WHERE id = ?`))", CLOSE);
 
@@ -388,7 +390,11 @@ public class SqlGen extends BaseObject {
     var tableNameGo = d.qualifiedName().className();
     var tableName = DataUtil.convertCamelCaseToUnderscores(tableNameGo);
 
-    s.a("func CreateTable", tableNameGo, "(db *sql.DB)", OPEN, //
+    var fnName = "CreateTable" + tableNameGo;
+    mCreateTableFnNames.add(fnName);
+    mCreateTableCalls.a(fnName, "(db)", CR);
+
+    s.a("func ", fnName, "(db *sql.DB)", OPEN, //
         " _, err := db.Exec(`CREATE TABLE IF NOT EXISTS ", tableName, " (", CR);
 
     var i = INIT_INDEX;
@@ -508,11 +514,22 @@ public class SqlGen extends BaseObject {
   }
 
   private SourceBuilder miscCode() {
-    return mMiscCode;
+    return mInitFunctionCode;
+  }
+
+  private SourceBuilder miscCode2() {
+    return mInitFunctionCode2;
+  }
+  private SourceBuilder outerCode() {
+    return mOuterCode;
   }
 
   private SourceBuilder mMiscVar = sourceBuilder();
-  private SourceBuilder mMiscCode = sourceBuilder();
+  private SourceBuilder mOuterCode = sourceBuilder();
+  private SourceBuilder mInitFunctionCode = sourceBuilder();
+  private SourceBuilder mInitFunctionCode2 = sourceBuilder();
+  private SourceBuilder mCreateTableCalls = sourceBuilder();
+  private List<String> mCreateTableFnNames = arrayList();
 
   private String uniqueVar(String prefix) {
     mUniqueVarCounter++;
@@ -540,6 +557,30 @@ public class SqlGen extends BaseObject {
   private String objNameGo;
 
   private Set<String> mUniqueIndexNames = hashSet();
+
+  private void constructTables() {
+
+    
+   var s = miscCode();
+    //s.a("func CreateTables(database webapp.database)", OPEN);
+    for (var x : mCreateTableFnNames) {
+     // s.a(x, "(database.Db)", CR);
+     s.a(x,"(db)",CR);
+       }
+   // s.a(CLOSE);
+
+    //    for (var fields : mIndexes) {
+    //      var indexName = fields.typeName + "_" + String.join("_", fields.mFieldNames);
+    //      checkState(mUniqueIndexNames.add(indexName), "duplicate index:", indexName);
+    //      var s = miscCode();
+    //      s.a("CheckOkWith(db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", tableNameSql(), " (");
+    //      s.startComma();
+    //      for (var fn : fields.mFieldNames) {
+    //        s.a(COMMA, fn);
+    //      }
+    //      s.endComma().a(")`))", CR);
+    //    }
+  }
 
   private void createIndexes() {
     for (var fields : mIndexes) {
@@ -592,7 +633,7 @@ public class SqlGen extends BaseObject {
     if (c.isEmpty())
       return;
     target.addParagraph(c);
-    
+
   }
 
   private void includeMiscCode() {
@@ -600,8 +641,9 @@ public class SqlGen extends BaseObject {
     if (!t.isEmpty()) {
       var s = sourceBuilder();
       s.a("func PrepareDatabase(db *sql.DB)", OPEN);
-      append(s, mMiscCode);
-      s.a(CLOSE);
+      append(s, mInitFunctionCode);
+      append(s, mInitFunctionCode2);
+       s.a(CLOSE);
       append(mCode, s);
     }
   }
