@@ -236,6 +236,8 @@ public final class SourceBuilder {
   }
 
   public void addSafe(String str) {
+    if (mStringBuilder == null)
+      throw badState();
     mStringBuilder.append(str);
     mColumn += str.length();
   }
@@ -262,7 +264,7 @@ public final class SourceBuilder {
 
   public SourceBuilder startComma() {
     checkState(mCommaState == 0, "comma nesting problem");
-    mCommaState = 1;
+    mCommaState++;
     return this;
   }
 
@@ -277,13 +279,20 @@ public final class SourceBuilder {
     if (mCommaState > 1) {
       a(", ");
     } else {
-      mCommaState = 1;
+      mCommaState++;
     }
     return this;
   }
 
   public boolean isEmpty() {
     return mStringBuilder.length() == 0;
+  }
+
+  public void addParagraph(String text) {
+    var lines = split(text, '\n');
+    for (var x : lines) {
+      a(x, CR);
+    }
   }
 
 }

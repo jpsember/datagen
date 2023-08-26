@@ -97,8 +97,6 @@ public class DatagenOper extends AppOper {
     }
 
     Context.sql.complete();
-
-    
     
     if (config.language() == Language.GO && !files().dryRun() && config.format()) {
       formatSourceFiles();

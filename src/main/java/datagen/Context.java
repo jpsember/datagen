@@ -54,8 +54,8 @@ public final class Context {
     Context.files = files;
     Context.config = config.build();
     Context.generatedFilesSet = hashSet();
-    Context.sql = new SqlGen( );
-    Context.sql.prepare(config);
+    Context.sql = new SqlGen(config);
+    Context.sql.prepare();
   }
 
   public static void prepare(DatWithSource entry) {

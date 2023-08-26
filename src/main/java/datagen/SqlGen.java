@@ -18,10 +18,14 @@ import static js.base.Tools.*;
 
 public class SqlGen extends BaseObject {
 
-  public void prepare(DatagenConfig config) {
-    //alertVerbose();
-    incState(1);
+  public SqlGen(DatagenConfig config) {
     mConfig = config;
+    alertVerbose();
+  }
+
+  public void prepare() {
+    log(VERT_SP, "prepare");
+    incState(1);
   }
 
   public void setActive(boolean state) {
@@ -55,7 +59,7 @@ public class SqlGen extends BaseObject {
   }
 
   public void generate(GeneratedTypeDef generatedTypeDef) {
-    log("generate, active:", mActive);
+    log(VERT_SP, "generate, active:", mActive);
     assertState(1);
     if (!mActive)
       return;
@@ -66,10 +70,6 @@ public class SqlGen extends BaseObject {
     createRecord();
     updateRecord();
     readRecord();
-    createIndexes();
-
-    includeVars();
-    includeMiscCode();
 
     generatedTypeDef = null;
   }
@@ -97,10 +97,16 @@ public class SqlGen extends BaseObject {
   }
 
   public void complete() {
-    log("complete, was active:", mWasActive);
+    log(VERT_SP, "complete, was active:", mWasActive);
     incState(2);
     if (!mWasActive)
       return;
+
+    createIndexes();
+
+    includeVars();
+    includeMiscCode();
+
     //  
     //  
     //  
@@ -191,7 +197,8 @@ public class SqlGen extends BaseObject {
     var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
     var stName = uniqueVar("stmtUpdate");
     //    var stName = "stmtUpdate" + objNameGo;
-    varCode().a("var ", stName, " *sql.Stmnt", CR);
+    pr("updaterecord");
+    varCode2().a("var ", stName, " *sql.Stmt", CR);
 
     // createConstantOnce(s, "var " + stName + " *sql.Stmt");
 
@@ -224,8 +231,8 @@ public class SqlGen extends BaseObject {
       s.comma();
       s.a("obj.", fieldDef.getterName(), "()");
     }
-    s.endComma();
-    s.a(", obj.Id())", CR);
+    s.comma();
+    s.a("obj.Id()").endComma().a(")", CR);
     s.a("err = err1", CR);
     s.a("if err != nil { break }", CR);
 
@@ -382,11 +389,13 @@ public class SqlGen extends BaseObject {
         " _, err := db.Exec(`CREATE TABLE IF NOT EXISTS ", tableName, " (", CR);
 
     var i = INIT_INDEX;
+    s.startComma();
     for (FieldDef f : d.fields()) {
       i++;
-      if (i != 0) {
-        s.a(",", CR);
-      }
+      //      if (i != 0) {
+      //        s.a(",", CR);
+      //      }
+      s.comma();
       var name = f.name();
       String sqlType = f.dataType().sqlType();
       boolean isId = name.equals("id");
@@ -404,6 +413,7 @@ public class SqlGen extends BaseObject {
       }
 
     }
+    s.endComma();
     s.cr();
     s.a(");`)").cr();
     s.a("  CheckOk(err, \"failed to create table\")", CR, //
@@ -486,12 +496,15 @@ public class SqlGen extends BaseObject {
   }
 
   public void addIndex(List<String> fields) {
+    IndexInfo info = new IndexInfo();
+    info.typeName = objName();
+    info.mFieldNames.addAll(fields);
     todo("if adding an index, and it's a single field, also add a READ function based on that index");
-    mIndexes.add(fields);
+    mIndexes.add(info);
   }
 
-  private SourceBuilder varCode() {
-    return mMiscVar;
+  private SourceBuilder varCode2() {
+    return mMiscVar2;
   }
 
   private SourceBuilder dbInitCode() {
@@ -502,15 +515,9 @@ public class SqlGen extends BaseObject {
     return mInitCode;
   }
 
-  //  private SourceBuilder mCreateTable = sourceBuilder();
-  //  private SourceBuilder mCreateIndex = sourceBuilder();
-
-  private SourceBuilder mMiscVar = sourceBuilder();
+  private SourceBuilder mMiscVar2 = sourceBuilder();
   private SourceBuilder mInitCode = sourceBuilder();
   private SourceBuilder mDbInitCode = sourceBuilder();
-
-  //  private SourceBuilder mMiscVarSourceBuilder;
-  //private SourceBuilder mMiscInitCodeSourceBuilder;
 
   private String uniqueVar(String prefix) {
     mUniqueVarCounter++;
@@ -540,41 +547,22 @@ public class SqlGen extends BaseObject {
   private Set<String> mUniqueIndexNames = hashSet();
 
   private void createIndexes() {
-
     for (var fields : mIndexes) {
-
-      var indexName = "index_" + objName() + "_" + String.join("_", fields);
+      var indexName = fields.typeName + "_" + String.join("_", fields.mFieldNames);
       checkState(mUniqueIndexNames.add(indexName), "duplicate index:", indexName);
-
-      var s = dbInitCode(); //sourceBuilder();
-
-      s.a("CheckOkWith(database.Exec(");
-      
-//      var sqlString = uniqueVar("createIndexStatement");
-//    //  s.a("var ",sqlString," string",CR);
-//      
-//      
-      s.a("`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", tableNameSql(),
-          " (");
+      var s = dbInitCode();
+      s.a("CheckOkWith(db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", tableNameSql(), " (");
       s.startComma();
-      for (var fn : fields) {
+      for (var fn : fields.mFieldNames) {
         s.a(COMMA, fn);
       }
-      s.endComma().a(")`");
-//      var goStatement = s.cr().getContent();
-//      varCode().addSafe(goStatement);
-//
-//      s = dbInitCode();
-      
-      s.a("))",CR);
-//s.a("CheckOkWith(database.Exec(", sqlString, ")",CR);
-//      s.a("_,err = database.Exec(", sqlString, ")", CR, //
-//          "CheckOk(err)", CR);
+      s.endComma().a(")`))", CR);
     }
   }
 
   private void includeVars() {
-    append(mCode, varCode(), "Variables");
+    pr("include vars");
+    append(mCode, varCode2(), "Variables");
   }
 
   private String auxAppend(SourceBuilder source, Object... comments) {
@@ -609,26 +597,18 @@ public class SqlGen extends BaseObject {
     var c = auxAppend(source, comments);
     if (c.isEmpty())
       return;
-    var lines = split(c,'\n');
-    for (var x : lines) {
-      target.a(x,CR);
-    }
+    target.addParagraph(c);
     
-//    target.addSafe(c);
   }
 
   private void includeMiscCode() {
     append(mCode, initCode());
 
-    var t =  dbInitCode();
+    var t = dbInitCode();
     if (!t.isEmpty()) {
       var s = sourceBuilder();
-      s.a("func PrepareDatabase(db *sql.DB)", OPEN, //
-          "var err error", CR //
-      );
-      //s.in();
+      s.a("func PrepareDatabase(db *sql.DB)", OPEN);
       append(s, mDbInitCode);
-      //s.out();
       s.a(CLOSE);
       append(mCode, s);
     }
@@ -643,8 +623,13 @@ public class SqlGen extends BaseObject {
   private boolean mWasActive;
   private File mCachedDir;
   private StringBuilder mCode = new StringBuilder();
-  private List<List<String>> mIndexes = arrayList();
+  private List<IndexInfo> mIndexes = arrayList();
   private GeneratedTypeDef mGeneratedTypeDef;
+
+  private static class IndexInfo {
+    String typeName;
+    List<String> mFieldNames = arrayList();
+  }
 
   /* private */ DatagenConfig mConfig;
 
