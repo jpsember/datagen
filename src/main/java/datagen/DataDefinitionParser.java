@@ -342,6 +342,9 @@ final class DataDefinitionParser extends BaseObject {
         continue;
       }
       
+      if (readIf("with-unsafe")) {
+        sql.WithUnsafe = true;
+      }
       throw read().fail("unexpected token");
     }
     todo("add support for generating sqlite statements for creating, reading, updating generated types");

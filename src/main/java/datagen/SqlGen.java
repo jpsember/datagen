@@ -197,7 +197,7 @@ public class SqlGen extends BaseObject {
     var objNameGo = d.qualifiedName().className();
     var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
     var stName = uniqueVar("stmtUpdate");
-    
+
     varCode().a("var ", stName, " *sql.Stmt", CR);
 
     // createConstantOnce(s, "var " + stName + " *sql.Stmt");
@@ -210,7 +210,7 @@ public class SqlGen extends BaseObject {
     List<FieldDef> filtFields = arrayList();
 
     {
-      var t = miscCode2();
+      var t = initCode2();
       t.a(stName, " = CheckOkWith(db.Prepare(`UPDATE ", objName, " SET ");
 
       t.startComma();
@@ -390,7 +390,7 @@ public class SqlGen extends BaseObject {
     var tableNameGo = d.qualifiedName().className();
     var tableName = DataUtil.convertCamelCaseToUnderscores(tableNameGo);
 
-    var fnName = "CreateTable" + tableNameGo;
+    var fnName = "createTable" + tableNameGo;
     mCreateTableFnNames.add(fnName);
     mCreateTableCalls.a(fnName, "(db)", CR);
 
@@ -435,55 +435,48 @@ public class SqlGen extends BaseObject {
     var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
     var stName = "stmtCreate" + objNameGo;
 
-    s.a("var ", stName, " *sql.Stmt", CR);
+    varCode().a("var ", stName, " *sql.Stmt", CR);
 
-    s.a("func Create", objNameGo, "(db *sql.DB, obj ", objNameGo, ") (", objNameGo, ", error)", OPEN);
-
-    s.a("Pr(`Create:`,obj)", CR);
-
-    s.a("if ", stName, " == nil ", OPEN, //
-        stName, " = CheckOkWith(db.Prepare(`INSERT INTO ", objName, " (");
-
-    boolean needComma = false;
+    s.a("func Create", objNameGo, "(database webapp.Database, obj ", objNameGo, ") (", objNameGo, ", error)",
+        OPEN);
 
     List<FieldDef> filtFields = arrayList();
 
-    for (var fieldDef : d.fields()) {
-      if (fieldDef.name().equals("id"))
-        continue;
-      filtFields.add(fieldDef);
-      if (needComma) {
-        s.a(", ");
+    {
+      var t = initCode2();
+      t.a(stName, " = CheckOkWith(db.Prepare(`INSERT INTO ", objName, " (");
+
+      t.startComma();
+      for (var fieldDef : d.fields()) {
+        if (fieldDef.name().equals("id"))
+          continue;
+        t.comma();
+        filtFields.add(fieldDef);
+        t.a(fieldDef.name());
       }
-      needComma = true;
-      s.a(fieldDef.name());
+      t.endComma();
+      t.a(") VALUES(");
+      t.startComma();
+      for (int i = 0; i < filtFields.size(); i++) {
+        t.comma();
+        t.a("?");
+      }
+      t.endComma();
+      t.a(")`))", CR);
     }
-    s.a(") VALUES(");
-    for (int i = 0; i < filtFields.size(); i++) {
-      if (i > 0)
-        s.a(",");
-      s.a("?");
-    }
-    s.a(")`))", CLOSE);
 
     s.a("var err error", CR, //
         "var createdObj ", objNameGo, CR, //
-
         "result, err1 := ", stName, ".Exec(");
 
-    needComma = false;
+    s.startComma();
     for (var f : filtFields) {
-      if (needComma) {
-        s.a(", ");
-      }
-      needComma = true;
-      s.a("obj.");
+      s.a(COMMA, "obj.");
       s.a(f.getterName(), "()");
       todo("we may need to convert getter output to something else, e.g. string or int");
     }
+    s.endComma();
     s.a(")", CR);
-
-    s.a("Pr(`execd, result:`,createdObj,`err:`,err1)", CR);
 
     s.a("err = err1", CR, "if err == nil", OPEN);
     {
@@ -513,20 +506,16 @@ public class SqlGen extends BaseObject {
     return mMiscVar;
   }
 
-  private SourceBuilder miscCode() {
-    return mInitFunctionCode;
+  private SourceBuilder initCode1() {
+    return mInitFunctionCode1;
   }
 
-  private SourceBuilder miscCode2() {
+  private SourceBuilder initCode2() {
     return mInitFunctionCode2;
-  }
-  private SourceBuilder outerCode() {
-    return mOuterCode;
   }
 
   private SourceBuilder mMiscVar = sourceBuilder();
-  private SourceBuilder mOuterCode = sourceBuilder();
-  private SourceBuilder mInitFunctionCode = sourceBuilder();
+  private SourceBuilder mInitFunctionCode1 = sourceBuilder();
   private SourceBuilder mInitFunctionCode2 = sourceBuilder();
   private SourceBuilder mCreateTableCalls = sourceBuilder();
   private List<String> mCreateTableFnNames = arrayList();
@@ -560,14 +549,13 @@ public class SqlGen extends BaseObject {
 
   private void constructTables() {
 
-    
-   var s = miscCode();
+    var s = initCode1();
     //s.a("func CreateTables(database webapp.database)", OPEN);
     for (var x : mCreateTableFnNames) {
-     // s.a(x, "(database.Db)", CR);
-     s.a(x,"(db)",CR);
-       }
-   // s.a(CLOSE);
+      // s.a(x, "(database.Db)", CR);
+      s.a(x, "(db)", CR);
+    }
+    // s.a(CLOSE);
 
     //    for (var fields : mIndexes) {
     //      var indexName = fields.typeName + "_" + String.join("_", fields.mFieldNames);
@@ -586,7 +574,7 @@ public class SqlGen extends BaseObject {
     for (var fields : mIndexes) {
       var indexName = fields.typeName + "_" + String.join("_", fields.mFieldNames);
       checkState(mUniqueIndexNames.add(indexName), "duplicate index:", indexName);
-      var s = miscCode();
+      var s = initCode1();
       s.a("CheckOkWith(db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", tableNameSql(), " (");
       s.startComma();
       for (var fn : fields.mFieldNames) {
@@ -637,13 +625,13 @@ public class SqlGen extends BaseObject {
   }
 
   private void includeMiscCode() {
-    var t = miscCode();
+    var t = initCode1();
     if (!t.isEmpty()) {
       var s = sourceBuilder();
       s.a("func PrepareDatabase(db *sql.DB)", OPEN);
-      append(s, mInitFunctionCode);
+      append(s, mInitFunctionCode1);
       append(s, mInitFunctionCode2);
-       s.a(CLOSE);
+      s.a(CLOSE);
       append(mCode, s);
     }
   }
@@ -666,5 +654,6 @@ public class SqlGen extends BaseObject {
   }
 
   /* private */ DatagenConfig mConfig;
+  public boolean WithUnsafe;
 
 }
