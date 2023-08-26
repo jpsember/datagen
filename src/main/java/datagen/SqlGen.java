@@ -189,44 +189,42 @@ public class SqlGen extends BaseObject {
 
     var objNameGo = d.qualifiedName().className();
     var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
-    var stName = "stmtUpdate" + objNameGo;
+    var stName = uniqueVar("stmtUpdate");
+    //    var stName = "stmtUpdate" + objNameGo;
+    varCode().a("var ", stName, " *sql.Stmnt", CR);
 
-    createConstantOnce(s, "var " + stName + " *sql.Stmt");
+    // createConstantOnce(s, "var " + stName + " *sql.Stmt");
 
     s.a("func Update", objNameGo, "(db *sql.DB, obj ", objNameGo, ") error", OPEN);
 
-    s.a("if ", stName, " == nil ", OPEN, //
-        stName, " = CheckOkWith(db.Prepare(`UPDATE ", objName, " SET "); //INSERT INTO ", objName, " (");
-
-    boolean needComma = false;
-
     List<FieldDef> filtFields = arrayList();
 
-    for (var fieldDef : d.fields()) {
-      if (fieldDef.name().equals("id"))
-        continue;
-      filtFields.add(fieldDef);
+    {
+      var t = dbInitCode();
+      t.a(stName, " = CheckOkWith(db.Prepare(`UPDATE ", objName, " SET ");
 
-      if (needComma) {
-        s.a(", ");
+      t.startComma();
+      for (var fieldDef : d.fields()) {
+        if (fieldDef.name().equals("id"))
+          continue;
+        t.comma();
+        filtFields.add(fieldDef);
+        t.a(fieldDef.name(), " = ?");
       }
-      needComma = true;
-      s.a(fieldDef.name(), " = ?");
+      t.endComma();
+      t.a(" WHERE id = ?`))", CR);
     }
-    s.a(" WHERE id = ?`))", CLOSE);
 
     s.a("var err error", CR);
     s.a("for", OPEN, //
         "result, err1 := ", stName, ".Exec(");
 
-    needComma = false;
+    s.startComma();
     for (var fieldDef : filtFields) {
-      if (needComma) {
-        s.a(", ");
-      }
-      needComma = true;
+      s.comma();
       s.a("obj.", fieldDef.getterName(), "()");
     }
+    s.endComma();
     s.a(", obj.Id())", CR);
     s.a("err = err1", CR);
     s.a("if err != nil { break }", CR);
@@ -488,13 +486,13 @@ public class SqlGen extends BaseObject {
   }
 
   public void addIndex(List<String> fields) {
+    todo("if adding an index, and it's a single field, also add a READ function based on that index");
     mIndexes.add(fields);
   }
 
   private SourceBuilder varCode() {
     return mMiscVar;
   }
-
 
   private SourceBuilder dbInitCode() {
     return mDbInitCode;
@@ -504,14 +502,13 @@ public class SqlGen extends BaseObject {
     return mInitCode;
   }
 
-//  private SourceBuilder mCreateTable = sourceBuilder();
-//  private SourceBuilder mCreateIndex = sourceBuilder();
+  //  private SourceBuilder mCreateTable = sourceBuilder();
+  //  private SourceBuilder mCreateIndex = sourceBuilder();
 
   private SourceBuilder mMiscVar = sourceBuilder();
   private SourceBuilder mInitCode = sourceBuilder();
   private SourceBuilder mDbInitCode = sourceBuilder();
 
-  
   //  private SourceBuilder mMiscVarSourceBuilder;
   //private SourceBuilder mMiscInitCodeSourceBuilder;
 
@@ -549,32 +546,39 @@ public class SqlGen extends BaseObject {
       var indexName = "index_" + objName() + "_" + String.join("_", fields);
       checkState(mUniqueIndexNames.add(indexName), "duplicate index:", indexName);
 
-      var s = sourceBuilder();
+      var s = dbInitCode(); //sourceBuilder();
 
-      var sqlString = uniqueVar("createIndexStatement");
-      s.a("var ", sqlString, " = `CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", tableNameSql(),
+      s.a("CheckOkWith(database.Exec(");
+      
+//      var sqlString = uniqueVar("createIndexStatement");
+//    //  s.a("var ",sqlString," string",CR);
+//      
+//      
+      s.a("`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", tableNameSql(),
           " (");
       s.startComma();
       for (var fn : fields) {
         s.a(COMMA, fn);
       }
       s.endComma().a(")`");
-      var goStatement = s.cr().getContent();
-      varCode().addSafe(goStatement);
+//      var goStatement = s.cr().getContent();
+//      varCode().addSafe(goStatement);
+//
+//      s = dbInitCode();
       
-      s = dbInitCode();
-      s.a("_,err = database.Exec(",sqlString,")",CR, //
-          "CheckOk(err)",CR
-          );
+      s.a("))",CR);
+//s.a("CheckOkWith(database.Exec(", sqlString, ")",CR);
+//      s.a("_,err = database.Exec(", sqlString, ")", CR, //
+//          "CheckOk(err)", CR);
     }
   }
 
   private void includeVars() {
-    append(mCode,varCode(),"Variables");
+    append(mCode, varCode(), "Variables");
   }
 
   private String auxAppend(SourceBuilder source, Object... comments) {
-//    pr("aux append, source empty:",source.isEmpty(),"comments:",BasePrinter.toString(comments));
+    //    pr("aux append, source empty:",source.isEmpty(),"comments:",BasePrinter.toString(comments));
     if (source.isEmpty())
       return "";
     StringBuilder sb = new StringBuilder();
@@ -590,7 +594,7 @@ public class SqlGen extends BaseObject {
     sb.append(source.getContent());
     addLF(sb);
     sb.append('\n');
-   
+
     return sb.toString();
   }
 
@@ -605,23 +609,28 @@ public class SqlGen extends BaseObject {
     var c = auxAppend(source, comments);
     if (c.isEmpty())
       return;
-    target.addSafe(c);
+    var lines = split(c,'\n');
+    for (var x : lines) {
+      target.a(x,CR);
+    }
+    
+//    target.addSafe(c);
   }
 
   private void includeMiscCode() {
-//    append(initCode(), mCreateTable,"Table creation");
-//    append(initCode(), mCreateIndex,"Index creation");
-    append(mCode,initCode() );
-    
-    if (!mDbInitCode.isEmpty()) {
+    append(mCode, initCode());
+
+    var t =  dbInitCode();
+    if (!t.isEmpty()) {
       var s = sourceBuilder();
-      s.a("func PrepareDatabase(db *sql.DB)",OPEN, //
-          "var err error",CR //
-          );
-      
-      append(s,mDbInitCode);
+      s.a("func PrepareDatabase(db *sql.DB)", OPEN, //
+          "var err error", CR //
+      );
+      //s.in();
+      append(s, mDbInitCode);
+      //s.out();
       s.a(CLOSE);
-      append(mCode,s);
+      append(mCode, s);
     }
   }
 
