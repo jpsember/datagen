@@ -337,10 +337,17 @@ final class DataDefinitionParser extends BaseObject {
       if (readIf("index")) {
         pr("just read index");
         List<String> fields = arrayList();
-        while (!readIf(SEMI)) {
+        if (readIf(PAROP)) {
+          while (!readIf(PARCL)) {
+            var fieldName = read().text();
+            todo("check if looks like a field name");
+            fields.add(fieldName);
+            pr("added field:", fieldName);
+          }
+        } else {
           var fieldName = read().text();
+          todo("check if looks like a field name");
           fields.add(fieldName);
-          pr("added field:", fieldName);
         }
         sql.addIndex(fields);
         continue;

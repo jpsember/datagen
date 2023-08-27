@@ -79,7 +79,8 @@ public class SqlGen extends BaseObject {
     createRecord();
     updateRecord();
     readRecord();
-
+    createIndexSpecific();
+    
     indexFunc();
 
     pr("...clearing generatedTypeDef to null");
@@ -528,6 +529,46 @@ public class SqlGen extends BaseObject {
     addChunk(s);
   }
 
+  private void createIndexSpecific() {
+    // If there's an index on a specific (non key) field, add Create<Type>With<Field> methods
+    
+    
+      for (var info : mIndexes) {
+        // We only do this if there is a single field in the index
+        if (info.mFieldNames.size() != 1) continue;
+        var fieldName = info.mFieldNames.get(0);
+        createWithField(fieldName);
+      }
+  }
+  private void createWithField(String fieldName) {
+    
+// // Create a user with the given (unique) name.
+//
+//    func (db Database) CreateUserWithUniqueName(user User) (User, error) {
+//
+//      Todo("Is there a UNIQUENESS constraint that we can take advantage of, to avoid this auxilliary lock?")
+//      // We use an auxilliary lock to avoid having some other thread call this function
+//      // and generate the same name (very unlikely)
+//      db.userLock.Lock()
+//      defer db.userLock.Unlock()
+//
+//      var createdUser User
+//
+//      existingId, _ := ReadUserWithName(user.Name())
+//      Todo("distinguish between a 'no user found' error and some other")
+//      if existingId != 0 {
+//        db.setError(UserExistsError)
+//      } else {
+//        c, err := CreateUser(user)
+//        createdUser = c
+//        db.setError(err)
+//      }
+//
+//      return createdUser, db.err
+//    }
+
+  }
+  
   private void addChunk(SourceBuilder sb) {
     mCode.append(sb.getContent());
     mCode.append("\n\n");
