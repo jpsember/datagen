@@ -28,8 +28,8 @@ public class SqlGen extends BaseObject {
     incState(1);
     mGlobalDbVar = uniqueVar("db");
     mGlobalLockVar = uniqueVar("dbLock");
-    varCode() .a("var ", mGlobalDbVar, " *sql.DB", CR);
- varCode() .a("var ", mGlobalLockVar, " *sync.Mutex", CR);
+    varCode().a("var ", mGlobalDbVar, " *sql.DB", CR);
+    varCode().a("var ", mGlobalLockVar, " *sync.Mutex", CR);
 
   }
 
@@ -80,7 +80,7 @@ public class SqlGen extends BaseObject {
     updateRecord();
     readRecord();
     createIndexSpecific();
-    
+
     indexFunc();
 
     pr("...clearing generatedTypeDef to null");
@@ -103,24 +103,25 @@ public class SqlGen extends BaseObject {
     }
   }
 
-  public void readByField(String fieldName) {
+  public void readByField(String fieldNameSnake) {
     var d = mGeneratedTypeDef;
     var s = sourceBuilder();
-
+    var fieldNameCamel = snakeToCamel(fieldNameSnake);
+    
     todo("probably a bunch of duplicated variables here, make them fields");
 
-    var objNameGo = d.qualifiedName().className();
-    var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
+    var objNameGo = objNameGo();
+    var objName = objName();
     var stName = "stmtReadByField" + objNameGo;
 
     varCode().a("var ", stName, " *sql.Stmt", CR);
 
     {
-      initCode2().a(stName, " = CheckOkWith(db.Prepare(`SELECT id FROM ", objName, " WHERE ", fieldName,
+      initCode2().a(stName, " = CheckOkWith(db.Prepare(`SELECT id FROM ", objName, " WHERE ", fieldNameSnake,
           " = ?`))", CR);
     }
 
-    var scanFuncName = "scanByField" + fieldName + objNameGo;
+    var scanFuncName = "scanByField" + fieldNameCamel + objNameGo;
     var addScanFunc = firstTimeInSet(scanFuncName);
     if (addScanFunc) {
       generateScanByFieldFunc(d, s, scanFuncName);
@@ -128,15 +129,15 @@ public class SqlGen extends BaseObject {
 
     FieldDef our = null;
     for (var fd : d.fields()) {
-      if (fd.name().equals(fieldName)) {
+      if (fd.name().equals(fieldNameSnake)) {
         our = fd;
       }
     }
-    checkState(our != null, "can't find field with name:", fieldName);
+    checkState(our != null, "can't find field with name:", fieldNameSnake);
     var fieldTypeStr = our.dataType().qualifiedName().className();
 
-    s.a("func Read", objNameGo, "With", DataUtil.capitalizeFirst(fieldName),
-        "(objValue ", fieldTypeStr, ") (int, error)", OPEN);
+    s.a("func Read", objNameGo, "With", fieldNameCamel, "(objValue ", fieldTypeStr,
+        ") (int, error)", OPEN);
 
     s.a("rows := ", stName, ".QueryRow(objValue)", CR, //
         "result, err := ", scanFuncName, "(rows)", CR, //
@@ -265,18 +266,18 @@ public class SqlGen extends BaseObject {
   }
 
   private void generateLockAndDeferUnlock(SourceBuilder s) {
-    s.a(mGlobalLockVar,".Lock()", CR, //
-        "defer ",mGlobalLockVar,".Unlock()", CR);
-    }
-    
+    s.a(mGlobalLockVar, ".Lock()", CR, //
+        "defer ", mGlobalLockVar, ".Unlock()", CR);
+  }
+
   private void updateRecord() {
     var s = sourceBuilder();
     var d = mGeneratedTypeDef;
 
     createConstantOnce(s, "var ObjectNotFoundError = errors.New(`object with requested id not found`)");
 
-    var objNameGo = d.qualifiedName().className();
-    var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
+    var objNameGo = objNameGo();
+    var objName = objName();
     var stName = uniqueVar("stmtUpdate");
 
     varCode().a("var ", stName, " *sql.Stmt", CR);
@@ -284,7 +285,7 @@ public class SqlGen extends BaseObject {
     s.a("func Update", objNameGo, "(obj ", objNameGo, ") error", OPEN);
 
     generateLockAndDeferUnlock(s);
- 
+
     List<FieldDef> filtFields = arrayList();
 
     {
@@ -336,8 +337,8 @@ public class SqlGen extends BaseObject {
 
     createConstantOnce(s, "var ObjectNotFoundError = errors.New(`object with requested id not found`)");
 
-    var objNameGo = d.qualifiedName().className();
-    var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
+    var objNameGo = objNameGo();
+    var objName = objName();
     var stName = "stmtRead" + objNameGo;
 
     varCode().a("var ", stName, " *sql.Stmt", CR);
@@ -435,7 +436,7 @@ public class SqlGen extends BaseObject {
     mCreateTableCalls.a(fnName, "()", CR);
 
     s.a("func ", fnName, "()", OPEN, //
-        " _, err := ",mGlobalDbVar,".Exec(`CREATE TABLE IF NOT EXISTS ", tableName, " (", CR);
+        " _, err := ", mGlobalDbVar, ".Exec(`CREATE TABLE IF NOT EXISTS ", tableName, " (", CR);
 
     var i = INIT_INDEX;
     s.startComma();
@@ -468,17 +469,17 @@ public class SqlGen extends BaseObject {
   }
 
   private void createRecord() {
+    todo("not all functions are adding lock wrapper");
     var d = mGeneratedTypeDef;
     var s = sourceBuilder();
 
-    var objNameGo = d.qualifiedName().className();
-    var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
+    var objNameGo = objNameGo();
+    var objName = objName();
     var stName = "stmtCreate" + objNameGo;
 
     varCode().a("var ", stName, " *sql.Stmt", CR);
 
-    s.a("func Create", objNameGo, "(obj ", objNameGo, ") (", objNameGo, ", error)",
-        OPEN);
+    s.a("func Create", objNameGo, "(obj ", objNameGo, ") (", objNameGo, ", error)", OPEN);
 
     List<FieldDef> filtFields = arrayList();
 
@@ -531,44 +532,64 @@ public class SqlGen extends BaseObject {
 
   private void createIndexSpecific() {
     // If there's an index on a specific (non key) field, add Create<Type>With<Field> methods
-    
-    
-      for (var info : mIndexes) {
-        // We only do this if there is a single field in the index
-        if (info.mFieldNames.size() != 1) continue;
-        var fieldName = info.mFieldNames.get(0);
-        createWithField(fieldName);
-      }
-  }
-  private void createWithField(String fieldName) {
-    
-// // Create a user with the given (unique) name.
-//
-//    func (db Database) CreateUserWithUniqueName(user User) (User, error) {
-//
-//      Todo("Is there a UNIQUENESS constraint that we can take advantage of, to avoid this auxilliary lock?")
-//      // We use an auxilliary lock to avoid having some other thread call this function
-//      // and generate the same name (very unlikely)
-//      db.userLock.Lock()
-//      defer db.userLock.Unlock()
-//
-//      var createdUser User
-//
-//      existingId, _ := ReadUserWithName(user.Name())
-//      Todo("distinguish between a 'no user found' error and some other")
-//      if existingId != 0 {
-//        db.setError(UserExistsError)
-//      } else {
-//        c, err := CreateUser(user)
-//        createdUser = c
-//        db.setError(err)
-//      }
-//
-//      return createdUser, db.err
-//    }
 
+    for (var info : mIndexes) {
+      // We only do this if there is a single field in the index
+      if (info.mFieldNames.size() != 1)
+        continue;
+      var fieldName = info.mFieldNames.get(0);
+      createWithField(fieldName);
+    }
+  }
+
+  private static String snakeToCamel(String snake) {
+    String r = DataUtil.convertUnderscoresToCamelCase(snake);
+    pr("snakeToCamel:",snake,"=>",r);
+    return r;
   }
   
+  private void createWithField(String fieldNameSnake) {
+
+    var fieldNameCamel = snakeToCamel(fieldNameSnake);
+    
+    var s = sourceBuilder();
+
+    var objNameGo = objNameGo();
+    var objName = objName();
+    var stName = "stmtCreate" + objName + "With" + fieldNameSnake;
+
+    varCode().a("var ", stName, " *sql.Stmt", CR);
+
+    //var fname2 = fieldNameSnake; //snakeToCamel(fieldName);
+    //todo("does this treat names like foo_bar properly: " + fieldNameSnake + " -> " + fname2);
+
+    s.a("// Create ", objNameGo, " with the given (unique) ", fieldNameSnake,
+        "; return nil if already exists; non-nil err if some other problem.", CR);
+    s.a("func Create", objNameGo, "With", fieldNameCamel, "(obj ", objNameGo, ") (", objNameGo, ", error)", OPEN);
+
+    // // Create a user with the given (unique) name; returns nil if unsuccessful
+    //    func CreateUserWithName(user User) (User, error) {
+    //
+    var ourLockVar = uniqueVar("lockCreateWith");
+    varCode().a("var ", ourLockVar, " sync.Mutex", CR);
+
+    s.a(ourLockVar, ".Lock()", CR, //
+        "defer ", ourLockVar, ".Unlock()", CR, //
+        //
+        "var err error", CR, //
+        "var created ", objNameGo, CR, //
+        //
+
+        "existingId, err1 := Read", objNameGo, "With", fieldNameCamel, "(obj.", fieldNameCamel, "())", CR, //
+        "Pr(`existing id:`,existingId)", CR, //
+        "err = err1", CR, //
+        "if err == ObjectNotFoundError", OPEN, //
+        "c, err2 := Create", objNameGo, "(obj)", CR, //
+        "err = err2", CR, "created = c", CLOSE, "return created,err", CR, CLOSE);
+    addChunk(s);
+
+  }
+
   private void addChunk(SourceBuilder sb) {
     mCode.append(sb.getContent());
     mCode.append("\n\n");
