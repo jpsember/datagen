@@ -26,7 +26,15 @@ public class SqlGen extends BaseObject {
   public void prepare() {
     log("prepare");
     incState(1);
+    mGlobalDbVar = uniqueVar("db");
+    mGlobalLockVar = uniqueVar("dbLock");
+    varCode() .a("var ", mGlobalDbVar, " *sql.DB", CR);
+ varCode() .a("var ", mGlobalLockVar, " *sync.Mutex", CR);
+
   }
+
+  private String mGlobalDbVar;
+  private String mGlobalLockVar;
 
   public void setActive(boolean state) {
     log("setActive:", state);
@@ -124,10 +132,10 @@ public class SqlGen extends BaseObject {
       }
     }
     checkState(our != null, "can't find field with name:", fieldName);
-    var fieldTypeStr = our.dataType().qualifiedName().className(); 
-        
+    var fieldTypeStr = our.dataType().qualifiedName().className();
+
     s.a("func Read", objNameGo, "With", DataUtil.capitalizeFirst(fieldName),
-        "(database webapp.Database, objValue ", fieldTypeStr, ") (int, error)", OPEN);
+        "(objValue ", fieldTypeStr, ") (int, error)", OPEN);
 
     s.a("rows := ", stName, ".QueryRow(objValue)", CR, //
         "result, err := ", scanFuncName, "(rows)", CR, //
@@ -255,6 +263,11 @@ public class SqlGen extends BaseObject {
     }
   }
 
+  private void generateLockAndDeferUnlock(SourceBuilder s) {
+    s.a(mGlobalLockVar,".Lock()", CR, //
+        "defer ",mGlobalLockVar,".Unlock()", CR);
+    }
+    
   private void updateRecord() {
     var s = sourceBuilder();
     var d = mGeneratedTypeDef;
@@ -267,11 +280,10 @@ public class SqlGen extends BaseObject {
 
     varCode().a("var ", stName, " *sql.Stmt", CR);
 
-    s.a("func Update", objNameGo, "(database webapp.Database, obj ", objNameGo, ") error", OPEN);
+    s.a("func Update", objNameGo, "(obj ", objNameGo, ") error", OPEN);
 
-    s.a("database.Lock()", CR, //
-        "defer database.Unlock()", CR);
-
+    generateLockAndDeferUnlock(s);
+ 
     List<FieldDef> filtFields = arrayList();
 
     {
@@ -339,7 +351,7 @@ public class SqlGen extends BaseObject {
       generateScanFunc(d, s, objNameGo, objName, scanFuncName);
     }
 
-    s.a("func Read", objNameGo, "(database webapp.Database, objId int) (", objNameGo, ", error)", OPEN);
+    s.a("func Read", objNameGo, "(objId int) (", objNameGo, ", error)", OPEN);
 
     s.a("rows := ", stName, ".QueryRow(objId)", CR, //
         "result, err := ", scanFuncName, "(rows)", CR, //
@@ -419,10 +431,10 @@ public class SqlGen extends BaseObject {
 
     var fnName = "createTable" + tableNameGo;
     mCreateTableFnNames.add(fnName);
-    mCreateTableCalls.a(fnName, "(db)", CR);
+    mCreateTableCalls.a(fnName, "()", CR);
 
-    s.a("func ", fnName, "(db *sql.DB)", OPEN, //
-        " _, err := db.Exec(`CREATE TABLE IF NOT EXISTS ", tableName, " (", CR);
+    s.a("func ", fnName, "()", OPEN, //
+        " _, err := ",mGlobalDbVar,".Exec(`CREATE TABLE IF NOT EXISTS ", tableName, " (", CR);
 
     var i = INIT_INDEX;
     s.startComma();
@@ -464,7 +476,7 @@ public class SqlGen extends BaseObject {
 
     varCode().a("var ", stName, " *sql.Stmt", CR);
 
-    s.a("func Create", objNameGo, "(database webapp.Database, obj ", objNameGo, ") (", objNameGo, ", error)",
+    s.a("func Create", objNameGo, "(obj ", objNameGo, ") (", objNameGo, ", error)",
         OPEN);
 
     List<FieldDef> filtFields = arrayList();
@@ -576,7 +588,7 @@ public class SqlGen extends BaseObject {
 
   private void constructTables() {
     for (var x : mCreateTableFnNames) {
-      initCode1().a(x, "(db)", CR);
+      initCode1().a(x, "()", CR);
     }
   }
 
@@ -638,7 +650,10 @@ public class SqlGen extends BaseObject {
     var t = initCode1();
     if (!t.isEmpty()) {
       var s = sourceBuilder();
-      s.a("func PrepareDatabase(db *sql.DB)", OPEN);
+      s.a("func PrepareDatabase(db *sql.DB, lock *sync.Mutex)", OPEN);
+      s.a(mGlobalDbVar, " = db", CR, //
+          mGlobalLockVar, " = lock", CR);
+
       append(s, mInitFunctionCode1);
       append(s, mInitFunctionCode2);
       s.a(CLOSE);
