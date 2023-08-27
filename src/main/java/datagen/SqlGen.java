@@ -47,9 +47,14 @@ public class SqlGen extends BaseObject {
     return "package " + pkgName;
   }
 
-  private void setTypeDef(GeneratedTypeDef typeDe) {
-    mGeneratedTypeDef = typeDe;
+  public void setTypeDef (GeneratedTypeDef typeDef) {
+    checkNotNull(typeDef);
+    pr("setTypeDef:",typeDef);
+    clearItemsForNewClass();
+    todo("clean up lifecycle of SqlGen");
+    mGeneratedTypeDef = typeDef;
     var pkg = determinePackage();
+    pr("setTypeDef:", typeDef);
     if (mPackageExpr == null) {
       mPackageExpr = pkg;
       log("package expr:", pkg);
@@ -58,20 +63,105 @@ public class SqlGen extends BaseObject {
     checkState(pkg.equals(mPackageExpr));
   }
 
-  public void generate(GeneratedTypeDef generatedTypeDef) {
-    log("generate, active:", mActive);
+  public void generate() {
+     log("generate, active:", mActive);
     assertState(1);
     if (!mActive)
       return;
 
-    setTypeDef(generatedTypeDef);
+    //setTypeDef(generatedTypeDef);
 
     createTable();
     createRecord();
     updateRecord();
     readRecord();
 
-    generatedTypeDef = null;
+    indexFunc();
+
+    pr("...clearing generatedTypeDef to null");
+    mGeneratedTypeDef = null;
+  }
+
+  private void clearItemsForNewClass() {
+    todo("this is error prone; have a separate container class that gets rebuilt");
+    mCachedObjName = null;
+    mCachedObjNameGo = null;
+    mIndexes = arrayList();
+  }
+
+  private void indexFunc() {
+    pr("indexFunc, index len:", mIndexes.size());
+    for (var info : mIndexes) {
+      checkState(info.mFieldNames.size() == 1, "unexpected number of fields");
+      var fieldName = info.mFieldNames.get(0);
+      readByField(fieldName);
+    }
+  }
+
+  public void readByField(String fieldName) {
+    checkState(mGeneratedTypeDef != null,"no generated type def");
+    var d = mGeneratedTypeDef;
+    var s = sourceBuilder();
+
+    todo("probably a bunch of duplicated variables here, make them fields");
+
+    var camelName = DataUtil.convertCamelCaseToUnderscores(fieldName);
+
+    var objNameGo = d.qualifiedName().className();
+    pr("readByField, typedef:", d, "objNameGo", objNameGo);
+    var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
+    var stName = "stmtReadByField" + objNameGo;
+
+    varCode().a("var ", stName, " *sql.Stmt", CR);
+
+    {
+      initCode2().a(stName, " = CheckOkWith(db.Prepare(`SELECT id FROM ", objName, " WHERE ", fieldName,
+          " = ?`))", CR);
+    }
+
+    var scanFuncName = "scanByField" + fieldName + objNameGo;
+    var addScanFunc = firstTimeInSet(scanFuncName);
+    if (addScanFunc) {
+      generateScanByFieldFunc(d, s, objNameGo, objName, scanFuncName, camelName);
+    }
+
+    s.a("func Read", objNameGo, "With", DataUtil.capitalizeFirst(fieldName),
+        "(database webapp.Database, objId int) (int, error)", OPEN);
+
+    s.a("rows := ", stName, ".QueryRow(objId)", CR, //
+        "result, err := ", scanFuncName, "(rows)", CR, //
+        "return result, err", CLOSE);
+    addChunk(s);
+  }
+
+  private void generateScanByFieldFunc(GeneratedTypeDef d, SourceBuilder s, String objNameGo, String objName,
+      String funcName, String camelFieldName) {
+
+    s.a("func ", funcName, "(rows *sql.Row) (int, error)", OPEN);
+
+    s.a("var id int", CR);
+    //  List<String> fieldNames = arrayList();
+    //  List<FieldDef> filtFields = d.fields();
+    //  for (FieldDef fieldDef : filtFields) {
+    //
+    //    var fn = DataUtil.convertCamelCaseToUnderscores(fieldDef.name());
+    //    fieldNames.add(fn);
+    //    s.a("var ", fn, " ", fieldDef.dataType().qualifiedName().className(), CR);
+    //  }
+
+    s.a("err := rows.Scan(&id)", CR);
+    //  boolean needComma = false;
+    //  for (var v : fieldNames) {
+    //    if (needComma) {
+    //      s.a(", ");
+    //    }
+    //    needComma = true;
+    //    s.a("&", v);
+    //  }
+    //  s.a(")", CR);
+
+    s.a("if err ==  sql.ErrNoRows", OPEN, "err = ObjectNotFoundError", CLOSE);
+    s.a("return id, err", CLOSE);
   }
 
   public File directory() {
@@ -182,10 +272,6 @@ public class SqlGen extends BaseObject {
       target.setLastModified(System.currentTimeMillis());
       log("...freshened:", target);
     }
-    //
-    //  postGenerate();
-    //  
-
   }
 
   private void updateRecord() {
@@ -199,8 +285,6 @@ public class SqlGen extends BaseObject {
     var stName = uniqueVar("stmtUpdate");
 
     varCode().a("var ", stName, " *sql.Stmt", CR);
-
-    // createConstantOnce(s, "var " + stName + " *sql.Stmt");
 
     s.a("func Update", objNameGo, "(database webapp.Database, obj ", objNameGo, ") error", OPEN);
 
@@ -262,7 +346,11 @@ public class SqlGen extends BaseObject {
     var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
     var stName = "stmtRead" + objNameGo;
 
-    createConstantOnce(s, "var " + stName + " *sql.Stmt");
+    varCode().a("var ", stName, " *sql.Stmt", CR);
+
+    {
+      initCode2().a(stName, " = CheckOkWith(db.Prepare(`SELECT * FROM ", objName, " WHERE id = ?`))", CR);
+    }
 
     var scanFuncName = "scan" + objNameGo;
     var addScanFunc = firstTimeInSet(scanFuncName);
@@ -271,11 +359,6 @@ public class SqlGen extends BaseObject {
     }
 
     s.a("func Read", objNameGo, "(database webapp.Database, objId int) (", objNameGo, ", error)", OPEN);
-
-    s.a("db := database.Db", CR);
-
-    s.a("if ", stName, " == nil ", OPEN, //
-        stName, " = CheckOkWith(db.Prepare(`SELECT * FROM ", objName, " WHERE id = ?`))", CLOSE);
 
     s.a("rows := ", stName, ".QueryRow(objId)", CR, //
         "result, err := ", scanFuncName, "(rows)", CR, //
@@ -322,34 +405,6 @@ public class SqlGen extends BaseObject {
     s.a(CLOSE);
 
     s.a("return b, err", CLOSE);
-
-    //func (db Database) scanUser(rows *sql.Row) UserBuilder {
-    //
-    //b := NewUser()
-    //
-    //var id int
-    //var name string
-    //var user_state string
-    //var user_class string
-    //var email string
-    //var password string
-    //
-    //errHolder := NewErrorHolder()
-    //
-    //err := rows.Scan(&id, &name, &user_state, &user_class, &email, &password)
-    //if err != sql.ErrNoRows {
-    //  errHolder.Add(err)
-    //  b = NewUser()
-    //  b.SetId(id)
-    //  b.SetName(name)
-    //  b.SetState(UserState(UserStateEnumInfo.FromString(user_state, errHolder)))
-    //  b.SetEmail(email)
-    //  b.SetPassword(password)
-    //}
-    //db.setError(errHolder.First())
-    //return b
-    //}
-
   }
 
   private boolean createConstantOnce(SourceBuilder s, String expr) {
@@ -496,9 +551,9 @@ public class SqlGen extends BaseObject {
 
   public void addIndex(List<String> fields) {
     IndexInfo info = new IndexInfo();
-    info.typeName = objName();
+    info.typeName2 = objName();
+    info.tableName2 = tableNameGo();
     info.mFieldNames.addAll(fields);
-    todo("if adding an index, and it's a single field, also add a READ function based on that index");
     mIndexes.add(info);
   }
 
@@ -528,54 +583,38 @@ public class SqlGen extends BaseObject {
   private int mUniqueVarCounter;
 
   private String objName() {
-    if (mObjName == null) {
-      mObjName = DataUtil.convertCamelCaseToUnderscores(objNameGo());
+    if (mCachedObjName == null) {
+      mCachedObjName = DataUtil.convertCamelCaseToUnderscores(objNameGo());
     }
-    return mObjName;
+    return mCachedObjName;
   }
 
-  private String mObjName;
+  private String mCachedObjName;
 
   private String objNameGo() {
-    if (objNameGo == null) {
-      objNameGo = mGeneratedTypeDef.qualifiedName().className();
+    if (mCachedObjNameGo == null) {
+      checkNotNull(mGeneratedTypeDef,"no generated type def given");
+      mCachedObjNameGo = mGeneratedTypeDef.qualifiedName().className();
     }
-    return objNameGo;
+    return mCachedObjNameGo;
   }
 
-  private String objNameGo;
+  private String mCachedObjNameGo;
 
   private Set<String> mUniqueIndexNames = hashSet();
 
   private void constructTables() {
-
-    var s = initCode1();
-    //s.a("func CreateTables(database webapp.database)", OPEN);
     for (var x : mCreateTableFnNames) {
-      // s.a(x, "(database.Db)", CR);
-      s.a(x, "(db)", CR);
+      initCode1().a(x, "(db)", CR);
     }
-    // s.a(CLOSE);
-
-    //    for (var fields : mIndexes) {
-    //      var indexName = fields.typeName + "_" + String.join("_", fields.mFieldNames);
-    //      checkState(mUniqueIndexNames.add(indexName), "duplicate index:", indexName);
-    //      var s = miscCode();
-    //      s.a("CheckOkWith(db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", tableNameSql(), " (");
-    //      s.startComma();
-    //      for (var fn : fields.mFieldNames) {
-    //        s.a(COMMA, fn);
-    //      }
-    //      s.endComma().a(")`))", CR);
-    //    }
   }
 
   private void createIndexes() {
     for (var fields : mIndexes) {
-      var indexName = fields.typeName + "_" + String.join("_", fields.mFieldNames);
+      var indexName = fields.typeName2 + "_" + String.join("_", fields.mFieldNames);
       checkState(mUniqueIndexNames.add(indexName), "duplicate index:", indexName);
       var s = initCode1();
-      s.a("CheckOkWith(db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", tableNameSql(), " (");
+      s.a("CheckOkWith(db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", fields.tableName2, " (");
       s.startComma();
       for (var fn : fields.mFieldNames) {
         s.a(COMMA, fn);
@@ -589,7 +628,6 @@ public class SqlGen extends BaseObject {
   }
 
   private String auxAppend(SourceBuilder source, Object... comments) {
-    //    pr("aux append, source empty:",source.isEmpty(),"comments:",BasePrinter.toString(comments));
     if (source.isEmpty())
       return "";
     StringBuilder sb = new StringBuilder();
@@ -645,15 +683,15 @@ public class SqlGen extends BaseObject {
   private boolean mWasActive;
   private File mCachedDir;
   private StringBuilder mCode = new StringBuilder();
-  private List<IndexInfo> mIndexes = arrayList();
+  private List<IndexInfo> mIndexes;
   private GeneratedTypeDef mGeneratedTypeDef;
 
   private static class IndexInfo {
-    String typeName;
+    String typeName2;
+    String tableName2;
     List<String> mFieldNames = arrayList();
   }
 
   /* private */ DatagenConfig mConfig;
-  public boolean WithUnsafe;
 
 }

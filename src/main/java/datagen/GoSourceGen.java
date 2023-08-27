@@ -95,8 +95,6 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected String generateImports(List<String> expressions) {
-    if (alert("disabling logging for now"))
-      setVerbose(false);
     log("generating golang imports");
 
     s.setIndent(2);

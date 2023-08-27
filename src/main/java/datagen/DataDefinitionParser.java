@@ -91,7 +91,7 @@ final class DataDefinitionParser extends BaseObject {
 
       reportUnusedReferences();
 
-      Context.sql.generate(Context.generatedTypeDef);
+      Context.sql.generate();
 
       Context.sql.setActive(false);
 
@@ -242,8 +242,9 @@ final class DataDefinitionParser extends BaseObject {
     //
     //
     if (readIf("sql")) {
+      Context.sql.setTypeDef(Context.generatedTypeDef);
       Context.sql.setActive(true);
-      processSqlInfo( Context.sql);
+      processSqlInfo(Context.sql);
     }
 
     read(BROP);
@@ -314,12 +315,13 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void processSqlInfo(SqlGen sql) {
-    boolean db = alert("verbosity");
+    boolean db = false;
     if (db)
       scanner().setVerbose();
 
     read(PAROP);
 
+    pr("parsing sql info, read parop");
     while (!readIf(PARCL)) {
 
       if (readIf("table")) {
@@ -333,21 +335,19 @@ final class DataDefinitionParser extends BaseObject {
       }
 
       if (readIf("index")) {
+        pr("just read index");
         List<String> fields = arrayList();
         while (!readIf(SEMI)) {
           var fieldName = read().text();
           fields.add(fieldName);
+          pr("added field:", fieldName);
         }
         sql.addIndex(fields);
         continue;
       }
-      
-      if (readIf("with-unsafe")) {
-        sql.WithUnsafe = true;
-      }
+
       throw read().fail("unexpected token");
     }
-    todo("add support for generating sqlite statements for creating, reading, updating generated types");
     if (db)
       scanner().setVerbose(false);
   }
