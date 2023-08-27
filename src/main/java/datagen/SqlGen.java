@@ -47,24 +47,20 @@ public class SqlGen extends BaseObject {
     return "package " + pkgName;
   }
 
-  public void setTypeDef (GeneratedTypeDef typeDef) {
-    checkNotNull(typeDef);
-    pr("setTypeDef:",typeDef);
+  public void setTypeDef(GeneratedTypeDef typeDef) {
     clearItemsForNewClass();
     todo("clean up lifecycle of SqlGen");
     mGeneratedTypeDef = typeDef;
     var pkg = determinePackage();
-    pr("setTypeDef:", typeDef);
     if (mPackageExpr == null) {
       mPackageExpr = pkg;
       log("package expr:", pkg);
     }
-
     checkState(pkg.equals(mPackageExpr));
   }
 
   public void generate() {
-     log("generate, active:", mActive);
+    log("generate, active:", mActive);
     assertState(1);
     if (!mActive)
       return;
@@ -99,16 +95,12 @@ public class SqlGen extends BaseObject {
   }
 
   public void readByField(String fieldName) {
-    checkState(mGeneratedTypeDef != null,"no generated type def");
     var d = mGeneratedTypeDef;
     var s = sourceBuilder();
 
     todo("probably a bunch of duplicated variables here, make them fields");
 
-    var camelName = DataUtil.convertCamelCaseToUnderscores(fieldName);
-
     var objNameGo = d.qualifiedName().className();
-    pr("readByField, typedef:", d, "objNameGo", objNameGo);
     var objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
     var stName = "stmtReadByField" + objNameGo;
 
@@ -122,44 +114,33 @@ public class SqlGen extends BaseObject {
     var scanFuncName = "scanByField" + fieldName + objNameGo;
     var addScanFunc = firstTimeInSet(scanFuncName);
     if (addScanFunc) {
-      generateScanByFieldFunc(d, s, objNameGo, objName, scanFuncName, camelName);
+      generateScanByFieldFunc(d, s, scanFuncName);
     }
 
+    FieldDef our = null;
+    for (var fd : d.fields()) {
+      if (fd.name().equals(fieldName)) {
+        our = fd;
+      }
+    }
+    checkState(our != null, "can't find field with name:", fieldName);
+    var fieldTypeStr = our.dataType().qualifiedName().className(); 
+        
     s.a("func Read", objNameGo, "With", DataUtil.capitalizeFirst(fieldName),
-        "(database webapp.Database, objId int) (int, error)", OPEN);
+        "(database webapp.Database, objValue ", fieldTypeStr, ") (int, error)", OPEN);
 
-    s.a("rows := ", stName, ".QueryRow(objId)", CR, //
+    s.a("rows := ", stName, ".QueryRow(objValue)", CR, //
         "result, err := ", scanFuncName, "(rows)", CR, //
         "return result, err", CLOSE);
+    todo("why is there no space between previous code?");
+    todo("we should be formatting this generated function as well");
     addChunk(s);
   }
 
-  private void generateScanByFieldFunc(GeneratedTypeDef d, SourceBuilder s, String objNameGo, String objName,
-      String funcName, String camelFieldName) {
-
+  private void generateScanByFieldFunc(GeneratedTypeDef d, SourceBuilder s, String funcName) {
     s.a("func ", funcName, "(rows *sql.Row) (int, error)", OPEN);
-
     s.a("var id int", CR);
-    //  List<String> fieldNames = arrayList();
-    //  List<FieldDef> filtFields = d.fields();
-    //  for (FieldDef fieldDef : filtFields) {
-    //
-    //    var fn = DataUtil.convertCamelCaseToUnderscores(fieldDef.name());
-    //    fieldNames.add(fn);
-    //    s.a("var ", fn, " ", fieldDef.dataType().qualifiedName().className(), CR);
-    //  }
-
     s.a("err := rows.Scan(&id)", CR);
-    //  boolean needComma = false;
-    //  for (var v : fieldNames) {
-    //    if (needComma) {
-    //      s.a(", ");
-    //    }
-    //    needComma = true;
-    //    s.a("&", v);
-    //  }
-    //  s.a(")", CR);
-
     s.a("if err ==  sql.ErrNoRows", OPEN, "err = ObjectNotFoundError", CLOSE);
     s.a("return id, err", CLOSE);
   }
@@ -419,15 +400,6 @@ public class SqlGen extends BaseObject {
     return unique.add(object);
   }
 
-  private String tableNameSql() {
-    if (mCachedTableNameSql == null) {
-      mCachedTableNameSql = DataUtil.convertCamelCaseToUnderscores(tableNameGo());
-    }
-    return mCachedTableNameSql;
-  }
-
-  private String mCachedTableNameSql;
-
   private String tableNameGo() {
     if (mCachedTableNameGo == null) {
       mCachedTableNameGo = mGeneratedTypeDef.qualifiedName().className();
@@ -593,7 +565,6 @@ public class SqlGen extends BaseObject {
 
   private String objNameGo() {
     if (mCachedObjNameGo == null) {
-      checkNotNull(mGeneratedTypeDef,"no generated type def given");
       mCachedObjNameGo = mGeneratedTypeDef.qualifiedName().className();
     }
     return mCachedObjNameGo;
@@ -614,7 +585,8 @@ public class SqlGen extends BaseObject {
       var indexName = fields.typeName2 + "_" + String.join("_", fields.mFieldNames);
       checkState(mUniqueIndexNames.add(indexName), "duplicate index:", indexName);
       var s = initCode1();
-      s.a("CheckOkWith(db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", fields.tableName2, " (");
+      s.a("CheckOkWith(db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", fields.tableName2,
+          " (");
       s.startComma();
       for (var fn : fields.mFieldNames) {
         s.a(COMMA, fn);
