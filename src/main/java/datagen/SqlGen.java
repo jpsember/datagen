@@ -25,10 +25,6 @@ public class SqlGen extends BaseObject {
   public void prepare() {
     log("prepare");
     incState(1);
-//    mGlobalDbVar = uniqueVar("db");
-//    mGlobalLockVar = uniqueVar("dbLock");
-//    varCode().a("var ", mGlobalDbVar, " *sql.DB", CR);
-//    varCode().a("var ", mGlobalLockVar, " *sync.Mutex", CR);
   }
 
   public void setTypeDef(GeneratedTypeDef typeDef) {
@@ -95,6 +91,7 @@ public class SqlGen extends BaseObject {
       var x = sourceBuilder();
       if (simulated()) {
       } else {
+        x.a(" _ \"github.com/mattn/go-sqlite3\"", CR);
         x.a(" \"database/sql\"", CR);
       }
       m.put("additional_imports", x.getContent());
@@ -107,14 +104,15 @@ public class SqlGen extends BaseObject {
 
     m.put("code", mCode.toString());
 
-    m.put("init_code1",  initCode1().getContent());
-    m.put("init_code2",  initCode2().getContent());
-    
+    m.put("init_code1", initCode1().getContent());
+    m.put("init_code2", initCode2().getContent());
+
     // Keep performing macro substitution until the output doesn't change.
     // This is so we can embed macro keys within other macros' values.
     // 
 
-    String template = Files.readString(SourceGen.class, "db_template_go.txt");;
+    String template = Files.readString(SourceGen.class, "db_template_go.txt");
+    ;
 
     String content = null;
     while (true) {
@@ -253,8 +251,8 @@ public class SqlGen extends BaseObject {
   }
 
   private void generateLockAndDeferUnlock(SourceBuilder s) {
-    s.a(mGlobalLockVar, ".Lock()", CR, //
-        "defer ", mGlobalLockVar, ".Unlock()", CR);
+    s.a(GLOBAL_LOCK, ".Lock()", CR, //
+        "defer ", GLOBAL_LOCK, ".Unlock()", CR);
   }
 
   private void updateRecord() {
@@ -427,7 +425,7 @@ public class SqlGen extends BaseObject {
     mCreateTableCalls.a(fnName, "()", CR);
 
     s.a("func ", fnName, "()", OPEN, //
-        " _, err := ", mGlobalDbVar, ".Exec(`CREATE TABLE IF NOT EXISTS ", tableName, " (", CR);
+        " _, err := ", GLOBAL_SQL_DB, ".Exec(`CREATE TABLE IF NOT EXISTS ", tableName, " (", CR);
 
     var i = INIT_INDEX;
     s.startComma();
@@ -683,28 +681,6 @@ public class SqlGen extends BaseObject {
     target.append(c);
   }
 
-  private void append(SourceBuilder target, SourceBuilder source, Object... comments) {
-    var c = auxAppend(source, comments);
-    if (c.isEmpty())
-      return;
-    target.addParagraph(c);
-  }
-
-//  private void includeMiscCode() {
-//    var t = initCode1();
-//    if (!t.isEmpty()) {
-//      var s = sourceBuilder();
-//      s.a("func PrepareDatabase(db *sql.DB, lock *sync.Mutex)", OPEN);
-//      s.a(mGlobalDbVar, " = db", CR, //
-//          mGlobalLockVar, " = lock", CR);
-//
-//      append(s, mInitFunctionCode1);
-//      append(s, mInitFunctionCode2);
-//      s.a(CLOSE);
-//      append(mCode, s);
-//    }
-//  }
-
   private static class IndexInfo {
     String typeName;
     String tableName;
@@ -715,66 +691,17 @@ public class SqlGen extends BaseObject {
     return mConfig.dbsim();
   }
 
-  /**
-   * If it doesn't exist, write golang file containing support functions
-   */
+  private static final String GLOBAL_LOCK = "singletonDatabase.Lock";
+  private static final String GLOBAL_SQL_DB = "singletonDatabase.SqlDatabase";
 
-  private void writeCommonSimFunction() {
-
-    File target = new File(directory(), "sim_db.go");
-    if (target.exists())
-      return;
-
-    JSMap m = map();
-    m.put("package_decl", mPackageExpr);
-
-    // Perform  macro substitution
-    //
-    String content = null;
-    {
-      MacroParser parser = new MacroParser();
-      String template = Files.readString(SourceGen.class, "db_template_go.txt");
-      parser.withTemplate(template).withMapper(m);
-      content = parser.content();
-    }
-
-    //  Strip (or retain) optional comments.  Such comments are denoted by a line with the prefix "@@"
-    //  
-    content = ParseTools.processOptionalComments(content, Context.config.comments());
-
-    content = Context.pt.adjustLinefeeds(content);
-
-    Context.files.mkdirs(Files.parent(target));
-    boolean wrote = Context.files.writeIfChanged(target, content);
-    todo("what does this do??");
-    Context.generatedFilesSet.add(target);
-    if (wrote)
-      log(".....updated:", target);
-    else {
-      target.setLastModified(System.currentTimeMillis());
-      log("...freshened:", target);
-    }
-
-  }
-
+  private DatagenConfig mConfig;
   private Set<String> mUniqueStringSet = hashSet();
-
   private int mState;
-
   private String mPackageExpr;
   private boolean mActive;
   private boolean mWasActive;
   private File mCachedDir;
   private StringBuilder mCode = new StringBuilder();
-
   private List<IndexInfo> mIndexes;
   private GeneratedTypeDef mGeneratedTypeDef;
-
-//  private String mGlobalDbVar;
-//  private String mGlobalLockVar;
-  
-  private String mGlobalLockVar = "vLock";
-  private String mGlobalDbVar = "vSqlDb";
-  
-  private DatagenConfig mConfig;
 }
