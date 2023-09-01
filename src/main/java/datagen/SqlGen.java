@@ -80,6 +80,7 @@ public class SqlGen extends BaseObject {
 
     if (simulated()) {
       todo("add simulated support");
+      writeCommonSimFunction();
     } else {
       constructTables();
       createIndexes();
@@ -692,6 +693,58 @@ public class SqlGen extends BaseObject {
     return mConfig.dbsim();
   }
 
+  /**
+   * If it doesn't exist, write golang file containing support functions
+   */
+
+  private void writeCommonSimFunction() {
+    
+    File target = new File(directory(), "sim_db.go");
+    if (target.exists()) return;
+    
+    
+    
+    
+    
+    
+    
+
+    JSMap m = map();
+    m.put("package_decl", mPackageExpr);
+    
+    // Perform  macro substitution
+    //
+    String content = null;
+    {
+      MacroParser parser = new MacroParser();
+      String template = Files.readString(SourceGen.class, "db_template_go.txt");
+      parser.withTemplate(template).withMapper(m);
+      content = parser.content();
+    }
+
+    //  Strip (or retain) optional comments.  Such comments are denoted by a line with the prefix "@@"
+    //  
+    content = ParseTools.processOptionalComments(content, Context.config.comments());
+
+    content = Context.pt.adjustLinefeeds(content);
+
+    Context.files.mkdirs(Files.parent(target));
+    boolean wrote = Context.files.writeIfChanged(target, content);
+    todo("what does this do??");
+    Context.generatedFilesSet.add(target);
+    if (wrote)
+      log(".....updated:", target);
+    else {
+      target.setLastModified(System.currentTimeMillis());
+      log("...freshened:", target);
+    }
+    
+    
+    
+    
+    
+  }
+  
   private Set<String> mUniqueStringSet = hashSet();
 
   private int mState;
