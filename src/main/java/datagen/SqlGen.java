@@ -296,22 +296,25 @@ public class SqlGen extends BaseObject {
 
   private void updateRecord() {
 
-    if (simulated()) {
-      notFinished("updateRecord");
-
-      return;
-    }
-
     var s = sourceBuilder();
     var d = mGeneratedTypeDef;
 
     var objNameGo = objNameGo();
     var objName = objName();
     var stName = uniqueVar("stmtUpdate");
+    s.a("func Update", objNameGo, "(obj ", objNameGo, ") error", OPEN);
+
+    if (simulated()) {
+      generateLockAndDeferUnlock(s);
+      s.a("tbl := ", GLOBAL_DB, ".getTable(", simTableNameGo(), ")", CR, //
+          "if !tbl.HasKey(obj.Id())", OPEN, //
+          "return ObjectNotFoundError", CLOSE, //
+          "tbl.Put(obj.Id(),obj.Build())", CR, //
+          "return nil", CLOSE);
+      return;
+    }
 
     varCode().a("var ", stName, " *sql.Stmt", CR);
-
-    s.a("func Update", objNameGo, "(obj ", objNameGo, ") error", OPEN);
 
     generateLockAndDeferUnlock(s);
 
@@ -363,6 +366,8 @@ public class SqlGen extends BaseObject {
   private void readRecord() {
 
     if (simulated()) {
+      if ( alert("not done yet")) return;
+      
       notFinished("readRecord");
 
       return;
@@ -605,7 +610,8 @@ public class SqlGen extends BaseObject {
   private void createWithField(String fieldNameSnake) {
 
     if (simulated()) {
-      notFinished("createWithField");
+      if ( alert("not done yet")) return;
+       notFinished("createWithField");
       return;
     }
 
