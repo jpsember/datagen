@@ -36,6 +36,7 @@ import datagen.gen.PartialType;
 import datagen.gen.TypeStructure;
 import js.file.Files;
 import js.json.JSMap;
+import js.parsing.RegExp;
 import js.parsing.ScanException;
 import js.parsing.Scanner;
 import js.parsing.Token;
@@ -339,8 +340,10 @@ final class DataDefinitionParser extends BaseObject {
             fields.add(fieldName);
           }
         } else {
-          var fieldName = read().text();
-          todo("check if looks like a field name");
+          Token t = read();
+          var fieldName = t.text();
+          if (!isValidIdentifier(fieldName))
+            throw t.fail("Not a valid field name");
           fields.add(fieldName);
         }
         sql.addIndex(fields);
@@ -351,6 +354,10 @@ final class DataDefinitionParser extends BaseObject {
     }
     if (db)
       scanner().setVerbose(false);
+  }
+
+  public static boolean isValidIdentifier(String s) {
+    return RegExp.patternMatchesString("[_a-zA-Z]\\w*", s);
   }
 
   /**

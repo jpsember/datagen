@@ -301,61 +301,62 @@ public class SqlGen extends BaseObject {
 
     var objNameGo = objNameGo();
     var objName = objName();
-    var stName = uniqueVar("stmtUpdate");
     s.a("func Update", objNameGo, "(obj ", objNameGo, ") error", OPEN);
 
     if (simulated()) {
       generateLockAndDeferUnlock(s);
       s.a("tbl := ", GLOBAL_DB, ".getTable(", simTableNameGo(), ")", CR, //
           "if !tbl.HasKey(obj.Id())", OPEN, //
-          "return ObjectNotFoundError", CLOSE, //
+          "return NoSuchObjectErr", CLOSE, //
           "tbl.Put(obj.Id(),obj.Build())", CR, //
-          "return nil", CLOSE);
-      return;
-    }
+          "tbl.modified = true", CR, "return nil", CLOSE);
 
-    varCode().a("var ", stName, " *sql.Stmt", CR);
+    } else {
+      var stName = uniqueVar("stmtUpdate");
 
-    generateLockAndDeferUnlock(s);
+      varCode().a("var ", stName, " *sql.Stmt", CR);
 
-    List<FieldDef> filtFields = arrayList();
+      generateLockAndDeferUnlock(s);
 
-    {
-      var t = initCode2();
-      t.a(stName, " = CheckOkWith(db.Prepare(`UPDATE ", objName, " SET ");
+      List<FieldDef> filtFields = arrayList();
 
-      t.startComma();
-      for (var fieldDef : d.fields()) {
-        if (fieldDef.name().equals("id"))
-          continue;
-        t.comma();
-        filtFields.add(fieldDef);
-        t.a(fieldDef.name(), " = ?");
+      {
+        var t = initCode2();
+        t.a(stName, " = CheckOkWith(db.Prepare(`UPDATE ", objName, " SET ");
+
+        t.startComma();
+        for (var fieldDef : d.fields()) {
+          if (fieldDef.name().equals("id"))
+            continue;
+          t.comma();
+          filtFields.add(fieldDef);
+          t.a(fieldDef.name(), " = ?");
+        }
+        t.endComma();
+        t.a(" WHERE id = ?`))", CR);
       }
-      t.endComma();
-      t.a(" WHERE id = ?`))", CR);
-    }
 
-    s.a("var err error", CR);
-    s.a("for", OPEN, //
-        "result, err1 := ", stName, ".Exec(");
+      s.a("var err error", CR);
+      s.a("for", OPEN, //
+          "result, err1 := ", stName, ".Exec(");
 
-    s.startComma();
-    for (var fieldDef : filtFields) {
+      s.startComma();
+      for (var fieldDef : filtFields) {
+        s.comma();
+        s.a("obj.", fieldDef.getterName(), "()");
+      }
       s.comma();
-      s.a("obj.", fieldDef.getterName(), "()");
-    }
-    s.comma();
-    s.a("obj.Id()").endComma().a(")", CR);
-    s.a("err = err1", CR);
-    s.a("if err != nil { break }", CR);
+      s.a("obj.Id()").endComma().a(")", CR);
+      s.a("err = err1", CR);
+      s.a("if err != nil { break }", CR);
 
-    s.a("count, err2 := result.RowsAffected()", CR, //
-        "err = err2", CR, //
-        "if err != nil { break } ", CR, //
-        "if count != 1 { err = NoSuchObjectErr }", CR, //
-        "break", CLOSE);
-    s.a("return err", CLOSE);
+      s.a("count, err2 := result.RowsAffected()", CR, //
+          "err = err2", CR, //
+          "if err != nil { break } ", CR, //
+          "if count != 1 { err = NoSuchObjectErr }", CR, //
+          "break", CLOSE);
+      s.a("return err", CLOSE);
+    }
     addChunk(s);
   }
 
@@ -375,16 +376,6 @@ public class SqlGen extends BaseObject {
     generateLockAndDeferUnlock(s);
 
     if (simulated()) {
-
-      //      func ReadFoo(id int) (Blob, error) {
-      //        singletonDatabase.Lock.Lock()
-      //        defer singletonDatabase.Lock.Unlock()
-      //        mp := singletonDatabase.getTable("foo")
-      //        if !mp.HasKey(id) {
-      //          return nil, NoSuchObjectErr
-      //        }
-      //        return mp.GetData(id, DefaultBlob).(Blob), nil
-      //      }
       s.a("mp := ", GLOBAL_DB, ".getTable(", simTableNameGo(), ")", CR, //
           "if !mp.HasKey(objId)", OPEN, //
           "return nil, NoSuchObjectErr", CLOSE, //
@@ -453,14 +444,6 @@ public class SqlGen extends BaseObject {
 
   private static void addCr(SourceBuilder s) {
     s.addSafe("\n");
-  }
-
-  private boolean createConstantOnce(SourceBuilder s, String expr) {
-    if (firstTimeInSet(expr)) {
-      s.br().a(expr).br();
-      return true;
-    }
-    return false;
   }
 
   private boolean firstTimeInSet(String object) {
@@ -535,7 +518,7 @@ public class SqlGen extends BaseObject {
           "id := mp.nextUniqueKey()", CR, //
           "obj = obj.ToBuilder().SetId(id).Build()", CR, //
           "mp.Put(id, obj)", CR, //
-          GLOBAL_DB, ".setModified(mp)", CR, //
+          "mp.modified = true", CR, //
           "return obj, nil", CLOSE);
       addChunk(s);
       return;
@@ -612,55 +595,104 @@ public class SqlGen extends BaseObject {
   }
 
   private static String snakeToCamel(String snake) {
-    String r = DataUtil.convertUnderscoresToCamelCase(snake);
-    pr("snakeToCamel:", snake, "=>", r);
-    return r;
+    return DataUtil.convertUnderscoresToCamelCase(snake);
   }
 
   private void createWithField(String fieldNameSnake) {
-
-    if (simulated()) {
-      if (alert("not done yet"))
-        return;
-      notFinished("createWithField");
-      return;
-    }
 
     var fieldNameCamel = snakeToCamel(fieldNameSnake);
 
     var s = sourceBuilder();
 
-    var objNameGo = objNameGo();
-    var objName = objName();
-    var stName = "stmtCreate" + objName + "With" + fieldNameSnake;
-
-    varCode().a("var ", stName, " *sql.Stmt", CR);
-
-    s.a("// Create ", objNameGo, " with the given (unique) ", fieldNameSnake,
+    s.a("// Create ", objNameGo(), " with the given (unique) ", fieldNameSnake,
         "; return nil if already exists; non-nil err if some other problem.", CR);
-    s.a("func Create", objNameGo, "With", fieldNameCamel, "(obj ", objNameGo, ") (", objNameGo, ", error)",
-        OPEN);
+    s.a("func Create", objNameGo(), "With", fieldNameCamel, "(obj ", objNameGo(), ") (", objNameGo(),
+        ", error)", OPEN);
 
-    s.a("// Use our own lock here; the functions we call will use the usual lock.", CR, //
-        "// Our own lock prevents other threads from calling this specific function.", CR, //
-        "// So, if this function is the only one called to create objects, the uniqueness", CR, //
-        "// property will hold.", CR);
+    if (simulated()) {
+      //      func CreateBlobWithName(obj Blob) (Blob, error) {
+      //       singletonDatabase.Lock.Lock()
+      //        defer singletonDatabase.Lock.Unlock()
+      //        mp := singletonDatabase.getTable("blob")
+      //        for _, val := range mp.table.WrappedMap() {
+      //          valMap := val.AsJSMap()
+      //          fieldVal := valMap.OptAny("name")
+      //          // convert fieldVal to apppropriate type (int, string, etc)
+      //          if fieldVal.AsString() == obj.Name() {
+      //            return nil, nil
+      //          }
+      //        }
+      //        obj  = obj.ToBuilder().SetId(mp.nextUniqueKey()).Build()
+      //        mp.Put(obj.Id(),obj)
+      //        mp.modified = true
+      //        return obj, nil
+      //      }
+      //
+      s.a("mp := ", GLOBAL_DB, ".getTable(", simTableNameGo(), ")", CR, //
+          "for _, val := range mp.table.WrappedMap()", OPEN, //
+          "valMap := val.AsJSMap()", CR, "fieldVal := valMap.OptAny(", quote(fieldNameSnake), ")", CR, //
+          "// convert fieldVal to appropriate type (int, string, etc)", CR);
 
-    var ourLockVar = uniqueVar("lockCreateWith");
-    varCode().a("var ", ourLockVar, " sync.Mutex", CR);
+      var d = mGeneratedTypeDef;
+      FieldDef our = null;
+      for (var fd : d.fields()) {
+        if (fd.name().equals(fieldNameSnake)) {
+          our = fd;
+        }
+      }
+      checkState(our != null, "can't find field with name:", fieldNameSnake);
+      var fieldTypeStr = our.dataType().qualifiedName().className();
 
-    s.a(ourLockVar, ".Lock()", CR, //
-        "defer ", ourLockVar, ".Unlock()", CR, //
-        //
-        "var err error", CR, //
-        "var created ", objNameGo, CR, //
+      var convExpr = "";
+      if (fieldTypeStr.equals("string")) {
+        convExpr = ".AsString()";
+      }
+      if (convExpr == null)
+        badArg("don't know how to convert field of type:", fieldTypeStr);
 
-        "existingId, err1 := Read", objNameGo, "With", fieldNameCamel, "(obj.", fieldNameCamel, "())", CR, //
-        "Pr(`existing id:`,existingId)", CR, //
-        "err = err1", CR, //
-        "if err == NoSuchObjectErr", OPEN, //
-        "c, err2 := Create", objNameGo, "(obj)", CR, //
-        "err = err2", CR, "created = c", CLOSE, "return created,err", CR, CLOSE);
+      s.a("if fieldVal", convExpr, " == obj.", fieldNameCamel, "()", OPEN, //
+          "return nil, nil", CLOSE, //
+          CLOSE);
+
+      //    obj  = obj.ToBuilder().SetId(mp.nextUniqueKey()).Build()
+      //    mp.Put(obj.Id(),obj)
+      //    mp.modified = true
+      //    return obj, nil
+      //  }
+      s.a("obj = obj.ToBuilder().SetId(mp.nextUniqueKey()).Build()", CR, //
+          "mp.Put(obj.Id(), obj)", CR, //
+          "mp.modified = true", CR, //
+          "return obj, nil", CLOSE);
+
+    } else {
+      var objNameGo = objNameGo();
+      var objName = objName();
+
+      var stName = "stmtCreate" + objName + "With" + fieldNameSnake;
+
+      varCode().a("var ", stName, " *sql.Stmt", CR);
+
+      s.a("// Use our own lock here; the functions we call will use the usual lock.", CR, //
+          "// Our own lock prevents other threads from calling this specific function.", CR, //
+          "// So, if this function is the only one called to create objects, the uniqueness", CR, //
+          "// property will hold.", CR);
+
+      var ourLockVar = uniqueVar("lockCreateWith");
+      varCode().a("var ", ourLockVar, " sync.Mutex", CR);
+
+      s.a(ourLockVar, ".Lock()", CR, //
+          "defer ", ourLockVar, ".Unlock()", CR, //
+          //
+          "var err error", CR, //
+          "var created ", objNameGo, CR, //
+
+          "existingId, err1 := Read", objNameGo, "With", fieldNameCamel, "(obj.", fieldNameCamel, "())", CR, //
+          "Pr(`existing id:`,existingId)", CR, //
+          "err = err1", CR, //
+          "if err == NoSuchObjectErr", OPEN, //
+          "c, err2 := Create", objNameGo, "(obj)", CR, //
+          "err = err2", CR, "created = c", CLOSE, "return created,err", CR, CLOSE);
+    }
     addChunk(s);
 
   }

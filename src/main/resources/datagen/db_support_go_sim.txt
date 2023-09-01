@@ -42,6 +42,7 @@ func CreateDatabase(dataSourceName string)   {
 	b := singletonDatabase.Base
 	b.SetName("Database")
 	b.AlertVerbose()
+	singletonDatabase.Open()
 }
 
 func Db() Database {
@@ -95,10 +96,6 @@ func (db Database) Close() {
 const SECONDS = 1000
 const MINUTES = SECONDS * 60
 const HOURS = MINUTES * 60
-
-func (db Database) setModified(mt MemTable) {
-  mt.modified = true
-}
 
 func (db Database) flushTable(mt MemTable) {
   p := db.getSimFile(mt)
