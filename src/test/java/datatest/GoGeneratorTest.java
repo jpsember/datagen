@@ -200,6 +200,7 @@ public class GoGeneratorTest extends GenBaseTest {
   public void charlie() {
     rv();
     addArg("dbsim");
+    addArg("comments");
     p().pr("class sql(index name) {", INDENT, //
         "int id;", CR, //
         "string name;", CR, //

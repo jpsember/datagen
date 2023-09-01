@@ -1,0 +1,100 @@
+@@// ---------------------------------------------------------------------------------------
+@@// This is code supporting the Sqlite database operations
+@@// ---------------------------------------------------------------------------------------
+@@
+
+
+type DatabaseStruct struct {
+  Base         BaseObject
+  state        dbState
+  theLock      sync.Mutex
+  dataSourceName string
+  sqlDatabase    *sql.DB
+}
+
+type Database = *DatabaseStruct
+
+
+type dbState int
+
+const (
+  dbStateNew dbState = iota
+  dbStateOpen
+  dbStateClosed
+)
+
+var singletonDatabase Database
+
+func newDatabase() Database {
+  t := &DatabaseStruct{}
+  t.Base.SetName("Database")
+  return t
+}
+
+func CreateDatabase(dataSourceName string)   {
+	CheckState(singletonDatabase == nil, "<1Singleton database already exists")
+	singletonDatabase = newDatabase()
+	singletonDatabase.dataSourceName = dataSourceName
+	b := singletonDatabase.Base
+	b.SetName("Database")
+	b.AlertVerbose()
+}
+
+func Db() Database {
+  CheckState(singletonDatabase != nil, "<1No database created yet")
+  return singletonDatabase
+}
+
+// This method does nothing in this version
+func (db Database) SetDataSourceName(dataSourceName string) {
+  CheckState(db.state == dbStateNew, "Illegal state:", db.state)
+}
+
+func (b Database) Open() {
+  Todo("the conflict between mysql db and our Database class is annoying; rename 'our' Database to b?")
+  if !b.tryLock(dbStateNew) {
+    BadState("Illegal database state")
+  }
+  defer b.unlock()
+  b.state = dbStateOpen
+  
+  db, err := sql.Open("sqlite3", b.dataSourceName)
+  if err != nil {
+    BadState("Trouble opening sqlite database", INDENT, err)
+  }
+  b.sqlDatabase = db
+
+
+[!init_code1]
+[!init_code2]
+
+}
+
+func (db Database) Close() {
+  if db.tryLock(dbStateOpen) {
+    defer db.unlock()
+    db.state = dbStateClosed
+  }
+}
+
+// Acquire the lock on the database.
+func (db Database) lock() {
+  if !db.tryLock(dbStateOpen) {
+    BadState("<1Illegal state:", db.state)
+  }
+}
+
+// Attempt to acquire the lock on the database; if state isn't expectedState, releases lock and returns false
+func (db Database) tryLock(expectedState dbState) bool {
+  db.theLock.Lock()
+  if db.state != expectedState {
+    db.theLock.Unlock()
+    return false
+  }
+  return true
+}
+
+func (db Database) unlock() {
+  db.theLock.Unlock()
+}
+

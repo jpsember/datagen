@@ -1,7 +1,7 @@
-{             "alpha" : 1513,
-              "bravo" : 1153,
+{             "alpha" : 2341,
+              "bravo" : 7153,
                 "cat" : 7450,
-            "charlie" : 3157,
+            "charlie" : 2473,
            "contract" : 4124,
                "crow" : 3760,
               "depr1" : 9492,
@@ -13,7 +13,5 @@
                "maps" : 4371,
   "persistSessionMap" : 5509,
             "session" : 4752,
-             "sqlGen" : 2393,
-     "sqlGenInactive" : 7159,
-           "sqlIndex" : 2640
+     "sqlGenInactive" : 7159
 }

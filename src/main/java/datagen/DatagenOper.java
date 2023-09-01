@@ -97,7 +97,7 @@ public class DatagenOper extends AppOper {
     }
 
     Context.sql.complete();
-    
+
     if (config.language() == Language.GO && !files().dryRun() && config.format()) {
       formatSourceFiles();
     }
@@ -117,7 +117,14 @@ public class DatagenOper extends AppOper {
     for (File f : Context.generatedFilesSet) {
       sc.arg(f.toString());
     }
-    sc.assertSuccess();
+
+    if (alert("allowing format errors")) {
+      if (sc.exitCode() != 0) {
+        pr("**** there was a format error:", sc.systemErr());
+      }
+    } else {
+      sc.assertSuccess();
+    }
   }
 
   /**

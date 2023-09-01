@@ -78,49 +78,70 @@ public class SqlGen extends BaseObject {
     if (!mWasActive)
       return;
 
-    if (simulated()) {
-      todo("add simulated support");
-      writeCommonSimFunction();
-    } else {
-      constructTables();
-      createIndexes();
+    //    if (simulated()) {
+    //      todo("add simulated support");
+    //      writeCommonSimFunction();
+    //    } else {
+    constructTables();
+    createIndexes();
 
-      includeVars();
-      includeMiscCode();
+    includeVars();
+    //includeMiscCode();
 
-      JSMap m = map();
-      m.put("package_decl", mPackageExpr);
-      
-      m.put("code", mCode.toString());
+    JSMap m = map();
+    m.put("package_decl", mPackageExpr);
 
-      // Perform  macro substitution
-      //
-      String content = null;
-      {
-        MacroParser parser = new MacroParser();
-        //parser.alertVerbose();
-        String template = Files.readString(SourceGen.class, "db_template_go.txt");
-        parser.withTemplate(template).withMapper(m);
-        content = parser.content();
+    {
+      var x = sourceBuilder();
+      if (simulated()) {
+      } else {
+        x.a(" \"database/sql\"", CR);
       }
+      m.put("additional_imports", x.getContent());
+    }
 
-      //  Strip (or retain) optional comments.  Such comments are denoted by a line with the prefix "@@"
-      //  
-      content = ParseTools.processOptionalComments(content, Context.config.comments());
+    {
+      var tn = simulated() ? "db_support_go_sim.txt" : "db_support_go_sqlite.txt";
+      m.put("support", Files.readString(SourceGen.class, tn));
+    }
 
-      content = Context.pt.adjustLinefeeds(content);
-      File target = new File(directory(), "db.go");
+    m.put("code", mCode.toString());
 
-      Context.files.mkdirs(Files.parent(target));
-      boolean wrote = Context.files.writeIfChanged(target, content);
-      todo("what does this do?");
-      Context.generatedFilesSet.add(target);
-      if (wrote)
-        log(".....updated:", target);
-      else {
-        target.setLastModified(System.currentTimeMillis());
-        log("...freshened:", target);
-      }
+    m.put("init_code1",  initCode1().getContent());
+    m.put("init_code2",  initCode2().getContent());
+    
+    // Keep performing macro substitution until the output doesn't change.
+    // This is so we can embed macro keys within other macros' values.
+    // 
+
+    String template = Files.readString(SourceGen.class, "db_template_go.txt");;
+
+    String content = null;
+    while (true) {
+      MacroParser parser = new MacroParser();
+      parser.withTemplate(template).withMapper(m);
+      content = parser.content();
+      if (content.equals(template))
+        break;
+      template = content;
+    }
+
+    //  Strip (or retain) optional comments.  Such comments are denoted by a line with the prefix "@@"
+    //  
+    content = ParseTools.processOptionalComments(content, Context.config.comments());
+
+    content = Context.pt.adjustLinefeeds(content);
+    File target = new File(directory(), "db.go");
+
+    Context.files.mkdirs(Files.parent(target));
+    boolean wrote = Context.files.writeIfChanged(target, content);
+    todo("what does this do?");
+    Context.generatedFilesSet.add(target);
+    if (wrote)
+      log(".....updated:", target);
+    else {
+      target.setLastModified(System.currentTimeMillis());
+      log("...freshened:", target);
     }
   }
 
@@ -438,7 +459,6 @@ public class SqlGen extends BaseObject {
     addChunk(s);
   }
 
-  
   private void createRecord() {
     todo("not all functions are adding lock wrapper");
     var d = mGeneratedTypeDef;
@@ -670,20 +690,20 @@ public class SqlGen extends BaseObject {
     target.addParagraph(c);
   }
 
-  private void includeMiscCode() {
-    var t = initCode1();
-    if (!t.isEmpty()) {
-      var s = sourceBuilder();
-      s.a("func PrepareDatabase(db *sql.DB, lock *sync.Mutex)", OPEN);
-      s.a(mGlobalDbVar, " = db", CR, //
-          mGlobalLockVar, " = lock", CR);
-
-      append(s, mInitFunctionCode1);
-      append(s, mInitFunctionCode2);
-      s.a(CLOSE);
-      append(mCode, s);
-    }
-  }
+//  private void includeMiscCode() {
+//    var t = initCode1();
+//    if (!t.isEmpty()) {
+//      var s = sourceBuilder();
+//      s.a("func PrepareDatabase(db *sql.DB, lock *sync.Mutex)", OPEN);
+//      s.a(mGlobalDbVar, " = db", CR, //
+//          mGlobalLockVar, " = lock", CR);
+//
+//      append(s, mInitFunctionCode1);
+//      append(s, mInitFunctionCode2);
+//      s.a(CLOSE);
+//      append(mCode, s);
+//    }
+//  }
 
   private static class IndexInfo {
     String typeName;
@@ -700,20 +720,14 @@ public class SqlGen extends BaseObject {
    */
 
   private void writeCommonSimFunction() {
-    
+
     File target = new File(directory(), "sim_db.go");
-    if (target.exists()) return;
-    
-    
-    
-    
-    
-    
-    
+    if (target.exists())
+      return;
 
     JSMap m = map();
     m.put("package_decl", mPackageExpr);
-    
+
     // Perform  macro substitution
     //
     String content = null;
@@ -740,13 +754,9 @@ public class SqlGen extends BaseObject {
       target.setLastModified(System.currentTimeMillis());
       log("...freshened:", target);
     }
-    
-    
-    
-    
-    
+
   }
-  
+
   private Set<String> mUniqueStringSet = hashSet();
 
   private int mState;
@@ -756,6 +766,7 @@ public class SqlGen extends BaseObject {
   private boolean mWasActive;
   private File mCachedDir;
   private StringBuilder mCode = new StringBuilder();
+
   private List<IndexInfo> mIndexes;
   private GeneratedTypeDef mGeneratedTypeDef;
 
