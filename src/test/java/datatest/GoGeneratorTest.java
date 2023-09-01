@@ -166,8 +166,9 @@ public class GoGeneratorTest extends GenBaseTest {
     compile();
   }
 
+
   @Test
-  public void sqlGen() {
+  public void alpha() {
     p().pr("class sql() {", INDENT, //
         "int id;", CR, //
         "string name;", CR, //
@@ -181,8 +182,7 @@ public class GoGeneratorTest extends GenBaseTest {
    * Generating SQL code for a data type that includes an index
    */
   @Test
-  public void alpha() {
-    rv();
+  public void bravo() {
     addArg("comments");
     p().pr("class sql(index name) {", INDENT, //
         "int id;", CR, //
@@ -193,6 +193,24 @@ public class GoGeneratorTest extends GenBaseTest {
     compile();
   }
 
+  /**
+   * Generating sql code, with simulated database
+   */
+  @Test
+  public void charlie() {
+    rv();
+    addArg("dbsim");
+    p().pr("class sql(index name) {", INDENT, //
+        "int id;", CR, //
+        "string name;", CR, //
+        "enum Level grad;", CR, //
+        "bool alive;", CR, //
+        "}");
+    compile();
+  }
+
+  
+  
   @Test
   public void sqlGenInactive() {
     p().pr("class /*sql(table)*/ {", INDENT, //

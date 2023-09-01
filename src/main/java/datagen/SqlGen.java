@@ -20,7 +20,6 @@ public class SqlGen extends BaseObject {
 
   public SqlGen(DatagenConfig config) {
     mConfig = config;
-    //alertVerbose();
   }
 
   public void prepare() {
@@ -30,29 +29,6 @@ public class SqlGen extends BaseObject {
     mGlobalLockVar = uniqueVar("dbLock");
     varCode().a("var ", mGlobalDbVar, " *sql.DB", CR);
     varCode().a("var ", mGlobalLockVar, " *sync.Mutex", CR);
-
-  }
-
-  private String mGlobalDbVar;
-  private String mGlobalLockVar;
-
-  public void setActive(boolean state) {
-    log("setActive:", state);
-    assertState(1);
-    mActive = state;
-    if (state)
-      mWasActive = true;
-  }
-
-  public boolean active() {
-    return mActive;
-  }
-
-  private String determinePackage() {
-    String pkgName = mGeneratedTypeDef.qualifiedName().packagePath();
-    checkArgument(!pkgName.isEmpty(), "Package name is empty");
-    pkgName = QualifiedName.lastComponent(pkgName);
-    return "package " + pkgName;
   }
 
   public void setTypeDef(GeneratedTypeDef typeDef) {
@@ -65,6 +41,15 @@ public class SqlGen extends BaseObject {
       log("package expr:", pkg);
     }
     checkState(pkg.equals(mPackageExpr));
+    setActive(true);
+  }
+
+  public void addIndex(List<String> fields) {
+    IndexInfo info = new IndexInfo();
+    info.typeName = objName();
+    info.tableName = tableNameGo();
+    info.mFieldNames.addAll(fields);
+    mIndexes.add(info);
   }
 
   public void generate() {
@@ -73,18 +58,83 @@ public class SqlGen extends BaseObject {
     if (!mActive)
       return;
 
-    //setTypeDef(generatedTypeDef);
-
-    createTable();
-    createRecord();
-    updateRecord();
-    readRecord();
-    createIndexSpecific();
-
-    indexFunc();
-
-    pr("...clearing generatedTypeDef to null");
+    if (simulated()) {
+      todo("add simulated support");
+    } else {
+      createTable();
+      createRecord();
+      updateRecord();
+      readRecord();
+      createIndexSpecific();
+      indexFunc();
+    }
     mGeneratedTypeDef = null;
+    setActive(false);
+  }
+
+  public void complete() {
+    log("complete, was active:", mWasActive);
+    incState(2);
+    if (!mWasActive)
+      return;
+
+    if (simulated()) {
+      todo("add simulated support");
+    } else {
+      constructTables();
+      createIndexes();
+
+      includeVars();
+      includeMiscCode();
+
+      JSMap m = map();
+      m.put("package_decl", mPackageExpr);
+      m.put("code", mCode.toString());
+
+      // Perform  macro substitution
+      //
+      String content = null;
+      {
+        MacroParser parser = new MacroParser();
+        //parser.alertVerbose();
+        String template = Files.readString(SourceGen.class, "db_template_go.txt");
+        parser.withTemplate(template).withMapper(m);
+        content = parser.content();
+      }
+
+      //  Strip (or retain) optional comments.  Such comments are denoted by a line with the prefix "@@"
+      //  
+      content = ParseTools.processOptionalComments(content, Context.config.comments());
+
+      content = Context.pt.adjustLinefeeds(content);
+      File target = new File(directory(), "db.go");
+
+      Context.files.mkdirs(Files.parent(target));
+      boolean wrote = Context.files.writeIfChanged(target, content);
+      todo("what does this do?");
+      Context.generatedFilesSet.add(target);
+      if (wrote)
+        log(".....updated:", target);
+      else {
+        target.setLastModified(System.currentTimeMillis());
+        log("...freshened:", target);
+      }
+    }
+  }
+
+  private void setActive(boolean state) {
+    log("setActive:", state);
+    assertState(1);
+    mActive = state;
+    if (state)
+      mWasActive = true;
+  }
+
+  private String determinePackage() {
+    String pkgName = mGeneratedTypeDef.qualifiedName().packagePath();
+    checkArgument(!pkgName.isEmpty(), "Package name is empty");
+    pkgName = QualifiedName.lastComponent(pkgName);
+    return "package " + pkgName;
   }
 
   private void clearItemsForNewClass() {
@@ -95,7 +145,6 @@ public class SqlGen extends BaseObject {
   }
 
   private void indexFunc() {
-    pr("indexFunc, index len:", mIndexes.size());
     for (var info : mIndexes) {
       checkState(info.mFieldNames.size() == 1, "unexpected number of fields");
       var fieldName = info.mFieldNames.get(0);
@@ -103,12 +152,10 @@ public class SqlGen extends BaseObject {
     }
   }
 
-  public void readByField(String fieldNameSnake) {
+  private void readByField(String fieldNameSnake) {
     var d = mGeneratedTypeDef;
     var s = sourceBuilder();
     var fieldNameCamel = snakeToCamel(fieldNameSnake);
-    
-    todo("probably a bunch of duplicated variables here, make them fields");
 
     var objNameGo = objNameGo();
     var objName = objName();
@@ -136,8 +183,12 @@ public class SqlGen extends BaseObject {
     checkState(our != null, "can't find field with name:", fieldNameSnake);
     var fieldTypeStr = our.dataType().qualifiedName().className();
 
-    s.a("func Read", objNameGo, "With", fieldNameCamel, "(objValue ", fieldTypeStr,
-        ") (int, error)", OPEN);
+    s.a("// Read ", objNameGo, " whose ", fieldNameCamel, " matches a value.", CR, //
+        "// Returns the object if successful.  If not found, returns nil.", CR, //
+        "// If some other database error, returns an error.", CR);
+
+    s.a("func Read", objNameGo, "With", fieldNameCamel, "(objValue ", fieldTypeStr, ") (int, error)", OPEN);
+    generateLockAndDeferUnlock(s);
 
     s.a("rows := ", stName, ".QueryRow(objValue)", CR, //
         "result, err := ", scanFuncName, "(rows)", CR, //
@@ -152,10 +203,11 @@ public class SqlGen extends BaseObject {
     s.a("var id int", CR);
     s.a("err := rows.Scan(&id)", CR);
     s.a("if err ==  sql.ErrNoRows", OPEN, "err = ObjectNotFoundError", CLOSE);
-    s.a("return id, err", CLOSE);
+    s.a("return id, err // missing cr here, wtf", CLOSE);
+    todo("annoying lack of cr here");
   }
 
-  public File directory() {
+  private File directory() {
     if (mCachedDir == null) {
       // Determine where the go source files were written, in order to place
       // the sql source file there as well
@@ -175,94 +227,6 @@ public class SqlGen extends BaseObject {
 
   private void assertState(int expectedCurrent) {
     checkState(mState == expectedCurrent);
-  }
-
-  public void complete() {
-    log("complete, was active:", mWasActive);
-    incState(2);
-    if (!mWasActive)
-      return;
-
-    constructTables();
-    createIndexes();
-
-    includeVars();
-    includeMiscCode();
-
-    //  
-    //  
-    //  
-    //  //GeneratedTypeDef def = Context.generatedTypeDef;
-
-    JSMap m = map();
-    m.put("package_decl", mPackageExpr);
-    m.put("code", mCode.toString());
-
-    //  // In this first pass, leave the imports macro unchanged
-    //  m.put("imports", "[!imports]");
-    //  m.put("class", def.name());
-    //
-    //  String content = getTemplate();
-    //  m.put("deprecated", def.isDeprecated() ? getDeprecationSource() : "");
-    //   if (def.isEnum()) {
-    //    generateEnumValues(def.enumDataType());
-    //    m.put("default_value", def.enumDataType().labels().get(0));
-    //    m.put("enum_values", content());
-    //    addAdditionalTemplateValues(m);
-    //  } else {
-    //    m.put("class_getter_implementation", generateGetters());
-    //    m.put("copy_to_builder", generateImmutableToBuilder());
-    //    m.put("copyfield_from_builder", generateCopyFromBuilderToImmutable());
-    //    m.put("equals", generateEquals());
-    //    m.put("hashcode", generateHashCode());
-    //    m.put("init_instance_fields", generateInitInstanceFields());
-    //    m.put("instance_fields", generateInstanceFields());
-    //    m.put("parse", generateParse());
-    //    m.put("setters", generateSetters());
-    //    m.put("string_constants", generateStringConstants());
-    //    m.put("to_json", generateToJson());
-    //    m.put("to_string", generateToString());
-    //    addAdditionalTemplateValues(m);
-    //  }
-    //
-    //  // Get any source that DataTypes may have needed to add;
-    //  // must be added here, after all other keys
-    //  m.put("class_specific", def.getClassSpecificSource());
-    //
-
-    // Perform  macro substitution
-    //
-    String content = null;
-    {
-      MacroParser parser = new MacroParser();
-      //parser.alertVerbose();
-      String template = Files.readString(SourceGen.class, "db_template_go.txt");
-      parser.withTemplate(template).withMapper(m);
-      content = parser.content();
-    }
-
-    //  Strip (or retain) optional comments.  Such comments are denoted by a line with the prefix "@@"
-    //  
-    content = ParseTools.processOptionalComments(content, Context.config.comments());
-    //
-    //  //
-    //  // Pass 5: remove extraneous linefeeds; insert requested blank lines according to language.  
-    //  //         For Python, lines starting with "\\[n]" indicate that n blank lines are to be placed between 
-    //  //         the neighboring (non-blank) lines
-    //  //
-    content = Context.pt.adjustLinefeeds(content);
-    File target = new File(directory(), "db.go");
-    alert("writing:", target);
-
-    Context.files.mkdirs(Files.parent(target));
-    boolean wrote = Context.files.writeIfChanged(target, content);
-    // Context.generatedFilesSet.add(target);
-    if (wrote)
-      log(".....updated:", target);
-    else {
-      target.setLastModified(System.currentTimeMillis());
-      log("...freshened:", target);
-    }
   }
 
   private void generateLockAndDeferUnlock(SourceBuilder s) {
@@ -343,9 +307,7 @@ public class SqlGen extends BaseObject {
 
     varCode().a("var ", stName, " *sql.Stmt", CR);
 
-    {
-      initCode2().a(stName, " = CheckOkWith(db.Prepare(`SELECT * FROM ", objName, " WHERE id = ?`))", CR);
-    }
+    initCode2().a(stName, " = CheckOkWith(db.Prepare(`SELECT * FROM ", objName, " WHERE id = ?`))", CR);
 
     var scanFuncName = "scan" + objNameGo;
     var addScanFunc = firstTimeInSet(scanFuncName);
@@ -354,6 +316,7 @@ public class SqlGen extends BaseObject {
     }
 
     s.a("func Read", objNameGo, "(objId int) (", objNameGo, ", error)", OPEN);
+    generateLockAndDeferUnlock(s);
 
     s.a("rows := ", stName, ".QueryRow(objId)", CR, //
         "result, err := ", scanFuncName, "(rows)", CR, //
@@ -363,7 +326,7 @@ public class SqlGen extends BaseObject {
 
   private void generateScanFunc(GeneratedTypeDef d, SourceBuilder s, String objNameGo, String objName,
       String funcName) {
-
+    s.a("// Return a non-nil error only if an error other than 'not found'.", CR);
     s.a("func ", funcName, "(rows *sql.Row) (", objNameGo, "Builder, error)", OPEN);
 
     s.a("var b ", objNameGo, "Builder", CR);
@@ -388,7 +351,7 @@ public class SqlGen extends BaseObject {
     }
     s.a(")", CR);
 
-    s.a("if err ==  sql.ErrNoRows", OPEN, "err = ObjectNotFoundError } else {", CR, //
+    s.a("if err ==  sql.ErrNoRows", OPEN, "err = nil } else {", CR, //
         "if err == nil", OPEN, //
         "b = New", objNameGo, "()", CR);
     var i = INIT_INDEX;
@@ -400,6 +363,11 @@ public class SqlGen extends BaseObject {
     s.a(CLOSE);
 
     s.a("return b, err", CLOSE);
+    addCr(s);
+  }
+
+  private static void addCr(SourceBuilder s) {
+    s.addSafe("\n");
   }
 
   private boolean createConstantOnce(SourceBuilder s, String expr) {
@@ -411,7 +379,7 @@ public class SqlGen extends BaseObject {
   }
 
   private boolean firstTimeInSet(String object) {
-    return unique.add(object);
+    return mUniqueStringSet.add(object);
   }
 
   private String tableNameGo() {
@@ -480,6 +448,7 @@ public class SqlGen extends BaseObject {
     varCode().a("var ", stName, " *sql.Stmt", CR);
 
     s.a("func Create", objNameGo, "(obj ", objNameGo, ") (", objNameGo, ", error)", OPEN);
+    generateLockAndDeferUnlock(s);
 
     List<FieldDef> filtFields = arrayList();
 
@@ -544,14 +513,14 @@ public class SqlGen extends BaseObject {
 
   private static String snakeToCamel(String snake) {
     String r = DataUtil.convertUnderscoresToCamelCase(snake);
-    pr("snakeToCamel:",snake,"=>",r);
+    pr("snakeToCamel:", snake, "=>", r);
     return r;
   }
-  
+
   private void createWithField(String fieldNameSnake) {
 
     var fieldNameCamel = snakeToCamel(fieldNameSnake);
-    
+
     var s = sourceBuilder();
 
     var objNameGo = objNameGo();
@@ -560,16 +529,16 @@ public class SqlGen extends BaseObject {
 
     varCode().a("var ", stName, " *sql.Stmt", CR);
 
-    //var fname2 = fieldNameSnake; //snakeToCamel(fieldName);
-    //todo("does this treat names like foo_bar properly: " + fieldNameSnake + " -> " + fname2);
-
     s.a("// Create ", objNameGo, " with the given (unique) ", fieldNameSnake,
         "; return nil if already exists; non-nil err if some other problem.", CR);
-    s.a("func Create", objNameGo, "With", fieldNameCamel, "(obj ", objNameGo, ") (", objNameGo, ", error)", OPEN);
+    s.a("func Create", objNameGo, "With", fieldNameCamel, "(obj ", objNameGo, ") (", objNameGo, ", error)",
+        OPEN);
 
-    // // Create a user with the given (unique) name; returns nil if unsuccessful
-    //    func CreateUserWithName(user User) (User, error) {
-    //
+    s.a("// Use our own lock here; the functions we call will use the usual lock.", CR, //
+        "// Our own lock prevents other threads from calling this specific function.", CR, //
+        "// So, if this function is the only one called to create objects, the uniqueness", CR, //
+        "// property will hold.", CR);
+
     var ourLockVar = uniqueVar("lockCreateWith");
     varCode().a("var ", ourLockVar, " sync.Mutex", CR);
 
@@ -578,7 +547,6 @@ public class SqlGen extends BaseObject {
         //
         "var err error", CR, //
         "var created ", objNameGo, CR, //
-        //
 
         "existingId, err1 := Read", objNameGo, "With", fieldNameCamel, "(obj.", fieldNameCamel, "())", CR, //
         "Pr(`existing id:`,existingId)", CR, //
@@ -593,14 +561,6 @@ public class SqlGen extends BaseObject {
   private void addChunk(SourceBuilder sb) {
     mCode.append(sb.getContent());
     mCode.append("\n\n");
-  }
-
-  public void addIndex(List<String> fields) {
-    IndexInfo info = new IndexInfo();
-    info.typeName2 = objName();
-    info.tableName2 = tableNameGo();
-    info.mFieldNames.addAll(fields);
-    mIndexes.add(info);
   }
 
   private SourceBuilder varCode() {
@@ -656,10 +616,10 @@ public class SqlGen extends BaseObject {
 
   private void createIndexes() {
     for (var fields : mIndexes) {
-      var indexName = fields.typeName2 + "_" + String.join("_", fields.mFieldNames);
+      var indexName = fields.typeName + "_" + String.join("_", fields.mFieldNames);
       checkState(mUniqueIndexNames.add(indexName), "duplicate index:", indexName);
       var s = initCode1();
-      s.a("CheckOkWith(db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", fields.tableName2,
+      s.a("CheckOkWith(db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", fields.tableName,
           " (");
       s.startComma();
       for (var fn : fields.mFieldNames) {
@@ -705,7 +665,6 @@ public class SqlGen extends BaseObject {
     if (c.isEmpty())
       return;
     target.addParagraph(c);
-
   }
 
   private void includeMiscCode() {
@@ -723,7 +682,17 @@ public class SqlGen extends BaseObject {
     }
   }
 
-  private Set<String> unique = hashSet();
+  private static class IndexInfo {
+    String typeName;
+    String tableName;
+    List<String> mFieldNames = arrayList();
+  }
+
+  private boolean simulated() {
+    return mConfig.dbsim();
+  }
+
+  private Set<String> mUniqueStringSet = hashSet();
 
   private int mState;
 
@@ -735,12 +704,8 @@ public class SqlGen extends BaseObject {
   private List<IndexInfo> mIndexes;
   private GeneratedTypeDef mGeneratedTypeDef;
 
-  private static class IndexInfo {
-    String typeName2;
-    String tableName2;
-    List<String> mFieldNames = arrayList();
-  }
+  private String mGlobalDbVar;
+  private String mGlobalLockVar;
 
-  /* private */ DatagenConfig mConfig;
-
+  private DatagenConfig mConfig;
 }

@@ -36,4 +36,7 @@ class {
   //
   bool format;
 
+  // Where sql code would be generated, it generates code for a simple filesystem simulation instead
+  //
+  bool dbsim;
 }

@@ -104,7 +104,6 @@ public class DatagenOper extends AppOper {
 
     if (config.deleteOld())
       deleteOldSourceFiles(config.sourcePath());
-
   }
 
   /**

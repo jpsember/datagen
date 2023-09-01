@@ -93,8 +93,6 @@ final class DataDefinitionParser extends BaseObject {
 
       Context.sql.generate();
 
-      Context.sql.setActive(false);
-
     } catch (Throwable t) {
       alert("Caught:", t.getMessage());
       if (t instanceof ScanException || SHOW_STACK_TRACES) {
@@ -243,7 +241,6 @@ final class DataDefinitionParser extends BaseObject {
     //
     if (readIf("sql")) {
       Context.sql.setTypeDef(Context.generatedTypeDef);
-      Context.sql.setActive(true);
       processSqlInfo(Context.sql);
     }
 
@@ -321,7 +318,6 @@ final class DataDefinitionParser extends BaseObject {
 
     read(PAROP);
 
-    pr("parsing sql info, read parop");
     while (!readIf(PARCL)) {
 
       if (readIf("table")) {
@@ -335,14 +331,12 @@ final class DataDefinitionParser extends BaseObject {
       }
 
       if (readIf("index")) {
-        pr("just read index");
         List<String> fields = arrayList();
         if (readIf(PAROP)) {
           while (!readIf(PARCL)) {
             var fieldName = read().text();
             todo("check if looks like a field name");
             fields.add(fieldName);
-            pr("added field:", fieldName);
           }
         } else {
           var fieldName = read().text();
