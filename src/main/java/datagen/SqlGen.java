@@ -173,30 +173,8 @@ public class SqlGen extends BaseObject {
 
   private void readByField(String fieldNameSnake) {
 
-    if (  simulated()) {
+    if (simulated()) {
       var s = sourceBuilder();
-
-//   // Read User whose Name matches a value.
-//   // Returns the object if successful.  If not found, returns nil.
-//   // If some other database error, returns an error.
-      
-//      func ReadUserWithName(objValue string) (User, error) {
-//        singletonDatabase.Lock.Lock()
-//        defer singletonDatabase.Lock.Unlock()
-//
-//        mp := singletonDatabase.getTable("user")
-//        for _, val := range mp.table.WrappedMap() {
-//          valMap := val.AsJSMap()
-//          fieldVal := valMap.OptAny("name")
-//          // convert fieldVal to appropriate type (int, string, etc)
-//          if fieldVal.AsString() == objValue {
-//            return DefaultUser.Parse(valMap).(User), nil
-//          }
-//        }
-//        
-//        return nil, Error("no such obj")
-//      }
-//
       var fieldNameCamel = snakeToCamel(fieldNameSnake);
 
       s.a("// Read ", objNameGo(), " whose ", fieldNameCamel, " matches a value.", CR, //
@@ -211,27 +189,26 @@ public class SqlGen extends BaseObject {
       }
       checkState(our != null, "can't find field with name:", fieldNameSnake);
       var fieldTypeStr = our.dataType().qualifiedName().className();
-      
-      s.a("func Read",objNameGo(),"With",fieldNameCamel,"(objValue ",fieldTypeStr,   ") (",objNameGo(),", error)", OPEN);
+
+      s.a("func Read", objNameGo(), "With", fieldNameCamel, "(objValue ", fieldTypeStr, ") (", objNameGo(),
+          ", error)", OPEN);
       generateLockAndDeferUnlock(s);
-      s.a("mp := ",GLOBAL_DB,".getTable(",simTableNameGo(),")", CR, //
-          "for _, val := range mp.table.WrappedMap()",OPEN, //
-          "valMap := val.AsJSMap()",CR,
-          "fieldVal := valMap.OptAny(",quote(fieldNameSnake),")",CR, //
-          "// convert fieldVal to apppropriate type (int, string, etc)",CR //
-          );
-          var convExpr = "";
-          if (fieldTypeStr .equals("string")) {
-            convExpr = ".AsString()";
-          }
-          if (convExpr == null) 
-            badArg("don't know how to convert field of type:",fieldTypeStr);
-      //pr(VERT_SP,"fieldTypeStr:",fieldTypeStr,"convExpr:",convExpr);
-          s.a("if fieldVal",convExpr," == objValue",OPEN, //
-              "return Default",objNameGo(),".Parse(valMap).(",objNameGo(),"), nil",CLOSE, //
-              CLOSE, //
-              "return nil, NoSuchObjectErr",CLOSE);
-          
+      s.a("mp := ", GLOBAL_DB, ".getTable(", simTableNameGo(), ")", CR, //
+          "for _, val := range mp.table.WrappedMap()", OPEN, //
+          "valMap := val.AsJSMap()", CR, "fieldVal := valMap.OptAny(", quote(fieldNameSnake), ")", CR, //
+          "// convert fieldVal to apppropriate type (int, string, etc)", CR //
+      );
+      var convExpr = "";
+      if (fieldTypeStr.equals("string")) {
+        convExpr = ".AsString()";
+      }
+      if (convExpr == null)
+        badArg("don't know how to convert field of type:", fieldTypeStr);
+      s.a("if fieldVal", convExpr, " == objValue", OPEN, //
+          "return Default", objNameGo(), ".Parse(valMap).(", objNameGo(), "), nil", CLOSE, //
+          CLOSE, //
+          "return nil, NoSuchObjectErr", CLOSE);
+
       addChunk(s);
       return;
     }
@@ -285,7 +262,7 @@ public class SqlGen extends BaseObject {
     s.a("func ", funcName, "(rows *sql.Row) (int, error)", OPEN);
     s.a("var id int", CR);
     s.a("err := rows.Scan(&id)", CR);
-    s.a("if err ==  sql.ErrNoRows", OPEN, "err = ObjectNotFoundError", CLOSE);
+    s.a("if err ==  sql.ErrNoRows", OPEN, "err = NoSuchObjectErr", CLOSE);
     s.a("return id, err // missing cr here, wtf", CLOSE);
     todo("annoying lack of cr here");
   }
@@ -318,10 +295,15 @@ public class SqlGen extends BaseObject {
   }
 
   private void updateRecord() {
+
+    if (simulated()) {
+      notFinished("updateRecord");
+
+      return;
+    }
+
     var s = sourceBuilder();
     var d = mGeneratedTypeDef;
-
-    createConstantOnce(s, "var ObjectNotFoundError = errors.New(`object with requested id not found`)");
 
     var objNameGo = objNameGo();
     var objName = objName();
@@ -368,7 +350,7 @@ public class SqlGen extends BaseObject {
     s.a("count, err2 := result.RowsAffected()", CR, //
         "err = err2", CR, //
         "if err != nil { break } ", CR, //
-        "if count != 1 { err = ObjectNotFoundError }", CR, //
+        "if count != 1 { err = NoSuchObjectErr }", CR, //
         "break", CLOSE);
     s.a("return err", CLOSE);
     addChunk(s);
@@ -379,10 +361,15 @@ public class SqlGen extends BaseObject {
   }
 
   private void readRecord() {
+
+    if (simulated()) {
+      notFinished("readRecord");
+
+      return;
+    }
+
     var d = mGeneratedTypeDef;
     var s = sourceBuilder();
-
-    createConstantOnce(s, "var ObjectNotFoundError = errors.New(`object with requested id not found`)");
 
     var objNameGo = objNameGo();
     var objName = objName();
@@ -523,40 +510,10 @@ public class SqlGen extends BaseObject {
   }
 
   private void createRecord() {
-    todo("not all functions are adding lock wrapper");
     var d = mGeneratedTypeDef;
     var s = sourceBuilder();
 
     if (simulated()) {
-
-      //      func CreateAnimal(obj Animal) (Animal, error) {
-      //        singletonDatabase.Lock.Lock()
-      //        defer singletonDatabase.Lock.Unlock()
-      //        var err error
-      //        var createdObj Animal
-      //        result, err1 := stmtCreateAnimal.Exec(obj.State(), obj.Name(), obj.Summary(), obj.Details(), obj.CampaignTarget(), obj.CampaignBalance())
-      //        err = err1
-      //        if err == nil {
-      //          id, err2 := result.LastInsertId()
-      //          err = err2
-      //          if err == nil {
-      //            createdObj = obj.ToBuilder().SetId(int(id)).Build()
-      //          }
-      //        }
-      //        return createdObj, err
-      //      }
-
-      //      func (db Database) CreateAnimal(a AnimalBuilder) error {
-      //        db.lock()
-      //        defer db.unlock()
-      //        mp := db.getTable(tableNameAnimal)
-      //        id := mp.nextUniqueKey()
-      //        a.SetId(id)
-      //        mp.Put(id, a.Build())
-      //        db.setModified(mp)
-      //        return nil
-      //      }
-      //
       s.a("func Create", objNameGo(), "(obj ", objNameGo(), ") (", objNameGo(), ", error)", OPEN);
       generateLockAndDeferUnlock(s);
       s.a("mp := ", GLOBAL_DB, ".getTable(", simTableNameGo(), ")", CR, //
@@ -647,6 +604,11 @@ public class SqlGen extends BaseObject {
 
   private void createWithField(String fieldNameSnake) {
 
+    if (simulated()) {
+      notFinished("createWithField");
+      return;
+    }
+
     var fieldNameCamel = snakeToCamel(fieldNameSnake);
 
     var s = sourceBuilder();
@@ -679,7 +641,7 @@ public class SqlGen extends BaseObject {
         "existingId, err1 := Read", objNameGo, "With", fieldNameCamel, "(obj.", fieldNameCamel, "())", CR, //
         "Pr(`existing id:`,existingId)", CR, //
         "err = err1", CR, //
-        "if err == ObjectNotFoundError", OPEN, //
+        "if err == NoSuchObjectErr", OPEN, //
         "c, err2 := Create", objNameGo, "(obj)", CR, //
         "err = err2", CR, "created = c", CLOSE, "return created,err", CR, CLOSE);
     addChunk(s);
@@ -810,8 +772,7 @@ public class SqlGen extends BaseObject {
   private static final String GLOBAL_DB = "singletonDatabase";
   private static final String GLOBAL_LOCK = GLOBAL_DB + ".Lock";
   private static final String GLOBAL_SQL_DB = GLOBAL_DB + ".SqlDatabase";
-  
-  
+
   private DatagenConfig mConfig;
   private Set<String> mUniqueStringSet = hashSet();
   private int mState;
