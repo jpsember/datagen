@@ -7,10 +7,13 @@
 type DatabaseStruct struct {
   Base         BaseObject
   state        dbState
-  theLock      sync.Mutex
+  //theLock      sync.Mutex
   dataSourceName string
-  sqlDatabase    *sql.DB
+  //sqlDatabase    *sql.DB
 }
+
+var vSqlDb *sql.DB
+var vLock sync.Mutex
 
 type Database = *DatabaseStruct
 
@@ -38,6 +41,7 @@ func CreateDatabase(dataSourceName string)   {
 	b := singletonDatabase.Base
 	b.SetName("Database")
 	b.AlertVerbose()
+  singletonDatabase.Open()
 }
 
 func Db() Database {
@@ -62,8 +66,7 @@ func (b Database) Open() {
   if err != nil {
     BadState("Trouble opening sqlite database", INDENT, err)
   }
-  b.sqlDatabase = db
-
+  vSqlDb = db
 
 [!init_code1]
 [!init_code2]
@@ -86,15 +89,15 @@ func (db Database) lock() {
 
 // Attempt to acquire the lock on the database; if state isn't expectedState, releases lock and returns false
 func (db Database) tryLock(expectedState dbState) bool {
-  db.theLock.Lock()
+  vLock.Lock()
   if db.state != expectedState {
-    db.theLock.Unlock()
+    vLock.Unlock()
     return false
   }
   return true
 }
 
 func (db Database) unlock() {
-  db.theLock.Unlock()
+  vLock.Unlock()
 }
 

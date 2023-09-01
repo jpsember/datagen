@@ -25,10 +25,10 @@ public class SqlGen extends BaseObject {
   public void prepare() {
     log("prepare");
     incState(1);
-    mGlobalDbVar = uniqueVar("db");
-    mGlobalLockVar = uniqueVar("dbLock");
-    varCode().a("var ", mGlobalDbVar, " *sql.DB", CR);
-    varCode().a("var ", mGlobalLockVar, " *sync.Mutex", CR);
+//    mGlobalDbVar = uniqueVar("db");
+//    mGlobalLockVar = uniqueVar("dbLock");
+//    varCode().a("var ", mGlobalDbVar, " *sql.DB", CR);
+//    varCode().a("var ", mGlobalLockVar, " *sync.Mutex", CR);
   }
 
   public void setTypeDef(GeneratedTypeDef typeDef) {
@@ -770,8 +770,11 @@ public class SqlGen extends BaseObject {
   private List<IndexInfo> mIndexes;
   private GeneratedTypeDef mGeneratedTypeDef;
 
-  private String mGlobalDbVar;
-  private String mGlobalLockVar;
-
+//  private String mGlobalDbVar;
+//  private String mGlobalLockVar;
+  
+  private String mGlobalLockVar = "vLock";
+  private String mGlobalDbVar = "vSqlDb";
+  
   private DatagenConfig mConfig;
 }
