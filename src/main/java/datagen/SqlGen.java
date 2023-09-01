@@ -90,6 +90,7 @@ public class SqlGen extends BaseObject {
 
       JSMap m = map();
       m.put("package_decl", mPackageExpr);
+      
       m.put("code", mCode.toString());
 
       // Perform  macro substitution
@@ -437,6 +438,7 @@ public class SqlGen extends BaseObject {
     addChunk(s);
   }
 
+  
   private void createRecord() {
     todo("not all functions are adding lock wrapper");
     var d = mGeneratedTypeDef;

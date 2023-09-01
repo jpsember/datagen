@@ -4,33 +4,34 @@
 @@
 [!package_decl]
 
+
+
 import (
-	"database/sql"
+    // don't include this in simulation:
+	// "database/sql"
+
 	. "github.com/jpsember/golang-base/base"
-)
-
-
-import (
-  "errors"
-  . "github.com/jpsember/golang-base/base"
-  . "github.com/jpsember/golang-base/webapp/gen/webapp_data"
   "reflect"
   "sync"
 )
 
-// ------------------------------------------------------------------------------------
-// Our errors related to database operations
-// ------------------------------------------------------------------------------------
+
+
 
 type DatabaseStruct struct {
   Base         BaseObject
   state        dbState
   theLock      sync.Mutex
   memTables    map[string]MemTable
+  dataSourceName string
+
+  // Only in the simulation version:
+  //
   simFilesPath Path
 }
 
 type Database = *DatabaseStruct
+
 
 type dbState int
 
@@ -49,13 +50,13 @@ func newDatabase() Database {
   return t
 }
 
-func CreateDatabase() Database {
-  CheckState(singletonDatabase == nil, "<1Singleton database already exists")
-  singletonDatabase = newDatabase()
-  b := singletonDatabase.Base
-  b.SetName("Database")
-  b.AlertVerbose()
-  return Db()
+func CreateDatabase(dataSourceName string)   {
+	CheckState(singletonDatabase == nil, "<1Singleton database already exists")
+	singletonDatabase = newDatabase()
+	singletonDatabase.dataSourceName = dataSourceName
+	b := singletonDatabase.Base
+	b.SetName("Database")
+	b.AlertVerbose()
 }
 
 func Db() Database {
@@ -85,7 +86,7 @@ func (db Database) Open() {
   }
   defer db.unlock()
   db.state = dbStateOpen
-  db.createTables()
+// db.createTables()
 
   var bgndTask = func() {
     for {
@@ -110,15 +111,16 @@ func (db Database) Close() {
   }
 }
 
-func (db Database) setError(e error) bool {
-  if e != nil {
-    if db.err == nil {
-      db.err = e
-      Alert("<1#50Setting database error:", INDENT, e)
-    }
-  }
-  return db.err != nil
-}
+//func (db Database) setError(e error) bool {
+//  if e != nil {
+//    if db.err == nil {
+//      db.err = e
+//      Alert("<1#50Setting database error:", INDENT, e)
+//    }
+//  }
+//  return db.err != nil
+//}
+//
 
 const SECONDS = 1000
 const MINUTES = SECONDS * 60
@@ -271,7 +273,7 @@ func (db Database) tryLock(expectedState dbState) bool {
     db.theLock.Unlock()
     return false
   }
-  db.err = nil
+  //db.err = nil
   return true
 }
 
