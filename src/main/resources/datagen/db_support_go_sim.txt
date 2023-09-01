@@ -3,10 +3,12 @@
 @@// ---------------------------------------------------------------------------------------
 @@
 
+var NoSuchObjectErr = Error("No such object found")
+
 type DatabaseStruct struct {
   Base         BaseObject
+  Lock      sync.Mutex
   state        dbState
-  theLock      sync.Mutex
   dataSourceName string
 
   simFilesPath Path
@@ -76,7 +78,7 @@ func (db Database) Open() {
         return
       }
       db.flushChanges()
-      db.theLock.Unlock()
+      db.Lock.Unlock()
     }
   }
   go bgndTask()
@@ -236,9 +238,9 @@ func (db Database) lock() {
 
 // Attempt to acquire the lock on the database; if state isn't expectedState, releases lock and returns false
 func (db Database) tryLock(expectedState dbState) bool {
-  db.theLock.Lock()
+  db.Lock.Lock()
   if db.state != expectedState {
-    db.theLock.Unlock()
+    db.Lock.Unlock()
     return false
   }
   //db.err = nil
@@ -246,12 +248,7 @@ func (db Database) tryLock(expectedState dbState) bool {
 }
 
 func (db Database) unlock() {
-  db.theLock.Unlock()
+  db.Lock.Unlock()
 }
 
-func (db Database) failIfError(err error) {
-  if err != nil {
-    BadState("<1Serious error has occurred:", err)
-  }
-}
 
