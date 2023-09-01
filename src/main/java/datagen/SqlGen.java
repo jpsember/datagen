@@ -130,7 +130,6 @@ public class SqlGen extends BaseObject {
 
     Context.files.mkdirs(Files.parent(target));
     boolean wrote = Context.files.writeIfChanged(target, content);
-    todo("what does this do?");
     Context.generatedFilesSet.add(target);
     if (wrote)
       log(".....updated:", target);
@@ -253,8 +252,6 @@ public class SqlGen extends BaseObject {
     s.a("rows := ", stName, ".QueryRow(objValue)", CR, //
         "result, err := ", scanFuncName, "(rows)", CR, //
         "return result, err", CLOSE);
-    todo("why is there no space between previous code?");
-    todo("we should be formatting this generated function as well");
     addChunk(s);
   }
 
@@ -263,8 +260,7 @@ public class SqlGen extends BaseObject {
     s.a("var id int", CR);
     s.a("err := rows.Scan(&id)", CR);
     s.a("if err ==  sql.ErrNoRows", OPEN, "err = NoSuchObjectErr", CLOSE);
-    s.a("return id, err // missing cr here, wtf", CLOSE);
-    todo("annoying lack of cr here");
+    s.a("return id, err", CLOSE);
   }
 
   private File directory() {
@@ -272,11 +268,8 @@ public class SqlGen extends BaseObject {
       // Determine where the go source files were written, in order to place
       // the sql source file there as well
       File sample = Context.generatedFilesSet.iterator().next();
-      mCachedDir = sample.getParentFile();
-      checkState(mCachedDir.exists());
-      todo("if clean, delete sql product directory (but not here)");
+      mCachedDir = Files.assertDirectoryExists(sample.getParentFile());
     }
-
     return mCachedDir;
   }
 
@@ -372,10 +365,9 @@ public class SqlGen extends BaseObject {
     var objNameGo = objNameGo();
     var objName = objName();
 
-    s.a("func Read", objNameGo, "(objId int) (", objNameGo, ", error)", OPEN);
-    generateLockAndDeferUnlock(s);
-
     if (simulated()) {
+      s.a("func Read", objNameGo, "(objId int) (", objNameGo, ", error)", OPEN);
+      generateLockAndDeferUnlock(s);
       s.a("mp := ", GLOBAL_DB, ".getTable(", simTableNameGo(), ")", CR, //
           "if !mp.HasKey(objId)", OPEN, //
           "return nil, NoSuchObjectErr", CLOSE, //
@@ -392,6 +384,9 @@ public class SqlGen extends BaseObject {
       if (addScanFunc) {
         generateScanFunc(d, s, objNameGo, objName, scanFuncName);
       }
+
+      s.a("func Read", objNameGo, "(objId int) (", objNameGo, ", error)", OPEN);
+      generateLockAndDeferUnlock(s);
 
       s.a("rows := ", stName, ".QueryRow(objId)", CR, //
           "result, err := ", scanFuncName, "(rows)", CR, //
