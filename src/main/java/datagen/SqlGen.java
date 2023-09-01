@@ -365,37 +365,47 @@ public class SqlGen extends BaseObject {
 
   private void readRecord() {
 
-    if (simulated()) {
-      if ( alert("not done yet")) return;
-      
-      notFinished("readRecord");
-
-      return;
-    }
-
     var d = mGeneratedTypeDef;
     var s = sourceBuilder();
 
     var objNameGo = objNameGo();
     var objName = objName();
-    var stName = "stmtRead" + objNameGo;
-
-    varCode().a("var ", stName, " *sql.Stmt", CR);
-
-    initCode2().a(stName, " = CheckOkWith(db.Prepare(`SELECT * FROM ", objName, " WHERE id = ?`))", CR);
-
-    var scanFuncName = "scan" + objNameGo;
-    var addScanFunc = firstTimeInSet(scanFuncName);
-    if (addScanFunc) {
-      generateScanFunc(d, s, objNameGo, objName, scanFuncName);
-    }
 
     s.a("func Read", objNameGo, "(objId int) (", objNameGo, ", error)", OPEN);
     generateLockAndDeferUnlock(s);
 
-    s.a("rows := ", stName, ".QueryRow(objId)", CR, //
-        "result, err := ", scanFuncName, "(rows)", CR, //
-        "return result, err", CLOSE);
+    if (simulated()) {
+
+      //      func ReadFoo(id int) (Blob, error) {
+      //        singletonDatabase.Lock.Lock()
+      //        defer singletonDatabase.Lock.Unlock()
+      //        mp := singletonDatabase.getTable("foo")
+      //        if !mp.HasKey(id) {
+      //          return nil, NoSuchObjectErr
+      //        }
+      //        return mp.GetData(id, DefaultBlob).(Blob), nil
+      //      }
+      s.a("mp := ", GLOBAL_DB, ".getTable(", simTableNameGo(), ")", CR, //
+          "if !mp.HasKey(objId)", OPEN, //
+          "return nil, NoSuchObjectErr", CLOSE, //
+          "return mp.GetData(objId, Default", objNameGo, ").(", objNameGo(), "), nil", CLOSE);
+    } else {
+
+      var stName = "stmtRead" + objNameGo;
+      varCode().a("var ", stName, " *sql.Stmt", CR);
+
+      initCode2().a(stName, " = CheckOkWith(db.Prepare(`SELECT * FROM ", objName, " WHERE id = ?`))", CR);
+
+      var scanFuncName = "scan" + objNameGo;
+      var addScanFunc = firstTimeInSet(scanFuncName);
+      if (addScanFunc) {
+        generateScanFunc(d, s, objNameGo, objName, scanFuncName);
+      }
+
+      s.a("rows := ", stName, ".QueryRow(objId)", CR, //
+          "result, err := ", scanFuncName, "(rows)", CR, //
+          "return result, err", CLOSE);
+    }
     addChunk(s);
   }
 
@@ -610,8 +620,9 @@ public class SqlGen extends BaseObject {
   private void createWithField(String fieldNameSnake) {
 
     if (simulated()) {
-      if ( alert("not done yet")) return;
-       notFinished("createWithField");
+      if (alert("not done yet"))
+        return;
+      notFinished("createWithField");
       return;
     }
 
