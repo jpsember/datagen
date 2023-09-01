@@ -235,16 +235,6 @@ final class DataDefinitionParser extends BaseObject {
 
     Context.generatedTypeDef.setUnsafe(unsafeMode);
 
-    // Process optional sql information:
-    //
-    // sql ( ...args... )
-    //
-    //
-    if (readIf("sql")) {
-      Context.sql.setTypeDef(Context.generatedTypeDef);
-      processSqlInfo(Context.sql);
-    }
-
     read(BROP);
 
     while (true) {
@@ -310,6 +300,17 @@ final class DataDefinitionParser extends BaseObject {
 
       read(SEMI);
     }
+
+    // Process optional sql information:
+    //
+    // sql { ...args... }
+    //
+    //
+    if (readIf("sql")) {
+      Context.sql.setTypeDef(Context.generatedTypeDef);
+      processSqlInfo(Context.sql);
+    }
+
   }
 
   private void processSqlInfo(SqlGen sql) {
@@ -317,9 +318,9 @@ final class DataDefinitionParser extends BaseObject {
     if (db)
       scanner().setVerbose();
 
-    read(PAROP);
+    read(BROP);
 
-    while (!readIf(PARCL)) {
+    while (!readIf(BRCL)) {
 
       if (readIf("table")) {
         // Optionally has extra arguments (...)

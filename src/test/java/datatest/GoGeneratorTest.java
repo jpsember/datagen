@@ -166,15 +166,14 @@ public class GoGeneratorTest extends GenBaseTest {
     compile();
   }
 
-
   @Test
   public void alpha() {
-    p().pr("class sql() {", INDENT, //
+    p().pr("class{", INDENT, //
         "int id;", CR, //
         "string name;", CR, //
         "enum Level grad;", CR, //
         "bool alive;", CR, //
-        "}");
+        "} sql{ }");
     compile();
   }
 
@@ -184,12 +183,12 @@ public class GoGeneratorTest extends GenBaseTest {
   @Test
   public void bravo() {
     addArg("comments");
-    p().pr("class sql(index name) {", INDENT, //
+    p().pr("class {", INDENT, //
         "int id;", CR, //
         "string name;", CR, //
         "enum Level grad;", CR, //
         "bool alive;", CR, //
-        "}");
+        "} sql{index name}");
     compile();
   }
 
@@ -200,25 +199,13 @@ public class GoGeneratorTest extends GenBaseTest {
   public void charlie() {
     addArg("dbsim");
     addArg("comments");
-    p().pr("class sql(index name) {", INDENT, //
+    p().pr("class {", INDENT, //
         "int id;", CR, //
         "string name;", CR, //
         "enum Level grad;", CR, //
         "bool alive;", CR, //
-        "}");
+        "} sql{index name}");
     compile();
   }
 
-  
-  
-  @Test
-  public void sqlGenInactive() {
-    p().pr("class /*sql(table)*/ {", INDENT, //
-        "int id;", CR, //
-        "string name;", CR, //
-        "enum Level grad;", CR, //
-        "bool alive;", CR, //
-        "}");
-    compile();
-  }
 }
