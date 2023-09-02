@@ -120,7 +120,7 @@ func NewMemTable(name string) MemTable {
     table: NewJSMap(),
   }
   t.Base.SetName("MemTable(" + name + ")")
-  t.Base.AlertVerbose()
+  //t.Base.AlertVerbose()
   return t
 }
 
