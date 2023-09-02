@@ -1,0 +1,64 @@
+@@// ---------------------------------------------------------------------------------------
+@@// This is Go code common to Sqlite and Simulation
+@@// ---------------------------------------------------------------------------------------
+@@
+
+var NoSuchObjectErr = Error("No such object found")
+
+
+type Database = *DatabaseStruct
+
+
+type dbState int
+
+const (
+  dbStateNew dbState = iota
+  dbStateOpen
+  dbStateClosed
+)
+
+var singletonDatabase Database
+
+
+func CreateDatabase(dataSourceName string)   {
+	CheckState(singletonDatabase == nil, "<1Singleton database already exists")
+	singletonDatabase = newDatabase()
+	singletonDatabase.dataSourceName = dataSourceName
+	b := singletonDatabase.Base
+	b.SetName("Database")
+	b.AlertVerbose()
+	singletonDatabase.Open()
+}
+
+func Db() Database {
+  CheckState(singletonDatabase != nil, "<1No database created yet")
+  return singletonDatabase
+}
+
+
+
+
+
+// Acquire the lock on the database, and clear the error register.
+func (db Database) lock() {
+  if !db.tryLock(dbStateOpen) {
+    BadState("<1Illegal state:", db.state)
+  }
+}
+
+// Attempt to acquire the lock on the database; if state isn't expectedState, releases lock and returns false
+func (db Database) tryLock(expectedState dbState) bool {
+  db.Lock.Lock()
+  if db.state != expectedState {
+    db.Lock.Unlock()
+    return false
+  }
+  //db.err = nil
+  return true
+}
+
+func (db Database) unlock() {
+  db.Lock.Unlock()
+}
+
+

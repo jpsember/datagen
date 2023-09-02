@@ -88,6 +88,7 @@ public class SqlGen extends BaseObject {
       m.put("additional_imports", x.getContent());
     }
 
+    m.put("support_common", Files.readString(SourceGen.class, "db_support_go_common.txt"));
     {
       var tn = simulated() ? "db_support_go_sim.txt" : "db_support_go_sqlite.txt";
       m.put("support", Files.readString(SourceGen.class, tn));
@@ -208,7 +209,7 @@ public class SqlGen extends BaseObject {
       s.a("if fieldVal", convExpr, " == objValue", OPEN, //
           "return Default", ci.objNameGo, ".Parse(valMap).(", ci.objNameGo, "), nil", CLOSE, //
           CLOSE, //
-          "return nil, NoSuchObjectErr", CLOSE);
+          "return nil, nil", CLOSE);
 
       addChunk(s);
       return;
@@ -261,7 +262,7 @@ public class SqlGen extends BaseObject {
     s.a("func ", funcName, "(rows *sql.Row) (int, error)", OPEN);
     s.a("var id int", CR);
     s.a("err := rows.Scan(&id)", CR);
-    s.a("if err ==  sql.ErrNoRows", OPEN, "err = NoSuchObjectErr", CLOSE);
+    s.a("if err ==  sql.ErrNoRows", OPEN, "err = nil", CLOSE);
     s.a("return id, err", CLOSE);
   }
 
@@ -372,7 +373,7 @@ public class SqlGen extends BaseObject {
       generateLockAndDeferUnlock(s);
       s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableName, ")", CR, //
           "if !mp.HasKey(objId)", OPEN, //
-          "return nil, NoSuchObjectErr", CLOSE, //
+          "return nil, nil", CLOSE, //
           "return mp.GetData(objId, Default", objNameGo, ").(", ci.objNameGo, "), nil", CLOSE);
     } else {
 
@@ -555,7 +556,7 @@ public class SqlGen extends BaseObject {
     for (var f : filtFields) {
       s.a(COMMA, "obj.");
       s.a(f.getterName(), "()");
-      todo("we may need to convert getter output to something else, e.g. string or int");
+      // todo("we may need to convert getter output to something else, e.g. string or int");
     }
     s.endComma();
     s.a(")", CR);
@@ -625,11 +626,6 @@ public class SqlGen extends BaseObject {
           "return nil, nil", CLOSE, //
           CLOSE);
 
-      //    obj  = obj.ToBuilder().SetId(mp.nextUniqueKey()).Build()
-      //    mp.Put(obj.Id(),obj)
-      //    mp.modified = true
-      //    return obj, nil
-      //  }
       s.a("obj = obj.ToBuilder().SetId(mp.nextUniqueKey()).Build()", CR, //
           "mp.Put(obj.Id(), obj)", CR, //
           "mp.modified = true", CR, //
@@ -637,15 +633,10 @@ public class SqlGen extends BaseObject {
 
     } else {
       var objNameGo = ci.objNameGo;
-      var objName = ci.objName;
-
-      var stName = "stmtCreate" + objName + "With" + fieldNameSnake;
-
-      varCode().a("var ", stName, " *sql.Stmt", CR);
 
       s.a("// Use our own lock here; the functions we call will use the usual lock.", CR, //
           "// Our own lock prevents other threads from calling this specific function.", CR, //
-          "// So, if this function is the only one called to create objects, the uniqueness", CR, //
+          "// So, if this function is the only one called to create these objects, the uniqueness", CR, //
           "// property will hold.", CR);
 
       var ourLockVar = uniqueVar("lockCreateWith");
@@ -658,14 +649,12 @@ public class SqlGen extends BaseObject {
           "var created ", objNameGo, CR, //
 
           "existingId, err1 := Read", objNameGo, "With", fieldNameCamel, "(obj.", fieldNameCamel, "())", CR, //
-          "Pr(`existing id:`,existingId)", CR, //
           "err = err1", CR, //
-          "if err == NoSuchObjectErr", OPEN, //
+          "if err == nil && existingId == 0", OPEN, //
           "c, err2 := Create", objNameGo, "(obj)", CR, //
           "err = err2", CR, "created = c", CLOSE, "return created,err", CR, CLOSE);
     }
     addChunk(s);
-
   }
 
   private void addChunk(SourceBuilder sb) {
@@ -697,27 +686,6 @@ public class SqlGen extends BaseObject {
   }
 
   private int mUniqueVarCounter;
-
-  //  private String objName() {
-  //    if (mCachedObjName == null) {
-  //      mCachedObjName = DataUtil.convertCamelCaseToUnderscores(objNameGo());
-  //    }
-  //    return mCachedObjName;
-  //  }
-  //
-  //  private String objNameGo() {
-  //    if (mCachedObjNameGo == null) {
-  //      mCachedObjNameGo = mGeneratedTypeDef.qualifiedName().className();
-  //    }
-  //    return mCachedObjNameGo;
-  //  }
-  //
-  //  private String simTableNameGo() {
-  //    if (mCachedSimTableNameGo == null) {
-  //      mCachedSimTableNameGo = quote(objName());
-  //    }
-  //    return mCachedSimTableNameGo;
-  //  }
 
   private Set<String> mUniqueIndexNames = hashSet();
 
