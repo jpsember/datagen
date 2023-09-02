@@ -59,6 +59,7 @@ public class DatagenOper extends AppOper {
 
   @Override
   public void perform() {
+    cmdLineArgs().assertArgsDone();
     DatagenConfig config = datagenConfig();
     Context.prepare(files(), config);
 
@@ -273,8 +274,10 @@ public class DatagenOper extends AppOper {
   private File determineGenDirectory(File sourceFile) {
     String path = sourceFile.toString();
     int cursor = path.lastIndexOf("/gen/");
-    if (cursor < 0)
+    if (cursor < 0) {
+    //  pr("determine gen directory, sourceFile:",INDENT, Files.infoMap(sourceFile));
       setError("Cannot find generated directory for source file:", sourceFile);
+    }
     return new File(path.substring(0, cursor) + "/gen");
   }
 
