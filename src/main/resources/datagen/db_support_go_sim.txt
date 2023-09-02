@@ -76,10 +76,6 @@ func (db Database) Close() {
   }
 }
 
-const SECONDS = 1000
-const MINUTES = SECONDS * 60
-const HOURS = MINUTES * 60
-
 func (db Database) flushTable(mt MemTable) {
   p := db.getSimFile(mt)
   p.WriteStringM(mt.table.CompactString())

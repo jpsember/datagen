@@ -19,7 +19,6 @@ const (
 
 var singletonDatabase Database
 
-
 func CreateDatabase(dataSourceName string)   {
 	CheckState(singletonDatabase == nil, "<1Singleton database already exists")
 	singletonDatabase = newDatabase()
@@ -53,7 +52,6 @@ func (db Database) tryLock(expectedState dbState) bool {
     db.Lock.Unlock()
     return false
   }
-  //db.err = nil
   return true
 }
 
