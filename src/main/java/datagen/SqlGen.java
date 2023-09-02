@@ -28,8 +28,7 @@ public class SqlGen extends BaseObject {
   }
 
   public void setTypeDef(GeneratedTypeDef typeDef) {
-    clearItemsForNewClass();
-    todo("clean up lifecycle of SqlGen");
+    ci = new ClassInfo();
     mGeneratedTypeDef = typeDef;
     var pkg = determinePackage();
     if (mPackageExpr == null) {
@@ -154,12 +153,8 @@ public class SqlGen extends BaseObject {
     return "package " + pkgName;
   }
 
-  private void clearItemsForNewClass() {
-    ci = new ClassInfo();
-    todo("this is error prone; have a separate container class that gets rebuilt");
-  }
-
   private static class ClassInfo {
+
     String objName;
     String objNameGo;
     String simTableName;

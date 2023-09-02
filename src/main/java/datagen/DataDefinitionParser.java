@@ -307,16 +307,18 @@ final class DataDefinitionParser extends BaseObject {
     //
     //
     if (readIf("sql")) {
-      Context.sql.setTypeDef(Context.generatedTypeDef);
-      processSqlInfo(Context.sql);
+      processSqlInfo();
     }
 
   }
 
-  private void processSqlInfo(SqlGen sql) {
+  private void processSqlInfo() {
     boolean db = false;
     if (db)
       scanner().setVerbose();
+
+    SqlGen sql = Context.sql;
+    sql.setTypeDef(Context.generatedTypeDef);
 
     read(BROP);
 
@@ -336,16 +338,10 @@ final class DataDefinitionParser extends BaseObject {
         List<String> fields = arrayList();
         if (readIf(PAROP)) {
           while (!readIf(PARCL)) {
-            var fieldName = read().text();
-            todo("check if looks like a field name");
-            fields.add(fieldName);
+            readFieldName(fields);
           }
         } else {
-          Token t = read();
-          var fieldName = t.text();
-          if (!isValidIdentifier(fieldName))
-            throw t.fail("Not a valid field name");
-          fields.add(fieldName);
+          readFieldName(fields);
         }
         sql.addIndex(fields);
         continue;
@@ -355,6 +351,14 @@ final class DataDefinitionParser extends BaseObject {
     }
     if (db)
       scanner().setVerbose(false);
+  }
+
+  private void readFieldName(List<String> fields) {
+    Token t = read();
+    var fieldName = t.text();
+    if (!isValidIdentifier(fieldName))
+      throw t.fail("Not a valid field name");
+    fields.add(fieldName);
   }
 
   public static boolean isValidIdentifier(String s) {
