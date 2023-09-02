@@ -176,8 +176,7 @@ public class SqlGen extends BaseObject {
 
     var s = sourceBuilder();
     var fieldNameCamel = snakeToCamel(fieldNameSnake);
-    
-    
+
     var d = mGeneratedTypeDef;
     FieldDef our = null;
     for (var fd : d.fields()) {
@@ -188,15 +187,14 @@ public class SqlGen extends BaseObject {
     checkState(our != null, "can't find field with name:", fieldNameSnake);
     var fieldTypeStr = our.dataType().qualifiedName().className();
 
-    
     s.a("// Read ", ci.objNameGo, " whose ", fieldNameCamel, " matches a value.", CR, //
         "// Returns the object if successful.  If not found, returns the default object.", CR, //
         "// If some other database error, returns an error.", CR);
     s.a("func Read", ci.objNameGo, "With", fieldNameCamel, "(objValue ", fieldTypeStr, ") (", ci.objNameGo,
         ", error)", OPEN);
     generateLockAndDeferUnlock(s);
-    
- if (simulated()) {
+
+    if (simulated()) {
       s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableName, ")", CR, //
           "for _, val := range mp.table.WrappedMap()", OPEN, //
           "valMap := val.AsJSMap()", CR, "fieldVal := valMap.OptAny(", quote(fieldNameSnake), ")", CR, //
@@ -217,8 +215,6 @@ public class SqlGen extends BaseObject {
       return;
     }
 
-//    var d = mGeneratedTypeDef;
-  
     var objNameGo = ci.objNameGo;
     var objName = ci.objName;
     var stName = "stmtReadByField" + objNameGo;
@@ -232,44 +228,23 @@ public class SqlGen extends BaseObject {
 
     var scanFuncName = "scanByField" + fieldNameCamel + objNameGo;
     var addScanFunc = firstTimeInSet(scanFuncName);
-   
-    //
-    //    FieldDef our = null;
-    //    for (var fd : d.fields()) {
-    //      if (fd.name().equals(fieldNameSnake)) {
-    //        our = fd;
-    //      }
-    //    }
-    //    checkState(our != null, "can't find field with name:", fieldNameSnake);
-    //    var fieldTypeStr = our.dataType().qualifiedName().className();
 
-//    s.a("// Read ", objNameGo, " whose ", fieldNameCamel, " matches a value.", CR, //
-//        "// Returns the object if successful.  If not found, returns the default object.", CR, //
-//        "// If some other database error, returns an error.", CR);
-
-   // s.a("func Read", objNameGo, "With", fieldNameCamel, "(objValue ", fieldTypeStr, ") (int, error)", OPEN);
-
-    s.a(
-        "var err error",CR,//
-        "object := Default",objNameGo,CR, //
+    s.a("var err error", CR, //
+        "object := Default", objNameGo, CR, //
         "rows := ", stName, ".QueryRow(objValue)", CR, //
         "objId, err1 := ", scanFuncName, "(rows)", CR, //
-        "err = err1",CR,//
-        "// ...assumes if an error occurred that the id is zero",CR, //
-        "if objId != 0",OPEN, //
-       // "return Default",objNameGo,", err1", "} else {",CR, //
-//        rows := stmtReadUser.QueryRow(objId)
-//        result, err := scanUser(rows)
-//        return result, err
-        "// Use the same code to read the item that is used in ReadXXX, but without locking again",CR, //
-        "rows := stmtRead",objNameGo,".QueryRow(objId)",CR, //
-        "object, err = scan",objNameGo,"(rows)",CLOSE, //
+        "err = err1", CR, //
+        "// ...assumes if an error occurred that the id is zero", CR, //
+        "if objId != 0", OPEN, //
+        "// Use the same code to read the item that is used in ReadXXX, but without locking again", CR, //
+        "rows := stmtRead", objNameGo, ".QueryRow(objId)", CR, //
+        "object, err = scan", objNameGo, "(rows)", CLOSE, //
         "return object, err", CLOSE);
-    
+
     if (addScanFunc) {
       generateScanByFieldFunc(d, s, scanFuncName);
     }
-    
+
     addChunk(s);
   }
 
@@ -671,13 +646,9 @@ public class SqlGen extends BaseObject {
           "// So, if this function is the only one called to create these objects, the uniqueness", CR, //
           "// property will hold.", CR);
 
-      var ourLockVar = uniqueVar("lockCreateWith");
-      varCode().a("var ", ourLockVar, " sync.Mutex", CR);
+      newLockAndDeferUnlock(s);
 
-      s.a(ourLockVar, ".Lock()", CR, //
-          "defer ", ourLockVar, ".Unlock()", CR, //
-          //
-          "var err error", CR, //
+      s.a("var err error", CR, //
           "created := Default", objNameGo, CR, //
 
           "existingObj, err1 := Read", objNameGo, "With", fieldNameCamel, "(obj.", fieldNameCamel, "())", CR, //
@@ -687,6 +658,17 @@ public class SqlGen extends BaseObject {
           "err = err2", CR, "created = c", CLOSE, "return created,err", CR, CLOSE);
     }
     addChunk(s);
+  }
+
+  /**
+   * Create a new (global) lock, and generate the code to lock it and defer
+   * unlocking it
+   */
+  private void newLockAndDeferUnlock(SourceBuilder s) {
+    var ourLockVar = uniqueVar("privateLock");
+    varCode().a("var ", ourLockVar, " sync.Mutex", CR);
+    s.a(ourLockVar, ".Lock()", CR, //
+        "defer ", ourLockVar, ".Unlock()", CR);
   }
 
   private void addChunk(SourceBuilder sb) {
