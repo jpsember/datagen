@@ -102,7 +102,6 @@ public class SqlGen extends BaseObject {
     // Keep performing macro substitution until the output doesn't change.
     // This is so we can embed macro keys within other macros' values.
     // 
-
     String template = Files.readString(SourceGen.class, "db_template_go.txt");
     String content = null;
     while (true) {
@@ -180,7 +179,7 @@ public class SqlGen extends BaseObject {
       var fieldNameCamel = snakeToCamel(fieldNameSnake);
 
       s.a("// Read ", ci.objNameGo, " whose ", fieldNameCamel, " matches a value.", CR, //
-          "// Returns the object if successful.  If not found, returns nil.", CR, //
+          "// Returns the object if successful.  If not found, returns the default object.", CR, //
           "// If some other database error, returns an error.", CR);
       var d = mGeneratedTypeDef;
       FieldDef our = null;
@@ -209,7 +208,7 @@ public class SqlGen extends BaseObject {
       s.a("if fieldVal", convExpr, " == objValue", OPEN, //
           "return Default", ci.objNameGo, ".Parse(valMap).(", ci.objNameGo, "), nil", CLOSE, //
           CLOSE, //
-          "return nil, nil", CLOSE);
+          "return Default",ci.objNameGo,", nil", CLOSE);
 
       addChunk(s);
       return;
@@ -246,7 +245,7 @@ public class SqlGen extends BaseObject {
     var fieldTypeStr = our.dataType().qualifiedName().className();
 
     s.a("// Read ", objNameGo, " whose ", fieldNameCamel, " matches a value.", CR, //
-        "// Returns the object if successful.  If not found, returns nil.", CR, //
+        "// Returns the object if successful.  If not found, returns the default object.", CR, //
         "// If some other database error, returns an error.", CR);
 
     s.a("func Read", objNameGo, "With", fieldNameCamel, "(objValue ", fieldTypeStr, ") (int, error)", OPEN);
@@ -401,9 +400,9 @@ public class SqlGen extends BaseObject {
   private void generateScanFunc(GeneratedTypeDef d, SourceBuilder s, String objNameGo, String objName,
       String funcName) {
     s.a("// Return a non-nil error only if an error other than 'not found'.", CR);
-    s.a("func ", funcName, "(rows *sql.Row) (", objNameGo, "Builder, error)", OPEN);
+    s.a("func ", funcName, "(rows *sql.Row) (", objNameGo, ", error)", OPEN);
 
-    s.a("var b ", objNameGo, "Builder", CR);
+    s.a("obj := Default", objNameGo, CR);
 
     List<String> fieldNames = arrayList();
     List<FieldDef> filtFields = d.fields();
@@ -427,16 +426,17 @@ public class SqlGen extends BaseObject {
 
     s.a("if err ==  sql.ErrNoRows", OPEN, "err = nil } else {", CR, //
         "if err == nil", OPEN, //
-        "b = New", objNameGo, "()", CR);
+        "b := New", objNameGo, "()", CR);
     var i = INIT_INDEX;
     for (var v : filtFields) {
       i++;
       s.a("b.", v.setterName(), "(", fieldNames.get(i), ")", CR);
     }
+    s.a("obj = b.Build()");
     s.a(CLOSE);
     s.a(CLOSE);
 
-    s.a("return b, err", CLOSE);
+    s.a("return obj, err", CLOSE);
     addCr(s);
   }
 
@@ -549,7 +549,7 @@ public class SqlGen extends BaseObject {
     }
 
     s.a("var err error", CR, //
-        "var createdObj ", objNameGo, CR, //
+        "createdObj := Default", objNameGo, CR, //
         "result, err1 := ", stName, ".Exec(");
 
     s.startComma();
@@ -596,7 +596,7 @@ public class SqlGen extends BaseObject {
 
     var nm = ci.objNameGo;
     s.a("// Create ", nm, " with the given (unique) ", fieldNameSnake,
-        "; return nil if already exists; non-nil err if some other problem.", CR);
+        "; return default object if already exists; non-nil err if some other problem.", CR);
     s.a("func Create", nm, "With", fieldNameCamel, "(obj ", nm, ") (", nm, ", error)", OPEN);
 
     if (simulated()) {
@@ -623,7 +623,7 @@ public class SqlGen extends BaseObject {
         badArg("don't know how to convert field of type:", fieldTypeStr);
 
       s.a("if fieldVal", convExpr, " == obj.", fieldNameCamel, "()", OPEN, //
-          "return nil, nil", CLOSE, //
+          "return Default",ci.objNameGo,", nil", CLOSE, //
           CLOSE);
 
       s.a("obj = obj.ToBuilder().SetId(mp.nextUniqueKey()).Build()", CR, //
@@ -646,7 +646,7 @@ public class SqlGen extends BaseObject {
           "defer ", ourLockVar, ".Unlock()", CR, //
           //
           "var err error", CR, //
-          "var created ", objNameGo, CR, //
+          "created := Default", objNameGo, CR, //
 
           "existingId, err1 := Read", objNameGo, "With", fieldNameCamel, "(obj.", fieldNameCamel, "())", CR, //
           "err = err1", CR, //
