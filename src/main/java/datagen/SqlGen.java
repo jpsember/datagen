@@ -42,7 +42,7 @@ public class SqlGen extends BaseObject {
   public void addIndex(List<String> fields) {
     IndexInfo info = new IndexInfo();
     info.typeName = ci.objName;
-    info.tableName = tableNameGo();
+    info.tableName = mGeneratedTypeDef.qualifiedName().className();
     info.mFieldNames.addAll(fields);
     ci.ind.add(info);
   }
@@ -70,15 +70,10 @@ public class SqlGen extends BaseObject {
     if (!mWasActive)
       return;
 
-    //    if (simulated()) {
-    //      todo("add simulated support");
-    //      writeCommonSimFunction();
-    //    } else {
     constructTables();
     createIndexes();
 
     includeVars();
-    //includeMiscCode();
 
     JSMap m = map();
     m.put("package_decl", mPackageExpr);
@@ -108,8 +103,6 @@ public class SqlGen extends BaseObject {
     // 
 
     String template = Files.readString(SourceGen.class, "db_template_go.txt");
-    ;
-
     String content = null;
     while (true) {
       MacroParser parser = new MacroParser();
@@ -453,15 +446,6 @@ public class SqlGen extends BaseObject {
   private boolean firstTimeInSet(String object) {
     return mUniqueStringSet.add(object);
   }
-
-  private String tableNameGo() {
-    if (mCachedTableNameGo == null) {
-      mCachedTableNameGo = mGeneratedTypeDef.qualifiedName().className();
-    }
-    return mCachedTableNameGo;
-  }
-
-  private String mCachedTableNameGo;
 
   private void createTable() {
     if (simulated())
