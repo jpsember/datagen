@@ -42,10 +42,10 @@ public class SqlGen extends BaseObject {
 
   public void addIndex(List<String> fields) {
     IndexInfo info = new IndexInfo();
-    info.typeName = objName();
+    info.typeName = ci.objName;
     info.tableName = tableNameGo();
     info.mFieldNames.addAll(fields);
-    mIndexes.add(info);
+    ci.ind.add(info);
   }
 
   public void generate() {
@@ -155,15 +155,29 @@ public class SqlGen extends BaseObject {
   }
 
   private void clearItemsForNewClass() {
+    ci = new ClassInfo();
     todo("this is error prone; have a separate container class that gets rebuilt");
-    mCachedObjName = null;
-    mCachedObjNameGo = null;
-    mCachedSimTableNameGo = null;
-    mIndexes = arrayList();
   }
 
+  private static class ClassInfo {
+    String objName;
+    String objNameGo;
+    String simTableName;
+    List<IndexInfo> ind = arrayList();
+
+    public ClassInfo() {
+      var t = Context.generatedTypeDef;
+      objNameGo = t.qualifiedName().className();
+      objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
+      simTableName = quote(objName);
+    }
+
+  }
+
+  private ClassInfo ci;
+
   private void indexFunc() {
-    for (var info : mIndexes) {
+    for (var info : ci.ind) {
       checkState(info.mFieldNames.size() == 1, "unexpected number of fields");
       var fieldName = info.mFieldNames.get(0);
       readByField(fieldName);
@@ -176,7 +190,7 @@ public class SqlGen extends BaseObject {
       var s = sourceBuilder();
       var fieldNameCamel = snakeToCamel(fieldNameSnake);
 
-      s.a("// Read ", objNameGo(), " whose ", fieldNameCamel, " matches a value.", CR, //
+      s.a("// Read ", ci.objNameGo, " whose ", fieldNameCamel, " matches a value.", CR, //
           "// Returns the object if successful.  If not found, returns nil.", CR, //
           "// If some other database error, returns an error.", CR);
       var d = mGeneratedTypeDef;
@@ -189,10 +203,10 @@ public class SqlGen extends BaseObject {
       checkState(our != null, "can't find field with name:", fieldNameSnake);
       var fieldTypeStr = our.dataType().qualifiedName().className();
 
-      s.a("func Read", objNameGo(), "With", fieldNameCamel, "(objValue ", fieldTypeStr, ") (", objNameGo(),
+      s.a("func Read", ci.objNameGo, "With", fieldNameCamel, "(objValue ", fieldTypeStr, ") (", ci.objNameGo,
           ", error)", OPEN);
       generateLockAndDeferUnlock(s);
-      s.a("mp := ", GLOBAL_DB, ".getTable(", simTableNameGo(), ")", CR, //
+      s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableName, ")", CR, //
           "for _, val := range mp.table.WrappedMap()", OPEN, //
           "valMap := val.AsJSMap()", CR, "fieldVal := valMap.OptAny(", quote(fieldNameSnake), ")", CR, //
           "// convert fieldVal to apppropriate type (int, string, etc)", CR //
@@ -204,7 +218,7 @@ public class SqlGen extends BaseObject {
       if (convExpr == null)
         badArg("don't know how to convert field of type:", fieldTypeStr);
       s.a("if fieldVal", convExpr, " == objValue", OPEN, //
-          "return Default", objNameGo(), ".Parse(valMap).(", objNameGo(), "), nil", CLOSE, //
+          "return Default", ci.objNameGo, ".Parse(valMap).(", ci.objNameGo, "), nil", CLOSE, //
           CLOSE, //
           "return nil, NoSuchObjectErr", CLOSE);
 
@@ -216,8 +230,8 @@ public class SqlGen extends BaseObject {
     var s = sourceBuilder();
     var fieldNameCamel = snakeToCamel(fieldNameSnake);
 
-    var objNameGo = objNameGo();
-    var objName = objName();
+    var objNameGo = ci.objNameGo;
+    var objName = ci.objName;
     var stName = "stmtReadByField" + objNameGo;
 
     varCode().a("var ", stName, " *sql.Stmt", CR);
@@ -292,13 +306,13 @@ public class SqlGen extends BaseObject {
     var s = sourceBuilder();
     var d = mGeneratedTypeDef;
 
-    var objNameGo = objNameGo();
-    var objName = objName();
+    var objNameGo = ci.objNameGo;
+    var objName = ci.objName;
     s.a("func Update", objNameGo, "(obj ", objNameGo, ") error", OPEN);
 
     if (simulated()) {
       generateLockAndDeferUnlock(s);
-      s.a("tbl := ", GLOBAL_DB, ".getTable(", simTableNameGo(), ")", CR, //
+      s.a("tbl := ", GLOBAL_DB, ".getTable(", ci.simTableName, ")", CR, //
           "if !tbl.HasKey(obj.Id())", OPEN, //
           "return NoSuchObjectErr", CLOSE, //
           "tbl.Put(obj.Id(),obj.Build())", CR, //
@@ -362,16 +376,16 @@ public class SqlGen extends BaseObject {
     var d = mGeneratedTypeDef;
     var s = sourceBuilder();
 
-    var objNameGo = objNameGo();
-    var objName = objName();
+    var objNameGo = ci.objNameGo;
+    var objName = ci.objName;
 
     if (simulated()) {
       s.a("func Read", objNameGo, "(objId int) (", objNameGo, ", error)", OPEN);
       generateLockAndDeferUnlock(s);
-      s.a("mp := ", GLOBAL_DB, ".getTable(", simTableNameGo(), ")", CR, //
+      s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableName, ")", CR, //
           "if !mp.HasKey(objId)", OPEN, //
           "return nil, NoSuchObjectErr", CLOSE, //
-          "return mp.GetData(objId, Default", objNameGo, ").(", objNameGo(), "), nil", CLOSE);
+          "return mp.GetData(objId, Default", objNameGo, ").(", ci.objNameGo, "), nil", CLOSE);
     } else {
 
       var stName = "stmtRead" + objNameGo;
@@ -507,9 +521,10 @@ public class SqlGen extends BaseObject {
     var s = sourceBuilder();
 
     if (simulated()) {
-      s.a("func Create", objNameGo(), "(obj ", objNameGo(), ") (", objNameGo(), ", error)", OPEN);
+      var objNameGo = ci.objNameGo;
+      s.a("func Create", objNameGo, "(obj ", objNameGo, ") (", objNameGo, ", error)", OPEN);
       generateLockAndDeferUnlock(s);
-      s.a("mp := ", GLOBAL_DB, ".getTable(", simTableNameGo(), ")", CR, //
+      s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableName, ")", CR, //
           "id := mp.nextUniqueKey()", CR, //
           "obj = obj.ToBuilder().SetId(id).Build()", CR, //
           "mp.Put(id, obj)", CR, //
@@ -519,8 +534,8 @@ public class SqlGen extends BaseObject {
       return;
     }
 
-    var objNameGo = objNameGo();
-    var objName = objName();
+    var objNameGo = ci.objNameGo;
+    var objName = ci.objName;
     var stName = "stmtCreate" + objNameGo;
 
     varCode().a("var ", stName, " *sql.Stmt", CR);
@@ -580,7 +595,7 @@ public class SqlGen extends BaseObject {
   private void createIndexSpecific() {
     // If there's an index on a specific (non key) field, add Create<Type>With<Field> methods
 
-    for (var info : mIndexes) {
+    for (var info : ci.ind) {
       // We only do this if there is a single field in the index
       if (info.mFieldNames.size() != 1)
         continue;
@@ -599,31 +614,13 @@ public class SqlGen extends BaseObject {
 
     var s = sourceBuilder();
 
-    s.a("// Create ", objNameGo(), " with the given (unique) ", fieldNameSnake,
+    var nm = ci.objNameGo;
+    s.a("// Create ", nm, " with the given (unique) ", fieldNameSnake,
         "; return nil if already exists; non-nil err if some other problem.", CR);
-    s.a("func Create", objNameGo(), "With", fieldNameCamel, "(obj ", objNameGo(), ") (", objNameGo(),
-        ", error)", OPEN);
+    s.a("func Create", nm, "With", fieldNameCamel, "(obj ", nm, ") (", nm, ", error)", OPEN);
 
     if (simulated()) {
-      //      func CreateBlobWithName(obj Blob) (Blob, error) {
-      //       singletonDatabase.Lock.Lock()
-      //        defer singletonDatabase.Lock.Unlock()
-      //        mp := singletonDatabase.getTable("blob")
-      //        for _, val := range mp.table.WrappedMap() {
-      //          valMap := val.AsJSMap()
-      //          fieldVal := valMap.OptAny("name")
-      //          // convert fieldVal to apppropriate type (int, string, etc)
-      //          if fieldVal.AsString() == obj.Name() {
-      //            return nil, nil
-      //          }
-      //        }
-      //        obj  = obj.ToBuilder().SetId(mp.nextUniqueKey()).Build()
-      //        mp.Put(obj.Id(),obj)
-      //        mp.modified = true
-      //        return obj, nil
-      //      }
-      //
-      s.a("mp := ", GLOBAL_DB, ".getTable(", simTableNameGo(), ")", CR, //
+      s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableName, ")", CR, //
           "for _, val := range mp.table.WrappedMap()", OPEN, //
           "valMap := val.AsJSMap()", CR, "fieldVal := valMap.OptAny(", quote(fieldNameSnake), ")", CR, //
           "// convert fieldVal to appropriate type (int, string, etc)", CR);
@@ -660,8 +657,8 @@ public class SqlGen extends BaseObject {
           "return obj, nil", CLOSE);
 
     } else {
-      var objNameGo = objNameGo();
-      var objName = objName();
+      var objNameGo = ci.objNameGo;
+      var objName = ci.objName;
 
       var stName = "stmtCreate" + objName + "With" + fieldNameSnake;
 
@@ -722,32 +719,26 @@ public class SqlGen extends BaseObject {
 
   private int mUniqueVarCounter;
 
-  private String objName() {
-    if (mCachedObjName == null) {
-      mCachedObjName = DataUtil.convertCamelCaseToUnderscores(objNameGo());
-    }
-    return mCachedObjName;
-  }
-
-  private String mCachedObjName;
-
-  private String objNameGo() {
-    if (mCachedObjNameGo == null) {
-      mCachedObjNameGo = mGeneratedTypeDef.qualifiedName().className();
-    }
-    return mCachedObjNameGo;
-  }
-
-  private String mCachedObjNameGo;
-
-  private String simTableNameGo() {
-    if (mCachedSimTableNameGo == null) {
-      mCachedSimTableNameGo = quote(objName());
-    }
-    return mCachedSimTableNameGo;
-  }
-
-  private String mCachedSimTableNameGo;
+  //  private String objName() {
+  //    if (mCachedObjName == null) {
+  //      mCachedObjName = DataUtil.convertCamelCaseToUnderscores(objNameGo());
+  //    }
+  //    return mCachedObjName;
+  //  }
+  //
+  //  private String objNameGo() {
+  //    if (mCachedObjNameGo == null) {
+  //      mCachedObjNameGo = mGeneratedTypeDef.qualifiedName().className();
+  //    }
+  //    return mCachedObjNameGo;
+  //  }
+  //
+  //  private String simTableNameGo() {
+  //    if (mCachedSimTableNameGo == null) {
+  //      mCachedSimTableNameGo = quote(objName());
+  //    }
+  //    return mCachedSimTableNameGo;
+  //  }
 
   private Set<String> mUniqueIndexNames = hashSet();
 
@@ -758,7 +749,7 @@ public class SqlGen extends BaseObject {
   }
 
   private void createIndexes() {
-    for (var fields : mIndexes) {
+    for (var fields : ci.ind) {
       var indexName = fields.typeName + "_" + String.join("_", fields.mFieldNames);
       checkState(mUniqueIndexNames.add(indexName), "duplicate index:", indexName);
       var s = initCode1();
@@ -825,6 +816,5 @@ public class SqlGen extends BaseObject {
   private boolean mWasActive;
   private File mCachedDir;
   private StringBuilder mCode = new StringBuilder();
-  private List<IndexInfo> mIndexes;
   private GeneratedTypeDef mGeneratedTypeDef;
 }
