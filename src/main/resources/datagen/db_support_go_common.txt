@@ -25,7 +25,6 @@ func CreateDatabase(dataSourceName string)   {
 	singletonDatabase.dataSourceName = dataSourceName
 	b := singletonDatabase.Base
 	b.SetName("Database")
-	b.AlertVerbose()
 	singletonDatabase.Open()
 }
 
