@@ -67,3 +67,19 @@ func (db Database) Close() {
     db.state = dbStateClosed
   }
 }
+
+// Given an array of sql.Rows containing a single id, attempt to read
+// the id from the first such row.  Returns:
+//    (id, nil)  a row existed, and id was successfully scanned
+//    (0, nil)   no rows
+//    (0, error) if some error occurred.
+//
+func scanIdFromRows(rows *sql.Row) (int, error) {
+	var id int
+	err := rows.Scan(&id)
+	if err == sql.ErrNoRows {
+		err = nil
+	}
+	return id, err
+}
+
