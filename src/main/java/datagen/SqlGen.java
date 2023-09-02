@@ -174,26 +174,29 @@ public class SqlGen extends BaseObject {
 
   private void readByField(String fieldNameSnake) {
 
-    if (simulated()) {
-      var s = sourceBuilder();
-      var fieldNameCamel = snakeToCamel(fieldNameSnake);
-
-      s.a("// Read ", ci.objNameGo, " whose ", fieldNameCamel, " matches a value.", CR, //
-          "// Returns the object if successful.  If not found, returns the default object.", CR, //
-          "// If some other database error, returns an error.", CR);
-      var d = mGeneratedTypeDef;
-      FieldDef our = null;
-      for (var fd : d.fields()) {
-        if (fd.name().equals(fieldNameSnake)) {
-          our = fd;
-        }
+    var s = sourceBuilder();
+    var fieldNameCamel = snakeToCamel(fieldNameSnake);
+    
+    
+    var d = mGeneratedTypeDef;
+    FieldDef our = null;
+    for (var fd : d.fields()) {
+      if (fd.name().equals(fieldNameSnake)) {
+        our = fd;
       }
-      checkState(our != null, "can't find field with name:", fieldNameSnake);
-      var fieldTypeStr = our.dataType().qualifiedName().className();
+    }
+    checkState(our != null, "can't find field with name:", fieldNameSnake);
+    var fieldTypeStr = our.dataType().qualifiedName().className();
 
-      s.a("func Read", ci.objNameGo, "With", fieldNameCamel, "(objValue ", fieldTypeStr, ") (", ci.objNameGo,
-          ", error)", OPEN);
-      generateLockAndDeferUnlock(s);
+    
+    s.a("// Read ", ci.objNameGo, " whose ", fieldNameCamel, " matches a value.", CR, //
+        "// Returns the object if successful.  If not found, returns the default object.", CR, //
+        "// If some other database error, returns an error.", CR);
+    s.a("func Read", ci.objNameGo, "With", fieldNameCamel, "(objValue ", fieldTypeStr, ") (", ci.objNameGo,
+        ", error)", OPEN);
+    generateLockAndDeferUnlock(s);
+    
+ if (simulated()) {
       s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableName, ")", CR, //
           "for _, val := range mp.table.WrappedMap()", OPEN, //
           "valMap := val.AsJSMap()", CR, "fieldVal := valMap.OptAny(", quote(fieldNameSnake), ")", CR, //
@@ -208,16 +211,14 @@ public class SqlGen extends BaseObject {
       s.a("if fieldVal", convExpr, " == objValue", OPEN, //
           "return Default", ci.objNameGo, ".Parse(valMap).(", ci.objNameGo, "), nil", CLOSE, //
           CLOSE, //
-          "return Default",ci.objNameGo,", nil", CLOSE);
+          "return Default", ci.objNameGo, ", nil", CLOSE);
 
       addChunk(s);
       return;
     }
 
-    var d = mGeneratedTypeDef;
-    var s = sourceBuilder();
-    var fieldNameCamel = snakeToCamel(fieldNameSnake);
-
+//    var d = mGeneratedTypeDef;
+  
     var objNameGo = ci.objNameGo;
     var objName = ci.objName;
     var stName = "stmtReadByField" + objNameGo;
@@ -231,29 +232,44 @@ public class SqlGen extends BaseObject {
 
     var scanFuncName = "scanByField" + fieldNameCamel + objNameGo;
     var addScanFunc = firstTimeInSet(scanFuncName);
+   
+    //
+    //    FieldDef our = null;
+    //    for (var fd : d.fields()) {
+    //      if (fd.name().equals(fieldNameSnake)) {
+    //        our = fd;
+    //      }
+    //    }
+    //    checkState(our != null, "can't find field with name:", fieldNameSnake);
+    //    var fieldTypeStr = our.dataType().qualifiedName().className();
+
+//    s.a("// Read ", objNameGo, " whose ", fieldNameCamel, " matches a value.", CR, //
+//        "// Returns the object if successful.  If not found, returns the default object.", CR, //
+//        "// If some other database error, returns an error.", CR);
+
+   // s.a("func Read", objNameGo, "With", fieldNameCamel, "(objValue ", fieldTypeStr, ") (int, error)", OPEN);
+
+    s.a(
+        "var err error",CR,//
+        "object := Default",objNameGo,CR, //
+        "rows := ", stName, ".QueryRow(objValue)", CR, //
+        "objId, err1 := ", scanFuncName, "(rows)", CR, //
+        "err = err1",CR,//
+        "// ...assumes if an error occurred that the id is zero",CR, //
+        "if objId != 0",OPEN, //
+       // "return Default",objNameGo,", err1", "} else {",CR, //
+//        rows := stmtReadUser.QueryRow(objId)
+//        result, err := scanUser(rows)
+//        return result, err
+        "// Use the same code to read the item that is used in ReadXXX, but without locking again",CR, //
+        "rows := stmtRead",objNameGo,".QueryRow(objId)",CR, //
+        "object, err = scan",objNameGo,"(rows)",CLOSE, //
+        "return object, err", CLOSE);
+    
     if (addScanFunc) {
       generateScanByFieldFunc(d, s, scanFuncName);
     }
-
-    FieldDef our = null;
-    for (var fd : d.fields()) {
-      if (fd.name().equals(fieldNameSnake)) {
-        our = fd;
-      }
-    }
-    checkState(our != null, "can't find field with name:", fieldNameSnake);
-    var fieldTypeStr = our.dataType().qualifiedName().className();
-
-    s.a("// Read ", objNameGo, " whose ", fieldNameCamel, " matches a value.", CR, //
-        "// Returns the object if successful.  If not found, returns the default object.", CR, //
-        "// If some other database error, returns an error.", CR);
-
-    s.a("func Read", objNameGo, "With", fieldNameCamel, "(objValue ", fieldTypeStr, ") (int, error)", OPEN);
-    generateLockAndDeferUnlock(s);
-
-    s.a("rows := ", stName, ".QueryRow(objValue)", CR, //
-        "result, err := ", scanFuncName, "(rows)", CR, //
-        "return result, err", CLOSE);
+    
     addChunk(s);
   }
 
@@ -296,6 +312,10 @@ public class SqlGen extends BaseObject {
 
     var objNameGo = ci.objNameGo;
     var objName = ci.objName;
+
+    s.a("// Update ", objNameGo, " based on its id.", CR, //
+        "// Returns a non-nil error if a problem occurs.", CR);
+
     s.a("func Update", objNameGo, "(obj ", objNameGo, ") error", OPEN);
 
     if (simulated()) {
@@ -367,6 +387,9 @@ public class SqlGen extends BaseObject {
     var objNameGo = ci.objNameGo;
     var objName = ci.objName;
 
+    s.a("// Read ", objNameGo, " with a particular id.  If not found, returns default object.", CR, //
+        "// Returns a non-nil error if some other problem occurs.", CR);
+
     if (simulated()) {
       s.a("func Read", objNameGo, "(objId int) (", objNameGo, ", error)", OPEN);
       generateLockAndDeferUnlock(s);
@@ -383,9 +406,6 @@ public class SqlGen extends BaseObject {
 
       var scanFuncName = "scan" + objNameGo;
       var addScanFunc = firstTimeInSet(scanFuncName);
-      if (addScanFunc) {
-        generateScanFunc(d, s, objNameGo, objName, scanFuncName);
-      }
 
       s.a("func Read", objNameGo, "(objId int) (", objNameGo, ", error)", OPEN);
       generateLockAndDeferUnlock(s);
@@ -393,13 +413,20 @@ public class SqlGen extends BaseObject {
       s.a("rows := ", stName, ".QueryRow(objId)", CR, //
           "result, err := ", scanFuncName, "(rows)", CR, //
           "return result, err", CLOSE);
+
+      if (addScanFunc) {
+        generateScanFunc(d, s, objNameGo, objName, scanFuncName);
+      }
+
     }
     addChunk(s);
   }
 
   private void generateScanFunc(GeneratedTypeDef d, SourceBuilder s, String objNameGo, String objName,
       String funcName) {
-    s.a("// Return a non-nil error only if an error other than 'not found'.", CR);
+    s.a("// Scan next row as ", objNameGo, ".  If no more rows exist, returns default object.", CR, //
+        "// Returns a non-nil error if some other problem occurs.", CR);
+
     s.a("func ", funcName, "(rows *sql.Row) (", objNameGo, ", error)", OPEN);
 
     s.a("obj := Default", objNameGo, CR);
@@ -500,6 +527,9 @@ public class SqlGen extends BaseObject {
     var d = mGeneratedTypeDef;
     var s = sourceBuilder();
 
+    s.a("// Create new ", ci.objNameGo, ", and return it.", CR, //
+        "// Returns a non-nil error if some other problem occurs.", CR);
+
     if (simulated()) {
       var objNameGo = ci.objNameGo;
       s.a("func Create", objNameGo, "(obj ", objNameGo, ") (", objNameGo, ", error)", OPEN);
@@ -595,8 +625,10 @@ public class SqlGen extends BaseObject {
     var s = sourceBuilder();
 
     var nm = ci.objNameGo;
-    s.a("// Create ", nm, " with the given (unique) ", fieldNameSnake,
-        "; return default object if already exists; non-nil err if some other problem.", CR);
+    s.a("// Create ", nm, " with the given (unique) ", fieldNameSnake, ".", CR, //
+        "// Returns default object if such an object already exists.", CR, //
+        "// Returns a non-nil error if some other problem occurs.", CR);
+
     s.a("func Create", nm, "With", fieldNameCamel, "(obj ", nm, ") (", nm, ", error)", OPEN);
 
     if (simulated()) {
@@ -623,7 +655,7 @@ public class SqlGen extends BaseObject {
         badArg("don't know how to convert field of type:", fieldTypeStr);
 
       s.a("if fieldVal", convExpr, " == obj.", fieldNameCamel, "()", OPEN, //
-          "return Default",ci.objNameGo,", nil", CLOSE, //
+          "return Default", ci.objNameGo, ", nil", CLOSE, //
           CLOSE);
 
       s.a("obj = obj.ToBuilder().SetId(mp.nextUniqueKey()).Build()", CR, //
@@ -648,9 +680,9 @@ public class SqlGen extends BaseObject {
           "var err error", CR, //
           "created := Default", objNameGo, CR, //
 
-          "existingId, err1 := Read", objNameGo, "With", fieldNameCamel, "(obj.", fieldNameCamel, "())", CR, //
+          "existingObj, err1 := Read", objNameGo, "With", fieldNameCamel, "(obj.", fieldNameCamel, "())", CR, //
           "err = err1", CR, //
-          "if err == nil && existingId == 0", OPEN, //
+          "if err == nil && existingObj.Id() == 0", OPEN, //
           "c, err2 := Create", objNameGo, "(obj)", CR, //
           "err = err2", CR, "created = c", CLOSE, "return created,err", CR, CLOSE);
     }

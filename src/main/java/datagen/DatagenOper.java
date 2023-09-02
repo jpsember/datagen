@@ -117,6 +117,12 @@ public class DatagenOper extends AppOper {
     for (File f : Context.generatedFilesSet) {
       sc.arg(f.toString());
     }
+    if (alert("not failing if problem scanning")) {
+      if (sc.exitCode() != 0) {
+        alert("problem formatting:", INDENT, sc.systemErr());
+        return;
+      }
+    }
     sc.assertSuccess();
   }
 
