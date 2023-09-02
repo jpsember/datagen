@@ -21,6 +21,17 @@ func newDatabase() Database {
   return t
 }
 
+func getSimDirectoryFromSql(pth Path) Path {
+  CheckArg(pth.Extension() == "db", "expected '.db' extension for path:", pth)
+  return pth.SetExtension("sim")
+}
+
+func DeleteDatabase(pth Path) {
+  CheckState(singletonDatabase == nil, "<1Database has already been opened")
+  pth.CheckNonEmpty()
+  pth2 := getSimDirectoryFromSql(pth)
+  pth2.DeleteDirectoryM("_TMP_")
+}
 
 
 func (db Database) flushChanges() {
@@ -87,7 +98,8 @@ func (db Database) getTable(name string) MemTable {
 
 func (db Database) getSimDir() Path {
   if db.simFilesPath.Empty() {
-    db.simFilesPath = NewPathM("simulated_db")
+    x := NewPathM(db.dataSourceName)
+    db.simFilesPath = getSimDirectoryFromSql(x)
     db.simFilesPath.MkDirsM()
   }
   return db.simFilesPath
