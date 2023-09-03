@@ -42,7 +42,7 @@ public class SqlGen extends BaseObject {
   public void addIndex(List<String> fields) {
     IndexInfo info = new IndexInfo();
     info.typeName = ci.objName;
-    info.tableName = mGeneratedTypeDef.qualifiedName().className();
+    info.tableName = camelToSnake(mGeneratedTypeDef.qualifiedName().className());
     info.mFieldNames.addAll(fields);
     ci.ind.add(info);
   }
@@ -157,7 +157,7 @@ public class SqlGen extends BaseObject {
     public ClassInfo() {
       var t = Context.generatedTypeDef;
       objNameGo = t.qualifiedName().className();
-      objName = DataUtil.convertCamelCaseToUnderscores(objNameGo);
+      objName = camelToSnake(objNameGo);
       simTableName = quote(objName);
     }
 
@@ -223,10 +223,7 @@ public class SqlGen extends BaseObject {
     var stName = "stmtReadByField" + objNameGo;
     declareStatement(stName);
 
-    {
-      initCode2().a(stName, " = CheckOkWith(",LOCAL_SQLDB,".Prepare(`SELECT id FROM ", objName, " WHERE ", fieldNameSnake,
-          " = ?`))", CR);
-    }
+    genPrepareStatement(stName, "`SELECT id FROM ", objName, " WHERE ", fieldNameSnake, " = ?`");
 
     var scanFuncName = "scanIdFromRows";
 
@@ -240,6 +237,13 @@ public class SqlGen extends BaseObject {
         "return object, err", CLOSE);
 
     addChunk(s);
+  }
+
+  private void genPrepareStatement(String stName, Object... args) {
+    initCode2().a(stName, " = CheckOkWith(", LOCAL_SQLDB, ".Prepare(");
+    for (var arg : args)
+      initCode2().a(arg);
+    initCode2().a("))", CR);
   }
 
   private File directory() {
@@ -313,7 +317,7 @@ public class SqlGen extends BaseObject {
 
       {
         var t = initCode2();
-        t.a(stName, " = CheckOkWith(",LOCAL_SQLDB,".Prepare(`UPDATE ", objName, " SET ");
+        t.a(stName, " = CheckOkWith(", LOCAL_SQLDB, ".Prepare(`UPDATE ", objName, " SET ");
 
         t.startComma();
         for (var fieldDef : d.fields()) {
@@ -378,8 +382,7 @@ public class SqlGen extends BaseObject {
       var stName = "stmtRead" + objNameGo;
       declareStatement(stName);
       // This LIMIT 1 is probably not necessary?
-      initCode2().a(stName, " = CheckOkWith(",LOCAL_SQLDB,".Prepare(`SELECT * FROM ", objName, " WHERE id = ? LIMIT 1`))",
-          CR);
+      genPrepareStatement(stName, "`SELECT * FROM ", objName, " WHERE id = ? LIMIT 1`");
 
       var scanFuncName = "scan" + objNameGo;
       var addScanFunc = firstTimeInSet(scanFuncName);
@@ -442,8 +445,8 @@ public class SqlGen extends BaseObject {
       // We need an SQL SELECT statement, e.g., "SELECT * FROM user WHERE id >= ? ..."
       var selectStatementName = uniqueVar("stmtRead" + ci.objNameGo + "Chunk");
       declareStatement(selectStatementName);
-      initCode2().a(selectStatementName, " = CheckOkWith(",LOCAL_SQLDB,".Prepare(`SELECT * FROM ", ci.objNameGo, " WHERE ",
-          fieldName, " > ? ORDER BY ", fieldName, " LIMIT 20`))", CR);
+      genPrepareStatement(selectStatementName, "`SELECT * FROM ", ci.objNameGo, " WHERE ", fieldName,
+          " > ? ORDER BY ", fieldName, " LIMIT 20`");
 
       // We need a function that extracts the field from an instance of this type of object
       var extractFieldFunc = uniqueVar("read" + snakeToCamel(fieldName) + "From" + ci.objNameGo);
@@ -517,7 +520,7 @@ public class SqlGen extends BaseObject {
     List<FieldDef> filtFields = d.fields();
     for (FieldDef fieldDef : filtFields) {
 
-      var fn = DataUtil.convertCamelCaseToUnderscores(fieldDef.name());
+      var fn = camelToSnake(fieldDef.name());
       fieldNames.add(fn);
       s.a("var ", fn, " ", fieldDef.dataType().qualifiedName().className(), CR);
     }
@@ -564,7 +567,7 @@ public class SqlGen extends BaseObject {
     var d = mGeneratedTypeDef;
 
     var tableNameGo = d.qualifiedName().className();
-    var tableName = DataUtil.convertCamelCaseToUnderscores(tableNameGo);
+    var tableName = camelToSnake(tableNameGo);
 
     var fnName = "createTable" + tableNameGo;
     mCreateTableFnNames.add(fnName);
@@ -636,7 +639,7 @@ public class SqlGen extends BaseObject {
 
     {
       var t = initCode2();
-      t.a(stName, " = CheckOkWith(",LOCAL_SQLDB,".Prepare(`INSERT INTO ", objName, " (");
+      t.a(stName, " = CheckOkWith(", LOCAL_SQLDB, ".Prepare(`INSERT INTO ", objName, " (");
 
       t.startComma();
       for (var fieldDef : d.fields()) {
@@ -696,6 +699,10 @@ public class SqlGen extends BaseObject {
 
   private static String snakeToCamel(String snake) {
     return DataUtil.convertUnderscoresToCamelCase(snake);
+  }
+
+  private static String camelToSnake(String camel) {
+    return DataUtil.convertCamelCaseToUnderscores(camel);
   }
 
   private void createWithField(String fieldNameSnake) {
@@ -812,8 +819,8 @@ public class SqlGen extends BaseObject {
       var indexName = fields.typeName + "_" + String.join("_", fields.mFieldNames);
       checkState(mUniqueIndexNames.add(indexName), "duplicate index:", indexName);
       var s = initCode1();
-      s.a("CheckOkWith(",LOCAL_SQLDB,".Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", fields.tableName,
-          " (");
+      s.a("CheckOkWith(", LOCAL_SQLDB, ".Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ",
+          fields.tableName, " (");
       s.startComma();
       for (var fn : fields.mFieldNames) {
         s.a(COMMA, fn);
