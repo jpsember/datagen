@@ -42,19 +42,18 @@ func DeleteDatabase(pth Path) {
 
 
 
-func (b Database) Open() {
-  Todo("the conflict between mysql db and our Database class is annoying; rename 'our' Database to b?")
-  if !b.tryLock(dbStateNew) {
+func (db Database) Open() {
+  if !db.tryLock(dbStateNew) {
     BadState("Illegal database state")
   }
-  defer b.unlock()
-  b.state = dbStateOpen
+  defer db.unlock()
+  db.state = dbStateOpen
   
-  db, err := sql.Open("sqlite3", b.dataSourceName)
+  sqldb, err := sql.Open("sqlite3", db.dataSourceName)
   if err != nil {
     BadState("Trouble opening sqlite database", INDENT, err)
   }
-  b.SqlDatabase = db
+  db.SqlDatabase = sqldb
 
 [!init_code1]
 [!init_code2]
@@ -82,4 +81,178 @@ func scanIdFromRows(rows *sql.Row) (int, error) {
 	}
 	return id, err
 }
+
+
+
+
+
+
+
+
+type dbIterStruct struct {
+  buffer                 []any // objects read in the last chunk
+  cursor                 int  // position within chunk buffer
+  fieldValMin            any  // value that field must be larger than to be included
+  finished               bool // true if iterator has finished
+  readChunkStmt          *sql.Stmt // the statement that is executed to read a chunk of records
+  scanFunc               func(*sql.Rows) (any, error)  // the function that scans a row to an object
+  readScanFieldValueFunc func(any) any // function that reads value to update fieldValMin with
+  defaultObject          any  // default object to return if no more objects remain
+  err                    error
+}
+
+type DbIter = *dbIterStruct
+
+func newDbIter() DbIter {
+	t := &dbIterStruct{}
+	return t
+}
+
+// For debug purposes; return a JSMap description of an iterator.
+func (iter DbIter) JSMap() JSMap {
+  m := NewJSMap()
+  m.Put("", "DbIter")
+  m.Put("cursor", iter.cursor)
+  m.Put("buffer length", len(iter.buffer))
+  m.Put("finished", iter.finished)
+  if iter.HasError() {
+    m.Put("err", iter.err.Error())
+  }
+  m.Put("fieldValMin", iter.fieldValMin)
+  return m
+}
+
+// For debug purposes; returns pretty-printed version of JSMap().
+func (iter DbIter) String() string {
+  return iter.JSMap().String()
+}
+
+
+
+
+
+// Sample readScanValueFunc implementation
+// func func77(obj any) any {
+//   user := obj.(User)
+//   return user.Id()
+// }
+
+// Sample concrete iterator
+// func UserIterator(idMin int) DbIter {
+//   x := newDbIter()
+//   x.fieldValMin = idMin
+//   x.readChunkStmt = stmtUserReadChunk
+//   x.scanFunc = scanUser
+//   x.readScanFieldValueFunc = func77
+//   x.defaultObject = DefaultUser
+//  return x
+// }
+
+
+func (iter DbIter) assertOk()   {
+	if iter.err != nil {
+		BadState("iterator had an error:", iter.err)
+	}
+}
+
+func (iter DbIter) HasError() bool {
+	return iter.err != nil
+}
+
+func (iter DbIter) HasNext() bool {
+	iter.assertOk()
+	for true {
+		if iter.HasError() {
+			break
+		}
+		if iter.finished {
+			break
+		}
+		if iter.cursor < len(iter.buffer) {
+			break
+		}
+		// Attempt to read another chunk
+		iter.readChunk()
+	}
+	return !(iter.finished || iter.HasError())
+}
+
+func (iter DbIter) Next() any {
+	CheckState(iter.HasNext())
+	value := iter.buffer[iter.cursor]
+	iter.cursor++
+	return value
+}
+
+func (iter DbIter) setError(err error) bool {
+	if err != nil && !iter.HasError() {
+		iter.err = err
+		Alert("<1DbIter setting error:", err)
+	}
+	return iter.HasError()
+}
+
+
+func (iter DbIter) readChunk() {
+  stmt := iter.readChunkStmt
+  iter.buffer = nil
+  iter.cursor = 0
+  var newbuffer []any
+  singletonDatabase.Lock.Lock()
+  defer singletonDatabase.Lock.Unlock()
+
+  rows, err := stmt.Query(iter.fieldValMin)
+  defer iter.closeRows(rows)
+
+  // If Query produced error, abort
+  if iter.setError(err) {
+    return
+  }
+
+  for {
+    var obj any
+    obj, err = iter.scanFunc(rows)
+    if iter.setError(err) {
+      break
+    }
+    if obj == iter.defaultObject {
+      break
+    }
+    newbuffer = append(newbuffer, obj)
+
+    fieldVal := iter.readScanFieldValueFunc(obj)
+    iter.fieldValMin = fieldVal
+  }
+
+  if len(newbuffer) == 0 {
+    iter.finished = true
+  } else {
+    iter.buffer = newbuffer
+  }
+}
+
+// This is a separate function to avoid being bitten by this:
+//
+// "The deferred call's arguments are evaluated immediately,
+//
+//  but the function call is not executed until the surrounding function returns."
+func (iter DbIter) closeRows(rows *sql.Rows) {
+  iter.setError(rows.Close())
+}
+
+
+
+// Sample function we're trying to construct
+//
+//  func UserIterator(idMin int) DbIter {
+//    x := newDbIter()
+//    x.fieldValMin = idMin
+//    x.readChunkStmt = stmtUserReadChunk
+//    x.scanFunc = scanUser
+//    x.readScanFieldValueFunc = func77
+//    x.defaultObject = DefaultUser
+//    return x
+//  }
+
+
 

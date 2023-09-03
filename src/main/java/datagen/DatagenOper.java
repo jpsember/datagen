@@ -280,6 +280,19 @@ public class DatagenOper extends AppOper {
     if (discardedDirectoriesSet.add(genDirectory)) {
       if (genDirectory.exists()) {
         log("Deleting existing generated source directory:", genDirectory);
+        if (alert("saving backups of existing db.go")) {
+          File target = new File(genDirectory , "webapp_data/db.go");
+          checkState(target.exists(),"can't find:",target);
+          int i = 0;
+          File c;
+          while (true) {
+            c =  Files.getDesktopFile(  "_SKIP_backup_" + i + "_db.go");
+            if (!c.exists())
+              break;
+            i++;
+          }
+          Context.files.writeString(c, Files.readString(target));
+        }
         files().deleteDirectory(genDirectory);
       }
     }

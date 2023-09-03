@@ -59,6 +59,7 @@ public class SqlGen extends BaseObject {
     readRecord();
     createIndexSpecific();
     indexFunc();
+    iterators();
 
     mGeneratedTypeDef = null;
     setActive(false);
@@ -220,11 +221,10 @@ public class SqlGen extends BaseObject {
     var objNameGo = ci.objNameGo;
     var objName = ci.objName;
     var stName = "stmtReadByField" + objNameGo;
-
-    varCode().a("var ", stName, " *sql.Stmt", CR);
+    declareStatement(stName);
 
     {
-      initCode2().a(stName, " = CheckOkWith(db.Prepare(`SELECT id FROM ", objName, " WHERE ", fieldNameSnake,
+      initCode2().a(stName, " = CheckOkWith(",LOCAL_SQLDB,".Prepare(`SELECT id FROM ", objName, " WHERE ", fieldNameSnake,
           " = ?`))", CR);
     }
 
@@ -305,8 +305,7 @@ public class SqlGen extends BaseObject {
 
     } else {
       var stName = uniqueVar("stmtUpdate");
-
-      varCode().a("var ", stName, " *sql.Stmt", CR);
+      declareStatement(stName);
 
       lockAndDeferUnlock(s);
 
@@ -314,7 +313,7 @@ public class SqlGen extends BaseObject {
 
       {
         var t = initCode2();
-        t.a(stName, " = CheckOkWith(db.Prepare(`UPDATE ", objName, " SET ");
+        t.a(stName, " = CheckOkWith(",LOCAL_SQLDB,".Prepare(`UPDATE ", objName, " SET ");
 
         t.startComma();
         for (var fieldDef : d.fields()) {
@@ -377,18 +376,27 @@ public class SqlGen extends BaseObject {
     } else {
 
       var stName = "stmtRead" + objNameGo;
-      varCode().a("var ", stName, " *sql.Stmt", CR);
-
-      initCode2().a(stName, " = CheckOkWith(db.Prepare(`SELECT * FROM ", objName, " WHERE id = ?`))", CR);
+      declareStatement(stName);
+      // This LIMIT 1 is probably not necessary?
+      initCode2().a(stName, " = CheckOkWith(",LOCAL_SQLDB,".Prepare(`SELECT * FROM ", objName, " WHERE id = ? LIMIT 1`))",
+          CR);
 
       var scanFuncName = "scan" + objNameGo;
       var addScanFunc = firstTimeInSet(scanFuncName);
 
       s.a("func Read", objNameGo, "(objId int) (", objNameGo, ", error)", OPEN);
       lockAndDeferUnlock(s);
+      s.a("// Now using the 'multiple rows' statement with a limit of 1, so we can reuse the scan code", CR);
 
-      s.a("rows := ", stName, ".QueryRow(objId)", CR, //
-          "result, err := ", scanFuncName, "(rows)", CR, //
+      s.a("rows, err := ", stName, ".Query(objId)", CR, //
+          "defer rows.Close()", CR, //
+          "result := Default", objNameGo, CR, //
+          "if err == nil", OPEN, //
+          "var obj any", CR, //
+          "obj, err = ", scanFuncName, "(rows)", CR, //
+          "if err == nil", OPEN, //
+          "result = obj.(", objNameGo, ")", CLOSE, //
+          CLOSE, //
           "return result, err", CLOSE);
 
       if (addScanFunc) {
@@ -399,14 +407,111 @@ public class SqlGen extends BaseObject {
     addChunk(s);
   }
 
+  private void iterators() {
+
+    for (var info : ci.ind) {
+      // For now, we only do this if there is a single field in the index
+      if (info.mFieldNames.size() != 1)
+        continue;
+      var fieldName = info.mFieldNames.get(0);
+      createIteratorWithField(fieldName);
+    }
+  }
+
+  private String indexTypeAsGo(String fieldName) {
+    var g = mGeneratedTypeDef;
+    for (var f : g.fields()) {
+      var nm = f.name();
+      if (nm.equals(fieldName))
+        return f.dataType().qualifiedName().className();
+    }
+    throw badArg("Can't find type name for:", fieldName);
+  }
+
+  private void createIteratorWithField(String fieldName) {
+    var s = sourceBuilder();
+    var argName = fieldName + "Min";
+
+    s.a("// Get an iterator over ", ci.objNameGo, " objects.", CR, //
+        "func ", ci.objNameGo, "Iterator(", argName, " ", indexTypeAsGo(fieldName), ") DbIter", OPEN);
+
+    if (simulated()) {
+      checkState(!simulated(), "not supported for simulation");
+    } else {
+
+      // We need an SQL SELECT statement, e.g., "SELECT * FROM user WHERE id >= ? ..."
+      var selectStatementName = uniqueVar("stmtRead" + ci.objNameGo + "Chunk");
+      declareStatement(selectStatementName);
+      initCode2().a(selectStatementName, " = CheckOkWith(",LOCAL_SQLDB,".Prepare(`SELECT * FROM ", ci.objNameGo, " WHERE ",
+          fieldName, " > ? ORDER BY ", fieldName, " LIMIT 20`))", CR);
+
+      // We need a function that extracts the field from an instance of this type of object
+      var extractFieldFunc = uniqueVar("read" + snakeToCamel(fieldName) + "From" + ci.objNameGo);
+
+      // We need a function to scan this type of object from a 'SELECT *' result
+      var scanFuncName = "scan" + ci.objNameGo;
+      var addScanFunc = firstTimeInSet(scanFuncName);
+
+      s.a("x := newDbIter()", CR, //
+          "x.fieldValMin = ", argName, CR, //
+          "x.readChunkStmt = ", selectStatementName, CR, //
+          "x.scanFunc = scan", ci.objNameGo, CR, //
+          "x.readScanFieldValueFunc = ", extractFieldFunc, CR, //
+          "x.defaultObject = Default", ci.objNameGo, CR, //
+          "return x", CLOSE);
+
+      if (addScanFunc) {
+        generateScanFunc(mGeneratedTypeDef, s, ci.objNameGo, ci.objName, scanFuncName);
+      }
+      generateExtractFieldFunc(s, extractFieldFunc, snakeToCamel(fieldName));
+    }
+    addChunk(s);
+  }
+
+  private void generateExtractFieldFunc(SourceBuilder s, String fnName, String fieldName) {
+    var varName = "as" + ci.objNameGo;
+    s.a("func ", fnName, "(obj any) any", OPEN, //
+        varName, " := obj.(", ci.objNameGo, ")", CR, //
+        "return ", varName, ".", fieldName, "()", CLOSE);
+  }
+
   private void generateScanFunc(GeneratedTypeDef d, SourceBuilder s, String objNameGo, String objName,
       String funcName) {
+    todo("a lot of these args don't need to be explicit");
+
+    // //Scan next row as User.  If no more rows exist, returns default object.
+    // //Returns a non-nil error if some other problem occurs.
+    // func scanUser(rows *sql.Rows) (User, error) {
+    // obj := DefaultUser
+    //
+    // if !rows.Next() {
+    //    return obj, rows.Err()
+    // }
+    //
+    // var id int
+    // var name string
+    // var state UserState
+    // var email string
+    // var password string
+    // var user_class UserClass
+    // err := rows.Scan(&id, &name, &state, &email, &password, &user_class)
+    // if err == nil {
+    //    b := NewUser()
+    //    b.SetId(id)
+    //      :
+    //    b.SetUserClass(user_class)
+    //    obj = b.Build()
+    // }
+    // return obj, err
+    //}
+
     s.a("// Scan next row as ", objNameGo, ".  If no more rows exist, returns default object.", CR, //
         "// Returns a non-nil error if some other problem occurs.", CR);
 
-    s.a("func ", funcName, "(rows *sql.Row) (", objNameGo, ", error)", OPEN);
-
-    s.a("obj := Default", objNameGo, CR);
+    s.a("func ", funcName, "(rows *sql.Rows) (any, error)", OPEN);
+    s.a("obj := Default", objNameGo, CR, //
+        "if !rows.Next()", OPEN, //
+        "return obj, rows.Err()", CLOSE);
 
     List<String> fieldNames = arrayList();
     List<FieldDef> filtFields = d.fields();
@@ -428,8 +533,7 @@ public class SqlGen extends BaseObject {
     }
     s.a(")", CR);
 
-    s.a("if err ==  sql.ErrNoRows", OPEN, "err = nil } else {", CR, //
-        "if err == nil", OPEN, //
+    s.a("if err == nil", OPEN, //
         "b := New", objNameGo, "()", CR);
     var i = INIT_INDEX;
     for (var v : filtFields) {
@@ -437,7 +541,6 @@ public class SqlGen extends BaseObject {
       s.a("b.", v.setterName(), "(", fieldNames.get(i), ")", CR);
     }
     s.a("obj = b.Build()");
-    s.a(CLOSE);
     s.a(CLOSE);
 
     s.a("return obj, err", CLOSE);
@@ -524,8 +627,7 @@ public class SqlGen extends BaseObject {
     var objNameGo = ci.objNameGo;
     var objName = ci.objName;
     var stName = "stmtCreate" + objNameGo;
-
-    varCode().a("var ", stName, " *sql.Stmt", CR);
+    declareStatement(stName);
 
     s.a("func Create", objNameGo, "(obj ", objNameGo, ") (", objNameGo, ", error)", OPEN);
     lockAndDeferUnlock(s);
@@ -534,7 +636,7 @@ public class SqlGen extends BaseObject {
 
     {
       var t = initCode2();
-      t.a(stName, " = CheckOkWith(db.Prepare(`INSERT INTO ", objName, " (");
+      t.a(stName, " = CheckOkWith(",LOCAL_SQLDB,".Prepare(`INSERT INTO ", objName, " (");
 
       t.startComma();
       for (var fieldDef : d.fields()) {
@@ -581,6 +683,7 @@ public class SqlGen extends BaseObject {
 
   private void createIndexSpecific() {
     // If there's an index on a specific (non key) field, add Create<Type>With<Field> methods
+    todo("clarify 'non key' comment");
 
     for (var info : ci.ind) {
       // We only do this if there is a single field in the index
@@ -690,6 +793,10 @@ public class SqlGen extends BaseObject {
     return prefix + mUniqueVarCounter;
   }
 
+  private void declareStatement(String varName) {
+    varCode().a("var ", varName, " *sql.Stmt", CR);
+  }
+
   private int mUniqueVarCounter;
 
   private Set<String> mUniqueIndexNames = hashSet();
@@ -705,7 +812,7 @@ public class SqlGen extends BaseObject {
       var indexName = fields.typeName + "_" + String.join("_", fields.mFieldNames);
       checkState(mUniqueIndexNames.add(indexName), "duplicate index:", indexName);
       var s = initCode1();
-      s.a("CheckOkWith(db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", fields.tableName,
+      s.a("CheckOkWith(",LOCAL_SQLDB,".Exec(`CREATE UNIQUE INDEX IF NOT EXISTS ", indexName, " ON ", fields.tableName,
           " (");
       s.startComma();
       for (var fn : fields.mFieldNames) {
@@ -759,6 +866,7 @@ public class SqlGen extends BaseObject {
   private static final String GLOBAL_DB = "singletonDatabase";
   private static final String GLOBAL_LOCK = GLOBAL_DB + ".Lock";
   private static final String GLOBAL_SQL_DB = GLOBAL_DB + ".SqlDatabase";
+  private static final String LOCAL_SQLDB = "sqldb";
 
   private DatagenConfig mConfig;
   private Set<String> mUniqueStringSet = hashSet();
