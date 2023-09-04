@@ -44,7 +44,6 @@ public final class GoIntDataType extends GoDataType {
     return type;
   }
 
-  
   @Override
   public boolean isPrimitive() {
     return true;

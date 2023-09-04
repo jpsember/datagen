@@ -2,6 +2,7 @@ package datagen;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import datagen.gen.DatagenConfig;
@@ -178,19 +179,31 @@ public class SqlGen extends BaseObject {
     }
   }
 
+  private FieldDef findFieldWithName(String fieldNameSnake) {
+    var d = mGeneratedTypeDef;
+    for (var fd : d.fields()) {
+      if (fd.name().equals(fieldNameSnake)) {
+        return fd;
+      }
+    }
+    throw badArg("can't find field with name:", fieldNameSnake);
+  }
+
   private void readByField(String fieldNameSnake) {
 
     var s = sourceBuilder();
+    FieldDef our = findFieldWithName(fieldNameSnake);
+
     var fieldNameCamel = snakeToCamel(fieldNameSnake);
 
-    var d = mGeneratedTypeDef;
-    FieldDef our = null;
-    for (var fd : d.fields()) {
-      if (fd.name().equals(fieldNameSnake)) {
-        our = fd;
-      }
-    }
-    checkState(our != null, "can't find field with name:", fieldNameSnake);
+    //    var d = mGeneratedTypeDef;
+    //    FieldDef our = null;
+    //    for (var fd : d.fields()) {
+    //      if (fd.name().equals(fieldNameSnake)) {
+    //        our = fd;
+    //      }
+    //    }
+    //    checkState(our != null, "can't find field with name:", fieldNameSnake);
     var fieldTypeStr = our.dataType().qualifiedName().className();
 
     s.a("// Read ", ci.objNameGo, " whose ", fieldNameCamel, " matches a value.", CR, //
@@ -454,7 +467,7 @@ public class SqlGen extends BaseObject {
     // We need a function that extracts the field from an instance of this type of object
     var extractFieldFunc = uniqueVar("read" + snakeToCamel(fieldNameSnake) + "From" + ci.objNameGo);
     generateExtractFieldFunc(extractFieldFunc, snakeToCamel(fieldNameSnake));
-  
+
     if (simulated()) {
 
       //      type dbIterStruct struct {
@@ -465,17 +478,23 @@ public class SqlGen extends BaseObject {
       //        fieldValMin            any  // value that field must be larger than to be included
       //        finished               bool // true if iterator has finished
       //        readScanFieldValueFunc func(any) any // function that reads value to update fieldValMin with
+      //        compareFieldValueFunc func(any, any) int // function that compares values a, b and returns eg -1,0,1
       //        defaultObject          any  // default object to return if no more objects remain
       //        err                    error
       //      }
 
-     
+      var fd = findFieldWithName(fieldNameSnake);
+      var compareFuncName = determineCompareFuncForField(fd);
+
+      //    compareFieldValueFunc func(any, any) int // function that compares values a, b and returns eg -1,0,1
+
       s.a("x := newDbIter()", CR, //
           "x.tableName = ", ci.simTableNameStr, CR, //
           "x.fieldName = `", fieldNameSnake, "`", CR, //
           "x.fieldValMin = ", argName, CR, //
           "x.defaultObject = Default", ci.objNameGo, CR, //
           "x.readScanFieldValueFunc = ", extractFieldFunc, CR, //
+          "x.compareFieldValueFunc = ", compareFuncName, CR, //
           "return x", CLOSE);
 
     } else {
@@ -486,7 +505,6 @@ public class SqlGen extends BaseObject {
       genPrepareStatement(selectStatementName, "`SELECT * FROM ", ci.objNameGo, " WHERE ", fieldNameSnake,
           " > ? ORDER BY ", fieldNameSnake, " LIMIT 20`");
 
-      
       // We need a function to scan this type of object from a 'SELECT *' result
       var scanFuncName = "scan" + ci.objNameGo;
       var addScanFunc = firstTimeInSet(scanFuncName);
@@ -505,6 +523,38 @@ public class SqlGen extends BaseObject {
     addChunk(s);
   }
 
+  private static Map<String, String> sCompareFuncMap;
+  static {
+    sCompareFuncMap = hashMap();
+    reg("int", "func compareInts(x, y any) int { return x.(int) - y.(int) }");
+    reg("string", "func compareStrings(x, y any) int { return strings.Compare(x.(string), y.(string)) }");
+  }
+
+  private static void reg(String key, String val) {
+    sCompareFuncMap.put(key, val);
+  }
+
+  private String determineCompareFuncForField(FieldDef fd) {
+    var dt = fd.dataType();
+    var name = dt.qualifiedName().className();
+
+    String funcText = sCompareFuncMap.get(name);
+    if (funcText == null) {
+      badArg("no compare func registered for type name:", quote(name));
+    }
+    
+    var s = chompPrefix(funcText, "func ");
+    var i = s.indexOf('(');
+    var funcName = s.substring(0,i);
+    
+    if (mCompareFuncsGenerated.add(funcName)) {
+      addChunk(sourceBuilder().a(funcText));
+    }
+    return funcName;
+  }
+  private Set<String> mCompareFuncsGenerated = hashSet();
+
+  
   private void generateExtractFieldFunc(String fnName, String fieldName) {
     var s = sourceBuilder();
     var varName = "as" + ci.objNameGo;
@@ -746,14 +796,7 @@ public class SqlGen extends BaseObject {
           "valMap := val.AsJSMap()", CR, "fieldVal := valMap.OptAny(", quote(fieldNameSnake), ")", CR, //
           "// convert fieldVal to appropriate type (int, string, etc)", CR);
 
-      var d = mGeneratedTypeDef;
-      FieldDef our = null;
-      for (var fd : d.fields()) {
-        if (fd.name().equals(fieldNameSnake)) {
-          our = fd;
-        }
-      }
-      checkState(our != null, "can't find field with name:", fieldNameSnake);
+      FieldDef our = findFieldWithName(fieldNameSnake);
       var fieldTypeStr = our.dataType().qualifiedName().className();
 
       var convExpr = "";
