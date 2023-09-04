@@ -90,8 +90,8 @@ type dbIterStruct struct {
   fieldValMin            any  // value that field must be larger than to be included
   finished               bool // true if iterator has finished
   readChunkStmt          *sql.Stmt // the statement that is executed to read a chunk of records
-  scanFunc               func(*sql.Rows) (any, error)  // the function that scans a row to an object
-  readScanFieldValueFunc func(any) any // function that reads value to update fieldValMin with
+  scanFunc               func(*sql.Rows) (DataClass, error)  // the function that scans a row to an object
+  readScanFieldValueFunc func(DataClass) any // function that reads value to update fieldValMin with
   defaultObject          DataClass  // default object to return if no more objects remain
   err                    error
 }
@@ -192,7 +192,7 @@ func (iter DbIter) readChunk() {
   }
 
   for {
-    var obj any
+    var obj DataClass
     obj, err = iter.scanFunc(rows)
     if iter.setError(err) {
       break

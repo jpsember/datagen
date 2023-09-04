@@ -547,7 +547,7 @@ public class SqlGen extends BaseObject {
     s.a("// Scan next row as ", oname, ".  If no more rows exist, returns default object.", CR, //
         "// Returns a non-nil error if some other problem occurs.", CR);
 
-    s.a("func ", funcName, "(rows *sql.Rows) (any, error)", OPEN);
+    s.a("func ", funcName, "(rows *sql.Rows) (DataClass, error)", OPEN);
     s.a("obj := Default", oname, CR, //
         "if !rows.Next()", OPEN, //
         "return obj, rows.Err()", CLOSE);
