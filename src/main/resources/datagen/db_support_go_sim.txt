@@ -38,7 +38,6 @@ func (db Database) flushChanges() {
   for _, mt := range db.memTables {
     if mt.modified {
       mt.Base.Log("flushing")
-      Pr("flushing table:",mt.name)
       p := db.getSimFile(mt)
       str := mt.table.CompactString()
       if Alert("writing pretty-printed mem tables") {
@@ -88,13 +87,11 @@ func (db Database) flushTable(mt MemTable) {
 
 func (db Database) getTable(name string) MemTable {
   mt := db.memTables[name]
-  Pr("get table:",name)
   if mt == nil {
     mt = NewMemTable(name)
     db.memTables[name] = mt
     p := db.getSimFile(mt)
     mt.table = JSMapFromFileIfExistsM(p)
-    Pr("got table:",name,INDENT,mt.table)
   }
   return mt
 }
@@ -363,8 +360,6 @@ func (iter DbIter) readChunk() {
 		jField := iter.readScanFieldValueFunc(sli[j])
 		return iter.compareFieldValueFunc(iField, jField) < 0
 	})
-	Pr("sorted:", JSListWith(sli))
-	
 
 	var newbuffer []any
 	for _, v := range sli {
@@ -380,8 +375,3 @@ func (iter DbIter) readChunk() {
 	}
 }
 
-
-
-func compareInts(a, b any) int {
-	return a.(int) - b.(int)
-}
