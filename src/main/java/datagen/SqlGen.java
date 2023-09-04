@@ -195,15 +195,6 @@ public class SqlGen extends BaseObject {
     FieldDef our = findFieldWithName(fieldNameSnake);
 
     var fieldNameCamel = snakeToCamel(fieldNameSnake);
-
-    //    var d = mGeneratedTypeDef;
-    //    FieldDef our = null;
-    //    for (var fd : d.fields()) {
-    //      if (fd.name().equals(fieldNameSnake)) {
-    //        our = fd;
-    //      }
-    //    }
-    //    checkState(our != null, "can't find field with name:", fieldNameSnake);
     var fieldTypeStr = our.dataType().qualifiedName().className();
 
     s.a("// Read ", ci.objNameGo, " whose ", fieldNameCamel, " matches a value.", CR, //
@@ -470,23 +461,8 @@ public class SqlGen extends BaseObject {
 
     if (simulated()) {
 
-      //      type dbIterStruct struct {
-      //        tableName              string // the name of the table being iterated over
-      //        fieldName              string // the name of the index field, in snake case
-      //        buffer                 []any // objects read in the last chunk
-      //        cursor                 int  // position within chunk buffer
-      //        fieldValMin            any  // value that field must be larger than to be included
-      //        finished               bool // true if iterator has finished
-      //        readScanFieldValueFunc func(any) any // function that reads value to update fieldValMin with
-      //        compareFieldValueFunc func(any, any) int // function that compares values a, b and returns eg -1,0,1
-      //        defaultObject          any  // default object to return if no more objects remain
-      //        err                    error
-      //      }
-
       var fd = findFieldWithName(fieldNameSnake);
       var compareFuncName = determineCompareFuncForField(fd);
-
-      //    compareFieldValueFunc func(any, any) int // function that compares values a, b and returns eg -1,0,1
 
       s.a("x := newDbIter()", CR, //
           "x.tableName = ", ci.simTableNameStr, CR, //
@@ -558,7 +534,7 @@ public class SqlGen extends BaseObject {
   private void generateExtractFieldFunc(String fnName, String fieldName) {
     var s = sourceBuilder();
     var varName = "as" + ci.objNameGo;
-    s.a("func ", fnName, "(obj any) any", OPEN, //
+    s.a("func ", fnName, "(obj DataClass) any", OPEN, //
         varName, " := obj.(", ci.objNameGo, ")", CR, //
         "return ", varName, ".", fieldName, "()", CLOSE);
     addChunk(s);

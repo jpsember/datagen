@@ -241,12 +241,12 @@ func argToMemtableValue(val any) JSMap {
 type dbIterStruct struct {
   tableName              string // the name of the table being iterated over
   fieldName              string // the name of the index field, in snake case
-  buffer                 []any // objects read in the last chunk
+  buffer                 []DataClass // objects read in the last chunk
   cursor                 int  // position within chunk buffer
   fieldValMin            any  // value that field must be larger than to be included
   finished               bool // true if iterator has finished
-  readScanFieldValueFunc func(any) any // function that reads value to update fieldValMin with
-  compareFieldValueFunc func(any, any) int // function that compares values a, b and returns eg -1,0,1
+  readScanFieldValueFunc func(DataClass) any // function that reads value to update fieldValMin with
+  compareFieldValueFunc  func(any, any) int // function that compares values a, b and returns eg -1,0,1
   defaultObject          DataClass  // default object to return if no more objects remain
   err                    error
 }
@@ -308,7 +308,7 @@ func (iter DbIter) HasNext() bool {
 	return !(iter.finished || iter.HasError())
 }
 
-func (iter DbIter) Next() any {
+func (iter DbIter) Next() DataClass {
 	CheckState(iter.HasNext())
 	value := iter.buffer[iter.cursor]
 	iter.cursor++
@@ -323,25 +323,15 @@ func (iter DbIter) setError(err error) bool {
 	return iter.HasError()
 }
 
-
-var infCount = 0
-
+// Read next chunk of objects for an iterator.
+// This actually reads all of the objects at one go.
 func (iter DbIter) readChunk() {
 
-
-	infCount++
-	CheckState(infCount < 10)
-
- 	singletonDatabase.Lock.Lock()
+	singletonDatabase.Lock.Lock()
 	defer singletonDatabase.Lock.Unlock()
 
-	arr := NewArray[DataClass]()
+	var arr []DataClass
 
-	if iter.compareFieldValueFunc == nil {
-		Alert("compareFieldValueFunc was nil")
-		iter.compareFieldValueFunc = compareInts
-	}
-	
 	tbl := singletonDatabase.getTable(iter.tableName)
 	for _, val := range tbl.table.WrappedMap() {
 		dataObj := iter.defaultObject.Parse(val)
@@ -350,28 +340,20 @@ func (iter DbIter) readChunk() {
 		if result <= 0 {
 			continue
 		}
-		arr.Add(dataObj)
+		arr = append(arr, dataObj)
 	}
 
-	sli := arr.Array()
 	// Sort this surviving list
-	sort.Slice(sli, func(i, j int) bool {
-		iField := iter.readScanFieldValueFunc(sli[i])
-		jField := iter.readScanFieldValueFunc(sli[j])
+	sort.Slice(arr, func(i, j int) bool {
+		iField := iter.readScanFieldValueFunc(arr[i])
+		jField := iter.readScanFieldValueFunc(arr[j])
 		return iter.compareFieldValueFunc(iField, jField) < 0
 	})
 
-	var newbuffer []any
-	for _, v := range sli {
-		newbuffer = append(newbuffer, v)
-	}
-
-
-	if len(newbuffer) == 0 {
+	if len(arr) == 0 {
 		iter.finished = true
 	} else {
-		iter.buffer = newbuffer
-		iter.fieldValMin = iter.readScanFieldValueFunc(newbuffer[len(newbuffer)-1])
+		iter.buffer = arr
+		iter.fieldValMin = iter.readScanFieldValueFunc(arr[len(arr)-1])
 	}
 }
-
