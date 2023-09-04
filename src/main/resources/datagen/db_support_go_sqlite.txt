@@ -3,8 +3,7 @@
 @@// ---------------------------------------------------------------------------------------
 @@
 
-
-type DatabaseStruct struct {
+type databaseStruct struct {
   Base         BaseObject
   Lock      sync.Mutex
   SqlDatabase    *sql.DB
@@ -15,14 +14,10 @@ type DatabaseStruct struct {
 
 
 func newDatabase() Database {
-  t := &DatabaseStruct{}
+  t := &databaseStruct{}
   t.Base.SetName("Database")
   return t
 }
-
-
-
-
 
 
 
@@ -130,25 +125,6 @@ func (iter DbIter) String() string {
 
 
 
-
-// Sample readScanValueFunc implementation
-// func func77(obj any) any {
-//   user := obj.(User)
-//   return user.Id()
-// }
-
-// Sample concrete iterator
-// func UserIterator(idMin int) DbIter {
-//   x := newDbIter()
-//   x.fieldValMin = idMin
-//   x.readChunkStmt = stmtUserReadChunk
-//   x.scanFunc = scanUser
-//   x.readScanFieldValueFunc = func77
-//   x.defaultObject = DefaultUser
-//  return x
-// }
-
-
 func (iter DbIter) assertOk()   {
 	if iter.err != nil {
 		BadState("iterator had an error:", iter.err)
@@ -239,20 +215,4 @@ func (iter DbIter) readChunk() {
 func (iter DbIter) closeRows(rows *sql.Rows) {
   iter.setError(rows.Close())
 }
-
-
-
-// Sample function we're trying to construct
-//
-//  func UserIterator(idMin int) DbIter {
-//    x := newDbIter()
-//    x.fieldValMin = idMin
-//    x.readChunkStmt = stmtUserReadChunk
-//    x.scanFunc = scanUser
-//    x.readScanFieldValueFunc = func77
-//    x.defaultObject = DefaultUser
-//    return x
-//  }
-
-
 

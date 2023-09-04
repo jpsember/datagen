@@ -6,7 +6,7 @@
 var NoSuchObjectErr = Error("No such object found")
 
 
-type Database = *DatabaseStruct
+type Database = *databaseStruct
 
 
 type dbState int

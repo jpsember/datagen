@@ -153,6 +153,7 @@ public class SqlGen extends BaseObject {
     String objNameGo;
     String simTableName;
     List<IndexInfo> ind = arrayList();
+    boolean idVerified;
 
     public ClassInfo() {
       var t = Context.generatedTypeDef;
@@ -361,11 +362,9 @@ public class SqlGen extends BaseObject {
 
   private void readRecord() {
 
-    var d = mGeneratedTypeDef;
     var s = sourceBuilder();
 
     var objNameGo = ci.objNameGo;
-    var objName = ci.objName;
 
     s.a("// Read ", objNameGo, " with a particular id.  If not found, returns default object.", CR, //
         "// Returns a non-nil error if some other problem occurs.", CR);
@@ -376,16 +375,17 @@ public class SqlGen extends BaseObject {
       s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableName, ")", CR, //
           "if !mp.HasKey(objId)", OPEN, //
           "return nil, nil", CLOSE, //
-          "return mp.GetData(objId, Default", objNameGo, ").(", ci.objNameGo, "), nil", CLOSE);
+          "return mp.GetData(objId, Default", objNameGo, ").(", objNameGo, "), nil", CLOSE);
     } else {
 
       var stName = "stmtRead" + objNameGo;
       declareStatement(stName);
       // This LIMIT 1 is probably not necessary?
-      genPrepareStatement(stName, "`SELECT * FROM ", objName, " WHERE id = ? LIMIT 1`");
+      genPrepareStatement(stName, "`SELECT * FROM ", ci.objName, " WHERE id = ? LIMIT 1`");
 
       var scanFuncName = "scan" + objNameGo;
-      var addScanFunc = firstTimeInSet(scanFuncName);
+      if (firstTimeInSet(scanFuncName))
+        generateScanFunc(scanFuncName);
 
       s.a("func Read", objNameGo, "(objId int) (", objNameGo, ", error)", OPEN);
       lockAndDeferUnlock(s);
@@ -402,15 +402,15 @@ public class SqlGen extends BaseObject {
           CLOSE, //
           "return result, err", CLOSE);
 
-      if (addScanFunc) {
-        generateScanFunc(d, s, objNameGo, objName, scanFuncName);
-      }
-
     }
     addChunk(s);
   }
 
   private void iterators() {
+
+    // If the first field is 'id', create an iterator from it (as this is the 'implicit' index).
+    verifyFirstFieldIsId();
+    createIteratorWithField("id");
 
     for (var info : ci.ind) {
       // For now, we only do this if there is a single field in the index
@@ -431,12 +431,21 @@ public class SqlGen extends BaseObject {
     throw badArg("Can't find type name for:", fieldName);
   }
 
-  private void createIteratorWithField(String fieldName) {
+  private void createIteratorWithField(String fieldNameSnake) {
     var s = sourceBuilder();
-    var argName = fieldName + "Min";
+    var argName = fieldNameSnake + "Min";
+    var fieldNameCamel = snakeToCamel(fieldNameSnake);
 
-    s.a("// Get an iterator over ", ci.objNameGo, " objects.", CR, //
-        "func ", ci.objNameGo, "Iterator(", argName, " ", indexTypeAsGo(fieldName), ") DbIter", OPEN);
+    String iteratorName;
+    if (fieldNameSnake.equals("id")) {
+      iteratorName = ci.objNameGo + "Iterator";
+    } else {
+      iteratorName = ci.objNameGo + fieldNameCamel + "Iterator";
+    }
+
+    s.a("// Get an iterator over ", ci.objNameGo, " objects, indexed by their ", fieldNameSnake, " fields.",
+        CR, //
+        "func ", iteratorName, "(", argName, " ", indexTypeAsGo(fieldNameSnake), ") DbIter", OPEN);
 
     if (simulated()) {
       checkState(!simulated(), "not supported for simulation");
@@ -445,11 +454,11 @@ public class SqlGen extends BaseObject {
       // We need an SQL SELECT statement, e.g., "SELECT * FROM user WHERE id >= ? ..."
       var selectStatementName = uniqueVar("stmtRead" + ci.objNameGo + "Chunk");
       declareStatement(selectStatementName);
-      genPrepareStatement(selectStatementName, "`SELECT * FROM ", ci.objNameGo, " WHERE ", fieldName,
-          " > ? ORDER BY ", fieldName, " LIMIT 20`");
+      genPrepareStatement(selectStatementName, "`SELECT * FROM ", ci.objNameGo, " WHERE ", fieldNameSnake,
+          " > ? ORDER BY ", fieldNameSnake, " LIMIT 20`");
 
       // We need a function that extracts the field from an instance of this type of object
-      var extractFieldFunc = uniqueVar("read" + snakeToCamel(fieldName) + "From" + ci.objNameGo);
+      var extractFieldFunc = uniqueVar("read" + snakeToCamel(fieldNameSnake) + "From" + ci.objNameGo);
 
       // We need a function to scan this type of object from a 'SELECT *' result
       var scanFuncName = "scan" + ci.objNameGo;
@@ -463,61 +472,36 @@ public class SqlGen extends BaseObject {
           "x.defaultObject = Default", ci.objNameGo, CR, //
           "return x", CLOSE);
 
-      if (addScanFunc) {
-        generateScanFunc(mGeneratedTypeDef, s, ci.objNameGo, ci.objName, scanFuncName);
-      }
-      generateExtractFieldFunc(s, extractFieldFunc, snakeToCamel(fieldName));
+      if (addScanFunc)
+        generateScanFunc(scanFuncName);
+      generateExtractFieldFunc(extractFieldFunc, snakeToCamel(fieldNameSnake));
     }
     addChunk(s);
   }
 
-  private void generateExtractFieldFunc(SourceBuilder s, String fnName, String fieldName) {
+  private void generateExtractFieldFunc(String fnName, String fieldName) {
+    var s = sourceBuilder();
     var varName = "as" + ci.objNameGo;
     s.a("func ", fnName, "(obj any) any", OPEN, //
         varName, " := obj.(", ci.objNameGo, ")", CR, //
         "return ", varName, ".", fieldName, "()", CLOSE);
+    addChunk(s);
   }
 
-  private void generateScanFunc(GeneratedTypeDef d, SourceBuilder s, String objNameGo, String objName,
-      String funcName) {
-    todo("a lot of these args don't need to be explicit");
+  private void generateScanFunc(String funcName) {
+    var s = sourceBuilder();
 
-    // //Scan next row as User.  If no more rows exist, returns default object.
-    // //Returns a non-nil error if some other problem occurs.
-    // func scanUser(rows *sql.Rows) (User, error) {
-    // obj := DefaultUser
-    //
-    // if !rows.Next() {
-    //    return obj, rows.Err()
-    // }
-    //
-    // var id int
-    // var name string
-    // var state UserState
-    // var email string
-    // var password string
-    // var user_class UserClass
-    // err := rows.Scan(&id, &name, &state, &email, &password, &user_class)
-    // if err == nil {
-    //    b := NewUser()
-    //    b.SetId(id)
-    //      :
-    //    b.SetUserClass(user_class)
-    //    obj = b.Build()
-    // }
-    // return obj, err
-    //}
-
-    s.a("// Scan next row as ", objNameGo, ".  If no more rows exist, returns default object.", CR, //
+    var oname = ci.objNameGo;
+    s.a("// Scan next row as ", oname, ".  If no more rows exist, returns default object.", CR, //
         "// Returns a non-nil error if some other problem occurs.", CR);
 
     s.a("func ", funcName, "(rows *sql.Rows) (any, error)", OPEN);
-    s.a("obj := Default", objNameGo, CR, //
+    s.a("obj := Default", oname, CR, //
         "if !rows.Next()", OPEN, //
         "return obj, rows.Err()", CLOSE);
 
     List<String> fieldNames = arrayList();
-    List<FieldDef> filtFields = d.fields();
+    List<FieldDef> filtFields = mGeneratedTypeDef.fields();
     for (FieldDef fieldDef : filtFields) {
 
       var fn = camelToSnake(fieldDef.name());
@@ -537,7 +521,7 @@ public class SqlGen extends BaseObject {
     s.a(")", CR);
 
     s.a("if err == nil", OPEN, //
-        "b := New", objNameGo, "()", CR);
+        "b := New", oname, "()", CR);
     var i = INIT_INDEX;
     for (var v : filtFields) {
       i++;
@@ -547,11 +531,7 @@ public class SqlGen extends BaseObject {
     s.a(CLOSE);
 
     s.a("return obj, err", CLOSE);
-    addCr(s);
-  }
-
-  private static void addCr(SourceBuilder s) {
-    s.addSafe("\n");
+    addChunk(s);
   }
 
   private boolean firstTimeInSet(String object) {
@@ -583,17 +563,11 @@ public class SqlGen extends BaseObject {
       s.comma();
       var name = f.name();
       String sqlType = f.dataType().sqlType();
-      boolean isId = name.equals("id");
-      if (isId) {
-        if (!sqlType.equals("INTEGER"))
-          badState("id doesn't look like an integer: ", f.name(), f.dataType().qualifiedName().className(),
-              sqlType);
-        checkState(i == 0, "'id' should be first field");
-      }
+      verifyFirstFieldIsId();
       s.a(name, " ");
       checkArgument(!sqlType.startsWith("!!!"), "no sql type for", f.name(), ";", f.dataType().getClass());
       s.a(sqlType);
-      if (isId) {
+      if (i == 0) {
         s.a(" PRIMARY KEY");
       }
 
@@ -604,6 +578,28 @@ public class SqlGen extends BaseObject {
     s.a("  CheckOk(err, \"failed to create table\")", CR, //
         CLOSE);
     addChunk(s);
+  }
+
+  private void verifyFirstFieldIsId() {
+    if (ci.idVerified)
+      return;
+
+    var i = INIT_INDEX;
+    for (FieldDef f : mGeneratedTypeDef.fields()) {
+      i++;
+      var name = f.name();
+      String sqlType = f.dataType().sqlType();
+      boolean isId = name.equals("id");
+      if (i == 0 != isId) {
+        badArg("The first field in type", mGeneratedTypeDef.name(), "should be 'id'");
+      }
+      if (isId) {
+        if (!sqlType.equals("INTEGER"))
+          badState("id doesn't look like an integer: ", f.name(), f.dataType().qualifiedName().className(),
+              sqlType);
+      }
+    }
+    ci.idVerified = true;
   }
 
   private void createRecord() {
