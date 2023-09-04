@@ -38,8 +38,13 @@ func (db Database) flushChanges() {
   for _, mt := range db.memTables {
     if mt.modified {
       mt.Base.Log("flushing")
+      Pr("flushing table:",mt.name)
       p := db.getSimFile(mt)
-      p.WriteStringM(mt.table.CompactString())
+      str := mt.table.CompactString()
+      if Alert("writing pretty-printed mem tables") {
+      	str = mt.table.String()
+      }
+      p.WriteStringM(str)
       mt.modified = false
     }
   }
@@ -83,11 +88,13 @@ func (db Database) flushTable(mt MemTable) {
 
 func (db Database) getTable(name string) MemTable {
   mt := db.memTables[name]
+  Pr("get table:",name)
   if mt == nil {
     mt = NewMemTable(name)
     db.memTables[name] = mt
     p := db.getSimFile(mt)
     mt.table = JSMapFromFileIfExistsM(p)
+    Pr("got table:",name,INDENT,mt.table)
   }
   return mt
 }
@@ -170,6 +177,10 @@ func (m MemTable) HasKey(key any) bool {
 func argToMemtableKey(key any) string {
   var strKey string
   switch k := key.(type) {
+  case JString:
+		strKey = k.AsString()
+	case JInteger:
+		strKey = IntToString(int(k))
   case string:
     strKey = k
   case int:
@@ -208,3 +219,169 @@ func argToMemtableValue(val any) JSMap {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+type dbIterStruct struct {
+  tableName              string // the name of the table being iterated over
+  fieldName              string // the name of the index field, in snake case
+  buffer                 []any // objects read in the last chunk
+  cursor                 int  // position within chunk buffer
+  fieldValMin            any  // value that field must be larger than to be included
+  finished               bool // true if iterator has finished
+  readScanFieldValueFunc func(any) any // function that reads value to update fieldValMin with
+  compareFieldValueFunc func(any, any) int // function that compares values a, b and returns eg -1,0,1
+  defaultObject          DataClass  // default object to return if no more objects remain
+  err                    error
+}
+
+type DbIter = *dbIterStruct
+
+func newDbIter() DbIter {
+	t := &dbIterStruct{}
+	return t
+}
+
+// For debug purposes; return a JSMap description of an iterator.
+func (iter DbIter) JSMap() JSMap {
+  m := NewJSMap()
+  m.Put("", "DbIter")
+  m.Put("cursor", iter.cursor)
+  m.Put("buffer length", len(iter.buffer))
+  m.Put("finished", iter.finished)
+  if iter.HasError() {
+    m.Put("err", iter.err.Error())
+  }
+  m.Put("fieldValMin", iter.fieldValMin)
+  return m
+}
+
+// For debug purposes; returns pretty-printed version of JSMap().
+func (iter DbIter) String() string {
+  return iter.JSMap().String()
+}
+
+
+
+
+func (iter DbIter) assertOk()   {
+	if iter.err != nil {
+		BadState("iterator had an error:", iter.err)
+	}
+}
+
+func (iter DbIter) HasError() bool {
+	return iter.err != nil
+}
+
+func (iter DbIter) HasNext() bool {
+	iter.assertOk()
+	for true {
+		if iter.HasError() {
+			break
+		}
+		if iter.finished {
+			break
+		}
+		if iter.cursor < len(iter.buffer) {
+			break
+		}
+		// Attempt to read another chunk
+		iter.readChunk()
+	}
+	return !(iter.finished || iter.HasError())
+}
+
+func (iter DbIter) Next() any {
+	CheckState(iter.HasNext())
+	value := iter.buffer[iter.cursor]
+	iter.cursor++
+	return value
+}
+
+func (iter DbIter) setError(err error) bool {
+	if err != nil && !iter.HasError() {
+		iter.err = err
+		Alert("<1DbIter setting error:", err)
+	}
+	return iter.HasError()
+}
+
+
+var infCount = 0
+
+func (iter DbIter) readChunk() {
+
+
+	infCount++
+	CheckState(infCount < 10)
+
+ 	singletonDatabase.Lock.Lock()
+	defer singletonDatabase.Lock.Unlock()
+
+	arr := NewArray[DataClass]()
+
+	if iter.compareFieldValueFunc == nil {
+		Alert("compareFieldValueFunc was nil")
+		iter.compareFieldValueFunc = compareInts
+	}
+	
+	tbl := singletonDatabase.getTable(iter.tableName)
+	for _, val := range tbl.table.WrappedMap() {
+		dataObj := iter.defaultObject.Parse(val)
+		iterValue := iter.readScanFieldValueFunc(dataObj)
+		result := iter.compareFieldValueFunc(iterValue, iter.fieldValMin)
+		if result <= 0 {
+			continue
+		}
+		arr.Add(dataObj)
+	}
+
+	sli := arr.Array()
+	// Sort this surviving list
+	sort.Slice(sli, func(i, j int) bool {
+		iField := iter.readScanFieldValueFunc(sli[i])
+		jField := iter.readScanFieldValueFunc(sli[j])
+		return iter.compareFieldValueFunc(iField, jField) < 0
+	})
+	Pr("sorted:", JSListWith(sli))
+	
+
+	var newbuffer []any
+	for _, v := range sli {
+		newbuffer = append(newbuffer, v)
+	}
+
+
+	if len(newbuffer) == 0 {
+		iter.finished = true
+	} else {
+		iter.buffer = newbuffer
+		iter.fieldValMin = iter.readScanFieldValueFunc(newbuffer[len(newbuffer)-1])
+	}
+}
+
+
+
+func compareInts(a, b any) int {
+	return a.(int) - b.(int)
+}

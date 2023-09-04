@@ -151,7 +151,7 @@ public class SqlGen extends BaseObject {
 
     String objName;
     String objNameGo;
-    String simTableName;
+    String simTableNameStr;
     List<IndexInfo> ind = arrayList();
     boolean idVerified;
 
@@ -159,9 +159,13 @@ public class SqlGen extends BaseObject {
       var t = Context.generatedTypeDef;
       objNameGo = t.qualifiedName().className();
       objName = camelToSnake(objNameGo);
-      simTableName = quote(objName);
+      simTableNameStr = goQuote(objName);
     }
 
+  }
+
+  private static String goQuote(Object obj) {
+    return "`" + obj + "`";
   }
 
   private ClassInfo ci;
@@ -197,7 +201,7 @@ public class SqlGen extends BaseObject {
 
     if (simulated()) {
       lockAndDeferUnlock(s);
-      s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableName, ")", CR, //
+      s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableNameStr, ")", CR, //
           "for _, val := range mp.table.WrappedMap()", OPEN, //
           "valMap := val.AsJSMap()", CR, "fieldVal := valMap.OptAny(", quote(fieldNameSnake), ")", CR, //
           "// convert fieldVal to apppropriate type (int, string, etc)", CR //
@@ -302,7 +306,7 @@ public class SqlGen extends BaseObject {
 
     if (simulated()) {
       lockAndDeferUnlock(s);
-      s.a("tbl := ", GLOBAL_DB, ".getTable(", ci.simTableName, ")", CR, //
+      s.a("tbl := ", GLOBAL_DB, ".getTable(", ci.simTableNameStr, ")", CR, //
           "if !tbl.HasKey(obj.Id())", OPEN, //
           "return NoSuchObjectErr", CLOSE, //
           "tbl.Put(obj.Id(),obj.Build())", CR, //
@@ -372,7 +376,7 @@ public class SqlGen extends BaseObject {
     if (simulated()) {
       s.a("func Read", objNameGo, "(objId int) (", objNameGo, ", error)", OPEN);
       lockAndDeferUnlock(s);
-      s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableName, ")", CR, //
+      s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableNameStr, ")", CR, //
           "if !mp.HasKey(objId)", OPEN, //
           "return nil, nil", CLOSE, //
           "return mp.GetData(objId, Default", objNameGo, ").(", objNameGo, "), nil", CLOSE);
@@ -447,8 +451,33 @@ public class SqlGen extends BaseObject {
         CR, //
         "func ", iteratorName, "(", argName, " ", indexTypeAsGo(fieldNameSnake), ") DbIter", OPEN);
 
+    // We need a function that extracts the field from an instance of this type of object
+    var extractFieldFunc = uniqueVar("read" + snakeToCamel(fieldNameSnake) + "From" + ci.objNameGo);
+    generateExtractFieldFunc(extractFieldFunc, snakeToCamel(fieldNameSnake));
+  
     if (simulated()) {
-      checkState(!simulated(), "not supported for simulation");
+
+      //      type dbIterStruct struct {
+      //        tableName              string // the name of the table being iterated over
+      //        fieldName              string // the name of the index field, in snake case
+      //        buffer                 []any // objects read in the last chunk
+      //        cursor                 int  // position within chunk buffer
+      //        fieldValMin            any  // value that field must be larger than to be included
+      //        finished               bool // true if iterator has finished
+      //        readScanFieldValueFunc func(any) any // function that reads value to update fieldValMin with
+      //        defaultObject          any  // default object to return if no more objects remain
+      //        err                    error
+      //      }
+
+     
+      s.a("x := newDbIter()", CR, //
+          "x.tableName = ", ci.simTableNameStr, CR, //
+          "x.fieldName = `", fieldNameSnake, "`", CR, //
+          "x.fieldValMin = ", argName, CR, //
+          "x.defaultObject = Default", ci.objNameGo, CR, //
+          "x.readScanFieldValueFunc = ", extractFieldFunc, CR, //
+          "return x", CLOSE);
+
     } else {
 
       // We need an SQL SELECT statement, e.g., "SELECT * FROM user WHERE id >= ? ..."
@@ -457,9 +486,7 @@ public class SqlGen extends BaseObject {
       genPrepareStatement(selectStatementName, "`SELECT * FROM ", ci.objNameGo, " WHERE ", fieldNameSnake,
           " > ? ORDER BY ", fieldNameSnake, " LIMIT 20`");
 
-      // We need a function that extracts the field from an instance of this type of object
-      var extractFieldFunc = uniqueVar("read" + snakeToCamel(fieldNameSnake) + "From" + ci.objNameGo);
-
+      
       // We need a function to scan this type of object from a 'SELECT *' result
       var scanFuncName = "scan" + ci.objNameGo;
       var addScanFunc = firstTimeInSet(scanFuncName);
@@ -474,7 +501,6 @@ public class SqlGen extends BaseObject {
 
       if (addScanFunc)
         generateScanFunc(scanFuncName);
-      generateExtractFieldFunc(extractFieldFunc, snakeToCamel(fieldNameSnake));
     }
     addChunk(s);
   }
@@ -613,7 +639,7 @@ public class SqlGen extends BaseObject {
       var objNameGo = ci.objNameGo;
       s.a("func Create", objNameGo, "(obj ", objNameGo, ") (", objNameGo, ", error)", OPEN);
       lockAndDeferUnlock(s);
-      s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableName, ")", CR, //
+      s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableNameStr, ")", CR, //
           "id := mp.nextUniqueKey()", CR, //
           "obj = obj.ToBuilder().SetId(id).Build()", CR, //
           "mp.Put(id, obj)", CR, //
@@ -681,9 +707,9 @@ public class SqlGen extends BaseObject {
   }
 
   private void createIndexSpecific() {
-    // If there's an index on a specific (non key) field, add Create<Type>With<Field> methods
-    todo("clarify 'non key' comment");
-
+    // For each explicit index (i.e., not on "id"), Create<Type>With<Field> methods.
+    // (The implicit "id" index is used by the Create<Type> method.)
+    //
     for (var info : ci.ind) {
       // We only do this if there is a single field in the index
       if (info.mFieldNames.size() != 1)
@@ -715,7 +741,7 @@ public class SqlGen extends BaseObject {
     s.a("func Create", nm, "With", fieldNameCamel, "(obj ", nm, ") (", nm, ", error)", OPEN);
 
     if (simulated()) {
-      s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableName, ")", CR, //
+      s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableNameStr, ")", CR, //
           "for _, val := range mp.table.WrappedMap()", OPEN, //
           "valMap := val.AsJSMap()", CR, "fieldVal := valMap.OptAny(", quote(fieldNameSnake), ")", CR, //
           "// convert fieldVal to appropriate type (int, string, etc)", CR);

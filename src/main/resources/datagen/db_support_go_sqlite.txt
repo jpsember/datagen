@@ -92,7 +92,7 @@ type dbIterStruct struct {
   readChunkStmt          *sql.Stmt // the statement that is executed to read a chunk of records
   scanFunc               func(*sql.Rows) (any, error)  // the function that scans a row to an object
   readScanFieldValueFunc func(any) any // function that reads value to update fieldValMin with
-  defaultObject          any  // default object to return if no more objects remain
+  defaultObject          DataClass  // default object to return if no more objects remain
   err                    error
 }
 
@@ -170,6 +170,12 @@ func (iter DbIter) setError(err error) bool {
 
 
 func (iter DbIter) readChunk() {
+  // NOTE! This iterator may omit some records if the field being
+  // iterated by is not unique to each record.  This is because if
+  // a stretch of identical fields crosses a chunk boundary, the 
+  // next chunk will resume with the next record whose field is strictly 
+  // greater than that field.
+  //
   stmt := iter.readChunkStmt
   iter.buffer = nil
   iter.cursor = 0
