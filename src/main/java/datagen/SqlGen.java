@@ -382,7 +382,7 @@ public class SqlGen extends BaseObject {
       lockAndDeferUnlock(s);
       s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableNameStr, ")", CR, //
           "if !mp.HasKey(objId)", OPEN, //
-          "return nil, nil", CLOSE, //
+          "return Default",objNameGo,", nil", CLOSE, //
           "return mp.GetData(objId, Default", objNameGo, ").(", objNameGo, "), nil", CLOSE);
     } else {
 
