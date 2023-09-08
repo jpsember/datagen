@@ -28,7 +28,7 @@ func getSimDirectoryFromSql(pth Path) Path {
 
 func DeleteDatabase(pth Path) {
   CheckState(singletonDatabase == nil, "<1Database has already been opened")
-  pth.CheckNonEmpty()
+  pth.AssertNonEmpty()
   pth2 := getSimDirectoryFromSql(pth)
   pth2.DeleteDirectoryM("_TMP_")
 }
@@ -137,7 +137,7 @@ func (m MemTable) nextUniqueKey() int {
   i := 1
   for {
     if !m.table.HasKey(IntToString(i)) {
-      Todo("reimplement as binary search for highest key")
+      Todo("?reimplement as binary search for highest key (simulated only, maybe not worth it)")
       break
     }
     i++

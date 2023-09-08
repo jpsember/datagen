@@ -25,7 +25,6 @@ func newDatabase() Database {
 
 func DeleteDatabase(pth Path) {
   CheckState(singletonDatabase == nil, "<1Database has already been opened")
-  pth.CheckNonEmpty()
   baseName := pth.Base()
   if !strings.Contains(baseName,"_TMP_") {
     Alert("Not deleting database with path:",pth,INDENT,"since it is missing the substring '_TMP_'")
