@@ -40,7 +40,7 @@ func (db Database) flushChanges() {
       mt.Base.Log("flushing")
       p := db.getSimFile(mt)
       str := mt.table.CompactString()
-      if Alert("writing pretty-printed mem tables") {
+      if false && Alert("writing pretty-printed mem tables") {
       	str = mt.table.String()
       }
       p.WriteStringM(str)

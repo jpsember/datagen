@@ -93,7 +93,7 @@ public class GoGeneratorTest extends GenBaseTest {
   @Test
   public void enums() {
     p().pr("enum {", INDENT, //
-        "alpha, bravo, charlie, delta_epsilon;", OUTDENT, //
+        "alpha, bravo, charlie, ddelta_epsilon;", OUTDENT, //
         "}");
     compile();
   }
