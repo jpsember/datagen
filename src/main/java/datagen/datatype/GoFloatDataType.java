@@ -29,6 +29,7 @@ import static js.base.Tools.*;
 import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
+import js.data.DataUtil;
 import js.json.JSMap;
 
 public final class GoFloatDataType extends GoDataType {
@@ -67,9 +68,9 @@ public final class GoFloatDataType extends GoDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    notFinished();
-    s.a("n.", f.instanceName(), " = s.Opt(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(),
-        ")");
+    s.a("n.", f.instanceName(), " = s.Opt", DataUtil.capitalizeFirst(qualifiedName().className()), "(",
+        f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(),")",CR);
   }
+ 
 
 }

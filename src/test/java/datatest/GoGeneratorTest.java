@@ -158,6 +158,16 @@ public class GoGeneratorTest extends GenBaseTest {
   }
 
   @Test
+  public void floats() {
+    p().pr("class {", INDENT, //
+        "float x;", CR, //
+        "float y = 42.12;", CR, //
+        "*float sizes;", CR, //
+        "}");
+    compile();
+  }
+  
+  @Test
   public void maps() {
     p().pr("class {", INDENT, //
         "map string string s;", CR, //
