@@ -6,7 +6,7 @@ APP=datagen
 BINDIR="$HOME/bin"
 if [ ! -d $BINDIR ]
 then
-  echo "Directory doesn't exist: $BINDIR"
+  echo "Directory doesn't exist; please create it: $BINDIR"
   exit 1
 fi
 LINK=$BINDIR/$APP
@@ -41,12 +41,15 @@ done
 # Perform clean, if requested
 #
 if [ "$CLEAN" != "" ]; then
-  echo "...cleaning $APP"
+  echo "...cleaning"
   mvn clean
   if [ -f $LINK ]; then
+    echo "....removing old driver: ${LINK}"
     rm $LINK
   fi
+  datagen clean delete_old
 fi
+
 
 
 
@@ -58,8 +61,7 @@ if [ "$NOTEST" != "" ]; then
   echo "...skipping tests"
 fi
 
+echo "...generating data classes"
+datagen
 mvn install $NOTEST
-
-if [ ! -f $LINK ]; then
-  cp .jsproject/driver.sh $LINK
-fi
+cp .jsproject/driver.sh $LINK
