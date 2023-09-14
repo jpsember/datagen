@@ -81,8 +81,19 @@ public class SqlGen extends BaseObject {
     m.put("package_decl", mPackageExpr);
 
     {
+      var tn = simulated() ? "db_import_go_sim.txt" : "db_import_go_sqlite.txt";
+      m.put("additional_imports", Files.readString(SourceGen.class, tn));
+    }
+    
+    
+    {
       var x = sourceBuilder();
       if (simulated()) {
+        x.addSafe("  \"reflect\"\n"
+            + "  \"sort\"\n"
+            + "  \"strings\"\n"
+            + "  \"sync\"\n"
+            );
       } else {
         x.a(" _ \"github.com/mattn/go-sqlite3\"", CR);
         x.a(" \"database/sql\"", CR);
@@ -382,7 +393,7 @@ public class SqlGen extends BaseObject {
       lockAndDeferUnlock(s);
       s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableNameStr, ")", CR, //
           "if !mp.HasKey(objId)", OPEN, //
-          "return Default",objNameGo,", nil", CLOSE, //
+          "return Default", objNameGo, ", nil", CLOSE, //
           "return mp.GetData(objId, Default", objNameGo, ").(", objNameGo, "), nil", CLOSE);
     } else {
 
@@ -518,19 +529,19 @@ public class SqlGen extends BaseObject {
     if (funcText == null) {
       badArg("no compare func registered for type name:", quote(name));
     }
-    
+
     var s = chompPrefix(funcText, "func ");
     var i = s.indexOf('(');
-    var funcName = s.substring(0,i);
-    
+    var funcName = s.substring(0, i);
+
     if (mCompareFuncsGenerated.add(funcName)) {
       addChunk(sourceBuilder().a(funcText));
     }
     return funcName;
   }
+
   private Set<String> mCompareFuncsGenerated = hashSet();
 
-  
   private void generateExtractFieldFunc(String fnName, String fieldName) {
     var s = sourceBuilder();
     var varName = "as" + ci.objNameGo;
