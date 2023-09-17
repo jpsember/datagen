@@ -194,8 +194,6 @@ public abstract class SourceGen extends BaseObject {
     MacroParser parser = new MacroParser();
     parser.withPattern(ParseTools.IMPORT_REGEXP);
     parser.withTemplate(template);
-    pr("Extracting import expressions from:",INDENT,template);
-    
     String result = parser.content(key -> {
       // See if this occurrence lies within a string constant; if so, return the original text
       {
@@ -217,12 +215,7 @@ public abstract class SourceGen extends BaseObject {
       checkArgument(subExp.size() == 2, "can't parse key into subexpressions:", key, subExp);
       String s0 = subExp.get(0);
       String s1 = subExp.get(1);
-      if (expressionSet.add(s0)) {
-        pr(VERT_SP, "adding expression:", s0, "parsed from key:", key);
-      }
-      if (s0.endsWith("base.base\"")) {
-        badState("expr:", s0, "template:", INDENT, template);
-      }
+      expressionSet.add(s0);
       return s1;
     });
     List<String> lst = arrayList();

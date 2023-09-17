@@ -17,20 +17,14 @@ public final class QualifiedName extends BaseObject {
       var a = expr.lastIndexOf('/');
       var b = expr.lastIndexOf('.');
       var nameStartPos = Math.max(a,b);
-//      int nameStartPos = expr.lastIndexOf('/');
-//      if (nameStartPos < 0) {
-//        nameStartPos = expr.lastIndexOf('.');
-//      }
       if (nameStartPos == 0 || nameStartPos == expr.length() - 1)
         throw badArg("from expr:", quote(expr));
       String packagePath = expr.substring(0, Math.max(0, nameStartPos));
       packagePath = ifNullOrEmpty(packagePath, nullToEmpty(defaultPackage));
       String className = expr.substring(1 + nameStartPos);
       QualifiedName result = new QualifiedName(packagePath, className);
-     // pr("parse:",expr,"yields:",INDENT,result);
       return result;
 }
-    
     
     int nameStartPos = expr.lastIndexOf('.');
     if (nameStartPos == 0 || nameStartPos == expr.length() - 1)

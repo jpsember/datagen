@@ -39,22 +39,11 @@ public class GoContractDataType extends GoDataType {
   public String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDefOrNull, JSMap json) {
     FieldDef fieldDef = fieldDefOrNull;
     SourceBuilder s = classSpecificSource;
-
-    // Special case code for certain types (e.g. IPoint)
-    var cn = qualifiedName(NAME_HUMAN).className();
-
-    //    if (cn.equals("IPoint")) {
-    //      s.a("var ", fieldDef.constantName(), " = ", sourceDefaultValue(), ".Parse(JSListFromStringM(",
-    //          DataUtil.escapeChars(json.toString(), true), ")).(", typeName(), ")", CR);
-    //    } else
-    //    
-    //    
     {
       s.a("var ", fieldDef.constantName(), " = ", sourceDefaultValue(), ".Parse(JSMapFromStringM(",
           DataUtil.escapeChars(json.toString(), true), ")).(", typeName(), ")", CR);
 
     }
-
     return fieldDef.constantName();
   }
 
@@ -98,15 +87,7 @@ public class GoContractDataType extends GoDataType {
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-
-    // Special case code for certain types (e.g. IPoint)
     var cn = qualifiedName(NAME_HUMAN).className();
-
-    if (cn.equals("IPoint")) {
-      s.a(targetExpr, " = ", f.instanceName(), CR);
-      return;
-    }
-
     String arg = f.instanceName();
     s.a("if ", arg, " == nil ", OPEN, //
         targetExpr, " = Default", cn, //
