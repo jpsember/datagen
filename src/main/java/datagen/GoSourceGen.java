@@ -95,33 +95,39 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected String generateImports(List<String> expressions) {
-    log("generating golang imports");
+    boolean db = false && alert("logging");
+    if (db)
+      log("generating golang imports");
 
     s.setIndent(2);
 
     for (String cn : expressions) {
-      log("... expression:", cn);
-      String importString =cn;
+      //log("... expression:", cn);
+      String importString = cn;
       QualifiedName qn = QualifiedName.parse(cn);
-       log(INDENT, "QualifiedName:", INDENT, qn);
+      if (db)
+        log(INDENT, "QualifiedName:", INDENT, qn);
 
       // Don't import anything if there is no package info
       if (qn.packagePath().isEmpty()) {
-        log("...package path is empty; skipping");
+        if (db)
+          log("...package path is empty; skipping");
         continue;
       }
 
       // If the package name is the same as that of the file being generated, no import necessary.
 
       if (qn.packagePath().equals(Context.generatedTypeDef.qualifiedName().packagePath())) {
-        log("...same package as the generated type; skipping");
+        if (db)
+          log("...same package as the generated type; skipping");
         continue;
       }
 
       importString = qn.packagePath();
       if (!Context.pt.go())
         importString = importString.replace('.', '/');
-      log("...------------------------------> importing:", importString);
+      if (db)
+        log("...------------------------------> importing:", importString);
       s.a(". \"", importString, "\"").cr();
     }
     return content();

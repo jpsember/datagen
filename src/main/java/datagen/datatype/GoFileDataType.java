@@ -32,8 +32,8 @@ import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.json.JSMap;
 import static js.base.Tools.*;
- import static datagen.ParseTools.*;
- 
+import static datagen.ParseTools.*;
+
 public final class GoFileDataType extends GoDataType {
 
   public static final DataType TYPE = new GoFileDataType();

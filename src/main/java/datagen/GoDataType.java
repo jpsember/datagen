@@ -27,7 +27,7 @@ public abstract class GoDataType extends DataType {
 
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String arg = f.instanceName();
-    if (isPrimitive()  ) {
+    if (isPrimitive()) {
       s.a(targetExpr, " = ", arg, CR);
     } else {
       s.a("if x == nil {", IN, //

@@ -8,8 +8,6 @@ import datagen.SourceBuilder;
 import js.geometry.IPoint;
 import js.json.JSMap;
 import static datagen.ParseTools.*;
-import static datagen.SourceBuilder.*;
-import static datagen.Utils.*;
 
 public class GoIPointDataType extends GoContractDataType {
 
@@ -17,7 +15,7 @@ public class GoIPointDataType extends GoContractDataType {
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    s.a(targetExpr, " = ",  f.instanceName(), CR);
+    s.a(targetExpr, " = ", f.instanceName(), CR);
   }
 
   @Override

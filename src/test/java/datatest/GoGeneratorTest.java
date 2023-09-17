@@ -218,5 +218,4 @@ public class GoGeneratorTest extends GenBaseTest {
     compile();
   }
 
-  
 }

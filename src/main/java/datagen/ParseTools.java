@@ -237,22 +237,11 @@ public final class ParseTools {
     return importedClassExpr(qualifiedClassName);
   }
 
-  private Object goClassExpr(String qualifiedClassName) {
-    if (mLanguage != Language.GO)
-      return null;
-    return importedClassExpr(qualifiedClassName);
-  }
-
   /**
    * Wrap a class name in delimeters so the class is imported, and the class
    * name (without its package) is generated
    */
   public static Object importedClassExpr(String classExpression) {
-    if (classExpression.startsWith("!")) {
-      die("is this still called?");
-      return importExprWithCode(classExpression.substring(1), "");
-    }
-
     QualifiedName qn = QualifiedName.parse(classExpression);
     return importExprWithCode(qn.combined(), qn.className());
   }

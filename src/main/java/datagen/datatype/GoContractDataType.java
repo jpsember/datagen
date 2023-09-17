@@ -39,11 +39,8 @@ public class GoContractDataType extends GoDataType {
   public String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDefOrNull, JSMap json) {
     FieldDef fieldDef = fieldDefOrNull;
     SourceBuilder s = classSpecificSource;
-    {
-      s.a("var ", fieldDef.constantName(), " = ", sourceDefaultValue(), ".Parse(JSMapFromStringM(",
-          DataUtil.escapeChars(json.toString(), true), ")).(", typeName(), ")", CR);
-
-    }
+    s.a("var ", fieldDef.constantName(), " = ", sourceDefaultValue(), ".Parse(JSMapFromStringM(",
+        DataUtil.escapeChars(json.toString(), true), ")).(", typeName(), ")", CR);
     return fieldDef.constantName();
   }
 
@@ -55,19 +52,6 @@ public class GoContractDataType extends GoDataType {
   // Make this final for now to avoid unintended overriding
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    // If there is a value for this key, use the type's default instance to parse that value
-    // and store that parsed value.
-    // Otherwise, if there is no value, leave the current value alone (which may be None, e.g. if value is optional)
-    //
-
-    // (we want something like this:)
-
-    //    var x = s.OptUnsafe("screen_size")
-    //        if x != nil {
-    //          n.screenSize = DefaultIPoint.Parse(x.(JSEntity)).(IPoint)
-    //        }
-    //    
-
     s.a(OPEN, "var x = s.OptUnsafe(\"", f.name(), "\")", CR, //
         "if x != nil ", OPEN, //
         "n.", f.instanceName(), " = Default", qualifiedName(NAME_HUMAN).className(), ".Parse(x.(JSEntity)).(",
