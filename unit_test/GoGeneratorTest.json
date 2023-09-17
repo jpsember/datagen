@@ -1,8 +1,8 @@
 {             "alpha" : 3056,
               "bravo" : 9108,
-                "cat" : 7450,
+                "cat" : 2703,
             "charlie" : 3279,
-           "contract" : 4124,
+           "contract" : 2665,
                "crow" : 3760,
               "depr1" : 9492,
               "depr2" : 6634,
@@ -11,7 +11,8 @@
    "externalRepeated" : 6065,
              "floats" : 9399,
                "ints" : 3994,
-               "maps" : 4371,
+            "ipoints" : 2119,
+               "maps" : 1687,
   "persistSessionMap" : 5509,
             "session" : 4752
 }

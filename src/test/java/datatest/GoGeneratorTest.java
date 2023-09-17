@@ -175,7 +175,21 @@ public class GoGeneratorTest extends GenBaseTest {
         "}");
     compile();
   }
+  
 
+  @Test
+  public void ipoints() {
+    rv();
+    p().pr("class {", INDENT, //
+//        "IPoint a;", CR, //
+//        "?IPoint b;", CR, //
+//        "*IPoint c;", CR, //
+//        "?*IPoint d;", CR, //
+        "IPoint e = [32,64];", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+  
   @Test
   public void alpha() {
     p().pr("class{", INDENT, //
@@ -218,4 +232,5 @@ public class GoGeneratorTest extends GenBaseTest {
     compile();
   }
 
+  
 }

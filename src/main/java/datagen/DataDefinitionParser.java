@@ -52,7 +52,7 @@ final class DataDefinitionParser extends BaseObject {
    * Parse .dat file; store generated type definition to Context
    */
   public void parse() {
-    try {
+//    try {
       prepareHandlers();
       startScanner();
 
@@ -94,17 +94,17 @@ final class DataDefinitionParser extends BaseObject {
 
       Context.sql.generate();
 
-    } catch (Throwable t) {
-      alert("Caught:", t.getMessage());
-      if (t instanceof ScanException || SHOW_STACK_TRACES) {
-        throw t;
-      }
-      if (mLastReadToken != null) {
-        Throwable t2 = mLastReadToken.fail(t.toString());
-        throw new RuntimeException(t2.getMessage(), t);
-      }
-      throw t;
-    }
+//    } catch (Throwable t) {
+//      alert("Caught:", t.getMessage());
+//      if (t instanceof ScanException || SHOW_STACK_TRACES) {
+//        throw t;
+//      }
+//      if (mLastReadToken != null) {
+//        Throwable t2 = mLastReadToken.fail(t.toString());
+//        throw new RuntimeException(t2.getMessage(), t);
+//      }
+//      throw t;
+//    }
   }
 
   private Token mDeprecationToken;

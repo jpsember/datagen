@@ -65,6 +65,7 @@ public final class DataTypeManager extends BaseObject {
       add("bool", GoBooleanDataType.TYPE);
       add("string", GoStringDataType.TYPE);
       add("File", GoFileDataType.TYPE);
+      add("IPoint", GoIPointDataType.TYPE);
     }
       break;
     case PYTHON:
@@ -84,6 +85,7 @@ public final class DataTypeManager extends BaseObject {
       add("JSMap", PythonJsonMapDataType.TYPE);
       add("Matrix", PyMatrixDataType.TYPE);
       break;
+      
     case JAVA:
       add("byte", JavaPrimitiveByteDataType.PRIM_TYPE);
       add("short", JavaPrimitiveShortDataType.PRIM_TYPE);

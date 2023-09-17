@@ -3,7 +3,6 @@ package datagen;
 import static js.base.Tools.*;
 
 import js.data.DataUtil;
-import static datagen.Utils.*;
 
 public class GoFieldDef extends FieldDef {
 
@@ -34,6 +33,7 @@ public class GoFieldDef extends FieldDef {
 
   @Override
   public String provideConstantName() {
-    return verboseVariant("_d" + index(), "def_" + name().toUpperCase());
+    // We don't have names private to classes like in Java, so we have a more elaborate prefix
+    return "c_" + Context.generatedTypeDef.qualifiedName().combined().replace('.', '_') + "_" + index();
   }
 }

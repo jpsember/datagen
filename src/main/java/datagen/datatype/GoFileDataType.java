@@ -32,14 +32,15 @@ import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.json.JSMap;
 import static js.base.Tools.*;
-
+ import static datagen.ParseTools.*;
+ 
 public final class GoFileDataType extends GoDataType {
 
   public static final DataType TYPE = new GoFileDataType();
 
   private GoFileDataType() {
     loadTools();
-    with("github.com/jpsember/golang-base/files.Path");
+    with(goModuleExpr("Path"));
   }
 
   @Override

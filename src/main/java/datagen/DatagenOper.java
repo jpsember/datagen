@@ -74,7 +74,7 @@ public class DatagenOper extends AppOper {
       // Reset context for a new file
       Context.prepare(entry);
 
-      try {
+     // try {
 
         // Parse .dat file
         //
@@ -88,13 +88,13 @@ public class DatagenOper extends AppOper {
         g.setVerbose(verbose());
         g.generate();
 
-      } catch (Throwable t) {
-        if (app().showExceptions() || SHOW_STACK_TRACES)
-          throw t;
-        setError("Processing", entry.datRelPath(), INDENT, t.getMessage());
-      } finally {
+//      } catch (Throwable t) {
+//        if (app().showExceptions() || SHOW_STACK_TRACES)
+//          throw t;
+//        setError("Processing", entry.datRelPath(), INDENT, t.getMessage());
+      //} finally {
         Context.discard();
-      }
+//      }
     }
 
     Context.sql.complete();

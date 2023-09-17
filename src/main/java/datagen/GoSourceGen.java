@@ -95,6 +95,7 @@ public final class GoSourceGen extends SourceGen {
 
   @Override
   protected String generateImports(List<String> expressions) {
+    alertVerbose();
     log("generating golang imports");
 
     s.setIndent(2);
@@ -103,6 +104,9 @@ public final class GoSourceGen extends SourceGen {
       log("... expression:", cn);
       String importString = chompPrefix(cn, "!");
       if (importString != cn) {
+        die("did not expect this code to be used");
+      }
+      if (importString != cn) {
         // Import the (rest of the) expression verbatim
         log("...------------------------------> importing:", importString);
         s.a(importString).cr();
@@ -110,11 +114,12 @@ public final class GoSourceGen extends SourceGen {
       }
 
       QualifiedName qn = QualifiedName.parse(cn);
-      log(INDENT, "QualifiedName:", INDENT, qn);
+      // log(INDENT, "QualifiedName:", INDENT, qn);
 
       // Don't import anything if there is no package info
       if (qn.packagePath().isEmpty()) {
-        log("...package path is empty; skipping");
+        log("...package path is empty; skipping, for:" + cn);
+        //        if (!alert("NOT skipping!"))
         continue;
       }
 
@@ -125,8 +130,11 @@ public final class GoSourceGen extends SourceGen {
         continue;
       }
 
-      importString = qn.packagePath().replace('.', '/');
+      importString = qn.packagePath();
+      if (!Context.pt.go())
+        importString = importString.replace('.', '/');
       log("...------------------------------> importing:", importString);
+      //checkState(!importString.equals("github.com/jpsember/golang-base"), INDENT, qn);
       s.a(". \"", importString, "\"").cr();
     }
     return content();
