@@ -18,7 +18,12 @@ public class GoFieldDef extends FieldDef {
 
   @Override
   public String provideNameStringConstantUnqualified() {
-    return quote(DataUtil.convertCamelCaseToUnderscores(name()));
+    var d = Context.generatedTypeDef;
+    SourceBuilder s = d.classSpecificSourceBuilder();
+    var goName = DataUtil.convertUnderscoresToCamelCase(name());
+    var varName = d.qualifiedName().className() + "_" + goName;
+    s.a("const ", varName, " = \"", name(), "\"", CR);
+    return varName;
   }
 
   @Override
