@@ -58,6 +58,7 @@ public class SqlGen extends BaseObject {
     createRecord();
     updateRecord();
     readRecord();
+    deleteRecord();
     createIndexSpecific();
     indexFunc();
     iterators();
@@ -84,16 +85,11 @@ public class SqlGen extends BaseObject {
       var tn = simulated() ? "db_import_go_sim.txt" : "db_import_go_sqlite.txt";
       m.put("additional_imports", Files.readString(SourceGen.class, tn));
     }
-    
-    
+
     {
       var x = sourceBuilder();
       if (simulated()) {
-        x.addSafe("  \"reflect\"\n"
-            + "  \"sort\"\n"
-            + "  \"strings\"\n"
-            + "  \"sync\"\n"
-            );
+        x.addSafe("  \"reflect\"\n" + "  \"sort\"\n" + "  \"strings\"\n" + "  \"sync\"\n");
       } else {
         x.a(" _ \"github.com/mattn/go-sqlite3\"", CR);
         x.a(" \"database/sql\"", CR);
@@ -421,6 +417,50 @@ public class SqlGen extends BaseObject {
           CLOSE, //
           "return result, err", CLOSE);
 
+    }
+    addChunk(s);
+  }
+
+  private void deleteRecord() {
+    //
+    //func DeleteUser(id int) (bool, error) {
+    //    singletonDatabase.Lock.Lock()
+    //    defer singletonDatabase.Lock.Unlock()
+    //    tbl := singletonDatabase.getTable(`user`)
+    //    if !tbl.HasKey(id) {
+    //      return false, nil
+    //    }
+    //    tbl.Delete(id)
+    //    tbl.modified = true
+    //    return true, nil
+    //}
+
+    var s = sourceBuilder();
+
+    var objNameGo = ci.objNameGo;
+
+    s.a("// Delete ", objNameGo, " with a particular id.  Returns true if object was deleted.", CR, //
+        "// Returns a non-nil error if some other problem occurs.", CR);
+
+    s.a("func Delete", objNameGo, "(objId int) (bool, error)", OPEN);
+    lockAndDeferUnlock(s);
+
+    if (simulated()) {
+      // lockAndDeferUnlock(s);
+      s.a("tbl := ", GLOBAL_DB, ".getTable(", ci.simTableNameStr, ")", CR, //
+          "if !tbl.HasKey(objId)", OPEN, //
+          "return false, nil", CLOSE, //
+          "tbl.Delete(objId)", CR, //
+          "tbl.modified = true", CR, //
+          "return true, nil", CLOSE);
+    } else {
+      var stName = "stmtDelete" + objNameGo;
+      declareStatement(stName);
+      // This LIMIT 1 is probably not necessary?
+      genPrepareStatement(stName, "`DELETE * FROM ", ci.objName, " WHERE id = ? LIMIT 1`");
+
+      s.a("result, err1 := ", stName, ".Exec(objId)", CR, //
+          "return result, err1", CLOSE);
     }
     addChunk(s);
   }

@@ -171,6 +171,11 @@ func (m MemTable) HasKey(key any) bool {
   return m.table.HasKey(strKey)
 }
 
+func (m MemTable) Delete(key any)   {
+	strKey := argToMemtableKey(key)
+	m.table.Delete(strKey)
+}
+
 func argToMemtableKey(key any) string {
   var strKey string
   switch k := key.(type) {
@@ -357,3 +362,18 @@ func (iter DbIter) readChunk() {
 		iter.fieldValMin = iter.readScanFieldValueFunc(arr[len(arr)-1])
 	}
 }
+
+
+
+//
+//func DeleteUser(id int) (bool, error) {
+//	singletonDatabase.Lock.Lock()
+//	defer singletonDatabase.Lock.Unlock()
+//	tbl := singletonDatabase.getTable(`user`)
+//	if !tbl.HasKey(id) {
+//		return false, nil
+//	}
+//	tbl.Delete(id)
+//	tbl.modified = true
+//	return true, nil
+//}
