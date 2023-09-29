@@ -67,8 +67,8 @@ public final class GoFileDataType extends GoDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("n.", f.instanceName(), " = ", Context.pt.PKGGO_FILE, "NewPathOrEmptyM(",
-        f.nameStringConstantQualified(), ")");
+    s.a("n.", f.instanceName(), " = ", Context.pt.PKGGO_FILE, "NewPathOrEmptyM(s.OptString(",
+        f.nameStringConstantQualified(), ", \"\"))");
   }
 
 }
