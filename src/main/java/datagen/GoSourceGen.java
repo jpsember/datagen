@@ -28,6 +28,7 @@ import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
 import java.util.List;
+import java.util.Set;
 
 import datagen.datatype.EnumDataType;
 import js.file.Files;
@@ -99,6 +100,8 @@ public final class GoSourceGen extends SourceGen {
     if (db)
       log("generating golang imports");
 
+    Set<String> uniqueSet = hashSet();
+
     s.setIndent(2);
 
     for (String cn : expressions) {
@@ -124,11 +127,11 @@ public final class GoSourceGen extends SourceGen {
       }
 
       importString = qn.packagePath();
-      if (!Context.pt.go())
-        importString = importString.replace('.', '/');
-      if (db)
-        log("...------------------------------> importing:", importString);
-      s.a(". \"", importString, "\"").cr();
+      if (uniqueSet.add(importString)) {
+        if (db)
+          log("...------------------------------> importing:", importString);
+        s.a(". \"", importString, "\"").cr();
+      }
     }
     return content();
   }

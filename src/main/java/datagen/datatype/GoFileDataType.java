@@ -45,12 +45,14 @@ public final class GoFileDataType extends GoDataType {
 
   @Override
   public boolean isPrimitive() {
-    return false;
+    return true;
   }
+
+
 
   @Override
   public String compilerInitialValue() {
-    return Context.pt.PKGGO_FILE + ".EmptyPath";
+    return Context.pt.PKGGO_FILE + "EmptyPath";
   }
 
   @Override
@@ -66,7 +68,7 @@ public final class GoFileDataType extends GoDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.a("n.", f.instanceName(), " = ", Context.pt.PKGGO_FILE, "NewPathOrEmptyM(",
-        f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(), ")");
+        f.nameStringConstantQualified(), ")");
   }
 
 }

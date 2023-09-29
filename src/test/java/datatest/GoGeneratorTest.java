@@ -71,8 +71,7 @@ public class GoGeneratorTest extends GenBaseTest {
 
   @Test
   public void filesMisc() {
-    if (alert("File datatype not finished yet"))
-      return;
+    rv();
     p().pr("class {", INDENT, //
         "File a;", CR, //
         "*File bs;", CR, //

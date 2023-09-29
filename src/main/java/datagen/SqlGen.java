@@ -422,19 +422,7 @@ public class SqlGen extends BaseObject {
   }
 
   private void deleteRecord() {
-    //
-    //func DeleteUser(id int) (bool, error) {
-    //    singletonDatabase.Lock.Lock()
-    //    defer singletonDatabase.Lock.Unlock()
-    //    tbl := singletonDatabase.getTable(`user`)
-    //    if !tbl.HasKey(id) {
-    //      return false, nil
-    //    }
-    //    tbl.Delete(id)
-    //    tbl.modified = true
-    //    return true, nil
-    //}
-
+   
     var s = sourceBuilder();
 
     var objNameGo = ci.objNameGo;
