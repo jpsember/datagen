@@ -71,4 +71,9 @@ public final class GoFileDataType extends GoDataType {
         f.nameStringConstantQualified(), ", \"\"))");
   }
 
+  @Override
+  public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
+    return "string("+valueExpression + ")";
+  }
+
 }

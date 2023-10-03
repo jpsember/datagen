@@ -71,7 +71,6 @@ public class GoGeneratorTest extends GenBaseTest {
 
   @Test
   public void filesMisc() {
-    rv();
     p().pr("class {", INDENT, //
         "File a;", CR, //
         "*File bs;", CR, //
