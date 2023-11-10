@@ -228,6 +228,15 @@ public final class GeneratedTypeDef extends BaseObject {
     return mClassSpecificSource;
   }
 
+
+  public FieldDef fieldWithName(String name) {
+    for (FieldDef field : fields()) {
+      if (field.name().equals(name))
+        return field;
+    }
+    throw badArg("can't find field with name:",name);
+  }
+
   private DataType registerType(PartialType partialType) {
     DataTypeManager dataTypes = Context.dataTypeManager;
     DataType dataType = dataTypes.get(partialType.name());

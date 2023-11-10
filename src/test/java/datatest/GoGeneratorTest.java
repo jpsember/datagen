@@ -168,9 +168,11 @@ public class GoGeneratorTest extends GenBaseTest {
   @Test
   public void maps() {
     p().pr("class {", INDENT, //
-        "map string string s;", CR, //
-        "map string string q = \"{\\\"bar\\\":\\\"foo\\\"}\";", CR, //
+         "map string string s;", CR, //
+      "map string string q = \"{\\\"bar\\\":\\\"foo\\\"}\";", CR, //
+        "map string long h;",CR,//
         "}");
+    alert("map string long fails; the long must be extracted from the JSEntity");
     compile();
   }
 
@@ -190,6 +192,7 @@ public class GoGeneratorTest extends GenBaseTest {
    */
   @Test
   public void bravo() {
+    //rv();
     addArg("comments");
     p().pr("class {", INDENT, //
         "int id;", CR, //
@@ -200,6 +203,20 @@ public class GoGeneratorTest extends GenBaseTest {
     compile();
   }
 
+ 
+  @Test
+  public void bravo2() {
+    //rv();
+    addArg("comments");
+    addArg("dbsim");
+    p().pr("class {", INDENT, //
+        "int id;", CR, //
+        "string name;", CR, //
+        "enum Level grad;", CR, //
+        "bool alive;", CR, //
+        "} sql{index name}");
+    compile();
+  }
   /**
    * Generating sql code, with simulated database
    */

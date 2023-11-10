@@ -186,23 +186,13 @@ public class SqlGen extends BaseObject {
     }
   }
 
-  private FieldDef findFieldWithName(String fieldNameSnake) {
-    var d = mGeneratedTypeDef;
-    for (var fd : d.fields()) {
-      if (fd.name().equals(fieldNameSnake)) {
-        return fd;
-      }
-    }
-    throw badArg("can't find field with name:", fieldNameSnake);
-  }
-
   private void readByField(String fieldNameSnake) {
 
     var s = sourceBuilder();
-    FieldDef our = findFieldWithName(fieldNameSnake);
+    FieldDef our =mGeneratedTypeDef.fieldWithName(fieldNameSnake);
 
     var fieldNameCamel = snakeToCamel(fieldNameSnake);
-    var fieldTypeStr = our.dataType().qualifiedName().className();
+    var fieldTypeStr = typeName(our); //our.dataType().qualifiedName().className();
 
     s.a("// Read ", ci.objNameGo, " whose ", fieldNameCamel, " matches a value.", CR, //
         "// Returns the object if successful.  If not found, returns the default object.", CR, //
@@ -215,15 +205,10 @@ public class SqlGen extends BaseObject {
       s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableNameStr, ")", CR, //
           "for _, val := range mp.table.WrappedMap()", OPEN, //
           "valMap := val.AsJSMap()", CR, "fieldVal := valMap.OptAny(", quote(fieldNameSnake), ")", CR, //
-          "// convert fieldVal to apppropriate type (int, string, etc)", CR //
+          "// convert fieldVal to appropriate type (int, string, etc)", CR //
       );
-      var convExpr = "";
-      if (fieldTypeStr.equals("string")) {
-        convExpr = ".AsString()";
-      }
-      if (convExpr == null)
-        badArg("don't know how to convert field of type:", fieldTypeStr);
-      s.a("if fieldVal", convExpr, " == objValue", OPEN, //
+      String convExpr = buildConvertExpr(fieldTypeStr, "fieldVal");
+      s.a("if ", convExpr, " == objValue", OPEN, //
           "return Default", ci.objNameGo, ".Parse(valMap).(", ci.objNameGo, "), nil", CLOSE, //
           CLOSE, //
           "return Default", ci.objNameGo, ", nil", CLOSE);
@@ -473,7 +458,7 @@ public class SqlGen extends BaseObject {
     for (var f : g.fields()) {
       var nm = f.name();
       if (nm.equals(fieldName))
-        return f.dataType().qualifiedName().className();
+        return typeName(f);
     }
     throw badArg("Can't find type name for:", fieldName);
   }
@@ -500,7 +485,7 @@ public class SqlGen extends BaseObject {
 
     if (simulated()) {
 
-      var fd = findFieldWithName(fieldNameSnake);
+      var fd = mGeneratedTypeDef.fieldWithName( fieldNameSnake);
       var compareFuncName = determineCompareFuncForField(fd);
 
       s.a("x := newDbIter()", CR, //
@@ -597,7 +582,7 @@ public class SqlGen extends BaseObject {
 
       var fn = camelToSnake(fieldDef.name());
       fieldNames.add(fn);
-      s.a("var ", fn, " ", fieldDef.dataType().qualifiedName().className(), CR);
+      s.a("var ", fn, " ", typeName(fieldDef), CR);
     }
 
     s.a("err := rows.Scan(");
@@ -686,7 +671,7 @@ public class SqlGen extends BaseObject {
       }
       if (isId) {
         if (!sqlType.equals("INTEGER"))
-          badState("id doesn't look like an integer: ", f.name(), f.dataType().qualifiedName().className(),
+          badState("id doesn't look like an integer: ", f.name(), typeName(f),
               sqlType);
       }
     }
@@ -792,10 +777,27 @@ public class SqlGen extends BaseObject {
     return DataUtil.convertCamelCaseToUnderscores(camel);
   }
 
+  private static String typeName(FieldDef field)   {
+    return field.dataType().qualifiedName().className();
+  }
+  
+  private String buildConvertExpr(String sourceType, String expr) {
+    String convExpr = null;
+    if (sourceType.equals("string")) {
+      convExpr = expr+".AsString()";
+    } else if (sourceType.equals("int")) {
+      convExpr = "int("+expr+".AsInteger())";
+    }
+    if (convExpr == null)
+      badArg("don't know how to convert field of type:", sourceType);
+    return convExpr;
+  }
+  
   private void createWithField(String fieldNameSnake) {
-
     var fieldNameCamel = snakeToCamel(fieldNameSnake);
-
+    var field = mGeneratedTypeDef.fieldWithName(fieldNameSnake);
+    var sourceType = typeName(field);
+    
     var s = sourceBuilder();
 
     var nm = ci.objNameGo;
@@ -803,7 +805,8 @@ public class SqlGen extends BaseObject {
         "// Returns default object if such an object already exists.", CR, //
         "// Returns a non-nil error if some other problem occurs.", CR);
 
-    s.a("func Create", nm, "With", fieldNameCamel, "(obj ", nm, ") (", nm, ", error)", OPEN);
+    
+    s.a("func Create", nm, "With", fieldNameCamel, "(value ", sourceType  , ") (", nm, ", error)", OPEN);
 
     if (simulated()) {
       s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableNameStr, ")", CR, //
@@ -811,21 +814,13 @@ public class SqlGen extends BaseObject {
           "valMap := val.AsJSMap()", CR, "fieldVal := valMap.OptAny(", quote(fieldNameSnake), ")", CR, //
           "// convert fieldVal to appropriate type (int, string, etc)", CR);
 
-      FieldDef our = findFieldWithName(fieldNameSnake);
-      var fieldTypeStr = our.dataType().qualifiedName().className();
+      String convExpr = buildConvertExpr(sourceType, "fieldVal");
 
-      var convExpr = "";
-      if (fieldTypeStr.equals("string")) {
-        convExpr = ".AsString()";
-      }
-      if (convExpr == null)
-        badArg("don't know how to convert field of type:", fieldTypeStr);
-
-      s.a("if fieldVal", convExpr, " == obj.", fieldNameCamel, "()", OPEN, //
+      s.a("if ", convExpr, " == value", OPEN, //
           "return Default", ci.objNameGo, ", nil", CLOSE, //
           CLOSE);
 
-      s.a("obj = obj.ToBuilder().SetId(mp.nextUniqueKey()).Build()", CR, //
+      s.a("obj := New", nm,"().SetId(mp.nextUniqueKey()).Set",fieldNameCamel,"(value).Build()", CR, //
           "mp.Put(obj.Id(), obj)", CR, //
           "mp.modified = true", CR, //
           "return obj, nil", CLOSE);
@@ -846,6 +841,7 @@ public class SqlGen extends BaseObject {
           "existingObj, err1 := Read", objNameGo, "With", fieldNameCamel, "(obj.", fieldNameCamel, "())", CR, //
           "err = err1", CR, //
           "if err == nil && existingObj.Id() == 0", OPEN, //
+          "obj := New",nm,"().Set",fieldNameCamel,"(value)",CR,//
           "c, err2 := Create", objNameGo, "(obj)", CR, //
           "err = err2", CR, "created = c", CLOSE, "return created,err", CR, CLOSE);
     }
