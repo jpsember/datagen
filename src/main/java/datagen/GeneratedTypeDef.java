@@ -34,6 +34,7 @@ import datagen.datatype.*;
 import datagen.gen.PartialType;
 import datagen.gen.TypeStructure;
 import js.base.BaseObject;
+import js.file.Files;
 
 /**
  * Encapsulates a generated data type or enum
@@ -242,10 +243,15 @@ public final class GeneratedTypeDef extends BaseObject {
     if (dataType == null) {
       var defaultPackage = Context.generatedTypeDef.qualifiedName().packagePath();
 
-      if (Context.pt.python()) {
-        // Issue #45: 
-        // Remove the last element of the package, e.g., "gen.layer" => "gen"
-        // (I'm not sure this is the permanant solution, but until some related problem occurs, I'll go with it)
+      // Issue #45: 
+      //
+      // With Python,
+      //
+      // Remove the last element of the package, e.g., "gen.layer" => "gen"
+      // (I'm not sure this is the permanant solution, but until some related problem occurs, I'll go with it)
+      // but DON'T do this if the 'alternate source path' parameter is in effect.
+      // 
+      if (Context.pt.python() && Files.empty(Context.config.pythonSourcePath())) {
         int i = defaultPackage.lastIndexOf('.');
         if (i >= 0)
           defaultPackage = defaultPackage.substring(0, i);
