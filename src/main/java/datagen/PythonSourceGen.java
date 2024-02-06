@@ -142,7 +142,7 @@ public class PythonSourceGen extends SourceGen {
     // External ref:      <package> . <ClassName>
     //
     // With the special rule that if no package is specified, it assumes the same package as the current
-    // datatype being generated.
+    // datatype being generated.   *** Maybe not (issue #45) ***
     //
     // When referring to such classes within generated Python code, we will derive and insert a filename
     // if the package includes 'gen'.

@@ -16,7 +16,7 @@ public final class QualifiedName extends BaseObject {
     if (Context.pt.go()) {
       var a = expr.lastIndexOf('/');
       var b = expr.lastIndexOf('.');
-      var nameStartPos = Math.max(a,b);
+      var nameStartPos = Math.max(a, b);
       if (nameStartPos == 0 || nameStartPos == expr.length() - 1)
         throw badArg("from expr:", quote(expr));
       String packagePath = expr.substring(0, Math.max(0, nameStartPos));
@@ -24,8 +24,8 @@ public final class QualifiedName extends BaseObject {
       String className = expr.substring(1 + nameStartPos);
       QualifiedName result = new QualifiedName(packagePath, className);
       return result;
-}
-    
+    }
+
     int nameStartPos = expr.lastIndexOf('.');
     if (nameStartPos == 0 || nameStartPos == expr.length() - 1)
       throw badArg("from expr:", quote(expr));
@@ -142,8 +142,8 @@ public final class QualifiedName extends BaseObject {
   }
 
   public static String lastComponent(String pkgName) {
-   int i = pkgName.lastIndexOf('/');
-   return pkgName.substring(i+1);
+    int i = pkgName.lastIndexOf('/');
+    return pkgName.substring(i + 1);
   }
 
   private final String mPackagePath;

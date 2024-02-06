@@ -228,21 +228,30 @@ public final class GeneratedTypeDef extends BaseObject {
     return mClassSpecificSource;
   }
 
-
   public FieldDef fieldWithName(String name) {
     for (FieldDef field : fields()) {
       if (field.name().equals(name))
         return field;
     }
-    throw badArg("can't find field with name:",name);
+    throw badArg("can't find field with name:", name);
   }
 
   private DataType registerType(PartialType partialType) {
     DataTypeManager dataTypes = Context.dataTypeManager;
     DataType dataType = dataTypes.get(partialType.name());
     if (dataType == null) {
-      QualifiedName qualName = QualifiedName.parse(partialType.name(),
-          Context.generatedTypeDef.qualifiedName().packagePath());
+      var defaultPackage = Context.generatedTypeDef.qualifiedName().packagePath();
+
+      if (Context.pt.python()) {
+        // Issue #45: 
+        // Remove the last element of the package, e.g., "gen.layer" => "gen"
+        // (I'm not sure this is the permanant solution, but until some related problem occurs, I'll go with it)
+        int i = defaultPackage.lastIndexOf('.');
+        if (i >= 0)
+          defaultPackage = defaultPackage.substring(0, i);
+      }
+
+      QualifiedName qualName = QualifiedName.parse(partialType.name(), defaultPackage);
       dataType = dataTypes.get(qualName.className());
       if (dataType == null) {
         if (partialType.enumFlag()) {
