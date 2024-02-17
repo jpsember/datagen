@@ -47,7 +47,6 @@ if [ "$CLEAN" != "" ]; then
     echo "....removing old driver: ${LINK}"
     rm $LINK
   fi
-  datagen clean delete_old
 fi
 
 
@@ -62,6 +61,5 @@ if [ "$NOTEST" != "" ]; then
 fi
 
 echo "...generating data classes"
-datagen
 mvn install $NOTEST
 cp .jsproject/driver.sh $LINK
