@@ -43,7 +43,7 @@ import js.file.Files;
 
 public class DatagenOper extends AppOper {
 
-  protected String getHelpDescription() {
+  protected String shortHelp() {
     return "Generate source files from .dat files";
   }
 
