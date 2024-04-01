@@ -80,6 +80,12 @@ public class JavaPrimitiveLongDataType extends JavaDataType {
     public String deserializeJsonToMapValue(String jsonValue) {
       return "(Long) " + jsonValue;
     }
+
+    @Override
+    public String deserializeStringToMapKey(String jsonStringValue) {
+      return "Long.parseInt(" + jsonStringValue + ")";
+    }
+
   }
 
 }

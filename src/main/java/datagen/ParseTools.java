@@ -30,6 +30,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import datagen.gen.Language;
+import js.file.Files;
 import js.json.JSMap;
 import js.parsing.DFA;
 import js.parsing.MacroParser;
@@ -117,7 +118,7 @@ public final class ParseTools {
 
   public static DFA dfa() {
     if (sDFA == null) {
-      sDFA = new DFA(JSMap.fromResource(Datagen.class, "tokens.dfa"));
+      sDFA = new DFA(new JSMap(Files.readString(Datagen.class, "tokens.dfa")));
     }
     return sDFA;
   }

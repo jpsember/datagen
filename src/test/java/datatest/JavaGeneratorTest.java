@@ -545,8 +545,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
-
-
   @Test
   public void typeMapVariousOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
@@ -555,6 +553,8 @@ public class JavaGeneratorTest extends GenBaseTest {
         "?map string File beta;", CR, //
         "map string Beaver gamma;", CR, //
         "map string string delta;", CR, //
+        "map int Beaver zulu;", CR, //
+        "map long Beaver yankee;", CR, //
         OUTDENT, "}");
     compile();
   }

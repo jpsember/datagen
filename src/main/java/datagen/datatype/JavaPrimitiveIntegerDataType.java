@@ -77,6 +77,11 @@ public class JavaPrimitiveIntegerDataType extends JavaDataType {
     public String deserializeJsonToMapValue(String jsonValue) {
       return "(Integer) " + jsonValue;
     }
+
+    @Override
+    public String deserializeStringToMapKey(String jsonStringValue) {
+      return "Integer.parseInt(" + jsonStringValue + ")";
+    }
   }
 
 }
