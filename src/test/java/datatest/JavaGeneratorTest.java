@@ -545,6 +545,8 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
+
+
   @Test
   public void typeMapVariousOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
