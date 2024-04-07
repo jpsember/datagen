@@ -887,6 +887,15 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
+  public void testIntMapKey()  {
+    p().pr(//
+        "fields {", INDENT, //
+        "map int string zebra;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
   public void typeBoxedValuesDebug() {
     debug();
     typeBoxedValues();
