@@ -90,7 +90,6 @@ public class JavaPrimitiveLongDataType extends JavaDataType {
     public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
       return valueExpression + ".toString()";
     }
-
   }
 
 }

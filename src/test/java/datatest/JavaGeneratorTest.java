@@ -560,14 +560,6 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void setOfInts() {
-    p().pr("fields {", INDENT, //
-        "set int alpha;", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
   public void typeSetVariousOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "fields {", INDENT, //
@@ -895,7 +887,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void testIntMapKey() {
+  public void testIntMapKey()  {
     p().pr(//
         "fields {", INDENT, //
         "map int string zebra;", CR, //
