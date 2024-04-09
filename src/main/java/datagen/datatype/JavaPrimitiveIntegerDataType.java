@@ -85,8 +85,9 @@ public class JavaPrimitiveIntegerDataType extends JavaDataType {
 
     @Override
     public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-      return valueExpression + ".toString()";
+      return valueExpression;
     }
+    
   }
 
 }

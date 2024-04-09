@@ -88,7 +88,7 @@ public class JavaPrimitiveLongDataType extends JavaDataType {
 
     @Override
     public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-      return valueExpression + ".toString()";
+      return valueExpression;
     }
   }
 
