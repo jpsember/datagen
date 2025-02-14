@@ -211,7 +211,7 @@ final class DataDefinitionParser extends BaseObject {
       classMode = true;
 
     if (!classMode) {
-      if (!sOldStyleWarningIssued && !testMode()) {
+      if (!sOldStyleWarningIssued) {
         sOldStyleWarningIssued = true;
         if (false)
           pr("Generating older version of source code; recommend using 'class' keyword instead of 'fields'...");
