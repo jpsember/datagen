@@ -207,6 +207,9 @@ public class DatagenOper extends AppOper {
       case GO:
         sourceClassName = protoName;
         break;
+      case RUST:
+        sourceClassName = protoName;
+        break;
       }
       String relativeClassFile = relPathExpr + sourceClassName + "." + sourceFileExtension();
       File sourceFile = new File(config.sourcePath(), relativeClassFile);

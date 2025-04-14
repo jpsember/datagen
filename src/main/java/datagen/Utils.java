@@ -61,6 +61,8 @@ public final class Utils {
       return "py";
     case GO:
       return "go";
+    case RUST:
+      return "rs";
     }
   }
 
