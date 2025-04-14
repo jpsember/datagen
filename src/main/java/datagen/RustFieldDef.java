@@ -33,7 +33,7 @@ public class RustFieldDef extends FieldDef {
 
   @Override
   public String provideInstanceName() {
-    return DataUtil.lowerFirst(DataUtil.convertUnderscoresToCamelCase(name()));
+    return DataUtil.convertCamelCaseToUnderscores(name());
   }
 
   @Override

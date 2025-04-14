@@ -170,7 +170,7 @@ public final class RustSourceGen extends SourceGen {
       max = Math.max(max, f.instanceName().length());
     }
     for (FieldDef f : def.fields()) {
-      s.a(f.instanceName(), spaces(1 + max - f.instanceName().length()), f.dataType().typeName());
+      s.a(f.instanceName(),":", spaces(1 + max - f.instanceName().length()), f.dataType().typeName(),",");
       s.a(CR);
     }
     return content();

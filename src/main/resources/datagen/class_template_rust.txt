@@ -34,6 +34,11 @@ pub struct [!builder_name] {
     s: Private[!class],
 }
 
+// These are the fields.  They are stored for both clients and builders
+//
+struct Private[!class] {
+[!instance_fields]}
+
 ...............not sure about this stuff
 ............................................................
 @@// ---------------------------------------------------------------------------------------
