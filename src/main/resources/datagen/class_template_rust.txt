@@ -1,0 +1,157 @@
+#![allow(dead_code)]
+#![allow(non_snake_case)]
+
+use crate::json::*;
+use std::error;
+use std::rc::Rc;
+
+// ---------------------------------------------------------------------------------------
+// [!interface_name] interface
+// ---------------------------------------------------------------------------------------
+
+
+// These are the functions that immutable objects
+// support (they are also supported by builders)
+//
+
+[!deprecated]pub trait [!interface_name]OrBuilder  {
+[!class_getter_declaration]
+  fn build(&self) -> Rc<Private[!class]>;
+  fn to_builder(&self) -> [!builder_name];
+  fn to_json(&self) -> JSValue;
+  fn parse(&self, s: JSValue) -> Result<[!class], Box<dyn error::Error>>;
+}
+
+// This is what clients see for immutable and builders
+//
+pub type [!class] = Rc<dyn [!interface_name]OrBuilder>;
+
+// This is what clients see for builders.
+// This is also what an immutable has, but it is only exposed
+// via the immutable trait
+//
+pub struct [!builder_name] {
+    s: Private[!class],
+}
+
+...............not sure about this stuff
+............................................................
+@@// ---------------------------------------------------------------------------------------
+@@// Generated code: DO NOT MODIFY
+@@// ---------------------------------------------------------------------------------------
+@@
+
+
+[!package_decl]
+
+import (
+[!imports])
+
+
+
+
+
+
+
+
+
+
+
+
+type [!static_class] struct {
+[!instance_fields]}
+
+[!deprecated]type [!builder_name]Obj struct {
+  // We embed the static struct
+  [!static_class]
+}
+
+type [!builder_name] = *[!builder_name]Obj
+
+
+[!deprecated]var [!default_var_name] = new[!class]()
+
+// Convenience method to get a fresh builder.
+[!deprecated]func New[!class]() [!builder_name] {
+  return [!default_var_name].ToBuilder()
+}
+
+// Construct a new static object, with fields initialized appropriately
+func new[!class]() [!interface_name] {
+  var m = [!static_class]{}
+[!class_init_fields_to_defaults]
+  return &m
+}
+
+
+// ---------------------------------------------------------------------------------------
+// Implementation of static (built) object
+// ---------------------------------------------------------------------------------------
+
+[!class_getter_implementation]
+
+func (v *[!static_class]) Build() [!interface_name] {
+  // This is already the immutable (built) version.
+  return v
+}
+
+func (v *[!static_class]) ToBuilder() [!builder_name] {
+  return &[!builder_name]Obj{ [!static_class]: *v}
+}
+
+func (v *[!static_class]) ToJson() JSEntity {
+  var m = NewJSMap()
+[!to_json]
+  return m
+}
+
+func (v *[!static_class]) Parse(source JSEntity) DataClass {
+  var s = source.AsJSMap()
+  var n = new[!class]().(*[!static_class])
+[!parse]
+  return n
+}
+
+func (v *[!static_class]) String() string {
+  var x = v.ToJson().AsJSMap()
+  return PrintJSEntity(x, true)
+}
+
+// ---------------------------------------------------------------------------------------
+// Implementation of builder
+// ---------------------------------------------------------------------------------------
+
+[!go_builder_getter_implementation]
+
+[!setters]
+
+func (v [!builder_name]) Build() [!interface_name] {
+  // Construct a copy of the embedded static struct
+  var b = v.[!static_class]
+  return &b
+}
+
+func (v [!builder_name]) ToBuilder() [!builder_name] {
+  return v
+}
+
+func (v [!builder_name]) ToJson() JSEntity {
+  return v.Build().ToJson()
+}
+
+func (v [!builder_name]) Parse(source JSEntity) DataClass {
+  return [!default_var_name].Parse(source)
+}
+
+func (v [!builder_name]) String() string {
+  return v.Build().String()
+}
+
+[!class_specific]
+
+
+// Convenience method to parse a [!interface_name] from a JSMap
+[!deprecated]func Parse[!interface_name](jsmap JSEntity) [!interface_name] {
+  m := jsmap.(JSMap)
+  return Default[!interface_name].Parse(m).([!interface_name])
+}

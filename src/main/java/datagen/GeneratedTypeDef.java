@@ -57,6 +57,9 @@ public final class GeneratedTypeDef extends BaseObject {
     case PYTHON:
       dataType = new PythonContractDataType();
       break;
+    case RUST:
+      dataType = new RustContractDataType();
+      break;
     default:
       throw notFinished();
     }

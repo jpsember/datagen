@@ -44,6 +44,8 @@ public abstract class FieldDef extends BaseObject {
       return new PythonFieldDef();
     case GO:
       return new GoFieldDef();
+    case RUST:
+      return new RustFieldDef();
    }
   }
 

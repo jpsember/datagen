@@ -1,0 +1,23 @@
+@@// ---------------------------------------------------------------------------------------
+@@// Generated code: DO NOT MODIFY
+@@// ---------------------------------------------------------------------------------------
+@@
+[!package_decl]
+
+import (
+[!imports])
+
+// See https://www.sohamkamani.com/golang/enums/
+
+type [!class] int
+
+const (
+[!enum_values]
+)
+
+@@/**
+@@ * The default value for this enum type
+@@ */
+const Default[!class] = [!default_value]
+
+[!enum_specific]

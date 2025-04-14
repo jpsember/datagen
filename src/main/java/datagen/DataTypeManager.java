@@ -68,6 +68,11 @@ public final class DataTypeManager extends BaseObject {
       add("IPoint", GoIPointDataType.TYPE);
     }
       break;
+    case RUST:
+    {
+      add("string", RustStringDataType.TYPE);
+    }
+    break;
     case PYTHON:
       tmp = PyIntDataType.TYPE;
       add("byte", tmp);

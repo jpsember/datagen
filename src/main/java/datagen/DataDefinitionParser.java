@@ -507,6 +507,10 @@ final class DataDefinitionParser extends BaseObject {
         break;
       case RUST:  
         todo("Rust support for package names");
+        {
+          int c = parentName.lastIndexOf(':');
+          mPackageName = parentName.substring(c + 1);
+        }
         break;
       }
       checkNotNull(mPackageName, "language not supported");

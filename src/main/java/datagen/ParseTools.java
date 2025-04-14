@@ -150,7 +150,9 @@ public final class ParseTools {
       throw languageNotSupported();
 
     case JAVA:
-    case GO: {
+    case GO:
+    case RUST:
+    {
       int blanks = 1;
       for (String line : lines) {
         if (line.isEmpty()) {
