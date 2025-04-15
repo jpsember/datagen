@@ -83,11 +83,9 @@ public final class RustSourceGen extends SourceGen {
       if (f.deprecated())
         s.addSafe(getDeprecationSource());
       DataType d = f.dataType();
-      s.a("pub fn ", f.setterName(), "(&mut self, ", f.instanceName(), ": ",
-          d.setterArgSignature(f),
-          
-          //ampForRef(f), d.typeName(),
-          
+      var argName = f.instanceName();
+      s.a("pub fn ", f.setterName(), "(&mut self, ", argName, ": ",
+          d.setterArgSignature(argName),
           ") -> &mut Self", OPEN);
       String targetExpr = "self.s." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
@@ -248,15 +246,14 @@ public final class RustSourceGen extends SourceGen {
   }
 
   private String generateInitFieldsToDefaults() {
+//    key: "".to_string(),
+//    out: "".to_string(),
+
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.setIndent(2);
+    s.setIndent(4);
     for (FieldDef f : def.fields()) {
-      // We don't need an explicit initializer if the desired initial value equals Go's default value
       String defaultValue = f.defaultValueOrNull();
-      String compilerInitialValue = f.dataType().compilerInitialValue();
-      if (defaultValue.equals(compilerInitialValue))
-        continue;
-      s.a("m.", f.instanceName(), " = ", defaultValue, CR);
+      s.a(f.instanceName()," = ",defaultValue,";",CR);
     }
     return trimRight(content());
   }

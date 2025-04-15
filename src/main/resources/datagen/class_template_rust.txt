@@ -1,5 +1,19 @@
+@@// ---------------------------------------------------------------------------------------
+@@// Generated code: DO NOT MODIFY
+@@// ---------------------------------------------------------------------------------------
+@@
+
 #![allow(dead_code)]
 #![allow(non_snake_case)]
+
+
+[!package_decl]
+/*
+imports macro not implemented:
+
+[!imports]
+
+*/
 
 use crate::json::*;
 use std::error;
@@ -87,121 +101,15 @@ impl [!class]Builder {
 
 [!setters]
 
-...............not sure about this stuff
-............................................................
-
-func (v [!builder_name]) Build() [!interface_name] {
-  // Construct a copy of the embedded static struct
-  var b = v.[!static_class]
-  return &b
-}
-
-func (v [!builder_name]) ToBuilder() [!builder_name] {
-  return v
-}
-
-func (v [!builder_name]) ToJson() JSEntity {
-  return v.Build().ToJson()
-}
-
-func (v [!builder_name]) Parse(source JSEntity) DataClass {
-  return [!default_var_name].Parse(source)
-}
-
-func (v [!builder_name]) String() string {
-  return v.Build().String()
-}
-
-}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-@@// ---------------------------------------------------------------------------------------
-@@// Generated code: DO NOT MODIFY
-@@// ---------------------------------------------------------------------------------------
-@@
-
-
-[!package_decl]
-
-import (
-[!imports])
-
-
-
-
-
-
-
-type [!builder_name] = *[!builder_name]Obj
-
-
-[!deprecated]var [!default_var_name] = new[!class]()
-
-// Convenience method to get a fresh builder.
-[!deprecated]func New[!class]() [!builder_name] {
-  return [!default_var_name].ToBuilder()
-}
-
-// Construct a new static object, with fields initialized appropriately
-func new[!class]() [!interface_name] {
-  var m = [!static_class]{}
+// This returns a freshly-constructed default instance.
+// For efficiency, threads will have to construct their own copies of this as needed,
+// since in Rust, we can’t share these safely across different threads.
+//
+pub fn default_[!class]() -> [!class] {
+  Rc::new(Private[!class] {
 [!class_init_fields_to_defaults]
-  return &m
+  })
 }
 
-
-
-
-// ---------------------------------------------------------------------------------------
-// Implementation of builder
-// ---------------------------------------------------------------------------------------
-
-[!go_builder_getter_implementation]
-
-[!setters]
-
-func (v [!builder_name]) Build() [!interface_name] {
-  // Construct a copy of the embedded static struct
-  var b = v.[!static_class]
-  return &b
-}
-
-func (v [!builder_name]) ToBuilder() [!builder_name] {
-  return v
-}
-
-func (v [!builder_name]) ToJson() JSEntity {
-  return v.Build().ToJson()
-}
-
-func (v [!builder_name]) Parse(source JSEntity) DataClass {
-  return [!default_var_name].Parse(source)
-}
-
-func (v [!builder_name]) String() string {
-  return v.Build().String()
-}
-
-func (v *[!static_class]) String() string {
-  var x = v.ToJson().AsJSMap()
-  return PrintJSEntity(x, true)
-}
-
-
-// Convenience method to parse a [!interface_name] from a JSMap
-[!deprecated]func Parse[!interface_name](jsmap JSEntity) [!interface_name] {
-  m := jsmap.(JSMap)
-  return Default[!interface_name].Parse(m).([!interface_name])
-}

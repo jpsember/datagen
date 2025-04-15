@@ -89,13 +89,13 @@ public final class RustStringDataType extends RustDataType {
   }
 
   @Override
-  public String setterArgSignature(FieldDef f) {
+  public String setterArgSignature(String expr) {
     return "&str";
   }
 
   @Override
-  public String setterArgUsage(FieldDef f) {
-    return f.instanceName()+".to_string()";
+  public String setterArgUsage(String expr) {
+    return expr+".to_string()";
   }
 
 }

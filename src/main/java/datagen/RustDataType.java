@@ -25,11 +25,10 @@ public abstract class RustDataType extends DataType {
     s.a(Utils.notSupportedMessage());
   }
 
- 
+  @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String arg = f.instanceName();
-    s.a(targetExpr," = ",setterArgUsage(f),CR);
-    todo("We need to have optional treatment for some types, e.g. String = &str");
+    s.a(targetExpr," = ",setterArgUsage(arg),CR);
   }
 
   @Override

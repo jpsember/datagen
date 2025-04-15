@@ -6,6 +6,7 @@ import js.data.DataUtil;
 
 public class RustFieldDef extends FieldDef {
 
+
   @Override
   public String provideSetterName() {
     return "set_" + provideGetterName();
@@ -21,7 +22,7 @@ public class RustFieldDef extends FieldDef {
     var d = Context.generatedTypeDef;
     SourceBuilder s = d.classSpecificSourceBuilder();
     var goName = DataUtil.convertCamelCaseToUnderscores(name());
-    var varName =  ("key_" + goName).toUpperCase();
+    var varName = ("key_" + goName).toUpperCase();
     s.a("const ", varName, ": &str = \"", name(), "\"", CR);
     return varName;
   }
@@ -41,4 +42,10 @@ public class RustFieldDef extends FieldDef {
     todo("!this doesn't need to be so involved");
     return "c_" + Context.generatedTypeDef.qualifiedName().combined().replace('.', '_') + "_" + index();
   }
+
+  @Override
+  public String defaultValueOrNull() {
+    return dataType().setterArgUsage(nullIfOptional(defaultValueSource()));
+  }
+
 }

@@ -338,11 +338,11 @@ public abstract class DataType implements DefaultValueParser {
   // Language-specific stuff
   // ------------------------------------------------------------------
 
-  public String setterArgSignature(FieldDef f) {
+  public String setterArgSignature(String expr) {
     throw languageNotSupported("setterArgUsage for type:", getClass().getName());
   }
 
-  public String setterArgUsage(FieldDef f) {
+  public String setterArgUsage(String expr) {
     throw languageNotSupported("setterArgUsage for type:", getClass().getName());
   }
 
