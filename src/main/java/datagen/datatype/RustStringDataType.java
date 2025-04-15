@@ -64,6 +64,12 @@ public final class RustStringDataType extends RustDataType {
   }
 
   @Override
+  public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
+    s.a("m.put_str(", f.nameStringConstantQualified(), ", ", //
+        sourceGenerateSerializeToObjectExpression("self." + f.instanceName()), ");", CR);
+  }
+
+  @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.a("n.", f.instanceName(), " = s.OptString(", f.nameStringConstantQualified(), ", ",
         f.defaultValueOrNull(), ")");

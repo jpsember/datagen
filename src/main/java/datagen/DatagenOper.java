@@ -150,6 +150,9 @@ public class DatagenOper extends AppOper {
         case PYTHON:
           f = Files.currentDirectory();
           break;
+        case RUST:
+          f = new File("src");
+          break;
         }
         config.sourcePath(f);
       }

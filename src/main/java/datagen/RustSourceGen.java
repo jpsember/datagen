@@ -261,7 +261,6 @@ public final class RustSourceGen extends SourceGen {
   private String generateClassGetterDeclaration() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
-    todo("We have to be able to include & before type name");
     for (FieldDef f : def.fields()) {
       s.a("fn ", f.getterName(), "(&self) -> ", ampForRef(f), f.dataType().typeName(), ";");
       s.a(CR);

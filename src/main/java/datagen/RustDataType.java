@@ -67,8 +67,7 @@ public abstract class RustDataType extends DataType {
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-    todo("!we want a different name than put_str for some types");
-    s.a("m.put_str(", f.nameStringConstantQualified(), ", ", //
+    s.a("m.put(", f.nameStringConstantQualified(), ", ", //
         sourceGenerateSerializeToObjectExpression("self." + f.instanceName()), ");", CR);
   }
 
