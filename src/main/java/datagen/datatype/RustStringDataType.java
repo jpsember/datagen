@@ -29,11 +29,12 @@ import static js.base.Tools.*;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.GoDataType;
+import datagen.RustDataType;
 import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.json.JSMap;
 
-public final class RustStringDataType extends GoDataType {
+public final class RustStringDataType extends RustDataType {
 
   public static final DataType TYPE = new RustStringDataType().with("String");
 

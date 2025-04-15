@@ -20,9 +20,9 @@ public class RustFieldDef extends FieldDef {
   public String provideNameStringConstantUnqualified() {
     var d = Context.generatedTypeDef;
     SourceBuilder s = d.classSpecificSourceBuilder();
-    var goName = DataUtil.convertUnderscoresToCamelCase(name());
-    var varName = d.qualifiedName().className() + "_" + goName;
-    s.a("const ", varName, " = \"", name(), "\"", CR);
+    var goName = DataUtil.convertCamelCaseToUnderscores(name());
+    var varName =  ("key_" + goName).toUpperCase();
+    s.a("const ", varName, ": &str = \"", name(), "\"", CR);
     return varName;
   }
 
@@ -38,7 +38,7 @@ public class RustFieldDef extends FieldDef {
 
   @Override
   public String provideConstantName() {
-    // We don't have names private to classes like in Java, so we have a more elaborate prefix
+    todo("!this doesn't need to be so involved");
     return "c_" + Context.generatedTypeDef.qualifiedName().combined().replace('.', '_') + "_" + index();
   }
 }

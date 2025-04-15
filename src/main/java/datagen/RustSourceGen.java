@@ -143,9 +143,9 @@ public final class RustSourceGen extends SourceGen {
     for (FieldDef f : def.fields()) {
       if (f.deprecated())
         s.addSafe(getDeprecationSource());
-      s.a("func (v *", def.wrappedType().qualifiedName(DataType.NAME_ALT).className(), ") ", f.getterName(),
-          "() ", f.dataType().typeName(), " ", OPEN, //
-          "return v.", f.instanceName(), CLOSE);
+
+      s.a("fn ", f.getterName(), "(&self) -> ", ampForRef(f), f.dataType().typeName(), " ", OPEN, //
+          "  ", ampForRef(f), "self.", f.instanceName(), CLOSE);
       s.br();
     }
     return content();
@@ -170,7 +170,7 @@ public final class RustSourceGen extends SourceGen {
       max = Math.max(max, f.instanceName().length());
     }
     for (FieldDef f : def.fields()) {
-      s.a(f.instanceName(),":", spaces(1 + max - f.instanceName().length()), f.dataType().typeName(),",");
+      s.a(f.instanceName(), ":", spaces(1 + max - f.instanceName().length()), f.dataType().typeName(), ",");
       s.a(CR);
     }
     return content();
@@ -194,7 +194,7 @@ public final class RustSourceGen extends SourceGen {
   @Override
   protected String generateToJson() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.setIndent(2);
+    s.setIndent(4);
     for (FieldDef f : def.fields()) {
       f.dataType().sourceSerializeToObject(s, f);
       s.cr();
@@ -205,9 +205,10 @@ public final class RustSourceGen extends SourceGen {
   @Override
   protected String generateParse() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.setIndent(2);
+    s.setIndent(4);
     for (FieldDef f : def.fields()) {
       f.dataType().sourceDeserializeFromObject(s, f);
+      s.a(";");
       s.cr();
     }
     return chomp(content());
@@ -263,11 +264,14 @@ public final class RustSourceGen extends SourceGen {
     s.setIndent(2);
     todo("We have to be able to include & before type name");
     for (FieldDef f : def.fields()) {
-      s.a("fn ", f.getterName(), "(&self) -> ", (f.dataType().isPrimitive() ? "" : "&"),
-          f.dataType().typeName(), ";");
+      s.a("fn ", f.getterName(), "(&self) -> ", ampForRef(f), f.dataType().typeName(), ";");
       s.a(CR);
     }
     return trimRight(content());
+  }
+
+  private String ampForRef(FieldDef f) {
+    return f.dataType().isPrimitive() ? "" : "&";
   }
 
   private String generateBuilderGetterImplementation() {

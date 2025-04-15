@@ -72,8 +72,15 @@ public abstract class RustDataType extends DataType {
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-    s.a("m.Put(", f.nameStringConstantQualified(), ", ", //
-        sourceGenerateSerializeToObjectExpression("v." + f.instanceName()), ")", CR);
+    todo("!we want a different name than put_str for some types");
+    s.a("m.put_str(", f.nameStringConstantQualified(), ", ", //
+        sourceGenerateSerializeToObjectExpression("self." + f.instanceName()), ");", CR);
+  }
+
+  @Override
+  public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
+    var prefix = isPrimitive() ? "" : "&";
+    return prefix + valueExpression;
   }
 
   // ------------------------------------------------------------------

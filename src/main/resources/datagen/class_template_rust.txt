@@ -30,14 +30,50 @@ pub type [!class] = Rc<dyn [!interface_name]OrBuilder>;
 // This is also what an immutable has, but it is only exposed
 // via the immutable trait
 //
+#[derive(Clone)]
 pub struct [!builder_name] {
     s: Private[!class],
 }
 
 // These are the fields.  They are stored for both clients and builders
 //
+#[derive(Clone)]
 struct Private[!class] {
 [!instance_fields]}
+
+
+[!class_specific]
+
+
+
+impl [!class]OrBuilder for Private[!class] {
+
+[!class_getter_implementation]
+
+    // When an immutable or builder is asked to build, it returns a fresh copy
+    fn build(&self) -> Rc<Private[!class]> {
+	    Rc::new(self.clone())
+	}
+
+    fn to_builder(&self) -> [!class]Builder {
+        [!class]Builder {
+            s: self.clone(),
+        }
+    }
+
+  fn to_json(&self) -> JSValue {
+    let m = new_map();
+[!to_json]
+    m
+  }
+
+  fn parse(&self, m: JSValue) -> Result<[!class], Box<dyn error::Error>> {
+    let mut b = default_[!class]().to_builder();
+[!parse]
+    Ok(b.build())
+	}
+
+}
 
 ...............not sure about this stuff
 ............................................................
@@ -104,11 +140,6 @@ func (v *[!static_class]) ToBuilder() [!builder_name] {
   return &[!builder_name]Obj{ [!static_class]: *v}
 }
 
-func (v *[!static_class]) ToJson() JSEntity {
-  var m = NewJSMap()
-[!to_json]
-  return m
-}
 
 func (v *[!static_class]) Parse(source JSEntity) DataClass {
   var s = source.AsJSMap()
@@ -117,10 +148,20 @@ func (v *[!static_class]) Parse(source JSEntity) DataClass {
   return n
 }
 
-func (v *[!static_class]) String() string {
-  var x = v.ToJson().AsJSMap()
-  return PrintJSEntity(x, true)
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // ---------------------------------------------------------------------------------------
 // Implementation of builder
@@ -152,7 +193,10 @@ func (v [!builder_name]) String() string {
   return v.Build().String()
 }
 
-[!class_specific]
+func (v *[!static_class]) String() string {
+  var x = v.ToJson().AsJSMap()
+  return PrintJSEntity(x, true)
+}
 
 
 // Convenience method to parse a [!interface_name] from a JSMap
