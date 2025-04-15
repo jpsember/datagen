@@ -333,4 +333,17 @@ public abstract class DataType implements DefaultValueParser {
   public String sqlType() {
     return "!!!UNKNOWN sqlType";
   }
+
+  // ------------------------------------------------------------------
+  // Language-specific stuff
+  // ------------------------------------------------------------------
+
+  public String setterArgSignature(FieldDef f) {
+    throw languageNotSupported("setterArgUsage for type:", getClass().getName());
+  }
+
+  public String setterArgUsage(FieldDef f) {
+    throw languageNotSupported("setterArgUsage for type:", getClass().getName());
+  }
+
 }

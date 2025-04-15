@@ -83,7 +83,11 @@ public final class RustSourceGen extends SourceGen {
       if (f.deprecated())
         s.addSafe(getDeprecationSource());
       DataType d = f.dataType();
-      s.a("pub fn ", f.setterName(), "(&mut self, ", f.instanceName(), ": ", ampForRef(f), d.typeName(),
+      s.a("pub fn ", f.setterName(), "(&mut self, ", f.instanceName(), ": ",
+          d.setterArgSignature(f),
+          
+          //ampForRef(f), d.typeName(),
+          
           ") -> &mut Self", OPEN);
       String targetExpr = "self.s." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
