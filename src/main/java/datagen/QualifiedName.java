@@ -12,6 +12,23 @@ public final class QualifiedName extends BaseObject {
   }
 
   public static QualifiedName parse(String expr, String defaultPackage) {
+    if (Context.pt.rust()) {
+      checkArgument(!expr.contains(":"), "Convert '::' expressions to '.'");
+      String packagePath = "";
+      String className = "";
+      
+      var a = expr.lastIndexOf('.');
+      className = expr.substring(a+1);
+      if (a > 0)
+        packagePath = expr.substring(0,a);
+      
+      QualifiedName result = new QualifiedName(packagePath, className);
+      
+//      pr(VERT_SP,"parse:",quote(expr),"produced:",INDENT,result);
+
+      return result;
+    }
+    
     
     if (Context.pt.go()) {
       var a = expr.lastIndexOf('/');
@@ -101,8 +118,9 @@ public final class QualifiedName extends BaseObject {
   public String combined() {
     if (mCachedCombined == null) {
       String combined = className();
-      if (!packagePath().isEmpty())
+      if (!packagePath().isEmpty()) {
         combined = packagePath() + "." + className();
+      }
       mCachedCombined = combined;
     }
     return mCachedCombined;

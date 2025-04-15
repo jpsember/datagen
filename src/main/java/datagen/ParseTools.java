@@ -76,6 +76,11 @@ public final class ParseTools {
     PKGGO_DATA = PKGGO_TOOLS;
     PKGGO_JSON = PKGGO_TOOLS;
     PKGGO_FILE = PKGGO_TOOLS;
+
+    PKG_RUST_TOOLS = "{{crate.tools.*|tools}}";
+    PKG_RUST_JSON = "{{crate.json.*|json}}";
+    PKG_RUST_ERROR = "{{std.error|error}}";
+    PKG_RUST_RC = "{{std.rc.Rc|wtf}}";
   }
 
   public static String goModuleExpr(String s) {
@@ -151,8 +156,7 @@ public final class ParseTools {
 
     case JAVA:
     case GO:
-    case RUST:
-    {
+    case RUST: {
       int blanks = 1;
       for (String line : lines) {
         if (line.isEmpty()) {
@@ -257,6 +261,11 @@ public final class ParseTools {
 
   public Object PKGGO_TOOLS, PKGGO_JSON, PKGGO_DATA, PKGGO_FILE;
 
+  public Object PKG_RUST_TOOLS;
+  public Object PKG_RUST_JSON;
+  public Object PKG_RUST_RC;
+  public Object PKG_RUST_ERROR;
+
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 
   public final String immutableCopyOfList(String expr) {
@@ -312,6 +321,10 @@ public final class ParseTools {
 
   public boolean go() {
     return language() == Language.GO;
+  }
+
+  public boolean rust() {
+    return language() == Language.RUST;
   }
 
   private final Language mLanguage;

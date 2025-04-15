@@ -24,12 +24,10 @@
  **/
 package datagen.datatype;
 
-import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 import datagen.DataType;
 import datagen.FieldDef;
-import datagen.GoDataType;
 import datagen.RustDataType;
 import datagen.SourceBuilder;
 import js.data.DataUtil;
@@ -71,8 +69,9 @@ public final class RustStringDataType extends RustDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("n.", f.instanceName(), " = s.OptString(", f.nameStringConstantQualified(), ", ",
-        f.defaultValueOrNull(), ")");
+    var x = f.defaultValueOrNull();
+    x = chomp(x, ".to_string()");
+    s.a("n.", f.instanceName(), " = m..get(", f.nameStringConstantQualified(), ").str_or(", x, ")?");
   }
 
   @Override
@@ -101,7 +100,7 @@ public final class RustStringDataType extends RustDataType {
 
   @Override
   public String setterArgUsage(String expr) {
-    return expr+".to_string()";
+    return expr + ".to_string()";
   }
 
 }

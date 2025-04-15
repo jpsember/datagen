@@ -39,7 +39,7 @@ public class RustGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void basic() {rv();
+  public void basic() { 
     p().pr("class {", INDENT, //
 
         "string profile;", CR, //
@@ -54,7 +54,7 @@ public class RustGeneratorTest extends GenBaseTest {
   }
   
   @Test
-  public void modSchemaConfig() {rv();
+  public void modSchemaConfig() { 
     p().pr("class {", INDENT, //
 
         "string profile;", CR, //

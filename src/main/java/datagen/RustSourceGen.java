@@ -46,11 +46,7 @@ public final class RustSourceGen extends SourceGen {
 
   @Override
   protected String generatePackageDecl() {
-    GeneratedTypeDef def = Context.generatedTypeDef;
-    String pkgName = def.qualifiedName().packagePath();
-    checkArgument(!pkgName.isEmpty(), "Package name is empty");
-    pkgName = QualifiedName.lastComponent(pkgName);
-    return "?package? " + pkgName;
+    return "";
   }
 
   @Override
@@ -84,8 +80,7 @@ public final class RustSourceGen extends SourceGen {
         s.addSafe(getDeprecationSource());
       DataType d = f.dataType();
       var argName = f.instanceName();
-      s.a("pub fn ", f.setterName(), "(&mut self, ", argName, ": ",
-          d.setterArgSignature(argName),
+      s.a("pub fn ", f.setterName(), "(&mut self, ", argName, ": ", d.setterArgSignature(argName),
           ") -> &mut Self", OPEN);
       String targetExpr = "self.s." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
@@ -99,20 +94,20 @@ public final class RustSourceGen extends SourceGen {
   protected String generateImports(List<String> expressions) {
     boolean db = false && alert("logging");
     if (db)
-      log("generating golang imports");
+      log("generating Rust imports");
 
     Set<String> uniqueSet = hashSet();
 
     s.setIndent(2);
 
     for (String cn : expressions) {
-      //log("... expression:", cn);
+      if (db) log(VERT_SP, "... expression:", cn);
       String importString = cn;
       QualifiedName qn = QualifiedName.parse(cn);
       if (db)
         log(INDENT, "QualifiedName:", INDENT, qn);
 
-      // Don't import anything if there is no package info
+      // If the package path is empty, don't import anything
       if (qn.packagePath().isEmpty()) {
         if (db)
           log("...package path is empty; skipping");
@@ -127,11 +122,11 @@ public final class RustSourceGen extends SourceGen {
         continue;
       }
 
-      importString = qn.packagePath();
+      importString = qn.combined().replace(".", "::");
       if (uniqueSet.add(importString)) {
         if (db)
           log("...------------------------------> importing:", importString);
-        s.a(". \"", importString, "\"").cr();
+        s.a("use ", importString, ";").cr();
       }
     }
     return content();
@@ -233,7 +228,8 @@ public final class RustSourceGen extends SourceGen {
       m.put("enum_specific", generateEnumSpecific());
     } else {
       SourceBuilder s = Context.generatedTypeDef.classSpecificSourceBuilder();
-      s.a(Context.pt.PKGGO_TOOLS, Context.pt.PKGGO_JSON);
+      s.a(Context.pt.PKG_RUST_TOOLS, Context.pt.PKG_RUST_JSON, Context.pt.PKG_RUST_ERROR,
+          Context.pt.PKG_RUST_RC);
     }
 
     m.put("static_class", type.qualifiedName(DataType.NAME_ALT).className());
@@ -246,14 +242,11 @@ public final class RustSourceGen extends SourceGen {
   }
 
   private String generateInitFieldsToDefaults() {
-//    key: "".to_string(),
-//    out: "".to_string(),
-
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(4);
     for (FieldDef f : def.fields()) {
       String defaultValue = f.defaultValueOrNull();
-      s.a(f.instanceName()," = ",defaultValue,";",CR);
+      s.a(f.instanceName(), " = ", defaultValue, ";", CR);
     }
     return trimRight(content());
   }

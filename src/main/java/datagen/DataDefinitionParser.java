@@ -506,7 +506,6 @@ final class DataDefinitionParser extends BaseObject {
       }
         break;
       case RUST:  
-        todo("Rust support for package names");
         {
           int c = parentName.lastIndexOf(':');
           mPackageName = parentName.substring(c + 1);
