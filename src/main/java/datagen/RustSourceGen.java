@@ -78,20 +78,18 @@ public final class RustSourceGen extends SourceGen {
 
   @Override
   protected final String generateSetters() {
-    s.a("generateSetters***");
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
       if (f.deprecated())
         s.addSafe(getDeprecationSource());
       DataType d = f.dataType();
-      s.a("func (v ", builderName(), ") ", f.setterName(), "(", f.instanceName(), " ", d.typeName(), ") ",
-          builderName(), OPEN);
-      String targetExpr = "v." + f.instanceName();
+      s.a("pub fn ", f.setterName(), "(&mut self, ", f.instanceName(), ": ", ampForRef(f), d.typeName(),
+          ") -> &mut Self", OPEN);
+      String targetExpr = "self.s." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
-      s.a(CR, "return v", CLOSE);
+      s.a(CR, "self", CLOSE);
       s.br();
     }
-
     return content();
   }
 

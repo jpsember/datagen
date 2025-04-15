@@ -27,13 +27,8 @@ public abstract class RustDataType extends DataType {
 
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String arg = f.instanceName();
-    if (isPrimitive()) {
-      s.a(targetExpr, " = ", arg, CR);
-    } else {
-      s.a("if x == nil {", IN, //
-          "x = ", f.defaultValueOrNull(), OUT, //
-          targetExpr, " = x", CR);
-    }
+    s.a(targetExpr," = ",arg,CR);
+    todo("We need to have optional treatment for some types, e.g. String = &str");
   }
 
   @Override

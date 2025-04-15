@@ -75,8 +75,58 @@ impl [!class]OrBuilder for Private[!class] {
 
 }
 
+
+
+
+// ---------------------------------------------------------------------------------------
+// Implementation of builder
+// ---------------------------------------------------------------------------------------
+
+
+impl [!class]Builder {
+
+[!setters]
+
 ...............not sure about this stuff
 ............................................................
+
+func (v [!builder_name]) Build() [!interface_name] {
+  // Construct a copy of the embedded static struct
+  var b = v.[!static_class]
+  return &b
+}
+
+func (v [!builder_name]) ToBuilder() [!builder_name] {
+  return v
+}
+
+func (v [!builder_name]) ToJson() JSEntity {
+  return v.Build().ToJson()
+}
+
+func (v [!builder_name]) Parse(source JSEntity) DataClass {
+  return [!default_var_name].Parse(source)
+}
+
+func (v [!builder_name]) String() string {
+  return v.Build().String()
+}
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 @@// ---------------------------------------------------------------------------------------
 @@// Generated code: DO NOT MODIFY
 @@// ---------------------------------------------------------------------------------------
@@ -94,19 +144,6 @@ import (
 
 
 
-
-
-
-
-
-type [!static_class] struct {
-[!instance_fields]}
-
-[!deprecated]type [!builder_name]Obj struct {
-  // We embed the static struct
-  [!static_class]
-}
-
 type [!builder_name] = *[!builder_name]Obj
 
 
@@ -123,42 +160,6 @@ func new[!class]() [!interface_name] {
 [!class_init_fields_to_defaults]
   return &m
 }
-
-
-// ---------------------------------------------------------------------------------------
-// Implementation of static (built) object
-// ---------------------------------------------------------------------------------------
-
-[!class_getter_implementation]
-
-func (v *[!static_class]) Build() [!interface_name] {
-  // This is already the immutable (built) version.
-  return v
-}
-
-func (v *[!static_class]) ToBuilder() [!builder_name] {
-  return &[!builder_name]Obj{ [!static_class]: *v}
-}
-
-
-func (v *[!static_class]) Parse(source JSEntity) DataClass {
-  var s = source.AsJSMap()
-  var n = new[!class]().(*[!static_class])
-[!parse]
-  return n
-}
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
