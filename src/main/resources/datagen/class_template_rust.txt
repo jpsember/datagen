@@ -47,20 +47,20 @@ impl [!class]OrBuilder for Private[!class] {
 
 [!class_getter_implementation]
 
-    // When an immutable or builder is asked to build, it returns a fresh copy
-    fn build(&self) -> Rc<Private[!class]> {
-	    Rc::new(self.clone())
-	}
+  // When an immutable or builder is asked to build, it returns a fresh copy
+  fn build(&self) -> Rc<Private[!class]> {
+    Rc::new(self.clone())
+  }
 
-    fn to_builder(&self) -> [!class]Builder {
-        self.clone()
-    }
+  fn to_builder(&self) -> [!class]Builder {
+      self.clone()
+  }
 
-  fn to_json(&self) -> JSValue {
+    fn to_json(&self) -> JSValue {
     let m = new_map();
 [!to_json]
     m
-  }
+    }
 
   fn parse(&self, m: JSValue) -> Result<[!class], Box<dyn error::Error>> {
     let mut b = default_[!class]().to_builder();
@@ -79,10 +79,8 @@ impl [!class]OrBuilder for Private[!class] {
 
 
 impl [!class]Builder {
-
 [!setters]
-
-
+}
 
 // This returns a freshly-constructed default instance.
 // For efficiency, threads will have to construct their own copies of this as needed,
