@@ -105,7 +105,8 @@ public class DatagenOper extends AppOper {
     }
 
     Context.sql.complete();
-    flushRustModules();
+    if (Context.rust())
+      flushRustModules();
 
     if (config.language() == Language.GO && !files().dryRun() && config.format()) {
       formatSourceFiles();
@@ -325,7 +326,7 @@ public class DatagenOper extends AppOper {
     var srcPath = new File(datagenConfig().sourcePath(), entry.sourceRelPath());
     while (true) {
       log("...", srcPath);
-      var parent =   Files.parent(srcPath);
+      var parent = Files.parent(srcPath);
       if (parent.equals(datagenConfig().sourcePath()))
         break;
       var st = mModFilesMap.get(parent);
@@ -350,9 +351,9 @@ public class DatagenOper extends AppOper {
       for (var x : sorted)
         sb.append("pub mod " + x + ";\n");
       var content = sb.toString();
-      var modFile = new File(file,"mod.rs");
+      var modFile = new File(file, "mod.rs");
       if (verbose())
-        log(VERT_SP,"Updating", modFile, ":",INDENT, content,VERT_SP);
+        log(VERT_SP, "Updating", modFile, ":", INDENT, content, VERT_SP);
       files().writeString(modFile, content);
     }
   }
