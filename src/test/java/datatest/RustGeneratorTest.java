@@ -41,7 +41,6 @@ public class RustGeneratorTest extends GenBaseTest {
   @Test
   public void basic() { 
     p().pr("class {", INDENT, //
-
         "string profile;", CR, //
         "string database;", CR, //
         "string config_file;", CR, //

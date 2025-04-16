@@ -12,7 +12,7 @@ public final class QualifiedName extends BaseObject {
   }
 
   public static QualifiedName parse(String expr, String defaultPackage) {
-    if (Context.pt.rust()) {
+    if (Context.rust()) {
       checkArgument(!expr.contains(":"), "Convert '::' expressions to '.'");
       String packagePath = "";
       String className = "";

@@ -29,6 +29,7 @@ import java.util.Set;
 
 import datagen.gen.DatWithSource;
 import datagen.gen.DatagenConfig;
+import datagen.gen.Language;
 import js.file.Files;
 
 import static js.base.Tools.*;
@@ -86,9 +87,18 @@ public final class Context {
     generatedTypeDef = null;
     dataTypeManager = null;
     datWithSource = null;
-    // sql = null;
   }
 
+  public static File rustModFile(File generatedClassFile) {
+    if (config.language() != Language.RUST)
+      return null;
+    return new File(Files.parent(generatedClassFile), "mod.rs");
+  }
+
+  public static boolean rust() {
+    return pt.rust();
+  }
+  
   private Context() {
   }
 

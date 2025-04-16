@@ -52,7 +52,8 @@ public abstract class SourceGen extends BaseObject {
       return new PythonSourceGen();
     case GO:
       return new GoSourceGen();
-    case RUST:return new RustSourceGen();
+    case RUST:
+      return new RustSourceGen();
     }
   }
 

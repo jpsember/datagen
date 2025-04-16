@@ -29,7 +29,9 @@ import static js.base.Tools.*;
 import static datagen.Utils.*;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import datagen.gen.DatWithSource;
@@ -65,6 +67,9 @@ public class DatagenOper extends AppOper {
 
     List<DatWithSource> entriesToFreshen = constructFileEntries();
 
+    if (Context.rust())
+      prepareRustModules();
+
     if (entriesToFreshen.isEmpty())
       log("...all files up-to-date (rerun with 'clean' option to force rebuild)");
 
@@ -88,6 +93,8 @@ public class DatagenOper extends AppOper {
         g.setVerbose(verbose());
         g.generate();
 
+        if (Context.pt.rust())
+          updateRustModules(entry);
       } catch (Throwable t) {
         if (app().showExceptions() || SHOW_STACK_TRACES)
           throw t;
@@ -98,6 +105,7 @@ public class DatagenOper extends AppOper {
     }
 
     Context.sql.complete();
+    flushRustModules();
 
     if (config.language() == Language.GO && !files().dryRun() && config.format()) {
       formatSourceFiles();
@@ -226,8 +234,19 @@ public class DatagenOper extends AppOper {
       DatWithSource fileEntry = DatWithSource.newBuilder().datRelPath(rel.getPath())
           .sourceRelPath(relativeClassFile).build();
 
-      if (config.clean() || !sourceFile.exists()
-          || sourceFile.lastModified() < dirWalk.abs(rel).lastModified()) {
+      File modFile = Context.rustModFile(sourceFile);
+
+      boolean rebuildRequired = config.clean();
+      if (!rebuildRequired) {
+        if (!sourceFile.exists() || sourceFile.lastModified() < dirWalk.abs(rel).lastModified())
+          rebuildRequired = true;
+      }
+      if (!rebuildRequired && modFile != null) {
+        if (!modFile.exists() || modFile.lastModified() < dirWalk.abs(rel).lastModified())
+          rebuildRequired = true;
+      }
+
+      if (rebuildRequired) {
         if (verbose()) {
           if (sourceFile.exists())
             log("file is out of date:", relativeClassFile);
@@ -292,5 +311,52 @@ public class DatagenOper extends AppOper {
   }
 
   private DatagenConfig mConfig;
+
+  // ------------------------------------------------------------------
+  // Generating Rust module files
+  // ------------------------------------------------------------------
+
+  private void prepareRustModules() {
+    mModFilesMap = hashMap();
+  }
+
+  private void updateRustModules(DatWithSource entry) {
+    log("updateRustModules, source:", entry.sourceRelPath());
+    var srcPath = new File(datagenConfig().sourcePath(), entry.sourceRelPath());
+    while (true) {
+      log("...", srcPath);
+      var parent =   Files.parent(srcPath);
+      if (parent.equals(datagenConfig().sourcePath()))
+        break;
+      var st = mModFilesMap.get(parent);
+      if (st == null) {
+        st = hashSet();
+        mModFilesMap.put(parent, st);
+      }
+      var name = Files.removeExtension(srcPath.getName());
+      st.add(name);
+      srcPath = parent;
+    }
+  }
+
+  private void flushRustModules() {
+    for (var ent : mModFilesMap.entrySet()) {
+      var file = ent.getKey();
+      var set = ent.getValue();
+      ArrayList<String> sorted = arrayList();
+      sorted.addAll(set);
+      sorted.sort(null);
+      var sb = new StringBuilder();
+      for (var x : sorted)
+        sb.append("pub mod " + x + ";\n");
+      var content = sb.toString();
+      var modFile = new File(file,"mod.rs");
+      if (verbose())
+        log(VERT_SP,"Updating", modFile, ":",INDENT, content,VERT_SP);
+      files().writeString(modFile, content);
+    }
+  }
+
+  private Map<File, Set<String>> mModFilesMap;
 
 }
