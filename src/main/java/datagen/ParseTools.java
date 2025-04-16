@@ -77,10 +77,10 @@ public final class ParseTools {
     PKGGO_JSON = PKGGO_TOOLS;
     PKGGO_FILE = PKGGO_TOOLS;
 
-    PKG_RUST_TOOLS = "{{crate.tools.*|tools}}";
-    PKG_RUST_JSON = "{{crate.json.*|json}}";
-    PKG_RUST_ERROR = "{{std.error|error}}";
-    PKG_RUST_RC = "{{std.rc.Rc|wtf}}";
+    PKG_RUST_TOOLS = "{{crate.tools.*|}}";
+    PKG_RUST_JSON = "{{crate.json.*|}}";
+    PKG_RUST_ERROR = "{{std.error|}}";
+    PKG_RUST_RC = "{{std.rc.Rc|}}";
   }
 
   public static String goModuleExpr(String s) {

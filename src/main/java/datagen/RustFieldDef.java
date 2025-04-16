@@ -23,7 +23,7 @@ public class RustFieldDef extends FieldDef {
     SourceBuilder s = d.classSpecificSourceBuilder();
     var goName = DataUtil.convertCamelCaseToUnderscores(name());
     var varName = ("key_" + goName).toUpperCase();
-    s.a("const ", varName, ": &str = \"", name(), "\"", CR);
+    s.a("const ", varName, ": &str = \"", name(), "\";", CR);
     return varName;
   }
 

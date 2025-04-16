@@ -56,7 +56,6 @@ public final class RustSourceGen extends SourceGen {
 
   @Override
   protected final String generateInitInstanceFields() {
-    s.a("**generateInitInstanceFields");
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
     for (FieldDef f : def.fields()) {
@@ -82,7 +81,7 @@ public final class RustSourceGen extends SourceGen {
       var argName = f.instanceName();
       s.a("pub fn ", f.setterName(), "(&mut self, ", argName, ": ", d.setterArgSignature(argName),
           ") -> &mut Self", OPEN);
-      String targetExpr = "self.s." + f.instanceName();
+      String targetExpr = "self." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "self", CLOSE);
       s.br();
@@ -228,7 +227,8 @@ public final class RustSourceGen extends SourceGen {
       m.put("enum_specific", generateEnumSpecific());
     } else {
       SourceBuilder s = Context.generatedTypeDef.classSpecificSourceBuilder();
-      s.a(Context.pt.PKG_RUST_TOOLS, Context.pt.PKG_RUST_JSON, Context.pt.PKG_RUST_ERROR,
+      s.a(//Context.pt.PKG_RUST_TOOLS, 
+          Context.pt.PKG_RUST_JSON, Context.pt.PKG_RUST_ERROR,
           Context.pt.PKG_RUST_RC);
     }
 
@@ -246,7 +246,7 @@ public final class RustSourceGen extends SourceGen {
     s.setIndent(4);
     for (FieldDef f : def.fields()) {
       String defaultValue = f.defaultValueOrNull();
-      s.a(f.instanceName(), " = ", defaultValue, ";", CR);
+      s.a(f.instanceName(), " : ", defaultValue, ",", CR);
     }
     return trimRight(content());
   }

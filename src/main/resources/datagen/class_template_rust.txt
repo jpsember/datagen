@@ -8,11 +8,14 @@
 
 [!imports]
 
+// This is what clients see for immutable and builders
+//
+pub type [!class] = Rc<dyn [!interface_name]OrBuilder>;
+
 
 // ---------------------------------------------------------------------------------------
 // [!interface_name] interface
 // ---------------------------------------------------------------------------------------
-
 
 // These are the functions that immutable objects
 // support (they are also supported by builders)
@@ -20,19 +23,14 @@
 
 [!deprecated]pub trait [!interface_name]OrBuilder  {
 [!class_getter_declaration]
-  fn build(&self) -> Rc<Private[!class]>;
+  fn build(&self) -> [!class];
   fn to_builder(&self) -> [!builder_name];
   fn to_json(&self) -> JSValue;
   fn parse(&self, s: JSValue) -> Result<[!class], Box<dyn error::Error>>;
 }
 
-// This is what clients see for immutable and builders
-//
-pub type [!class] = Rc<dyn [!interface_name]OrBuilder>;
-
 // This is what clients see for builders.
-// This is also what an immutable has, but it is only exposed
-// via the immutable trait
+// This is also what an immutable has, but it is only exposed via the immutable trait
 //
 #[derive(Clone)]
 pub struct [!builder_name] {
@@ -43,12 +41,12 @@ pub struct [!builder_name] {
 
 
 
-impl [!class]OrBuilder for Private[!class] {
+impl [!class]OrBuilder for [!class]Builder {
 
 [!class_getter_implementation]
 
   // When an immutable or builder is asked to build, it returns a fresh copy
-  fn build(&self) -> Rc<Private[!class]> {
+  fn build(&self) -> [!class] {
     Rc::new(self.clone())
   }
 
@@ -63,9 +61,9 @@ impl [!class]OrBuilder for Private[!class] {
     }
 
   fn parse(&self, m: JSValue) -> Result<[!class], Box<dyn error::Error>> {
-    let mut b = default_[!class]().to_builder();
+    let mut n = default_[!class]().to_builder();
 [!parse]
-    Ok(b.build())
+    Ok(n.build())
 	}
 
 }
@@ -87,7 +85,7 @@ impl [!class]Builder {
 // since in Rust, we can’t share these safely across different threads.
 //
 pub fn default_[!class]() -> [!class] {
-  Rc::new(Private[!class] {
+  Rc::new([!class]Builder {
 [!class_init_fields_to_defaults]
   })
 }

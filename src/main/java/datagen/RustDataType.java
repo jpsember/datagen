@@ -28,7 +28,7 @@ public abstract class RustDataType extends DataType {
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String arg = f.instanceName();
-    s.a(targetExpr," = ",setterArgUsage(arg),CR);
+    s.a(targetExpr," = ",setterArgUsage(arg),";",CR);
   }
 
   @Override
