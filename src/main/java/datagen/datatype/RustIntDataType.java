@@ -30,25 +30,25 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.RustDataType;
 import datagen.SourceBuilder;
-//import js.data.DataUtil;
 import js.json.JSMap;
 
 public final class RustIntDataType extends RustDataType {
 
-  public static final DataType TYPE = new RustIntDataType().with("i32");
+  public static final DataType BYTE_TYPE = new RustIntDataType(8).with("i8");
+  public static final DataType SHORT_TYPE = new RustIntDataType(16).with("i16");
+  public static final DataType INT_TYPE = new RustIntDataType(32).with("i32");
+  public static final DataType LONG_TYPE = new RustIntDataType(64).with("i64");
 
-  private RustIntDataType() {
+  private int mBitSize;
+
+  private RustIntDataType(int bitSize) {
+    mBitSize = bitSize;
   }
 
   @Override
   public boolean isPrimitive() {
     return true;
   }
-
-//  @Override
-//  public String compilerInitialValue() {
-//    return "\"\"";
-//  }
 
   @Override
   public final String provideSourceDefaultValue() {
@@ -59,7 +59,7 @@ public final class RustIntDataType extends RustDataType {
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
     return Integer.toString(json.getInt(""));
   }
-  
+
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     s.a("m.put_int(", f.nameStringConstantQualified(), ", ", //
@@ -69,17 +69,25 @@ public final class RustIntDataType extends RustDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     var x = f.defaultValueOrNull();
-    s.a("n.", f.instanceName(), " = m.get(", f.nameStringConstantQualified(), ").or_int(", x, ")? as i32 /* do I need a semicolon here? */");
+    s.a("n.", f.instanceName(), " = m.get(", f.nameStringConstantQualified(), ").or_int(", x, ")?");
+    if (mBitSize != 64)
+      s.a(" as i", mBitSize);
   }
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    return  valueExpression + " as i64";
+    var x = valueExpression;
+    if (mBitSize != 64)
+      x += " as i64";
+    return x;
   }
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-    return jsentityExpression + ".as_int()? as i32";
+    var x = jsentityExpression + ".as_int()?";
+    if (mBitSize != 64)
+      x += " as i" + mBitSize;
+    return x;
   }
 
   @Override
@@ -94,12 +102,12 @@ public final class RustIntDataType extends RustDataType {
 
   @Override
   public String setterArgSignature(String expr) {
-    return "i32";
+    return "i"+mBitSize;
   }
 
   @Override
   public String setterArgUsage(String expr) {
-    return expr; // + ".to_string()";
+    return expr; 
   }
 
 }
