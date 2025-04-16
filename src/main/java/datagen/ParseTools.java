@@ -81,6 +81,7 @@ public final class ParseTools {
     PKG_RUST_JSON = "{{crate.json.*|}}";
     PKG_RUST_ERROR = "{{std.error|}}";
     PKG_RUST_RC = "{{std.rc.Rc|}}";
+    PKG_RUST_FMT = "{{std.fmt|}}";
   }
 
   public static String goModuleExpr(String s) {
@@ -265,7 +266,8 @@ public final class ParseTools {
   public Object PKG_RUST_JSON;
   public Object PKG_RUST_RC;
   public Object PKG_RUST_ERROR;
-
+  public Object PKG_RUST_FMT;
+  
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 
   public final String immutableCopyOfList(String expr) {

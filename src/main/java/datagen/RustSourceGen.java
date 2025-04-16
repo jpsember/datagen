@@ -73,6 +73,7 @@ public final class RustSourceGen extends SourceGen {
 
   @Override
   protected final String generateSetters() {
+    s.setIndent(2);
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
       if (f.deprecated())
@@ -96,8 +97,6 @@ public final class RustSourceGen extends SourceGen {
       log("generating Rust imports");
 
     Set<String> uniqueSet = hashSet();
-
-    s.setIndent(2);
 
     for (String cn : expressions) {
       if (db) log(VERT_SP, "... expression:", cn);
@@ -133,6 +132,7 @@ public final class RustSourceGen extends SourceGen {
 
   @Override
   protected final String generateGetters() {
+    s.setIndent(2);
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
       if (f.deprecated())
@@ -229,7 +229,7 @@ public final class RustSourceGen extends SourceGen {
       SourceBuilder s = Context.generatedTypeDef.classSpecificSourceBuilder();
       s.a(//Context.pt.PKG_RUST_TOOLS, 
           Context.pt.PKG_RUST_JSON, Context.pt.PKG_RUST_ERROR,
-          Context.pt.PKG_RUST_RC);
+          Context.pt.PKG_RUST_RC, Context.pt.PKG_RUST_FMT);
     }
 
     m.put("static_class", type.qualifiedName(DataType.NAME_ALT).className());

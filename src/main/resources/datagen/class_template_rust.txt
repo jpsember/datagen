@@ -54,11 +54,11 @@ impl [!class]OrBuilder for [!class]Builder {
       self.clone()
   }
 
-    fn to_json(&self) -> JSValue {
+  fn to_json(&self) -> JSValue {
     let m = new_map();
 [!to_json]
     m
-    }
+  }
 
   fn parse(&self, m: JSValue) -> Result<[!class], Box<dyn error::Error>> {
     let mut n = default_[!class]().to_builder();
@@ -77,6 +77,7 @@ impl [!class]OrBuilder for [!class]Builder {
 
 
 impl [!class]Builder {
+
 [!setters]
 }
 
@@ -90,3 +91,14 @@ pub fn default_[!class]() -> [!class] {
   })
 }
 
+impl fmt::Display for dyn [!class]OrBuilder {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    write!(f, "{}", self.to_json().to_string())
+  }
+}
+
+impl fmt::Display for [!class]Builder {
+  fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+    write!(f, "{}", self.to_json().to_string())
+  }
+}
