@@ -79,6 +79,8 @@ public final class Utils {
       return "null";
     case GO:
       return "nil";
+    case RUST:
+      return "<rust has no nulls though!>";
     }
   }
 

@@ -54,8 +54,7 @@ public final class DataTypeManager extends BaseObject {
     switch (Context.pt.language()) {
     default:
       throw languageNotSupported(Context.pt.language());
-    case GO:  
-    {
+    case GO: {
       add("byte", new GoIntDataType(8));
       add("short", new GoIntDataType(16));
       add("int", new GoIntDataType(32));
@@ -68,11 +67,11 @@ public final class DataTypeManager extends BaseObject {
       add("IPoint", GoIPointDataType.TYPE);
     }
       break;
-    case RUST:
-    {
+    case RUST: {
       add("string", RustStringDataType.TYPE);
+      add("int", RustIntDataType.TYPE);
     }
-    break;
+      break;
     case PYTHON:
       tmp = PyIntDataType.TYPE;
       add("byte", tmp);
@@ -90,7 +89,7 @@ public final class DataTypeManager extends BaseObject {
       add("JSMap", PythonJsonMapDataType.TYPE);
       add("Matrix", PyMatrixDataType.TYPE);
       break;
-      
+
     case JAVA:
       add("byte", JavaPrimitiveByteDataType.PRIM_TYPE);
       add("short", JavaPrimitiveShortDataType.PRIM_TYPE);
