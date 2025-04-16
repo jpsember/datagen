@@ -68,6 +68,7 @@ public final class DataTypeManager extends BaseObject {
     }
       break;
     case RUST: {
+      add("bool", RustBoolDataType.TYPE);
       add("string", RustStringDataType.TYPE);
       add("int", RustIntDataType.INT_TYPE);
       add("long", RustIntDataType.LONG_TYPE);
