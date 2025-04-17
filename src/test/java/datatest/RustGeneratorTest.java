@@ -39,7 +39,7 @@ public class RustGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void basic() { 
+  public void basic() {
     p().pr("class {", INDENT, //
         "string profile;", CR, //
         "string database;", CR, //
@@ -47,11 +47,10 @@ public class RustGeneratorTest extends GenBaseTest {
         "string hive;", CR, //
         "string key = \"sample_key\";", CR, //
         "string out;", CR, //
-        
         OUTDENT, "}");
     compile();
   }
-  
+
   @Test
   public void crow() {
     p().pr("class {", INDENT, //
@@ -61,6 +60,15 @@ public class RustGeneratorTest extends GenBaseTest {
         "bool live;", CR, //
         "string zebra = \"frank\";", CR, //
         OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void contract() {
+    p().pr("extern gen.abc.Crow;", CR, //
+        "class {", INDENT, //
+        "Crow boss;", OUTDENT, //
+        "}");
     compile();
   }
 
