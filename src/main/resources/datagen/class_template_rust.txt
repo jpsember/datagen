@@ -10,7 +10,7 @@
 
 // This is what clients see for immutable and builders
 //
-pub type [!class] = Rc<dyn [!interface_name]OrBuilder>;
+pub type [!class] = Arc<dyn [!interface_name]OrBuilder>;
 
 
 // ---------------------------------------------------------------------------------------
@@ -47,7 +47,7 @@ impl [!class]OrBuilder for [!class]Builder {
 
   // When an immutable or builder is asked to build, it returns a fresh copy
   fn build(&self) -> [!class] {
-    Rc::new(self.clone())
+    Arc::new(self.clone())
   }
 
   fn to_builder(&self) -> [!class]Builder {
@@ -86,7 +86,7 @@ impl [!class]Builder {
 // since in Rust, we can’t share these safely across different threads.
 //
 pub fn default_[!class]() -> [!class] {
-  Rc::new([!class]Builder {
+  Arc::new([!class]Builder {
 [!class_init_fields_to_defaults]
   })
 }
