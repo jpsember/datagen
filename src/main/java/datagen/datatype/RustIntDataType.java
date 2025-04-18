@@ -24,6 +24,7 @@
  **/
 package datagen.datatype;
 
+import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 import datagen.DataType;
@@ -102,12 +103,16 @@ public final class RustIntDataType extends RustDataType {
 
   @Override
   public String setterArgSignature(String expr) {
-    return "i"+mBitSize;
+    return "i" + mBitSize;
   }
 
   @Override
   public String setterArgUsage(String expr) {
-    return expr; 
+    return expr;
   }
 
+  @Override
+  public String buildRustJsonValueFrom(String expr) {
+    return "new_int(*" + expr + ((mBitSize != 64) ? " as i64" : "") + ")";
+  }
 }

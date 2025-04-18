@@ -206,6 +206,7 @@ public final class RustSourceGen extends SourceGen {
 
   @Override
   protected String generateInstanceFields() {
+    todo("I think we need convenience fn, 'new_builder'");
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
     int max = 0;
@@ -237,8 +238,10 @@ public final class RustSourceGen extends SourceGen {
   @Override
   protected String generateToJson() {
     GeneratedTypeDef def = Context.generatedTypeDef;
+    s.debug("generateToJson");
     s.setIndent(4);
     for (FieldDef f : def.fields()) {
+      s.debug("field def:",f.name());
       f.dataType().sourceSerializeToObject(s, f);
       s.cr();
     }

@@ -48,13 +48,30 @@ public abstract class RustDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+    
+    
+//    {
+//      let jslist = m.opt(KEY_FOO).or_list()?;
+//      let len = jslist.len();
+//      let mut y = Vec::with_capacity(len);
+//      for x in 0..len {
+//        let w = jslist.get_item_at(x);
+//        y.push(w.as_number()? /* we want a datatype fn call here for cvt from json */);
+//      }
+//      n.foo = y;
+//    }
+//    
+    
+    
     s.a(OPEN, //
-        "var jslist = s.OptList(", f.nameStringConstantQualified(), ")", CR, //
-        "if jslist != nil ", OPEN, //
-        "var length = jslist.Length()", CR, "var z = make(", f.dataType().typeName(), ", length)", CR, //
-        "for i := 0; i < length; i++ ", OPEN, //
-        "z[i] = ", parseElementFromJsonValue(f, "jslist.Get(i)"), CLOSE, //
-        "n.", f.instanceName(), " = z", CLOSE, //
+        "let jslist = m.opt(",f.nameStringConstantQualified(),").or_list()?;",CR, //
+        "let len = jslist.len();",CR, //
+        "let mut y = Vec::with_capacity(len);",CR,//
+        "for x in 0..len {",CR, //
+       // "let w = jslist.get(x);",CR,//
+        "y.push(",parseElementFromJsonValue(f,"jslist.get_item_at(x)"),");",comment("e.g. let w = jslist.get(x);"),CR, //
+        CLOSE, //
+        "n.",f.instanceName()," = y;", //
         CLOSE);
   }
 
@@ -67,7 +84,7 @@ public abstract class RustDataType extends DataType {
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-    s.a("m.put(", f.nameStringConstantQualified(), ", ", //
+    s.a("m.put(", f.nameStringConstantQualified(),comment("constantName?"), ", ", //
         sourceGenerateSerializeToObjectExpression("self." + f.instanceName()), ");", CR);
   }
 

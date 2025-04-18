@@ -117,4 +117,31 @@ public final class Utils {
     return sb.toString();
   }
 
+  /**
+   * Get stack trace element at a particular depth within the current thread,
+   * converted to a string that allows clicking on within (an
+   * intelligent-enough) IDE.
+   */
+  public static String getStackTraceElement(int stackDepth) {
+    stackDepth += 2;
+    StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+    if (stackTrace.length <= stackDepth) {
+      return "(no stack info avail)";
+    } else {
+      StackTraceElement element = stackTrace[stackDepth];
+
+      var sb = new StringBuilder();
+      //
+      sb.append('(');
+      sb.append(element.getFileName());
+      sb.append(':');
+      sb.append(element.getLineNumber());
+      sb.append("; ");
+
+      // The method name maybe just adds unnecessary clutter.
+      sb.append(element.getMethodName());
+      sb.append(')');
+      return sb.toString();
+    }
+  }
 }

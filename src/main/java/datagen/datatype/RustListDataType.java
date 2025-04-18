@@ -39,9 +39,10 @@ public class RustListDataType extends RustDataType {
         comment(), //
         "let y = {{crate.tools.*|}}list();",CR, //
         "for x in &self.",f.instanceName()," ",OPEN, //
-        "y.push(x.to_json());",CR, //
+        "y.push(", wrappedType().buildRustJsonValueFrom("x"),");",CR, //
         CLOSE, //
-        "m.put(&",f.constantName(),", y);", CR, //
+        comment("const name: "+f.nameStringConstantQualified()), //
+        "m.put(&",f.nameStringConstantQualified(),", y);", CR, //
         CLOSE);
   }
 
@@ -104,6 +105,6 @@ public class RustListDataType extends RustDataType {
   public void getterBody(SourceBuilder s, FieldDef f) {
     s.a("&self.", f.instanceName(), comment(""));
   }
- 
+
   private final DataType mWrappedType;
 }

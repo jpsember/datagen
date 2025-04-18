@@ -71,6 +71,20 @@ public final class SourceBuilder {
     return this;
   }
 
+  public void debug(Object... messages) {
+    debugWithSkip(1, messages);
+  }
+
+  public void debugWithSkip(int skip, Object... messages) {
+    if (RUST_COMMENTS) {
+      var msg = BasePrinter.toString(messages).trim();
+      var x = getStackTraceElement(1 + skip);
+      if (!msg.isEmpty())
+        x = x + " " + msg;
+      addSafe(" /* " + x + " */\n");
+    }
+  }
+
   /**
    * Append the string representations of a list of objects
    */
