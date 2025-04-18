@@ -355,11 +355,47 @@ public abstract class DataType implements DefaultValueParser {
     //)ampForRef(f), "self.", f.instanceName(), CLOSE);
   }
 
+  public void comment(SourceBuilder s, Object msg) {
+    s.a(commentWithSkip(1, msg));
+  }
+
   public String comment(Object msg) {
+    return commentWithSkip(1, msg);
+  }
+
+  public String commentWithSkip(int skip, Object msg) {
     if (true) {
-      return " /*** " + msg + " ***/    ";
+      var x = getStackTraceElement(1 + skip);
+      return " /*** " + x + " " + msg + " ***/    ";
     }
     return "";
   }
 
+  /**
+   * Get stack trace element at a particular depth within the current thread,
+   * converted to a string that allows clicking on within (an
+   * intelligent-enough) IDE.
+   */
+  private static String getStackTraceElement(int stackDepth) {
+    stackDepth += 2;
+    StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+    if (stackTrace.length <= stackDepth) {
+      return "(no stack info avail)";
+    } else {
+      StackTraceElement element = stackTrace[stackDepth];
+
+      var sb = new StringBuilder();
+      //
+      sb.append('(');
+      sb.append(element.getFileName());
+      sb.append(':');
+      sb.append(element.getLineNumber());
+      sb.append("; ");
+
+      //// The method name maybe just adds unnecessary clutter.
+      sb.append(element.getMethodName());
+      sb.append(')');
+      return sb.toString();
+    }
+  }
 }

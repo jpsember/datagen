@@ -42,9 +42,9 @@ public class RustContractDataType extends RustDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.a(OPEN, "let x = n.opt(", f.nameStringConstantQualified(), ");",
-        comment("RustContractDataType: sourceDeserializeFromObject"), CR, //
+        comment(""), CR, //
         "if !x.is_null()", OPEN, //
-        "n.", f.instanceName(), " = default_", qualifiedName(NAME_HUMAN).className(), "().parse(x.clone());",
+        "n.", f.instanceName(), " = default_", qualifiedName(NAME_HUMAN).className(), "().parse(x.clone())?;",
         CLOSE, //
         CLOSE);
   }
@@ -63,10 +63,8 @@ public class RustContractDataType extends RustDataType {
     var cn = qualifiedName(NAME_HUMAN).className();
     String arg = f.instanceName();
 
-    s.a("if ", arg, " == nil ", OPEN, //
-        targetExpr, " = Default", cn, //
-        CR, OUT, "} else {", IN, CR, targetExpr, " = ", arg, ".Build()", //,
-        CLOSE);
+    
+    s.a(comment(""), targetExpr, " = ", arg, ".Build();",CR);
   }
 
   @Override
@@ -92,16 +90,16 @@ public class RustContractDataType extends RustDataType {
   }
 
   public String setterArgUsage(String expr) {
-    return expr + ".clone()" + comment("RustContractDataType : setterArgUsage()");
+    return expr + ".clone()" + comment("");
   }
 
   @Override
   public String getterReturnTypeExpr() {
-    return typeName() + comment("RustContractDataType : getterReturnTypeExpr()");
+    return typeName() + comment("");
   }
 
   @Override
   public void getterBody(SourceBuilder s, FieldDef f) {
-    s.a("self.", f.instanceName(), ".clone()", comment("RustContractDataType : getterBody()"));
+    s.a("self.", f.instanceName(), ".clone()", comment(""));
   }
 }

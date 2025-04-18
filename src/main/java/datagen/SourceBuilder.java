@@ -139,6 +139,27 @@ public final class SourceBuilder {
     return this;
   }
 
+  private char lastNonWsChar() {
+    var i = mStringBuilder.length();
+    while (i > 0) {
+      i--;
+      var ch = mStringBuilder.charAt(i);
+      if (ch > ' ') {
+        return ch;
+      }
+    }
+    return '?';
+  }
+
+  public SourceBuilder addSemiIfNec() {
+    if (mLanguage == Language.RUST) {
+      var ch = lastNonWsChar();
+      if (!(ch == ';' || ch == '}'))
+        addSafe(";");
+    }
+    return this;
+  }
+
   public SourceBuilder setIndent(int indent) {
     mIndent = indent;
     return this;
