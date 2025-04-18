@@ -352,8 +352,11 @@ public abstract class DataType implements DefaultValueParser {
 
   public void getterBody(SourceBuilder s, FieldDef f) {
     throw languageNotSupported("getterBody for type:", getClass().getName());
-    //)ampForRef(f), "self.", f.instanceName(), CLOSE);
   }
+
+  public String getInitInstanceFieldExpr(FieldDef f) {
+    return f.defaultValueOrNull()+comment();
+   }
 
   public void comment(SourceBuilder s, Object msg) {
     if (RUST_COMMENTS)
@@ -362,6 +365,10 @@ public abstract class DataType implements DefaultValueParser {
 
   public String comment(Object msg) {
     return commentWithSkip(1, msg);
+  }
+
+  public String comment() {
+    return commentWithSkip(1, "");
   }
 
   public String commentWithSkip(int skip, Object msg) {

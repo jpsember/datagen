@@ -63,11 +63,9 @@ public final class RustSourceGen extends SourceGen {
     for (FieldDef f : def.fields()) {
       if (f.optional())
         continue;
-
-      // We don't need an explicit initializer if the desired initial value equals the Java default value
-      String initialValue = f.defaultValueOrNull();
-      if (initialValue.equals(f.dataType().compilerInitialValue()))
-        continue;
+      String initialValue = 
+          f.dataType().getInitInstanceFieldExpr(f);
+//          f.defaultValueOrNull();
       s.a(CR, f.instanceName(), " = ", initialValue, ";");
     }
     return content();
@@ -291,7 +289,7 @@ public final class RustSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(4);
     for (FieldDef f : def.fields()) {
-      String defaultValue = f.defaultValueOrNull();
+      String defaultValue = f.dataType().getInitInstanceFieldExpr(f);
       s.a(f.instanceName(), " : ", defaultValue, ",", CR);
     }
     return trimRight(content());

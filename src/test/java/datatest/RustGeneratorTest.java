@@ -65,7 +65,6 @@ public class RustGeneratorTest extends GenBaseTest {
 
   @Test
   public void pluto() {
-    rv();
     p().pr("extern gen.abc.Contract;", CR, //
         "class {", INDENT, //
         "int foo;", CR, //
@@ -74,4 +73,12 @@ public class RustGeneratorTest extends GenBaseTest {
     compile();
   }
 
+  @Test
+  public void fox() {
+    rv();
+    p().pr("class {", INDENT, //
+        "*int foo;", CR, //
+        "}");
+    compile();
+  }
 }

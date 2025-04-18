@@ -154,7 +154,7 @@ public final class GeneratedTypeDef extends BaseObject {
       if (complexType == null) {
         switch (Context.pt.language()) {
         default:
-          throw notSupported();
+          throw notSupported("lists not supported for this language");
         case JAVA:
           complexType = new JavaListDataType(dataType);
           break;
@@ -164,6 +164,8 @@ public final class GeneratedTypeDef extends BaseObject {
         case GO:
           complexType = new GoListDataType(dataType);
           break;
+        case RUST:
+          complexType = new RustListDataType(dataType);break;
         }
       }
       break;

@@ -32,8 +32,9 @@ import js.base.BasePrinter;
 public final class Utils {
 
   public static final boolean DEBUG_RUST_IMPORTS = false;
-  public static final boolean RUST_COMMENTS = false;
-  public static final boolean DEBUG_RUST = DEBUG_RUST_IMPORTS;
+  public static final boolean DEBUG_RUST_LISTS = true;
+  public static final boolean DEBUG_RUST = DEBUG_RUST_IMPORTS || DEBUG_RUST_LISTS;
+  public static final boolean RUST_COMMENTS = DEBUG_RUST_LISTS;
   public static final String GEN_SUBDIR_NAME = "gen";
 
   public static void loadUtils() {
