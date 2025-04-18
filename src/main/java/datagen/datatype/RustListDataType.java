@@ -37,12 +37,13 @@ public class RustListDataType extends RustDataType {
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     s.a(OPEN, //
         comment(), //
-        "let y = {{crate.tools.*|}}list();",CR, //
-        "for x in &self.",f.instanceName()," ",OPEN, //
-        "y.push(", wrappedType().buildRustJsonValueFrom("x"),");",CR, //
+        "let y = {{crate.tools.*|}}list();", CR, //
+        " /* this could be a json or tools utility file */ ", //
+        "for x in &self.", f.instanceName(), " ", OPEN, //
+        "y.push(", wrappedType().buildRustJsonValueFrom("x"), ");", //
         CLOSE, //
-        comment("const name: "+f.nameStringConstantQualified()), //
-        "m.put(&",f.nameStringConstantQualified(),", y);", CR, //
+        comment("const name: " + f.nameStringConstantQualified()), //
+        "m.put(&", f.nameStringConstantQualified(), ", y);", CR, //
         CLOSE);
   }
 

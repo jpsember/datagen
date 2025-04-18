@@ -34,8 +34,8 @@ import js.json.JSMap;
 
 public final class RustBoolDataType extends RustDataType {
 
-  public static final  DataType TYPE = new RustBoolDataType().with("bool");
-  
+  public static final DataType TYPE = new RustBoolDataType().with("bool");
+
   private RustBoolDataType() {
   }
 
@@ -68,7 +68,7 @@ public final class RustBoolDataType extends RustDataType {
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    return "new_bool("+valueExpression + ")";
+    return "new_bool(" + valueExpression + ")";
   }
 
   @Override
@@ -97,4 +97,8 @@ public final class RustBoolDataType extends RustDataType {
     return expr;
   }
 
+  @Override
+  public String buildRustJsonValueFrom(String expr) {
+    return "new_bool(*" + expr + ")";
+  }
 }

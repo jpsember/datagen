@@ -24,7 +24,6 @@
  **/
 package datagen.datatype;
 
-import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 import datagen.DataType;
