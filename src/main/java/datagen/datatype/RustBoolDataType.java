@@ -68,7 +68,7 @@ public final class RustBoolDataType extends RustDataType {
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    return "new_bool("+valueExpression + ") /* RustBoolDataType #71 */";
+    return "new_bool("+valueExpression + ")";
   }
 
   @Override

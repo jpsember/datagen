@@ -346,4 +346,20 @@ public abstract class DataType implements DefaultValueParser {
     throw languageNotSupported("setterArgUsage for type:", getClass().getName());
   }
 
+  public String getterReturnTypeExpr() {
+    throw languageNotSupported("getterReturnTypeExpr for type:", getClass().getName());
+  }
+
+  public void getterBody(SourceBuilder s, FieldDef f) {
+    throw languageNotSupported("getterBody for type:", getClass().getName());
+    //)ampForRef(f), "self.", f.instanceName(), CLOSE);
+  }
+
+  public String comment(Object msg) {
+    if (true) {
+      return " /*** " + msg + " ***/    ";
+    }
+    return "";
+  }
+
 }

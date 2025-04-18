@@ -97,6 +97,7 @@ final class DataDefinitionParser extends BaseObject {
     } catch (Throwable t) {
       alert("Caught:", t.getMessage());
       if (t instanceof ScanException || SHOW_STACK_TRACES) {
+        if (SHOW_STACK_TRACES) pr(t);
         throw t;
       }
       if (mLastReadToken != null) {
@@ -200,6 +201,7 @@ final class DataDefinitionParser extends BaseObject {
     QualifiedName q = QualifiedName.parse(nameExpression, packageName());
     dataType.withQualifiedName(q);
     dataType.setDeclaredFlag();
+  pr(VERT_SP,"procExternalRef, packageName:",packageName(),"qualname:",q);
     Context.dataTypeManager.add(q.className(), dataType);
   }
 

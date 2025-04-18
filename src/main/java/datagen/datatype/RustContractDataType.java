@@ -1,8 +1,8 @@
 package datagen.datatype;
 
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
-import datagen.GoDataType;
 import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.json.JSMap;
@@ -11,27 +11,16 @@ import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
 import datagen.QualifiedName;
+import datagen.RustDataType;
 
 /**
  * DataType that wraps objects that implement the DataType interface
  */
-public class RustContractDataType extends GoDataType {
+public class RustContractDataType extends RustDataType {
 
   @Override
-  public DataType withQualifiedName(QualifiedName qualifiedName) {
-
-    // Have the 'main' type name be the interface, e.g. Cat
-    with(NAME_MAIN, qualifiedName);
-
-    // Have the 'alternate' type name be the static name, e.g. Cat
-    // ...but preceded by a small s, so it is not exported
-    String x = qualifiedName.combined();
-    int i = x.lastIndexOf('.');
-    checkArgument(i > 0, qualifiedName);
-    with(NAME_ALT, x.substring(0, i + 1) + "s" + x.substring(i + 1));
-
-    // The human name can be the same as the main name
-    //  with(NAME_HUMAN, qualifiedName);
+  public DataType withQualifiedName(QualifiedName qn) {
+    with(NAME_MAIN, qn);
     return this;
   }
 
@@ -46,16 +35,16 @@ public class RustContractDataType extends GoDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return "Default" + qualifiedName(NAME_HUMAN).className();
+    var result = "Default" + Context.pt.importExprWithClassName(qualifiedName(NAME_HUMAN));
+    return result;
   }
 
-  // Make this final for now to avoid unintended overriding
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a(OPEN, "var x = s.OptUnsafe(\"", f.name(), "\")", CR, //
-        "if x != nil ", OPEN, //
-        "n.", f.instanceName(), " = Default", qualifiedName(NAME_HUMAN).className(), ".Parse(x.(JSEntity)).(",
-        typeName(), ")", //
+    s.a(OPEN, "let x = n.opt(\"", f.name(), "\");", comment("use the str constant here!"),
+        comment("RustContractDataType: sourceDeserializeFromObject"), CR, //
+        "if !x.is_null()", OPEN, //
+        "n.", f.instanceName(), " = default_", qualifiedName(NAME_HUMAN).className(), "().parse(x.clone());",
         CLOSE, //
         CLOSE);
   }
@@ -66,13 +55,14 @@ public class RustContractDataType extends GoDataType {
   }
 
   public String getSerializeToJSONValue(String value) {
-    return value + ".ToJson()";
+    return value + ".to_json()";
   }
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     var cn = qualifiedName(NAME_HUMAN).className();
     String arg = f.instanceName();
+
     s.a("if ", arg, " == nil ", OPEN, //
         targetExpr, " = Default", cn, //
         CR, OUT, "} else {", IN, CR, targetExpr, " = ", arg, ".Build()", //,
@@ -94,5 +84,24 @@ public class RustContractDataType extends GoDataType {
   public String deserializeJsonToMapValue(String jsonValue) {
     return provideSourceDefaultValue() + ".Parse(" + jsonValue + ").(" + qualifiedName(NAME_HUMAN).className()
         + ")";
+  }
+
+  @Override
+  public String setterArgSignature(String expr) {
+    return Context.pt.PKG_RUST_ARC + "<" + expr + ">";
+  }
+
+  public String setterArgUsage(String expr) {
+    return expr + ".clone()" + comment("RustContractDataType : setterArgUsage()");
+  }
+
+  @Override
+  public String getterReturnTypeExpr() {
+    return typeName() + comment("RustContractDataType : getterReturnTypeExpr()");
+  }
+
+  @Override
+  public void getterBody(SourceBuilder s, FieldDef f) {
+    s.a("self.", f.instanceName(), ".clone()", comment("RustContractDataType : getterBody()"));
   }
 }

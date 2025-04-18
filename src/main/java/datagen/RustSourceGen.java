@@ -99,7 +99,8 @@ public final class RustSourceGen extends SourceGen {
     Set<String> uniqueSet = hashSet();
 
     for (String cn : expressions) {
-      if (db) log(VERT_SP, "... expression:", cn);
+      if (db)
+        log(VERT_SP, "... expression:", cn);
       String importString = cn;
       QualifiedName qn = QualifiedName.parse(cn);
       if (db)
@@ -137,9 +138,11 @@ public final class RustSourceGen extends SourceGen {
     for (FieldDef f : def.fields()) {
       if (f.deprecated())
         s.addSafe(getDeprecationSource());
-
-      s.a("fn ", f.getterName(), "(&self) -> ", ampForRef(f), f.dataType().typeName(), " ", OPEN, //
-          "  ", ampForRef(f), "self.", f.instanceName(), CLOSE);
+      s.a("fn ", f.getterName(), "(&self) -> ", f.dataType().getterReturnTypeExpr(), " ", OPEN, //
+          // ampForRef(f), f.dataType().typeName(), " ", OPEN, //
+          "  ");
+      f.dataType().getterBody(s, f);
+      s.a(CLOSE);
       s.br();
     }
     return content();
@@ -227,9 +230,7 @@ public final class RustSourceGen extends SourceGen {
       m.put("enum_specific", generateEnumSpecific());
     } else {
       SourceBuilder s = Context.generatedTypeDef.classSpecificSourceBuilder();
-      s.a(//Context.pt.PKG_RUST_TOOLS, 
-          Context.pt.PKG_RUST_JSON, Context.pt.PKG_RUST_ERROR,
-          Context.pt.PKG_RUST_RC, Context.pt.PKG_RUST_FMT);
+      s.a(Context.pt.PKG_RUST_FMT);
     }
 
     m.put("static_class", type.qualifiedName(DataType.NAME_ALT).className());
@@ -255,7 +256,7 @@ public final class RustSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
     for (FieldDef f : def.fields()) {
-      s.a("fn ", f.getterName(), "(&self) -> ", ampForRef(f), f.dataType().typeName(), ";");
+      s.a("fn ", f.getterName(), "(&self) -> ", f.dataType().getterReturnTypeExpr(), ";");
       s.a(CR);
     }
     return trimRight(content());

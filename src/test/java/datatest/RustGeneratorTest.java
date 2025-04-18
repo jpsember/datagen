@@ -64,10 +64,12 @@ public class RustGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void contract() {
-    p().pr("extern gen.abc.Crow;", CR, //
+  public void pluto() {
+    rv();
+    p().pr("extern gen.abc.Contract;", CR, //
         "class {", INDENT, //
-        "Crow boss;", OUTDENT, //
+        "int foo;", CR, //
+        "Contract contract;", OUTDENT, //
         "}");
     compile();
   }

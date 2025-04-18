@@ -10,23 +10,19 @@
 
 // This is what clients see for immutable and builders
 //
-pub type [!class] = Arc<dyn [!interface_name]OrBuilder>;
+pub type [!class] = {{std.sync|Arc}}<dyn [!interface_name]OrBuilder>;
 
 
 // ---------------------------------------------------------------------------------------
 // [!interface_name] interface
 // ---------------------------------------------------------------------------------------
 
-// These are the functions that immutable objects
-// support (they are also supported by builders)
-//
-
 [!deprecated]pub trait [!interface_name]OrBuilder  {
 [!class_getter_declaration]
   fn build(&self) -> [!class];
   fn to_builder(&self) -> [!builder_name];
-  fn to_json(&self) -> JSValue;
-  fn parse(&self, s: JSValue) -> Result<[!class], Box<dyn error::Error>>;
+  fn to_json(&self) -> {{crate.json.*|}}JSValue;
+  fn parse(&self, s: {{crate.json.*|}}JSValue) -> Result<[!class], Box<dyn error::{{std.error|Error}}>>;
 }
 
 // This is what clients see for builders.
@@ -47,20 +43,20 @@ impl [!class]OrBuilder for [!class]Builder {
 
   // When an immutable or builder is asked to build, it returns a fresh copy
   fn build(&self) -> [!class] {
-    Arc::new(self.clone())
+    {{std.sync|Arc}}::new(self.clone())
   }
 
   fn to_builder(&self) -> [!class]Builder {
       self.clone()
   }
 
-  fn to_json(&self) -> JSValue {
+  fn to_json(&self) -> {{crate.json.*|}}JSValue {
     let m = new_map();
 [!to_json]
     m
   }
 
-  fn parse(&self, m: JSValue) -> Result<[!class], Box<dyn error::Error>> {
+  fn parse(&self, m: {{crate.json.*|}}JSValue) -> Result<[!class], Box<dyn error::{{std.error|Error}}>> {
     let mut n = default_[!class]().to_builder();
 [!parse]
     Ok(n.build())
@@ -86,7 +82,7 @@ impl [!class]Builder {
 // since in Rust, we can’t share these safely across different threads.
 //
 pub fn default_[!class]() -> [!class] {
-  Arc::new([!class]Builder {
+  {{std.sync|Arc}}::new([!class]Builder {
 [!class_init_fields_to_defaults]
   })
 }

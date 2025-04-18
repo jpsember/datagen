@@ -1,6 +1,7 @@
 package datagen;
 
 import static datagen.SourceBuilder.*;
+import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 public abstract class RustDataType extends DataType {
@@ -28,7 +29,7 @@ public abstract class RustDataType extends DataType {
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String arg = f.instanceName();
-    s.a(targetExpr," = ",setterArgUsage(arg),";",CR);
+    s.a(targetExpr, " = ", setterArgUsage(arg), ";", CR);
   }
 
   @Override
@@ -102,4 +103,16 @@ public abstract class RustDataType extends DataType {
     throw notSupported("deserializeJsonToMapValue for dataType:" + getClass());
   }
 
+  @Override
+  public String getterReturnTypeExpr() {
+    var prefix = isPrimitive() ? "" : "&";
+    return prefix + typeName();
+  }
+
+  @Override
+  public void getterBody(SourceBuilder s, FieldDef f) {
+    if (!isPrimitive())
+      s.a("& /***IS THIS CORRECT?***/  ");
+    s.a("self.", f.instanceName());
+  }
 }

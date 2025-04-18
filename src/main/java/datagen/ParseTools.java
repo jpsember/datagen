@@ -80,8 +80,8 @@ public final class ParseTools {
     PKG_RUST_TOOLS = "{{crate.tools.*|}}";
     PKG_RUST_JSON = "{{crate.json.*|}}";
     PKG_RUST_ERROR = "{{std.error|}}";
-    PKG_RUST_RC = "{{std.rc.Rc|}}";
     PKG_RUST_FMT = "{{std.fmt|}}";
+    PKG_RUST_ARC = "{{std.sync|Arc}}";
   }
 
   public static String goModuleExpr(String s) {
@@ -92,7 +92,7 @@ public final class ParseTools {
     return quote(goModuleExpr(s));
   }
 
-  public static final boolean SHOW_STACK_TRACES = false && alert("showing full stack traces");
+  public static final boolean SHOW_STACK_TRACES = true && alert("showing full stack traces");
 
   public static final String EXT_DATA_DEFINITION = "dat";
   public static final String DOT_EXT_DATA_DEFINITION = "." + EXT_DATA_DEFINITION;
@@ -264,10 +264,10 @@ public final class ParseTools {
 
   public Object PKG_RUST_TOOLS;
   public Object PKG_RUST_JSON;
-  public Object PKG_RUST_RC;
   public Object PKG_RUST_ERROR;
   public Object PKG_RUST_FMT;
-  
+  public Object PKG_RUST_ARC;
+
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 
   public final String immutableCopyOfList(String expr) {

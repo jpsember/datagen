@@ -168,6 +168,8 @@ public final class DataTypeManager extends BaseObject {
       return new PythonContractDataType();
     case GO:
       return new GoContractDataType();
+    case RUST:
+      return new RustContractDataType();
     }
   }
 
