@@ -31,7 +31,13 @@ import js.base.BasePrinter;
 
 public final class Utils {
 
+  public static final boolean DEBUG_RUST_IMPORTS = false;
+  public static final boolean RUST_COMMENTS = false;
+  public static final boolean DEBUG_RUST = DEBUG_RUST_IMPORTS;
   public static final String GEN_SUBDIR_NAME = "gen";
+
+  public static void loadUtils() {
+  }
 
   /**
    * Throw UnsupportedOperationException due to an unsupported target language

@@ -26,11 +26,13 @@ package datagen;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
+import static datagen.Utils.*;
 
 import java.util.List;
 import java.util.Set;
 
 import datagen.datatype.EnumDataType;
+import js.data.DataUtil;
 import js.file.Files;
 import js.json.JSMap;
 
@@ -81,8 +83,8 @@ public final class RustSourceGen extends SourceGen {
       DataType d = f.dataType();
       var argName = f.instanceName();
 
-      s.a("pub fn ", f.setterName(), "(& mut self, ", argName, ": ", d.setterArgSignature(argName), ") -> &Self",
-          OPEN);
+      s.a("pub fn ", f.setterName(), "(& mut self, ", argName, ": ", d.setterArgSignature(argName),
+          ") -> &Self", OPEN);
       String targetExpr = "self." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "self", CLOSE);
@@ -93,15 +95,38 @@ public final class RustSourceGen extends SourceGen {
 
   @Override
   protected String generateImports(List<String> expressions) {
-    boolean db = false && alert("logging");
+
+    // 
+    // Like Python, Rust package names differ from Java ones.
+    //
+    // Java classes have this structure:
+    //
+    //  File path:         <path> . <filename> 
+    //  Import statement:  <package> . <ClassName>
+    //
+    // Rust classes have this  (we will replace '.' with '::'):
+    //
+    //  File path:        <path> . <filename>
+    //  Import statement: <package> . <filename> . <ClassName>
+    //    or what is more useful, 
+    //                     <package> . <filename> . *
+    //
+    // We refer to external types within .dat files in the same way as Java import statements:
+    //
+    // External ref:      <package> . <ClassName>
+    //
+
+    boolean db = DEBUG_RUST_IMPORTS && alert("logging");
     if (db)
       log("generating Rust imports");
 
     Set<String> uniqueSet = hashSet();
 
     for (String cn : expressions) {
+
       if (db)
         log(VERT_SP, "... expression:", cn);
+
       String importString = cn;
       QualifiedName qn = QualifiedName.parse(cn);
       if (db)
@@ -114,14 +139,34 @@ public final class RustSourceGen extends SourceGen {
         continue;
       }
 
-      // If the package name is the same as that of the file being generated, no import necessary.
-
-      if (qn.packagePath().equals(Context.generatedTypeDef.qualifiedName().packagePath())) {
+      // If the combined path equals that of the file being generated, don't import anything
+      {
+        var current = Context.generatedTypeDef.qualifiedName();
         if (db)
-          log("...same package as the generated type; skipping");
-        continue;
+          log("...name for file being generated:", INDENT, current);
+        if (current.combined().equals(qn.combined())) {
+          if (db)
+            log("...same; skipping");
+          continue;
+        }
       }
+      // If one of the package directories is 'gen', we apply our special rules
+      if (("." + qn.packagePath() + ".").contains(".gen.")) {
 
+        // Extend the package path to include a snake case form of the class name
+        // e.g. gen.Saturn => gen.saturn.Saturn.
+        // 
+        // Don't do this if the class name is '*'
+        //
+        if (!qn.className().equals("*")) {
+          var toUnder = DataUtil.convertCamelCaseToUnderscores(qn.className());
+          qn = qn.withPackageName(qn.packagePath() + "." + toUnder);
+          // Replace the class name with '*'
+          qn = qn.withClassName("*");
+          if (db)
+            pr("modified for Rust:", qn);
+        }
+      }
       importString = qn.combined().replace(".", "::");
       if (uniqueSet.add(importString)) {
         if (db)
@@ -129,6 +174,8 @@ public final class RustSourceGen extends SourceGen {
         s.a("use ", importString, ";").cr();
       }
     }
+    if (DEBUG_RUST_IMPORTS)
+      halt("returning content:", INDENT, content());
     return content();
   }
 
@@ -229,9 +276,6 @@ public final class RustSourceGen extends SourceGen {
 
     if (Context.generatedTypeDef.isEnum()) {
       m.put("enum_specific", generateEnumSpecific());
-    } else {
-      SourceBuilder s = Context.generatedTypeDef.classSpecificSourceBuilder();
-      s.a(Context.pt.PKG_RUST_FMT, Context.pt.PKG_RUST_ARC);
     }
 
     m.put("static_class", type.qualifiedName(DataType.NAME_ALT).className());
@@ -240,7 +284,7 @@ public final class RustSourceGen extends SourceGen {
     m.put("go_builder_getter_implementation", generateBuilderGetterImplementation());
     m.put("builder_name", type.qualifiedName(DataType.NAME_HUMAN).className() + "Builder");
     m.put("interface_name", type.qualifiedName(DataType.NAME_MAIN).className());
-    m.put("default_var_name", "Default" + type.qualifiedName(DataType.NAME_HUMAN).className());
+    m.put("default_var_name", "default_" + type.qualifiedName(DataType.NAME_HUMAN).className());
   }
 
   private String generateInitFieldsToDefaults() {
@@ -261,10 +305,6 @@ public final class RustSourceGen extends SourceGen {
       s.a(CR);
     }
     return trimRight(content());
-  }
-
-  private String ampForRef(FieldDef f) {
-    return f.dataType().isPrimitive() ? "" : "&";
   }
 
   private String generateBuilderGetterImplementation() {

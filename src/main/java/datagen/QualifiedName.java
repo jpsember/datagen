@@ -12,24 +12,26 @@ public final class QualifiedName extends BaseObject {
   }
 
   public static QualifiedName parse(String expr, String defaultPackage) {
+    
     if (Context.rust()) {
       checkArgument(!expr.contains(":"), "Convert '::' expressions to '.'");
+      expr = expr.replace('/', '.');
+      
       String packagePath = "";
       String className = "";
-      
-      var a = expr.lastIndexOf('.');
-      className = expr.substring(a+1);
-      if (a > 0)
-        packagePath = expr.substring(0,a);
-      
-      QualifiedName result = new QualifiedName(packagePath, className);
-      
-//      pr(VERT_SP,"parse:",quote(expr),"produced:",INDENT,result);
 
+      var a = expr.lastIndexOf('.');
+      className = expr.substring(a + 1);
+      if (a > 0)
+        packagePath = expr.substring(0, a);
+
+      if (packagePath.startsWith("gen.") || packagePath.equals("gen"))
+        packagePath = "crate." + packagePath;
+
+      QualifiedName result = new QualifiedName(packagePath, className);
       return result;
     }
-    
-    
+
     if (Context.pt.go()) {
       var a = expr.lastIndexOf('/');
       var b = expr.lastIndexOf('.');

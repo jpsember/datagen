@@ -356,7 +356,8 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   public void comment(SourceBuilder s, Object msg) {
-    s.a(commentWithSkip(1, msg));
+    if (RUST_COMMENTS)
+      s.a(commentWithSkip(1, msg));
   }
 
   public String comment(Object msg) {
@@ -364,7 +365,7 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   public String commentWithSkip(int skip, Object msg) {
-    if (true) {
+    if (RUST_COMMENTS) {
       var x = getStackTraceElement(1 + skip);
       return " /*** " + x + " " + msg + " ***/    ";
     }

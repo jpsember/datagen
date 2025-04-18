@@ -10,7 +10,7 @@
 
 // This is what clients see for immutable and builders
 //
-pub type [!class] = {{std.sync|Arc}}<dyn [!interface_name]OrBuilder>;
+pub type [!class] = {{std.sync.Arc|Arc}}<dyn [!interface_name]OrBuilder>;
 
 
 // ---------------------------------------------------------------------------------------
@@ -42,7 +42,7 @@ impl [!class]OrBuilder for [!class]Builder {
 
   // When an immutable or builder is asked to build, it returns a fresh copy
   fn build(&self) -> [!class] {
-    {{std.sync|Arc}}::new(self.clone())
+    Arc::new(self.clone())
   }
 
   fn to_builder(&self) -> [!class]Builder {
@@ -75,12 +75,12 @@ impl [!class]Builder {
 // since in Rust, we can’t share these safely across different threads.
 //
 pub fn default_[!class]() -> [!class] {
-  {{std.sync|Arc}}::new([!class]Builder {
+  Arc::new([!class]Builder {
 [!class_init_fields_to_defaults]
   })
 }
 
-impl fmt::Display for dyn [!class]OrBuilder {
+impl {{std.fmt|fmt}}::Display for dyn [!class]OrBuilder {
   fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
     write!(f, "{}", self.to_json().to_string())
   }

@@ -101,7 +101,7 @@ public abstract class SourceGen extends BaseObject {
       content = parser.content();
     }
 
-    if (false && alert("showing content")) {
+    if (DEBUG_RUST_IMPORTS && alert("showing content")) {
       pr(DASHES, CR, "Content after pass 1:", CR, DASHES, CR, content);
     }
 
@@ -192,7 +192,9 @@ public abstract class SourceGen extends BaseObject {
    * </pre>
    */
   private String extractImportExpressions(String template) {
-//    halt("template:",INDENT,template);
+
+    final var db = DEBUG_RUST_IMPORTS;
+
     Set<String> expressionSet = hashSet();
     MacroParser parser = new MacroParser();
     parser.withPattern(ParseTools.IMPORT_REGEXP);
@@ -200,7 +202,8 @@ public abstract class SourceGen extends BaseObject {
     String result = parser.content(key -> {
       // See if this occurrence lies within a string constant; if so, return the original text
       {
-        //pr("====> found import expr: >>>"+key+"<<<");
+        if (db)
+          pr("====> found import expr: >>>" + key + "<<<");
         int quotesCount = 0;
         for (int cursor = parser.keyCursor(); cursor > 0; cursor--) {
           char c = template.charAt(cursor);
@@ -212,15 +215,18 @@ public abstract class SourceGen extends BaseObject {
               quotesCount++;
           }
         }
-        if (quotesCount % 2 != 0)
+        if (quotesCount % 2 != 0) {
+          if (db)
+            pr("====> found key:", key);
           return key;
+        }
       }
       List<String> subExp = split(key, '|');
       checkArgument(subExp.size() == 2, "can't parse key into subexpressions:", key, subExp);
       String s0 = subExp.get(0);
       String s1 = subExp.get(1);
-      //pr("========== adding import expr:",s0);
-      //die("adding import expr:", s0,"template:",INDENT,template);
+      if (db)
+        pr("========== adding import expr:", s0);
       expressionSet.add(s0);
       return s1;
     });

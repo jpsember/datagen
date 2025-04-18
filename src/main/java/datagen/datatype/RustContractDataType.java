@@ -9,6 +9,7 @@ import js.json.JSMap;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
+import static datagen.Utils.*;
 
 import datagen.QualifiedName;
 import datagen.RustDataType;
@@ -20,6 +21,7 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public DataType withQualifiedName(QualifiedName qn) {
+    loadUtils();
     with(NAME_MAIN, qn);
     return this;
   }
@@ -35,17 +37,15 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    var result = "Default" + Context.pt.importExprWithClassName(qualifiedName(NAME_HUMAN));
+    var result = "default_" + Context.pt.importExprWithClassName(qualifiedName(NAME_HUMAN)) + "()";
     return result;
   }
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a(OPEN, "let x = n.opt(", f.nameStringConstantQualified(), ");",
-        comment(""), CR, //
+    s.a(OPEN, "let x = m.opt(", f.nameStringConstantQualified(), ");", comment(""), CR, //
         "if !x.is_null()", OPEN, //
-        "n.", f.instanceName(), " = default_", qualifiedName(NAME_HUMAN).className(), "().parse(x.clone())?;",
-        CLOSE, //
+        "n.", f.instanceName(), " = parse_", qualifiedName(NAME_HUMAN).className(), "(x.clone())?;", CLOSE, //
         CLOSE);
   }
 
@@ -60,11 +60,11 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    var cn = qualifiedName(NAME_HUMAN).className();
     String arg = f.instanceName();
-
-    
-    s.a(comment(""), targetExpr, " = ", arg, ".Build();",CR);
+    if (RUST_COMMENTS) {
+      s.a(comment("the import should be something like: 'use crate::gen::saturn::Saturn;'"));
+    }
+    s.a( targetExpr, " = ", arg, ".build();", CR);
   }
 
   @Override
@@ -86,7 +86,7 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public String setterArgSignature(String expr) {
-    return Context.pt.PKG_RUST_ARC + "<" + expr + ">";
+    return qualifiedName(NAME_HUMAN).className();
   }
 
   public String setterArgUsage(String expr) {
@@ -95,7 +95,7 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public String getterReturnTypeExpr() {
-    return typeName() + comment("");
+    return typeName() + comment("package path:" + this.qualifiedName().packagePath());
   }
 
   @Override

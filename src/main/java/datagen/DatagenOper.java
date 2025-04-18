@@ -322,10 +322,13 @@ public class DatagenOper extends AppOper {
   }
 
   private void updateRustModules(DatWithSource entry) {
-    log("updateRustModules, source:", entry.sourceRelPath());
+    var db = DEBUG_RUST;
+    if (db)
+      log("updateRustModules, source:", entry.sourceRelPath());
     var srcPath = new File(datagenConfig().sourcePath(), entry.sourceRelPath());
     while (true) {
-      log("...", srcPath);
+      if (db)
+        log("...", srcPath);
       var parent = Files.parent(srcPath);
       if (parent.equals(datagenConfig().sourcePath()))
         break;
@@ -352,7 +355,7 @@ public class DatagenOper extends AppOper {
         sb.append("pub mod " + x + ";\n");
       var content = sb.toString();
       var modFile = new File(file, "mod.rs");
-      if (verbose())
+      if (DEBUG_RUST_IMPORTS && verbose())
         log(VERT_SP, "Updating", modFile, ":", INDENT, content, VERT_SP);
       files().writeString(modFile, content);
     }
