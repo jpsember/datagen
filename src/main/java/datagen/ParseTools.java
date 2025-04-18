@@ -81,7 +81,7 @@ public final class ParseTools {
     PKG_RUST_JSON = "{{crate.json.*|}}";
     PKG_RUST_ERROR = "{{std.error|}}";
     PKG_RUST_FMT = "{{std.fmt|}}";
-    PKG_RUST_ARC = "{{std.sync|Arc}}";
+    PKG_RUST_ARC = "{{std.sync.Arc|}}";
   }
 
   public static String goModuleExpr(String s) {

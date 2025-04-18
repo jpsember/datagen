@@ -201,7 +201,6 @@ final class DataDefinitionParser extends BaseObject {
     QualifiedName q = QualifiedName.parse(nameExpression, packageName());
     dataType.withQualifiedName(q);
     dataType.setDeclaredFlag();
-  pr(VERT_SP,"procExternalRef, packageName:",packageName(),"qualname:",q);
     Context.dataTypeManager.add(q.className(), dataType);
   }
 

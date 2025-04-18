@@ -49,7 +49,6 @@ public class JavaContractDataType extends JavaDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    halt("source def, type name:",typeName());
     return typeName() + ".DEFAULT_INSTANCE";
   }
 

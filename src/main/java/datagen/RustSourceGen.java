@@ -80,10 +80,9 @@ public final class RustSourceGen extends SourceGen {
         s.addSafe(getDeprecationSource());
       DataType d = f.dataType();
       var argName = f.instanceName();
-      
-      s.a("pub fn ", f.setterName(), "(&self, ", argName, ": ", d.setterArgSignature(argName),
-          ") -> &Self", OPEN);
-      d.comment(s, "none of these need to be 'mut'");
+
+      s.a("pub fn ", f.setterName(), "(& mut self, ", argName, ": ", d.setterArgSignature(argName), ") -> &Self",
+          OPEN);
       String targetExpr = "self." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "self", CLOSE);
@@ -232,7 +231,7 @@ public final class RustSourceGen extends SourceGen {
       m.put("enum_specific", generateEnumSpecific());
     } else {
       SourceBuilder s = Context.generatedTypeDef.classSpecificSourceBuilder();
-      s.a(Context.pt.PKG_RUST_FMT);
+      s.a(Context.pt.PKG_RUST_FMT, Context.pt.PKG_RUST_ARC);
     }
 
     m.put("static_class", type.qualifiedName(DataType.NAME_ALT).className());

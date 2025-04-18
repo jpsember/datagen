@@ -22,7 +22,6 @@ pub type [!class] = {{std.sync|Arc}}<dyn [!interface_name]OrBuilder>;
   fn build(&self) -> [!class];
   fn to_builder(&self) -> [!builder_name];
   fn to_json(&self) -> {{crate.json.*|}}JSValue;
-  fn parse(&self, s: {{crate.json.*|}}JSValue) -> Result<[!class], Box<dyn error::{{std.error|Error}}>>;
 }
 
 // This is what clients see for builders.
@@ -55,12 +54,6 @@ impl [!class]OrBuilder for [!class]Builder {
 [!to_json]
     m
   }
-
-  fn parse(&self, m: {{crate.json.*|}}JSValue) -> Result<[!class], Box<dyn error::{{std.error|Error}}>> {
-    let mut n = default_[!class]().to_builder();
-[!parse]
-    Ok(n.build())
-	}
 
 }
 
@@ -98,3 +91,16 @@ impl fmt::Display for [!class]Builder {
     write!(f, "{}", self.to_json().to_string())
   }
 }
+
+
+// ---------------------------------------------------------------------------------------
+// Global function for parsing, not tied to a particular instance
+// ---------------------------------------------------------------------------------------
+
+pub fn parse_[!class](m: {{crate.json.*|}}JSValue) -> Result<[!class], Box<dyn error::{{std.error|Error}}>> {
+    let mut n = default_[!class]().to_builder();
+[!parse]
+    Ok(n.build())
+}
+
+
