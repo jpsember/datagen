@@ -36,11 +36,12 @@ public class RustListDataType extends RustDataType {
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     s.a(OPEN, //
-        "var list = NewJSList()", CR, //
-        "for _, x := range v.", f.instanceName(), " ", OPEN, //
-        "list.Add(", wrappedType().sourceGenerateSerializeToObjectExpression("x"), ")", //
+        comment(), //
+        "let y = {{crate.tools.*|}}list();",CR, //
+        "for x in &self.",f.instanceName()," ",OPEN, //
+        "y.push(x.to_json());",CR, //
         CLOSE, //
-        "m.Put(", quote(f.instanceName()), ", list)", // 
+        "m.put(&",f.constantName(),", y);", CR, //
         CLOSE);
   }
 
