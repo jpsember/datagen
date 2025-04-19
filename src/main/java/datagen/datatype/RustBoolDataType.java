@@ -26,6 +26,7 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.RustDataType;
@@ -100,6 +101,11 @@ public final class RustBoolDataType extends RustDataType {
   @Override
   public String buildRustJsonValueFrom(String expr) {
     return "new_bool(*" + expr + ")";
+  }
+
+  @Override
+  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+    s.a(Context.pt.PKG_RUST_JSON, "parse_bool_list(j.or_list()?)?");
   }
 
 }
