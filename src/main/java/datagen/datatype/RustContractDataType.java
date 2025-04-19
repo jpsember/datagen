@@ -50,6 +50,12 @@ public class RustContractDataType extends RustDataType {
   }
 
   @Override
+  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+    s.a("parse_data_from_list(j, &parse_",qualifiedName(NAME_HUMAN).className(),")?");
+    s.comment("add a preset to import json.parse_xxxx");
+  }
+  
+  @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
     return getSerializeToJSONValue(valueExpression);
   }

@@ -34,19 +34,11 @@ public class RustListDataType extends RustDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-
-    // For a list of contract types, we want this:
-    //
-    //    let jslist = m.opt(KEY_GALAXY).or_list()?;
-    //    let len = jslist.len();
-    //    let mut y = Vec::with_capacity(len);
-    //    for x in 0..len {
-    //      let q = jslist.get_item_at(x);
-    //      y.push(parse_Saturn(q)?);
-    //    }
-    //    n.galaxy = y;
-
+    s.a(OPEN, //
+        "let j = m.opt(", f.nameStringConstantQualified(), ").or_list()?;", CR);
+    s.a("n.", f.instanceName(), " = ");
     wrappedType().sourceDeserializeFromList(s, f);
+    s.a(";", CLOSE);
   }
 
   @Override
@@ -63,11 +55,11 @@ public class RustListDataType extends RustDataType {
     //    }
 
     s.comment("This could be a utility function");
-    
+
     s.a(OPEN, //
         "let x = new_list();", CR, //
         "for v in &self.", f.instanceName(), OPEN, //
-        "x.push(", wrappedType().buildRustJsonValueFrom("v"),");", CLOSE, //
+        "x.push(", wrappedType().buildRustJsonValueFrom("v"), ");", CLOSE, //
         "m.put(", f.nameStringConstantQualified(), ", x);", //
         CLOSE, CR);
   }
