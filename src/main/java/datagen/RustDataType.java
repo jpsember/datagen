@@ -3,8 +3,6 @@ package datagen;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
-import js.base.Pair;
-
 public abstract class RustDataType extends DataType {
 
   /**

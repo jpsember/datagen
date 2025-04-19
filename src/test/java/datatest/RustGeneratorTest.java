@@ -75,7 +75,7 @@ public class RustGeneratorTest extends GenBaseTest {
 
   @Test
   public void fox() {
-    rv();
+//    rv();
     p().pr("class {", INDENT, //
         "*int foo;", CR, //
         "}");

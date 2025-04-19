@@ -24,14 +24,12 @@
  **/
 package datagen.datatype;
 
-import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.RustDataType;
 import datagen.SourceBuilder;
-import js.base.Pair;
 import js.json.JSMap;
 
 public final class RustIntDataType extends RustDataType {
@@ -115,11 +113,6 @@ public final class RustIntDataType extends RustDataType {
   @Override
   public String buildRustJsonValueFrom(String expr) {
     return "new_int(*" + expr + ((mBitSize != 64) ? " as i64" : "") + ")";
-  }
-
-  @Override
-  public Pair<String, String> buildSerializeFromListVariable(String varName) {
-    return pair("&" + varName, "new_int(" + sourceGenerateSerializeToObjectExpression(varName) + ")");
   }
 
 }

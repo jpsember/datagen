@@ -2,9 +2,7 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 import static datagen.SourceBuilder.*;
-import static datagen.Utils.*;
 
-import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.RustDataType;
@@ -36,16 +34,40 @@ public class RustListDataType extends RustDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
+
+    // For a list of contract types, we want this:
+    //
+    //    let jslist = m.opt(KEY_GALAXY).or_list()?;
+    //    let len = jslist.len();
+    //    let mut y = Vec::with_capacity(len);
+    //    for x in 0..len {
+    //      let q = jslist.get_item_at(x);
+    //      y.push(parse_Saturn(q)?);
+    //    }
+    //    n.galaxy = y;
+
     wrappedType().sourceDeserializeFromList(s, f);
   }
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
+
+    // This is an example of what we generate for a wrapped type = contract:
+    //
+    //    {
+    //      let x = new_list();
+    //      for v in &self.galaxy {
+    //        x.push(v.to_json());
+    //      }
+    //      m.put(KEY_GALAXY, x);
+    //    }
+
     s.comment("This could be a utility function");
-    var exprs = wrappedType().buildSerializeFromListVariable("v");
+    
     s.a(OPEN, //
-        "let x = new_list();", CR, "for ", exprs.first, " in self.", f.instanceName(), OPEN, //
-        "x.push(", exprs.second, ");", CLOSE, //
+        "let x = new_list();", CR, //
+        "for v in &self.", f.instanceName(), OPEN, //
+        "x.push(", wrappedType().buildRustJsonValueFrom("v"),");", CLOSE, //
         "m.put(", f.nameStringConstantQualified(), ", x);", //
         CLOSE, CR);
   }

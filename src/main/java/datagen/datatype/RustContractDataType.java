@@ -4,7 +4,6 @@ import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
-import js.base.Pair;
 import js.data.DataUtil;
 import js.json.JSMap;
 
@@ -110,8 +109,4 @@ public class RustContractDataType extends RustDataType {
    return  "parse_" + qualifiedName(NAME_HUMAN).className() + "(" + expr + ")";
   }
   
-  @Override
-  public Pair<String, String> buildSerializeFromListVariable(String varName) {
-    return pair("&" + varName,  varName  + ".clone()");
-  }
 }
