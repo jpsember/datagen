@@ -30,6 +30,7 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.RustDataType;
 import datagen.SourceBuilder;
+import js.base.Pair;
 import js.json.JSMap;
 
 public final class RustBoolDataType extends RustDataType {
@@ -100,5 +101,10 @@ public final class RustBoolDataType extends RustDataType {
   @Override
   public String buildRustJsonValueFrom(String expr) {
     return "new_bool(*" + expr + ")";
+  }
+
+  @Override
+  public Pair<String, String> buildSerializeFromListVariable(String varName) {
+    return pair("&" + varName, sourceGenerateSerializeToObjectExpression(varName) );
   }
 }

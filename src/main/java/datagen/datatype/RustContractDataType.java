@@ -4,6 +4,7 @@ import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
+import js.base.Pair;
 import js.data.DataUtil;
 import js.json.JSMap;
 
@@ -64,7 +65,7 @@ public class RustContractDataType extends RustDataType {
     if (RUST_COMMENTS) {
       s.a(comment("the import should be something like: 'use crate::gen::saturn::Saturn;'"));
     }
-    s.a( targetExpr, " = ", arg, ".build();", CR);
+    s.a(targetExpr, " = ", arg, ".build();", CR);
   }
 
   @Override
@@ -74,13 +75,14 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-    return "Default" + qualifiedName(NAME_HUMAN).className() + ".Parse(" + jsentityExpression + ").("
-        + typeName() + ")";
+ //   notFinished();
+    return "parse_" + qualifiedName(NAME_HUMAN).className() + "(" + jsentityExpression + ")";
   }
 
   @Override
   public String deserializeJsonToMapValue(String jsonValue) {
-    return provideSourceDefaultValue() + ".Parse(" + jsonValue + ").(" + qualifiedName(NAME_HUMAN).className()
+    notFinished();
+      return provideSourceDefaultValue() + ".Parse(" + jsonValue + ").(" + qualifiedName(NAME_HUMAN).className()
         + ")";
   }
 
@@ -101,5 +103,15 @@ public class RustContractDataType extends RustDataType {
   @Override
   public void getterBody(SourceBuilder s, FieldDef f) {
     s.a("self.", f.instanceName(), ".clone()", comment(""));
+  }
+
+  @Override
+  public String buildRustJsonValueFrom(String expr) {
+   return  "parse_" + qualifiedName(NAME_HUMAN).className() + "(" + expr + ")";
+  }
+  
+  @Override
+  public Pair<String, String> buildSerializeFromListVariable(String varName) {
+    return pair("&" + varName,  varName  + ".clone()");
   }
 }

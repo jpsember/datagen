@@ -4,6 +4,7 @@ import static js.base.Tools.*;
 import static datagen.SourceBuilder.*;
 import static datagen.Utils.*;
 
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.RustDataType;
@@ -34,27 +35,24 @@ public class RustListDataType extends RustDataType {
   }
 
   @Override
+  public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
+    wrappedType().sourceDeserializeFromList(s, f);
+  }
+
+  @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
+    s.comment("This could be a utility function");
+    var exprs = wrappedType().buildSerializeFromListVariable("v");
     s.a(OPEN, //
-        comment(), //
-        "let y = {{crate.tools.*|}}list();", CR, //
-        " /* this could be a json or tools utility file */ ", //
-        "for x in &self.", f.instanceName(), " ", OPEN, //
-        "y.push(", wrappedType().buildRustJsonValueFrom("x"), ");", //
-        CLOSE, //
-        comment("const name: " + f.nameStringConstantQualified()), //
-        "m.put(&", f.nameStringConstantQualified(), ", y);", CR, //
-        CLOSE);
+        "let x = new_list();", CR, "for ", exprs.first, " in self.", f.instanceName(), OPEN, //
+        "x.push(", exprs.second, ");", CLOSE, //
+        "m.put(", f.nameStringConstantQualified(), ", x);", //
+        CLOSE, CR);
   }
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
     throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    wrappedType().sourceDeserializeFromList(s, f);
   }
 
   @Override

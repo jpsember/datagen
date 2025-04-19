@@ -29,6 +29,7 @@ import static js.base.Tools.*;
 import java.util.Map;
 
 import datagen.gen.TypeStructure;
+import js.base.Pair;
 
 import static datagen.Utils.*;
 
@@ -361,6 +362,23 @@ public abstract class DataType implements DefaultValueParser {
   public String buildRustJsonValueFrom(String expr) {
     throw languageNotSupported("buildRustJsonValueFrom for type:", getClass().getName());
   }
+
+  // This is used in RustListDataType within code that looks like this:
+  //    {
+  //      let x = new_list();
+  //      for ==>&v<=== in self.bit_flags {
+  //        x.push(new_bool(==>*v<==));
+  //      }
+  //      m.put(KEY_BIT_FLAGS, x);
+  //    }
+  public Pair<String,String> buildSerializeFromListVariable(String varName) {
+    throw languageNotSupported("buildSerializeFromListVariable for type:", getClass().getName());
+  }
+  //
+  //  // This produces the complement 
+  //  public String buildUseSerializeFromListVariable(String varName) {
+  //    throw languageNotSupported("buildUseSerializeFromListVariable for type:", getClass().getName());
+  //  }
 
   public void comment(SourceBuilder s, Object msg) {
     if (RUST_COMMENTS) {

@@ -3,6 +3,8 @@ package datagen;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
+import js.base.Pair;
+
 public abstract class RustDataType extends DataType {
 
   /**
@@ -63,13 +65,17 @@ public abstract class RustDataType extends DataType {
 //    
     
     
+//    parseElementFromJsonValue(f,"jslist.get_item_at(x)");
     s.a(OPEN, //
         "let jslist = m.opt(",f.nameStringConstantQualified(),").or_list()?;",CR, //
         "let len = jslist.len();",CR, //
         "let mut y = Vec::with_capacity(len);",CR,//
         "for x in 0..len {",CR, //
-       // "let w = jslist.get(x);",CR,//
-        "y.push(",parseElementFromJsonValue(f,"jslist.get_item_at(x)"),");",comment("e.g. let w = jslist.get(x);"),CR, //
+        "y.push(");
+      
+//    sourceDeserializeFromObject(s, f);
+      
+        s.a(");",comment("e.g. let w = jslist.get(x);"),CR, //
         CLOSE, //
         "n.",f.instanceName()," = y;", //
         CLOSE);
@@ -95,7 +101,7 @@ public abstract class RustDataType extends DataType {
   }
 
   // ------------------------------------------------------------------
-  // For supporting GoMapDataType
+  // For supporting RustMapDataType
   // ------------------------------------------------------------------
 
   /**
@@ -131,4 +137,9 @@ public abstract class RustDataType extends DataType {
       s.a("&");
     s.a("self.", f.instanceName());
   }
+  
+//  @Override
+//  public  Pair<String, String> buildSerializeFromListVariable(String varName) {
+//    return pair("&" + varName, "(*" + varName + ")");
+//  }
 }
