@@ -35,7 +35,7 @@ public class RustListDataType extends RustDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.a(OPEN, //
-        "let j = m.opt(", f.nameStringConstantQualified(), ").or_list()?;", CR);
+        "let j = m.opt(", f.nameStringConstantQualified(), ");", CR);
     s.a("n.", f.instanceName(), " = ");
     wrappedType().sourceDeserializeFromList(s, f);
     s.a(";", CLOSE);

@@ -51,10 +51,10 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("parse_data_from_list(j, &parse_",qualifiedName(NAME_HUMAN).className(),")?");
-    s.comment("add a preset to import json.parse_xxxx");
+    s.a(Context.pt.PKG_RUST_JSON, "parse_data_from_list(j.or_list()?, &parse_",
+        qualifiedName(NAME_HUMAN).className(), ")?");
   }
-  
+
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
     return getSerializeToJSONValue(valueExpression);
@@ -80,14 +80,14 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
- //   notFinished();
+    //   notFinished();
     return "parse_" + qualifiedName(NAME_HUMAN).className() + "(" + jsentityExpression + ")";
   }
 
   @Override
   public String deserializeJsonToMapValue(String jsonValue) {
     notFinished();
-      return provideSourceDefaultValue() + ".Parse(" + jsonValue + ").(" + qualifiedName(NAME_HUMAN).className()
+    return provideSourceDefaultValue() + ".Parse(" + jsonValue + ").(" + qualifiedName(NAME_HUMAN).className()
         + ")";
   }
 
@@ -112,7 +112,7 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public String buildRustJsonValueFrom(String expr) {
-   return  "parse_" + qualifiedName(NAME_HUMAN).className() + "(" + expr + ")";
+    return "parse_" + qualifiedName(NAME_HUMAN).className() + "(" + expr + ")";
   }
-  
+
 }

@@ -136,8 +136,5 @@ public abstract class RustDataType extends DataType {
     s.a("self.", f.instanceName());
   }
   
-//  @Override
-//  public  Pair<String, String> buildSerializeFromListVariable(String varName) {
-//    return pair("&" + varName, "(*" + varName + ")");
-//  }
+ 
 }
