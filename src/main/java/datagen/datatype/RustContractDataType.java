@@ -115,4 +115,10 @@ public class RustContractDataType extends RustDataType {
     return "parse_" + qualifiedName(NAME_HUMAN).className() + "(" + expr + ")";
   }
 
+  @Override
+  public void generateSerializeListOf(SourceBuilder s, FieldDef f) {
+    s.a("encode_data_list_as_json(self.", f.instanceName(), ", to_json_", qualifiedName(NAME_HUMAN).className(),
+        ")");
+  }
+
 }

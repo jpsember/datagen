@@ -388,4 +388,8 @@ public abstract class DataType implements DefaultValueParser {
     throw languageNotSupported("buildRustJsonValueFrom for type:", getClass().getName());
   }
 
+  public void generateSerializeListOf(SourceBuilder s, FieldDef f) {
+    throw languageNotSupported("generateSerializeListOf for type:", getClass().getName());
+     }
+  
 }

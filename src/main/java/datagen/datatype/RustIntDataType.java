@@ -121,4 +121,9 @@ public final class RustIntDataType extends RustDataType {
     s.a(Context.pt.PKG_RUST_JSON, "parse_i", mBitSize, "_list(j.or_list()?)?");
   }
 
+  @Override
+  public void generateSerializeListOf(SourceBuilder s, FieldDef f) {
+    s.comment("not finished! RustIntDataType");
+  }
+
 }

@@ -54,14 +54,20 @@ public class RustListDataType extends RustDataType {
     //      m.put(KEY_GALAXY, x);
     //    }
 
-    s.comment("This could be a utility function");
+    //  m.put(KEY_GALAXY, encode_data_list_as_json(&self.galaxy, &encode_Saturn));
 
-    s.a(OPEN, //
-        "let x = new_list();", CR, //
-        "for v in &self.", f.instanceName(), OPEN, //
-        "x.push(", wrappedType().buildRustJsonValueFrom("v"), ");", CLOSE, //
-        "m.put(", f.nameStringConstantQualified(), ", x);", //
-        CLOSE, CR);
+    s.a("m.put(", f.nameStringConstantQualified(), ", ");
+    wrappedType().generateSerializeListOf(s, f);
+    s.a(");",CR);
+
+    //    s.comment("This could be a utility function");
+    //      
+    //    s.a(OPEN, //
+    //        "let x = new_list();", CR, //
+    //        "for v in &self.", f.instanceName(), OPEN, //
+    //        "x.push(", wrappedType().buildRustJsonValueFrom("v"), ");", CLOSE, //
+    //        "m.put(", f.nameStringConstantQualified(), ", x);", //
+    //        CLOSE, CR);
   }
 
   @Override

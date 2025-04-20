@@ -104,3 +104,8 @@ pub fn parse_[!class](m: {{crate.json.*|}}JSValue) -> Result<[!class], Box<dyn e
 }
 
 
+pub fn to_json_[!class](obj: [!class]) -> JSValue {
+    obj.to_json()
+}
+
+
