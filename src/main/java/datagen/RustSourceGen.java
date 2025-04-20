@@ -238,10 +238,8 @@ public final class RustSourceGen extends SourceGen {
   @Override
   protected String generateToJson() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    s.debug("generateToJson");
     s.setIndent(4);
     for (FieldDef f : def.fields()) {
-      s.debug("field def:",f.name());
       f.dataType().sourceSerializeToObject(s, f);
       s.cr();
     }

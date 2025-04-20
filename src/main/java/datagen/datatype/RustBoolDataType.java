@@ -110,7 +110,7 @@ public final class RustBoolDataType extends RustDataType {
 
   @Override
   public void generateSerializeListOf(SourceBuilder s, FieldDef f) {
-    s.comment("not finished!  RustBoolDataType");
+    s.a("encode_bool_list(&self.", f.instanceName(), ")");
   }
 
 }

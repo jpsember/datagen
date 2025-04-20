@@ -123,7 +123,7 @@ public final class RustIntDataType extends RustDataType {
 
   @Override
   public void generateSerializeListOf(SourceBuilder s, FieldDef f) {
-    s.comment("not finished! RustIntDataType");
+    s.a("encode_i",mBitSize,"_list(&self.",f.instanceName(),")");
   }
 
 }
