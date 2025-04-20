@@ -206,7 +206,6 @@ public final class RustSourceGen extends SourceGen {
 
   @Override
   protected String generateInstanceFields() {
-    todo("I think we need convenience fn, 'new_builder'");
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
     int max = 0;
