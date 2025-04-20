@@ -75,9 +75,32 @@ public class RustGeneratorTest extends GenBaseTest {
 
   @Test
   public void fox() {
-//    rv();
     p().pr("class {", INDENT, //
         "*int foo;", CR, //
+        "}");
+    compile();
+  }
+
+  @Test
+  public void neptune() {
+    p().pr( //
+        "class {", INDENT, //
+        "int foo;", CR, //
+        "gen.abc.Contract contract;", OUTDENT, //
+        "}");
+    compile();
+  }
+  
+  @Test
+  public void lists() {
+    p().pr( //
+        "class {", INDENT, //
+        "* byte b;",CR,//
+        "* short s;",CR, //
+        "* int i;",CR, //
+        "* long g;",CR, //
+        "* string strs;",CR, //
+        "* gen.abc.Contract con;", OUTDENT, //
         "}");
     compile();
   }

@@ -108,7 +108,7 @@ public class DatagenOper extends AppOper {
     if (Context.rust())
       flushRustModules();
 
-    if (config.language() == Language.GO && !files().dryRun() && config.format()) {
+    if (!files().dryRun() && config.format()) {
       formatSourceFiles();
     }
 
@@ -120,12 +120,30 @@ public class DatagenOper extends AppOper {
    * Use the gofmt tool to format the source files as a go ide would
    */
   private void formatSourceFiles() {
+
     if (Context.generatedFilesSet.isEmpty())
       return;
+
     SystemCall sc = new SystemCall();
-    sc.arg("/usr/local/go/bin/gofmt", "-w");
-    for (File f : Context.generatedFilesSet) {
-      sc.arg(f.toString());
+
+    // todo("allow user to configure location of format tool");
+
+    switch (datagenConfig().language()) {
+    case GO:
+      sc.arg("/usr/local/go/bin/gofmt", "-w");
+      for (File f : Context.generatedFilesSet) {
+        sc.arg(f.toString());
+      }
+      break;
+    case RUST:
+      sc.arg(new File(Files.homeDirectory(),".cargo/bin/rustfmt"));
+      for (File f : Context.generatedFilesSet) {
+        sc.arg(f.toString());
+      }
+      break;
+    default:
+      alert("no formatting is available for this language");
+      return;
     }
     if (sc.exitCode() != 0) {
       alert("problem formatting; try without 'format' option to investigate?", INDENT, sc.systemErr());

@@ -26,6 +26,7 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.RustDataType;
@@ -101,6 +102,16 @@ public final class RustStringDataType extends RustDataType {
   @Override
   public String setterArgUsage(String expr) {
     return expr + ".to_string()";
+  }
+
+  @Override
+  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+    s.a(Context.pt.PKG_RUST_JSON, "parse_str_list(j.or_list()?)?");
+  }
+
+  @Override
+  public void generateSerializeListOf(SourceBuilder s, FieldDef f) {
+    s.a("encode_str_list(&self.", f.instanceName(), ")");
   }
 
 }
