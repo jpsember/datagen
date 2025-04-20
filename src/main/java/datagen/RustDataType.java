@@ -48,34 +48,16 @@ public abstract class RustDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    
-    
-//    {
-//      let jslist = m.opt(KEY_FOO).or_list()?;
-//      let len = jslist.len();
-//      let mut y = Vec::with_capacity(len);
-//      for x in 0..len {
-//        let w = jslist.get_item_at(x);
-//        y.push(w.as_number()? /* we want a datatype fn call here for cvt from json */);
-//      }
-//      n.foo = y;
-//    }
-//    
-    
-    
-//    parseElementFromJsonValue(f,"jslist.get_item_at(x)");
     s.a(OPEN, //
-        "let jslist = m.opt(",f.nameStringConstantQualified(),").or_list()?;",CR, //
-        "let len = jslist.len();",CR, //
-        "let mut y = Vec::with_capacity(len);",CR,//
-        "for x in 0..len {",CR, //
+        "let jslist = m.opt(", f.nameStringConstantQualified(), ").or_list()?;", CR, //
+        "let len = jslist.len();", CR, //
+        "let mut y = Vec::with_capacity(len);", CR, //
+        "for x in 0..len {", CR, //
         "y.push(");
-      
-//    sourceDeserializeFromObject(s, f);
-      
-        s.a(");",comment("e.g. let w = jslist.get(x);"),CR, //
+
+    s.a(");", comment("e.g. let w = jslist.get(x);"), CR, //
         CLOSE, //
-        "n.",f.instanceName()," = y;", //
+        "n.", f.instanceName(), " = y;", //
         CLOSE);
   }
 
@@ -88,7 +70,7 @@ public abstract class RustDataType extends DataType {
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-    s.a("m.put(", f.nameStringConstantQualified(),comment("constantName?"), ", ", //
+    s.a("m.put(", f.nameStringConstantQualified(), ", ", //
         sourceGenerateSerializeToObjectExpression("self." + f.instanceName()), ");", CR);
   }
 
@@ -135,6 +117,5 @@ public abstract class RustDataType extends DataType {
       s.a("&");
     s.a("self.", f.instanceName());
   }
-  
- 
+
 }

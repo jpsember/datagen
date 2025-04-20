@@ -77,7 +77,7 @@ public final class RustIntDataType extends RustDataType {
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    var x = "/* not sure this applies for all types! */ *" + valueExpression;
+    var x = valueExpression;
     if (mBitSize != 64)
       x += " as i64";
     return x;
@@ -123,7 +123,7 @@ public final class RustIntDataType extends RustDataType {
 
   @Override
   public void generateSerializeListOf(SourceBuilder s, FieldDef f) {
-    s.a("encode_i",mBitSize,"_list(&self.",f.instanceName(),")");
+    s.a("encode_i", mBitSize, "_list(&self.", f.instanceName(), ")");
   }
 
 }
