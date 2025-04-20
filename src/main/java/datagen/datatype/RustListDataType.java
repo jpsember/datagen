@@ -43,31 +43,9 @@ public class RustListDataType extends RustDataType {
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-
-    // This is an example of what we generate for a wrapped type = contract:
-    //
-    //    {
-    //      let x = new_list();
-    //      for v in &self.galaxy {
-    //        x.push(v.to_json());
-    //      }
-    //      m.put(KEY_GALAXY, x);
-    //    }
-
-    //  m.put(KEY_GALAXY, encode_data_list_as_json(&self.galaxy, &encode_Saturn));
-
     s.a("m.put(", f.nameStringConstantQualified(), ", ");
     wrappedType().generateSerializeListOf(s, f);
     s.a(");",CR);
-
-    //    s.comment("This could be a utility function");
-    //      
-    //    s.a(OPEN, //
-    //        "let x = new_list();", CR, //
-    //        "for v in &self.", f.instanceName(), OPEN, //
-    //        "x.push(", wrappedType().buildRustJsonValueFrom("v"), ");", CLOSE, //
-    //        "m.put(", f.nameStringConstantQualified(), ", x);", //
-    //        CLOSE, CR);
   }
 
   @Override
@@ -97,32 +75,32 @@ public class RustListDataType extends RustDataType {
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String argName = f.instanceName();
-    s.a(targetExpr, " = ", argName, ".to_vec();", comment());
+    s.a(targetExpr, " = ", argName, ".to_vec();");
   }
 
   @Override
   public String setterArgSignature(String expr) {
-    return "&[" + wrappedType().typeName() + "]" + comment();
+    return "&[" + wrappedType().typeName() + "]";
   }
 
   @Override
   public String getInitInstanceFieldExpr(FieldDef f) {
-    return "Vec::new()" + comment();
+    return "Vec::new()";
   }
 
   public String setterArgUsage(String expr) {
     checkArgument(!expr.contains("Vec::"));
-    return expr + ".to_vec()" + comment("");
+    return expr + ".to_vec()";
   }
 
   @Override
   public String getterReturnTypeExpr() {
-    return "&[" + wrappedType().typeName() + "]" + comment("");
+    return "&[" + wrappedType().typeName() + "]";
   }
 
   @Override
   public void getterBody(SourceBuilder s, FieldDef f) {
-    s.a("&self.", f.instanceName(), comment(""));
+    s.a("&self.", f.instanceName());
   }
 
   private final DataType mWrappedType;

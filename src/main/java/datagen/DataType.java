@@ -359,7 +359,7 @@ public abstract class DataType implements DefaultValueParser {
     }
     return "";
   }
-  
+
   // ------------------------------------------------------------------
   // Language-specific stuff
   // ------------------------------------------------------------------
@@ -381,7 +381,7 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   public String getInitInstanceFieldExpr(FieldDef f) {
-    return f.defaultValueOrNull() + comment();
+    return f.defaultValueOrNull();
   }
 
   public String buildRustJsonValueFrom(String expr) {
@@ -390,6 +390,6 @@ public abstract class DataType implements DefaultValueParser {
 
   public void generateSerializeListOf(SourceBuilder s, FieldDef f) {
     throw languageNotSupported("generateSerializeListOf for type:", getClass().getName());
-     }
-  
+  }
+
 }

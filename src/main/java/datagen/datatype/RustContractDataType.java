@@ -43,7 +43,7 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a(OPEN, "let x = m.opt(", f.nameStringConstantQualified(), ");", comment(""), CR, //
+    s.a(OPEN, "let x = m.opt(", f.nameStringConstantQualified(), ");", CR, //
         "if !x.is_null()", OPEN, //
         "n.", f.instanceName(), " = parse_", qualifiedName(NAME_HUMAN).className(), "(x.clone())?;", CLOSE, //
         CLOSE);
@@ -66,11 +66,7 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    String arg = f.instanceName();
-    if (RUST_COMMENTS) {
-      s.a(comment("the import should be something like: 'use crate::gen::saturn::Saturn;'"));
-    }
-    s.a(targetExpr, " = ", arg, ".build();", CR);
+    s.a(targetExpr, " = ", f.instanceName(), ".build();", CR);
   }
 
   @Override
@@ -97,17 +93,17 @@ public class RustContractDataType extends RustDataType {
   }
 
   public String setterArgUsage(String expr) {
-    return expr + ".clone()" + comment("");
+    return expr + ".clone()" ;
   }
 
   @Override
   public String getterReturnTypeExpr() {
-    return typeName() + comment("package path:" + this.qualifiedName().packagePath());
+    return typeName();
   }
 
   @Override
   public void getterBody(SourceBuilder s, FieldDef f) {
-    s.a("self.", f.instanceName(), ".clone()", comment(""));
+    s.a("self.", f.instanceName(), ".clone()");
   }
 
   @Override

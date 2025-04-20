@@ -58,26 +58,13 @@ impl [!class]OrBuilder for [!class]Builder {
 }
 
 
-
-
 // ---------------------------------------------------------------------------------------
 // Implementation of builder
 // ---------------------------------------------------------------------------------------
 
-
 impl [!class]Builder {
 
 [!setters]
-}
-
-// This returns a freshly-constructed default instance.
-// For efficiency, threads will have to construct their own copies of this as needed,
-// since in Rust, we can’t share these safely across different threads.
-//
-pub fn default_[!class]() -> [!class] {
-  Arc::new([!class]Builder {
-[!class_init_fields_to_defaults]
-  })
 }
 
 impl {{std.fmt|fmt}}::Display for dyn [!class]OrBuilder {
@@ -92,20 +79,38 @@ impl fmt::Display for [!class]Builder {
   }
 }
 
-
 // ---------------------------------------------------------------------------------------
-// Global function for parsing, not tied to a particular instance
+// Global functions
 // ---------------------------------------------------------------------------------------
 
+// Return a newly-built default instance.
+// For efficiency, threads will have to construct their own copies of this as needed,
+// since in Rust, we can’t share these safely across different threads.
+// (This calls the new_builder_[!class]() method, but does not expose any mutating functions.)
+//
+pub fn default_[!class]() -> [!class] {
+  Arc::new(new_builder_[!class]())
+}
+
+// Return a new builder.
+// 
+pub fn new_builder_[!class]() -> [!class]Builder {
+  [!class]Builder {
+[!class_init_fields_to_defaults]
+  }
+}
+  
+// Attempt to parse (deserialize) a [!class] from a JSValue
+//
 pub fn parse_[!class](m: {{crate.json.*|}}JSValue) -> Result<[!class], Box<dyn error::{{std.error|Error}}>> {
-    let mut n = default_[!class]().to_builder();
+    let mut n = new_builder_[!class]();
 [!parse]
     Ok(n.build())
 }
 
-
-pub fn to_json_[!class](obj: [!class]) -> JSValue {
+// Encode (serialize) a [!class] to a JSValue
+//
+pub fn to_json_[!class](obj: &[!class]) -> JSValue {
     obj.to_json()
 }
-
 
