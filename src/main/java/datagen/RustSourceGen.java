@@ -172,7 +172,7 @@ public final class RustSourceGen extends SourceGen {
         s.a("use ", importString, ";").cr();
       }
     }
-    if (DEBUG_RUST_IMPORTS)
+    if (false && DEBUG_RUST_IMPORTS)
       halt("returning content:", INDENT, content());
     return content();
   }

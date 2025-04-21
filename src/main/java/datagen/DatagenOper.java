@@ -29,7 +29,6 @@ import static js.base.Tools.*;
 import static datagen.Utils.*;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,6 +41,7 @@ import js.base.SystemCall;
 import js.data.DataUtil;
 import js.file.DirWalk;
 import js.file.Files;
+import js.parsing.RegExp;
 
 public class DatagenOper extends AppOper {
 
@@ -136,7 +136,7 @@ public class DatagenOper extends AppOper {
       }
       break;
     case RUST:
-      sc.arg(new File(Files.homeDirectory(),".cargo/bin/rustfmt"));
+      sc.arg(new File(Files.homeDirectory(), ".cargo/bin/rustfmt"));
       for (File f : Context.generatedFilesSet) {
         sc.arg(f.toString());
       }
@@ -253,15 +253,9 @@ public class DatagenOper extends AppOper {
       DatWithSource fileEntry = DatWithSource.newBuilder().datRelPath(rel.getPath())
           .sourceRelPath(relativeClassFile).build();
 
-      File modFile = Context.rustModFile(sourceFile);
-
       boolean rebuildRequired = config.clean();
       if (!rebuildRequired) {
         if (!sourceFile.exists() || sourceFile.lastModified() < dirWalk.abs(rel).lastModified())
-          rebuildRequired = true;
-      }
-      if (!rebuildRequired && modFile != null) {
-        if (!modFile.exists() || modFile.lastModified() < dirWalk.abs(rel).lastModified())
           rebuildRequired = true;
       }
 
@@ -365,18 +359,46 @@ public class DatagenOper extends AppOper {
     for (var ent : mModFilesMap.entrySet()) {
       var file = ent.getKey();
       var set = ent.getValue();
-      ArrayList<String> sorted = arrayList();
+      Set<String> sorted = treeSet();
       sorted.addAll(set);
-      sorted.sort(null);
+
+      var modFile = new File(file, "mod.rs");
+      if (datagenConfig().clean())
+        files().deletePeacefully(modFile);
+
+      // Add existing mod file entries, so we don't omit any ones
+      // corresponding to files that aren't being freshened
+      // (as they won't have entries in our mModFilesMap)
+      {
+        var c = Files.readString(modFile, "").strip();
+        if (!c.isEmpty()) {
+          var lines = split(c, '\n');
+          for (var x : lines) {
+            x = removePubModFromClass(x);
+            sorted.add(x);
+          }
+        }
+      }
+
       var sb = new StringBuilder();
       for (var x : sorted)
-        sb.append("pub mod " + x + ";\n");
+        sb.append(addPubModToClass(x)).append('\n');
       var content = sb.toString();
-      var modFile = new File(file, "mod.rs");
       if (DEBUG_RUST_IMPORTS && verbose())
         log(VERT_SP, "Updating", modFile, ":", INDENT, content, VERT_SP);
       files().writeString(modFile, content);
     }
+  }
+
+  private static String addPubModToClass(String className) {
+    return "pub mod " + className + ";";
+  }
+
+  private static String removePubModFromClass(String pubModEntry) {
+    var m = RegExp.matcher("pub mod ([a-zA-Z_][a-zA-Z_0-9]*);", pubModEntry.strip());
+    checkArgument(m.matches(), "unexpected mod.rs entry:", pubModEntry);
+    var stripped = m.group(1);
+    return stripped;
   }
 
   private Map<File, Set<String>> mModFilesMap;
