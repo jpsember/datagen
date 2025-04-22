@@ -78,7 +78,6 @@ public final class RustSourceGen extends SourceGen {
         s.addSafe(getDeprecationSource());
       DataType d = f.dataType();
       var argName = f.instanceName();
-
       s.a("pub fn ", f.setterName(), "(& mut self, ", argName, ": ", d.setterArgSignature(argName),
           ") -> &Self", OPEN);
       String targetExpr = "self." + f.instanceName();
@@ -219,31 +218,9 @@ public final class RustSourceGen extends SourceGen {
 
   @Override
   protected void generateEnumValues(EnumDataType enumType) {
-
-    //    private String generateEnumVariantsToString() {
-//    GeneratedTypeDef def = Context.generatedTypeDef;
-    //      EnumDataType enumType = def.enumDataType();
-
-//    todo("Do we need to modify the case, e.g. capitalize first?");
     for (var lbl : enumType.labels()) {
-      // e.g.   Uranus::Alpha => "Alpha".to_string(),
-      s.a(lbl, ",", CR); //def.qualifiedName().className(),"::",lbl," => ",QUOTE,lbl,".to_string(),",CR);
+      s.a(lbl, ",", CR); 
     }
-    //    }
-    //    
-    //    
-    // // m.put("enum_values", content());
-    //    s.in();
-    //    int i = INIT_INDEX;
-    //    for (String label : dt.labels()) {
-    //      s.cr();
-    //      i++;
-    //      s.a(label);
-    //      if (i == 0) {
-    //        s.a(" ", Context.generatedTypeDef.qualifiedName().className(), " = iota");
-    //      }
-    //    }
-    //    s.outNoCr();
   }
 
   @Override
@@ -292,7 +269,6 @@ public final class RustSourceGen extends SourceGen {
       m.put("default_enum", type.qualifiedName().className() + "::" + enumType.labels().get(0));
       m.put("init_enum_map_fields", generateEnumInitEnumMapFields());
     } else {
-
       m.put("static_class", type.qualifiedName(DataType.NAME_ALT).className());
       m.put("class_init_fields_to_defaults", generateInitFieldsToDefaults());
       m.put("class_getter_declaration", generateClassGetterDeclaration());

@@ -63,9 +63,6 @@ public class DatagenOper extends AppOper {
   public void perform() {
     cmdLineArgs().assertArgsDone();
     DatagenConfig config = datagenConfig();
-    if (alert("deleting zebra"))
-      files().deletePeacefully(new File("/Users/home/rust_sample/src/gen/zebra.rs"));
-    
     Context.prepare(files(), config);
 
     List<DatWithSource> entriesToFreshen = constructFileEntries();
