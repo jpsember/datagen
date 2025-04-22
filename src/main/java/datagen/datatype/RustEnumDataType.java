@@ -33,7 +33,6 @@ import datagen.RustDataType;
 import datagen.SourceBuilder;
 
 import static datagen.SourceBuilder.*;
-import static datagen.Utils.*;
 
 public class RustEnumDataType extends RustDataType implements EnumDataType {
 
@@ -53,24 +52,6 @@ public class RustEnumDataType extends RustDataType implements EnumDataType {
         "if !x.is_null()", OPEN, //
         "n.", f.instanceName(), " = parse_", qualifiedName(NAME_HUMAN).className(), "(x.clone())?;", CLOSE, //
         CLOSE);
-  }
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  @Override
-  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    throw languageNotSupported("deserializing list of Go enums from list");
   }
 
   @Override
