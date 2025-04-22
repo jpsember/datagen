@@ -47,6 +47,8 @@ public interface EnumDataType {
       return new PythonEnumDataType();
     case GO:
       return new GoEnumDataType();
+    case RUST:
+      return new RustEnumDataType();
     }
   }
 }

@@ -63,9 +63,7 @@ public final class RustSourceGen extends SourceGen {
     for (FieldDef f : def.fields()) {
       if (f.optional())
         continue;
-      String initialValue = 
-          f.dataType().getInitInstanceFieldExpr(f);
-//          f.defaultValueOrNull();
+      String initialValue = f.dataType().getInitInstanceFieldExpr(f);
       s.a(CR, f.instanceName(), " = ", initialValue, ";");
     }
     return content();
@@ -220,18 +218,32 @@ public final class RustSourceGen extends SourceGen {
   }
 
   @Override
-  protected void generateEnumValues(EnumDataType dt) {
-    s.in();
-    int i = INIT_INDEX;
-    for (String label : dt.labels()) {
-      s.cr();
-      i++;
-      s.a(label);
-      if (i == 0) {
-        s.a(" ", Context.generatedTypeDef.qualifiedName().className(), " = iota");
-      }
+  protected void generateEnumValues(EnumDataType enumType) {
+
+    //    private String generateEnumVariantsToString() {
+//    GeneratedTypeDef def = Context.generatedTypeDef;
+    //      EnumDataType enumType = def.enumDataType();
+
+//    todo("Do we need to modify the case, e.g. capitalize first?");
+    for (var lbl : enumType.labels()) {
+      // e.g.   Uranus::Alpha => "Alpha".to_string(),
+      s.a(lbl, ",", CR); //def.qualifiedName().className(),"::",lbl," => ",QUOTE,lbl,".to_string(),",CR);
     }
-    s.outNoCr();
+    //    }
+    //    
+    //    
+    // // m.put("enum_values", content());
+    //    s.in();
+    //    int i = INIT_INDEX;
+    //    for (String label : dt.labels()) {
+    //      s.cr();
+    //      i++;
+    //      s.a(label);
+    //      if (i == 0) {
+    //        s.a(" ", Context.generatedTypeDef.qualifiedName().className(), " = iota");
+    //      }
+    //    }
+    //    s.outNoCr();
   }
 
   @Override
@@ -269,20 +281,47 @@ public final class RustSourceGen extends SourceGen {
 
   @Override
   protected void addAdditionalTemplateValues(JSMap m) {
-
-    DataType type = Context.generatedTypeDef.wrappedType();
+    GeneratedTypeDef def = Context.generatedTypeDef;
+    DataType type = def.wrappedType();
 
     if (Context.generatedTypeDef.isEnum()) {
+      var enumType = def.enumDataType();
+      m.put("class_short", type.qualifiedName(DataType.NAME_HUMAN).className());
       m.put("enum_specific", generateEnumSpecific());
-    }
+      m.put("enum_variants_to_string", generateEnumVariantsToString());
+      m.put("default_enum", type.qualifiedName().className() + "::" + enumType.labels().get(0));
+      m.put("init_enum_map_fields", generateEnumInitEnumMapFields());
+    } else {
 
-    m.put("static_class", type.qualifiedName(DataType.NAME_ALT).className());
-    m.put("class_init_fields_to_defaults", generateInitFieldsToDefaults());
-    m.put("class_getter_declaration", generateClassGetterDeclaration());
-    m.put("go_builder_getter_implementation", generateBuilderGetterImplementation());
-    m.put("builder_name", type.qualifiedName(DataType.NAME_HUMAN).className() + "Builder");
-    m.put("interface_name", type.qualifiedName(DataType.NAME_MAIN).className());
-    m.put("default_var_name", "default_" + type.qualifiedName(DataType.NAME_HUMAN).className());
+      m.put("static_class", type.qualifiedName(DataType.NAME_ALT).className());
+      m.put("class_init_fields_to_defaults", generateInitFieldsToDefaults());
+      m.put("class_getter_declaration", generateClassGetterDeclaration());
+      m.put("go_builder_getter_implementation", generateBuilderGetterImplementation());
+      m.put("builder_name", type.qualifiedName(DataType.NAME_HUMAN).className() + "Builder");
+      m.put("interface_name", type.qualifiedName(DataType.NAME_MAIN).className());
+      m.put("default_var_name", "default_" + type.qualifiedName(DataType.NAME_HUMAN).className());
+    }
+  }
+
+  private String generateEnumInitEnumMapFields() {
+    GeneratedTypeDef def = Context.generatedTypeDef;
+    EnumDataType enumType = def.enumDataType();
+    for (var lbl : enumType.labels()) {
+      //   e.g. a.insert("Alpha".to_string(), Uranus::Alpha );
+      s.a("a.insert(", QUOTE, lbl, ".to_string(), ", def.qualifiedName().className(), "::", lbl, ");", CR);
+    }
+    return content();
+  }
+
+  private String generateEnumVariantsToString() {
+    GeneratedTypeDef def = Context.generatedTypeDef;
+    EnumDataType enumType = def.enumDataType();
+
+    for (var lbl : enumType.labels()) {
+      // e.g.   Uranus::Alpha => "Alpha".to_string(),
+      s.a(def.qualifiedName().className(), "::", lbl, " => ", QUOTE, lbl, ".to_string(),", CR);
+    }
+    return content();
   }
 
   private String generateInitFieldsToDefaults() {

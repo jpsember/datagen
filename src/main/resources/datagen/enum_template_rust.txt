@@ -2,22 +2,154 @@
 @@// Generated code: DO NOT MODIFY
 @@// ---------------------------------------------------------------------------------------
 @@
-[!package_decl]
 
-import (
-[!imports])
+#![allow(dead_code)]
+#![allow(non_snake_case)]
 
-// See https://www.sohamkamani.com/golang/enums/
+use crate::json::*;
+use crate::tools::*;
+use std::collections::HashMap;
+use std::sync::{LazyLock,RwLock};
+use std::{fmt};
 
-type [!class] int
-
-const (
+#[derive(Copy, Clone)]
+pub enum [!class] {
 [!enum_values]
-)
+}
 
-@@/**
-@@ * The default value for this enum type
-@@ */
-const Default[!class] = [!default_value]
+/*
+pub enum Uranus {
+    Alpha,
+    Bravo,
+}
+*/
 
-[!enum_specific]
+
+
+
+impl Jsonable for [!class] {
+    fn to_json(&self) -> JSValue {
+        new_string(&self.to_string())
+    }
+}
+
+/*
+impl Jsonable for Uranus {
+    fn to_json(&self) -> JSValue {
+        new_string(&self.to_string())
+    }
+}
+*/
+
+
+
+
+impl [!class] {
+    pub fn to_string(&self) -> String {
+        match self {
+[!enum_variants_to_string]
+        }
+    }
+}
+
+/*
+impl Uranus {
+    pub fn to_string(&self) -> String {
+        match self {
+            Uranus::Alpha => "Alpha".to_string(),
+            Uranus::Bravo => "Bravo".to_string(),
+        }
+    }
+}
+*/
+
+
+impl fmt::Display for [!class] {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.to_string())
+    }
+}
+
+impl fmt::Debug for [!class] {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.to_string())
+    }
+}
+
+/*
+impl fmt::Display for Uranus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.to_string())
+    }
+}
+
+impl fmt::Debug for Uranus {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.to_string())
+    }
+}
+*/
+
+// ---------------------------------------------------------------------------------------
+// Global functions
+// ---------------------------------------------------------------------------------------
+
+pub fn default_[!class]() -> [!class] {
+[!default_enum]
+}
+
+/*
+pub fn default_Uranus() -> Uranus {
+    Uranus::Alpha
+}
+*/
+
+
+
+// Attempt to parse (deserialize) a [!class] from a JSValue
+//
+pub fn parse_[!class](m: JSValue) -> Result<[!class] , AnyError> {
+    let q = PRIVATE.read().unwrap();
+    let string = m.as_str()?;
+    let k = q.get(&string);
+    match k {
+        None => Err(new_error(&format!("No [!class_short] enum for: {}",&string))),
+        Some(x) => Ok(x.clone())
+    }
+}
+
+/*
+// Attempt to parse (deserialize) a Uranus from a JSValue
+//
+pub fn parse_Uranus(m: JSValue) -> Result< Uranus , AnyError> {
+    let q = PRIVATE.read().unwrap();
+    let string = m.as_str()?;
+    let k = q.get(&string);
+    match k {
+        None => Err(new_error(&format!("No Uranus enum for: {}",&string))),
+        Some(x) => Ok(x.clone())
+    }
+}
+*/
+
+
+type Private = HashMap<String, [!class]>;
+
+fn new_private() -> Private {
+    let mut a = HashMap::new();
+[!init_enum_map_fields]
+    a
+}
+
+/*
+type Private = HashMap<String, Uranus>;
+
+fn new_private() -> Private {
+    let mut a = HashMap::new();
+    a.insert("Alpha".to_string(), Uranus::Alpha );
+    a.insert("Bravo".to_string(),  Uranus::Bravo );
+    a
+}
+*/
+
+static PRIVATE: Singleton<Private> = LazyLock::new(|| RwLock::new(new_private()));

@@ -66,12 +66,14 @@ public abstract class SourceGen extends BaseObject {
     m.put("class", def.name());
 
     String content = getTemplate();
+  
     m.put("deprecated", def.isDeprecated() ? getDeprecationSource() : "");
+    
     if (def.isEnum()) {
-      generateEnumValues(def.enumDataType());
-      m.put("default_value", def.enumDataType().labels().get(0));
-      m.put("enum_values", content());
-      addAdditionalTemplateValues(m);
+      generateEnumValues(def.enumDataType());                                                                                                                          
+     m.put("enum_values", content());                                                                                                                              
+     m.put("default_value", def.enumDataType().labels().get(0));                                                                                                  
+     addAdditionalTemplateValues(m);                                             
     } else {
       m.put("class_getter_implementation", generateGetters());
       m.put("copy_to_builder", generateImmutableToBuilder());
@@ -100,7 +102,9 @@ public abstract class SourceGen extends BaseObject {
       parser.withTemplate(content).withMapper(m);
       content = parser.content();
     }
-
+    
+    //pr("content:",INDENT,content);
+    
     if (DEBUG_RUST_IMPORTS && alert("showing content")) {
       pr(DASHES, CR, "Content after pass 1:", CR, DASHES, CR, content);
     }
@@ -131,6 +135,9 @@ public abstract class SourceGen extends BaseObject {
     content = Context.pt.adjustLinefeeds(content);
     File target = sourceFile();
     Context.files.mkdirs(Files.parent(target));
+    if (false && alert("halting for enum") && def.isEnum()) {
+      halt("would write this file:",DASHES,content);
+    }
     boolean wrote = Context.files.writeIfChanged(target, content);
     Context.generatedFilesSet.add(target);
     if (wrote)
