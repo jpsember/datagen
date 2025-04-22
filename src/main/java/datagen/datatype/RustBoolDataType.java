@@ -105,7 +105,7 @@ public final class RustBoolDataType extends RustDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a(Context.pt.PKG_RUST_JSON, "j.parse_bool_list()?");
+    s.a(Context.pt.PKG_RUST_JSON, "j.or_empty_list()?.parse_bool_list()?");
   }
 
   @Override

@@ -118,7 +118,7 @@ public final class RustIntDataType extends RustDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a(Context.pt.PKG_RUST_JSON, "j.parse_i", mBitSize, "_list()?");
+    s.a(Context.pt.PKG_RUST_JSON, "j.or_empty_list()?.parse_i", mBitSize, "_list()?");
   }
 
   @Override
