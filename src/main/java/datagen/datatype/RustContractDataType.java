@@ -90,7 +90,6 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-    //   notFinished();
     return "parse_" + qualifiedName(NAME_HUMAN).className() + "(" + jsentityExpression + ")";
   }
 
@@ -127,8 +126,11 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public void generateSerializeListOf(SourceBuilder s, FieldDef f) {
-    s.a("encode_data_list_as_json(&self.", f.instanceName(), ", &to_json_",
-        qualifiedName(NAME_HUMAN).className(), ")");
+    s.a(OPEN, //
+        "let mut x = Vec::new();", CR, //
+        "for y in self.", f.instanceName(), " ", OPEN, //
+        "x.push(y.to_json());", CLOSE, //
+        "new_list_with(x)", CLOSE);
   }
 
   @Override
