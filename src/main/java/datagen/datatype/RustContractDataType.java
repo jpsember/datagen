@@ -69,7 +69,6 @@ public class RustContractDataType extends RustDataType {
     );
   }
 
-  @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
     return getSerializeToJSONValue(valueExpression);
   }
@@ -128,7 +127,7 @@ public class RustContractDataType extends RustDataType {
   public void generateSerializeListOf(SourceBuilder s, FieldDef f) {
     s.a(OPEN, //
         "let mut x = Vec::new();", CR, //
-        "for y in self.", f.instanceName(), " ", OPEN, //
+        "for y in &self.", f.instanceName(), " ", OPEN, //
         "x.push(y.to_json());", CLOSE, //
         "new_list_with(x)", CLOSE);
   }

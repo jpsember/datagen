@@ -1,7 +1,6 @@
 package datagen.datatype;
 
 import static js.base.Tools.*;
-import static datagen.SourceBuilder.*;
 
 import datagen.DataType;
 import datagen.FieldDef;
@@ -34,18 +33,14 @@ public class RustListDataType extends RustDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a(OPEN, //
-        "let j = m.opt(", f.nameStringConstantQualified(), ");", CR);
-    s.a("n.", f.instanceName(), " = ");
     wrappedType().sourceDeserializeFromList(s, f);
-    s.a(";", CLOSE);
   }
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     s.a("m.put(", f.nameStringConstantQualified(), ", ");
     wrappedType().generateSerializeListOf(s, f);
-    s.a(");",CR);
+    s.a(");", CR);
   }
 
   @Override

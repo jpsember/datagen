@@ -26,7 +26,6 @@ package datagen.datatype;
 
 import static js.base.Tools.*;
 
-import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.RustDataType;
@@ -118,7 +117,8 @@ public final class RustIntDataType extends RustDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a(Context.pt.PKG_RUST_JSON, "j.or_empty_list()?.parse_i", mBitSize, "_list()?");
+    s.a("n.", f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ").or_empty_list()?.parse_i",
+        mBitSize, "_list()?;");
   }
 
   @Override

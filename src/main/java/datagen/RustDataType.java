@@ -49,16 +49,12 @@ public abstract class RustDataType extends DataType {
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a(OPEN, //
-        "let jslist = m.opt(", f.nameStringConstantQualified(), ").or_list()?;", CR, //
-        "let len = jslist.len();", CR, //
-        "let mut y = Vec::with_capacity(len);", CR, //
-        "for x in 0..len {", CR, //
-        "y.push(");
-
-    s.a(");", comment("e.g. let w = jslist.get(x);"), CR, //
-        CLOSE, //
-        "n.", f.instanceName(), " = y;", //
-        CLOSE);
+        "let j = m.opt(", f.nameStringConstantQualified(), ").or_empty_list()?.extract_list_elements()?;", CR, //
+        "let mut x = Vec::with_capacity(j.len());", CR, //
+        "for y in &j ", OPEN, //
+        "x.push(", parseElementFromJsonValue(f, "y.clone()"), "?);", CLOSE, //
+        "n.", f.instanceName(), " = x;", CLOSE //
+    );
   }
 
   /**
