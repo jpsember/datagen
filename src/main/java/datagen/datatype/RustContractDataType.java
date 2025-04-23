@@ -51,21 +51,18 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-
     //    {
     //      let x = m.opt(KEY_FOXES).or_empty_list()?.extract_list_elements()?;
     //      for item in x {
     //          n.foxes.push(parse_Fox(item)?)
     //      }
     //  }
+    var target = "n."+f.instanceName();
     s.a(
-        "/* we could optimize this by using existing (empty) n.array */",CR, //
-        
         OPEN, //
         "let x = m.opt(", f.nameStringConstantQualified(), ").or_empty_list()?.extract_list_elements()?;", CR, //
-        "let mut z = Vec::with_capacity(x.len());", CR, //
-        "for y in x ", OPEN, "z.push(parse_", qualifiedName(NAME_HUMAN).className(), "(y)?)", CLOSE, //
-        "z", CLOSE //
+        "for y in x ", OPEN, target,".push(parse_", qualifiedName(NAME_HUMAN).className(), "(y)?)", CLOSE, //
+        CLOSE //
     );
   }
 
