@@ -51,8 +51,22 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a(Context.pt.PKG_RUST_JSON, "parse_data_from_list(j.or_list()?, &parse_",
-        qualifiedName(NAME_HUMAN).className(), ")?");
+
+    //    {
+    //      let x = m.opt(KEY_FOXES).or_empty_list()?.extract_list_elements()?;
+    //      for item in x {
+    //          n.foxes.push(parse_Fox(item)?)
+    //      }
+    //  }
+    s.a(
+        "/* we could optimize this by using existing (empty) n.array */",CR, //
+        
+        OPEN, //
+        "let x = m.opt(", f.nameStringConstantQualified(), ").or_empty_list()?.extract_list_elements()?;", CR, //
+        "let mut z = Vec::with_capacity(x.len());", CR, //
+        "for y in x ", OPEN, "z.push(parse_", qualifiedName(NAME_HUMAN).className(), "(y)?)", CLOSE, //
+        "z", CLOSE //
+    );
   }
 
   @Override
@@ -66,7 +80,7 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    s.a(targetExpr," = ",f.dataType().wrapInBuildExpression(f.instanceName()),";", CR);
+    s.a(targetExpr, " = ", f.dataType().wrapInBuildExpression(f.instanceName()), ";", CR);
   }
 
   @Override
@@ -93,7 +107,7 @@ public class RustContractDataType extends RustDataType {
   }
 
   public String setterArgUsage(String expr) {
-    return expr + ".clone()" ;
+    return expr + ".clone()";
   }
 
   @Override
@@ -113,8 +127,8 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public void generateSerializeListOf(SourceBuilder s, FieldDef f) {
-    s.a("encode_data_list_as_json(&self.", f.instanceName(), ", &to_json_", qualifiedName(NAME_HUMAN).className(),
-        ")");
+    s.a("encode_data_list_as_json(&self.", f.instanceName(), ", &to_json_",
+        qualifiedName(NAME_HUMAN).className(), ")");
   }
 
   @Override
