@@ -109,13 +109,17 @@ pub fn default_Uranus() -> Uranus {
 // Attempt to parse (deserialize) a [!class] from a JSValue
 //
 pub fn parse_[!class](m: JSValue) -> Result<[!class] , AnyError> {
-    let q = PRIVATE.read().unwrap();
-    let string = m.as_str()?;
-    let k = q.get(&string);
-    match k {
-        None => Err(new_error(&format!("No [!class_short] enum for: {}",&string))),
-        Some(x) => Ok(x.clone())
-    }
+    if m.is_null() {
+    	Ok(default_[!class]())
+    } else {
+	    let q = PRIVATE.read().unwrap();
+	    let string = m.as_str()?;
+	    let k = q.get(&string);
+	    match k {
+	        None => Err(new_error(&format!("No [!class_short] enum for: {}",&string))),
+	        Some(x) => Ok(x.clone())
+	    }
+	}
 }
 
 /*

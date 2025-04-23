@@ -70,7 +70,7 @@ public final class RustIntDataType extends RustDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     var x = f.defaultValueOrNull();
-    s.a("n.", f.instanceName(), " = m.get(", f.nameStringConstantQualified(), ").or_int(", x, ")?");
+    s.a("n.", f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ").or_int(", x, ")?");
     if (mBitSize != 64)
       s.a(" as i", mBitSize);
   }
@@ -118,7 +118,7 @@ public final class RustIntDataType extends RustDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a(Context.pt.PKG_RUST_JSON, "parse_i", mBitSize, "_list(j.or_list()?)?");
+    s.a(Context.pt.PKG_RUST_JSON, "j.parse_i", mBitSize, "_list()?");
   }
 
   @Override

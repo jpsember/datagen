@@ -64,7 +64,7 @@ public final class RustBoolDataType extends RustDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     var x = f.defaultValueOrNull();
-    s.a("n.", f.instanceName(), " = m.get(", f.nameStringConstantQualified(), ").or_bool(", x, ")?");
+    s.a("n.", f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ").or_bool(", x, ")?");
   }
 
   @Override
@@ -105,7 +105,7 @@ public final class RustBoolDataType extends RustDataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a(Context.pt.PKG_RUST_JSON, "parse_bool_list(j.or_list()?)?");
+    s.a(Context.pt.PKG_RUST_JSON, "j.parse_bool_list()?");
   }
 
   @Override

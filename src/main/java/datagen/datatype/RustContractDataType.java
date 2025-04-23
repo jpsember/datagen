@@ -66,7 +66,7 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    s.a(targetExpr, " = ", f.instanceName(), ".build();", CR);
+    s.a(targetExpr," = ",f.dataType().wrapInBuildExpression(f.instanceName()),";", CR);
   }
 
   @Override
@@ -117,4 +117,8 @@ public class RustContractDataType extends RustDataType {
         ")");
   }
 
+  @Override
+  public String wrapInBuildExpression(String expr) {
+    return expr;
+  }
 }

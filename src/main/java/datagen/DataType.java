@@ -392,4 +392,8 @@ public abstract class DataType implements DefaultValueParser {
     throw languageNotSupported("generateSerializeListOf for type:", getClass().getName());
   }
 
+  public String wrapInBuildExpression(String expr) {
+    throw languageNotSupported("wrapInBuildExpression for type:", getClass().getName());
+  }
+
 }

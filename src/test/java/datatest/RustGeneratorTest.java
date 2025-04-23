@@ -90,18 +90,24 @@ public class RustGeneratorTest extends GenBaseTest {
         "}");
     compile();
   }
-  
+
   @Test
   public void lists() {
     p().pr( //
         "class {", INDENT, //
-        "* byte b;",CR,//
-        "* short s;",CR, //
-        "* int i;",CR, //
-        "* long g;",CR, //
-        "* string strs;",CR, //
+        "* byte b;", CR, //
+        "* short s;", CR, //
+        "* int i;", CR, //
+        "* long g;", CR, //
+        "* string strs;", CR, //
         "* gen.abc.Contract con;", OUTDENT, //
         "}");
+    compile();
+  }
+
+  @Test
+  public void enum1() {
+    p().pr("enum {alpha, beta, gamma}");
     compile();
   }
 }

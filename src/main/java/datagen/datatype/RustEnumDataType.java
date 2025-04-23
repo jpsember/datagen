@@ -31,29 +31,56 @@ import java.util.List;
 import datagen.FieldDef;
 import datagen.RustDataType;
 import datagen.SourceBuilder;
+
+import static datagen.SourceBuilder.*;
 import static datagen.Utils.*;
 
 public class RustEnumDataType extends RustDataType implements EnumDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return "Default" + typeName();
+    return "default_" + typeName() + "()";
   }
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    return valueExpression + ".String()";
+    return valueExpression + ".to_json()";
   }
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("n.", f.instanceName(), " = ", sourceDefaultValue(), ".ParseFrom(s, ",
-        f.nameStringConstantQualified(), ")", CR);
+    s.a(OPEN, "let x = m.opt(", f.nameStringConstantQualified(), ");", CR, //
+        "if !x.is_null()", OPEN, //
+        "n.", f.instanceName(), " = parse_", qualifiedName(NAME_HUMAN).className(), "(x.clone())?;", CLOSE, //
+        CLOSE);
   }
 
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     throw languageNotSupported("deserializing list of Go enums from list");
+  }
+
+  @Override
+  public String setterArgSignature(String expr) {
+    return qualifiedName(NAME_HUMAN).className();
+  }
+
+  @Override
+  public String buildRustJsonValueFrom(String expr) {
+    return "parse_" + qualifiedName(NAME_HUMAN).className() + "(" + expr + ")";
   }
 
   //------------------------------------------------------------------
@@ -80,12 +107,12 @@ public class RustEnumDataType extends RustDataType implements EnumDataType {
   }
 
   @Override
-  public String setterArgUsage(String expr) { 
+  public String setterArgUsage(String expr) {
     return expr;
   }
 
   @Override
-  public String setterArgSignature(String expr) {
+  public String wrapInBuildExpression(String expr) {
     return expr;
   }
 
