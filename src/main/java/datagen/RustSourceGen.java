@@ -78,8 +78,8 @@ public final class RustSourceGen extends SourceGen {
         s.addSafe(getDeprecationSource());
       DataType d = f.dataType();
       var argName = f.instanceName();
-      s.a("pub fn ", f.setterName(), "(& mut self, ", argName, ": ", d.setterArgSignature(argName),
-          ") -> &Self", OPEN);
+      s.a("pub fn ", f.setterName(), "(&mut self, ", argName, ": ", d.setterArgSignature(argName),
+          ") -> &mut Self", OPEN);
       String targetExpr = "self." + f.instanceName();
       d.sourceSetter(s, f, targetExpr);
       s.a(CR, "self", CLOSE);
