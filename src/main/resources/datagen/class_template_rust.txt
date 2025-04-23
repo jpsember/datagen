@@ -86,15 +86,15 @@ impl fmt::Display for [!class]Builder {
 // Return a newly-built default instance.
 // For efficiency, threads will have to construct their own copies of this as needed,
 // since in Rust, we can’t share these safely across different threads.
-// (This calls the new_builder_[!class]() method, but does not expose any mutating functions.)
+// (This calls the new_[!class]() method, but does not expose any mutating functions.)
 //
 pub fn default_[!class]() -> [!class] {
-  Arc::new(new_builder_[!class]())
+  Arc::new(new_[!class]())
 }
 
 // Return a new builder.
 // 
-pub fn new_builder_[!class]() -> [!class]Builder {
+pub fn new_[!class]() -> [!class]Builder {
   [!class]Builder {
 [!class_init_fields_to_defaults]
   }
@@ -103,7 +103,7 @@ pub fn new_builder_[!class]() -> [!class]Builder {
 // Attempt to parse (deserialize) a [!class] from a JSValue
 //
 pub fn parse_[!class](m: {{crate.json.*|}}JSValue) -> Result<[!class], Box<dyn error::{{std.error|Error}}>> {
-    let mut n = new_builder_[!class]();
+    let mut n = new_[!class]();
 [!parse]
     Ok(n.build())
 }
