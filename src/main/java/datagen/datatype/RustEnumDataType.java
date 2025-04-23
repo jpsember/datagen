@@ -29,11 +29,11 @@ import static js.base.Tools.*;
 import java.util.List;
 
 import datagen.FieldDef;
-import datagen.GoDataType;
+import datagen.RustDataType;
 import datagen.SourceBuilder;
 import static datagen.Utils.*;
 
-public class RustEnumDataType extends GoDataType implements EnumDataType {
+public class RustEnumDataType extends RustDataType implements EnumDataType {
 
   @Override
   public String provideSourceDefaultValue() {
@@ -79,9 +79,14 @@ public class RustEnumDataType extends GoDataType implements EnumDataType {
     return true;
   }
 
-  public String sqlType() {
-    // We will store enumerations by their numerical (not string) values, unlike their json serializations
-    return "INTEGER";
+  @Override
+  public String setterArgUsage(String expr) { 
+    return expr;
+  }
+
+  @Override
+  public String setterArgSignature(String expr) {
+    return expr;
   }
 
 }
