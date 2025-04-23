@@ -72,7 +72,7 @@ public final class RustStringDataType extends RustDataType {
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     var x = f.defaultValueOrNull();
     x = chomp(x, ".to_string()");
-    s.a("n.", f.instanceName(), " = m.get(", f.nameStringConstantQualified(), ").str_or(", x, ")?");
+    s.a("n.", f.instanceName(), " = m.get(", f.nameStringConstantQualified(), ").or_str(", x, ")?");
   }
 
   @Override
