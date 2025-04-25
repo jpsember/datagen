@@ -512,6 +512,9 @@ final class DataDefinitionParser extends BaseObject {
           mPackageName = parentName.substring(c + 1);
         }
         break;
+      default:
+        Utils.languageNotSupported();
+        break;
       }
       checkNotNull(mPackageName, "language not supported");
     }

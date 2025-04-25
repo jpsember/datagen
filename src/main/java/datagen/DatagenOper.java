@@ -29,12 +29,14 @@ import static js.base.Tools.*;
 import static datagen.Utils.*;
 
 import java.io.File;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import datagen.gen.DatWithSource;
 import datagen.gen.DatagenConfig;
+import datagen.gen.LangInfo;
 import datagen.gen.Language;
 import js.app.AppOper;
 import js.base.SystemCall;
@@ -163,6 +165,10 @@ public class DatagenOper extends AppOper {
       if (Files.nonEmpty(config.startDir()))
         config.startDir(config.startDir().getAbsoluteFile());
 
+      if (config.language() == Language.AUTO) {
+        determineLanguage(config);
+      }
+
       config.datPath(Files.assertDirectoryExists(getFile(config.startDir(), config.datPath()), "dat_path"));
 
       if (Files.empty(config.sourcePath())) {
@@ -196,6 +202,57 @@ public class DatagenOper extends AppOper {
       mConfig = config.build();
     }
     return mConfig;
+  }
+
+  private void determineLanguage(DatagenConfig.Builder config) {
+    var startDir = config.startDir();
+    if (Files.empty(startDir))
+      startDir = Files.currentDirectory();
+    List<LangInfo> candidateList = arrayList();
+    addLangInfo(candidateList, Language.JAVA, startDir, "pom.xml");
+    addLangInfo(candidateList, Language.RUST, startDir, "Cargo.toml");
+    addLangInfo(candidateList, Language.PYTHON, startDir, "__init__.py");
+    addLangInfo(candidateList, Language.GO, startDir, "go.mod");
+    candidateList.sort(new Comparator<>() {
+      @Override
+      public int compare(LangInfo o1, LangInfo o2) {
+        var diff = -Integer.compare(o1.depth(), o2.depth());
+        if (diff == 0)
+          diff = Integer.compare(o1.language().ordinal(), o2.language().ordinal());
+        return diff;
+      }
+    });
+
+    log("determineLanguage, candidates:", INDENT, candidateList);
+    if (candidateList.isEmpty())
+      setError("Can't infer language");
+    var winner = candidateList.get(0);
+    if (candidateList.size() >= 2) {
+      var runnerUp = candidateList.get(1);
+      if (winner.depth() == runnerUp.depth())
+        setError("Can't infer language; found:", INDENT, winner.sentinelFile(), CR, runnerUp.sentinelFile());
+    }
+    log("candidates:", INDENT, candidateList, CR, "result:", winner);
+    config.language(winner.language());
+  }
+
+  private void addLangInfo(List<LangInfo> dest, Language language, File startDir, String seekName) {
+    var f = Files.getFileWithinParents(startDir, seekName);
+    if (Files.nonEmpty(f)) {
+      var b = LangInfo.newBuilder().language(language).sentinelFile(f);
+      var s = f.toString();
+      int depth = 0;
+      int i = 0;
+      while (true) {
+        var j = s.indexOf('/', i);
+        if (j < 0)
+          break;
+        depth++;
+        i = j + 1;
+      }
+      b.depth(depth);
+      dest.add(b.build());
+    }
   }
 
   private List<DatWithSource> constructFileEntries() {
