@@ -110,4 +110,12 @@ public class RustGeneratorTest extends GenBaseTest {
     p().pr("enum {alpha, beta, gamma}");
     compile();
   }
+
+  @Test
+  public void file1() {
+    p().pr("class {", INDENT, //
+        "File x;", OUTDENT, //
+        "}");
+    compile();
+  }
 }

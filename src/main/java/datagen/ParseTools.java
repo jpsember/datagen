@@ -80,8 +80,9 @@ public final class ParseTools {
     PKG_RUST_TOOLS = "{{crate.tools.*|}}";
     PKG_RUST_JSON = "{{crate.json.*|}}";
     PKG_RUST_ERROR = "{{std.error|}}";
+    PKG_RUST_FILES = "{{crate.files.*|}}";
   }
-
+  
   public static String goModuleExpr(String s) {
     return "github.com/jpsember/golang-base/base." + s;
   }
@@ -262,7 +263,7 @@ public final class ParseTools {
 
   public Object PKG_RUST_TOOLS;
   public Object PKG_RUST_JSON;
-  public Object PKG_RUST_ERROR;
+  public Object PKG_RUST_ERROR, PKG_RUST_FILES;
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 
