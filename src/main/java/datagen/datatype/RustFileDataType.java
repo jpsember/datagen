@@ -72,7 +72,7 @@ public final class RustFileDataType extends RustStringDataType {
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    return valueExpression + ".toString()";
+    return "&" + valueExpression + ".to_string()";
   }
 
   @Override
@@ -91,6 +91,16 @@ public final class RustFileDataType extends RustStringDataType {
   @Override
   public String deserializeJsonToMapValue(String jsonValue) {
     return "new " + typeName() + "((String) " + jsonValue + ")";
+  }
+
+  @Override
+  public String setterArgSignature(String expr) {
+    return "JFile";
+  }
+
+  @Override
+  public String setterArgUsage(String expr) {
+    return expr;
   }
 
 }
