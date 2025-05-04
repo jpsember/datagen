@@ -49,6 +49,10 @@ public final class SourceBuilder {
     mTabSize = 2;
   }
 
+  public String debugContent() {
+    return mStringBuilder.toString();
+  }
+  
   public String toString() {
     throw die("unexpected! Did you mean to call content()?");
   }

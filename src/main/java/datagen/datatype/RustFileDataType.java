@@ -24,11 +24,9 @@
  **/
 package datagen.datatype;
 
-import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 import static datagen.Utils.*;
 
-import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
@@ -74,20 +72,7 @@ public final class RustFileDataType extends RustStringDataType {
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
     return "&" + valueExpression + ".to_string()";
   }
-
-  @Override
-  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a(OPEN, //
-        Context.pt.PKG_LIST, "<", typeName(), "> result = ", //
-        f.nullIfOptional("new " + Context.pt.PKG_ARRAYLIST + "<>()"), ";", CR, //
-        Context.pt.PKG_JSLIST, " j = m.optJSList(", f.nameStringConstantQualified(), ");", CR);
-    sourceIfNotNull(s, "j");
-    s.a("result = ", Context.pt.PKG_DATAUTIL, ".parseFileListFrom(j);");
-    s.a(CLOSE);
-    s.a(f.instanceName(), " = ", Context.pt.assignToListExpr("result"), ";");
-    sourceEndIf(s);
-  }
-
+  
   @Override
   public String deserializeJsonToMapValue(String jsonValue) {
     return "new " + typeName() + "((String) " + jsonValue + ")";
@@ -103,4 +88,15 @@ public final class RustFileDataType extends RustStringDataType {
     return expr;
   }
 
+  @Override
+  public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
+    s.a("n.", f.instanceName(), " = m.opt(", f.nameStringConstantQualified(),
+        ").or_empty_list()?.parse_jfile_list()?;");
+  }
+
+  @Override
+  public void generateSerializeListOf(SourceBuilder s, FieldDef f) {
+    s.a("encode_jfile_list(&self.", f.instanceName(), ")");
+  }
+  
 }
