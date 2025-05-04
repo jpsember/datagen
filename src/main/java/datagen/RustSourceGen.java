@@ -122,7 +122,7 @@ public final class RustSourceGen extends SourceGen {
       if (db)
         log(VERT_SP, "... expression:", cn);
 
-      String importString = cn;
+      String expr = cn;
       QualifiedName qn = QualifiedName.parse(cn);
       if (db)
         log(INDENT, "QualifiedName:", INDENT, qn);
@@ -145,6 +145,7 @@ public final class RustSourceGen extends SourceGen {
           continue;
         }
       }
+
       // If one of the package directories is 'gen', we apply our special rules
       if (("." + qn.packagePath() + ".").contains(".gen.")) {
 
@@ -162,11 +163,23 @@ public final class RustSourceGen extends SourceGen {
             pr("modified for Rust:", qn);
         }
       }
-      importString = qn.combined().replace(".", "::");
-      if (uniqueSet.add(importString)) {
+      expr = qn.combined().replace(".", "::");
+
+      // If the import string starts with "all." then
+      // instead of importing the last element, replace it with '*'
+      //
+      if (expr.startsWith(RUST_IMPORT_ALL_PREFIX)) {
+        expr = chompPrefix(expr, RUST_IMPORT_ALL_PREFIX);
+        var i = expr.lastIndexOf(':');
+        checkArgument(i >= 0);
+        // Retain the ':' but replace what follows with *
+        expr = expr.substring(0, i + 1) + "*";
+      }
+
+      if (uniqueSet.add(expr)) {
         if (db)
-          log("...------------------------------> importing:", importString);
-        s.a("use ", importString, ";").cr();
+          log("...------------------------------> importing:", expr);
+        s.a("use ", expr, ";").cr();
       }
     }
     if (false && DEBUG_RUST_IMPORTS)
@@ -219,7 +232,7 @@ public final class RustSourceGen extends SourceGen {
   @Override
   protected void generateEnumValues(EnumDataType enumType) {
     for (var lbl : enumType.labels()) {
-      s.a(lbl, ",", CR); 
+      s.a(lbl, ",", CR);
     }
   }
 

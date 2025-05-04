@@ -16,7 +16,7 @@ public final class QualifiedName extends BaseObject {
     if (Context.rust()) {
       checkArgument(!expr.contains(":"), "Convert '::' expressions to '.'");
       expr = expr.replace('/', '.');
-      
+
       String packagePath = "";
       String className = "";
 
@@ -111,6 +111,7 @@ public final class QualifiedName extends BaseObject {
       default:
         break;
       }
+
       String typeName = ParseTools.importedClassExpr(prefix).toString();
       withEmbeddedName(typeName + suffix);
     }

@@ -8,10 +8,7 @@
 
 [!imports]
 
-// This is what clients see for immutable and builders
-//
 pub type [!class] = {{std.sync.Arc|Arc}}<dyn [!interface_name]OrBuilder>;
-
 
 // ---------------------------------------------------------------------------------------
 // [!interface_name] interface
@@ -24,9 +21,6 @@ pub type [!class] = {{std.sync.Arc|Arc}}<dyn [!interface_name]OrBuilder>;
   fn to_json(&self) -> {{crate.json.*|}}JSValue;
 }
 
-// This is what clients see for builders.
-// This is also what an immutable has, but it is only exposed via the immutable trait
-//
 #[derive(Clone)]
 pub struct [!builder_name] {
 [!instance_fields]}
@@ -35,12 +29,10 @@ pub struct [!builder_name] {
 [!class_specific]
 
 
-
 impl [!class]OrBuilder for [!class]Builder {
 
 [!class_getter_implementation]
 
-  // When an immutable or builder is asked to build, it returns a fresh copy
   fn build(&self) -> [!class] {
     Arc::new(self.clone())
   }
@@ -84,9 +76,6 @@ impl fmt::Display for [!class]Builder {
 // ---------------------------------------------------------------------------------------
 
 // Return a newly-built default instance.
-// For efficiency, threads will have to construct their own copies of this as needed,
-// since in Rust, we can’t share these safely across different threads.
-// (This calls the new_[!class]() method, but does not expose any mutating functions.)
 //
 pub fn default_[!class]() -> [!class] {
   Arc::new(new_[!class]())
@@ -113,4 +102,3 @@ pub fn parse_[!class](m: {{crate.json.*|}}JSValue) -> Result<[!class], Box<dyn e
 pub fn to_json_[!class](obj: &[!class]) -> JSValue {
     obj.to_json()
 }
-

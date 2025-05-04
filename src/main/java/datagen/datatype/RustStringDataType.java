@@ -33,11 +33,11 @@ import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.json.JSMap;
 
-public final class RustStringDataType extends RustDataType {
+public class RustStringDataType extends RustDataType {
 
   public static final DataType TYPE = new RustStringDataType().with("String");
 
-  private RustStringDataType() {
+  public RustStringDataType() {
   }
 
   @Override
@@ -52,12 +52,12 @@ public final class RustStringDataType extends RustDataType {
   }
 
   @Override
-  public final String provideSourceDefaultValue() {
+  public String provideSourceDefaultValue() {
     return "\"\"";
   }
 
   @Override
-  public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap map) {
+  public String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap map) {
     return DataUtil.escapeChars(map.get(""), true);
   }
 
@@ -114,5 +114,4 @@ public final class RustStringDataType extends RustDataType {
     s.a("encode_str_list(&self.", f.instanceName(), ")");
   }
 
-  
 }

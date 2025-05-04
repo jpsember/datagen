@@ -38,7 +38,7 @@ public abstract class FieldDef extends BaseObject {
     switch (Context.pt.language()) {
     default:
       throw languageNotSupported();
-     case JAVA:
+    case JAVA:
       return new JavaFieldDef();
     case PYTHON:
       return new PythonFieldDef();
@@ -46,7 +46,7 @@ public abstract class FieldDef extends BaseObject {
       return new GoFieldDef();
     case RUST:
       return new RustFieldDef();
-   }
+    }
   }
 
   public FieldDef() {

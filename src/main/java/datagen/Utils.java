@@ -31,11 +31,14 @@ import js.base.BasePrinter;
 
 public final class Utils {
 
+  public static final boolean DEBUG_RUST_FILES = true && alert("ISSUE 47 is in effect");
+
   public static final boolean DEBUG_RUST_IMPORTS = false;
   public static final boolean DEBUG_RUST_LISTS = false;
-  public static final boolean DEBUG_RUST = DEBUG_RUST_IMPORTS || DEBUG_RUST_LISTS;
-  public static final boolean RUST_COMMENTS = DEBUG_RUST_LISTS;
+  public static final boolean DEBUG_RUST = DEBUG_RUST_FILES || DEBUG_RUST_IMPORTS || DEBUG_RUST_LISTS;
+  public static final boolean RUST_COMMENTS = DEBUG_RUST;
   public static final String GEN_SUBDIR_NAME = "gen";
+  public static final String RUST_IMPORT_ALL_PREFIX = "!all_";
 
   public static void loadUtils() {
   }

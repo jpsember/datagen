@@ -74,6 +74,7 @@ public final class DataTypeManager extends BaseObject {
       add("long", RustIntDataType.LONG_TYPE);
       add("short", RustIntDataType.SHORT_TYPE);
       add("byte", RustIntDataType.BYTE_TYPE);
+      add("File",RustFileDataType.TYPE);
     }
       break;
     case PYTHON:

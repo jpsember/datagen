@@ -111,6 +111,7 @@ public class DatagenOper extends AppOper {
       flushRustModules();
 
     if (!files().dryRun() && config.format()) {
+      if (!DEBUG_RUST_FILES)
       formatSourceFiles();
     }
 

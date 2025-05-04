@@ -26,49 +26,48 @@ package datagen.datatype;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
+import static datagen.Utils.*;
 
 import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
-import datagen.JavaDataType;
-import datagen.RustDataType;
 import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.json.JSMap;
 
-public final class RustFileDataType extends RustDataType {
+public final class RustFileDataType extends RustStringDataType {
 
   public static final DataType TYPE = new RustFileDataType();
 
   private RustFileDataType() {
-    with("java.io.File");
+    with(RUST_IMPORT_ALL_PREFIX + "crate.files.JFile");
   }
 
   @Override
   public final String provideSourceDefaultValue() {
-    return Context.pt.PKG_FILES + ".DEFAULT";
+    return "null_file()";
   }
 
   @Override
   public boolean isPrimitive() {
     return false;
   }
-  
+
   @Override
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
     String text = json.get("");
-    return "new_file(&"+DataUtil.escapeChars(text, true)+")";
+    return "new_file(&" + DataUtil.escapeChars(text, true) + ")";
+  }
+
+  // Kind of hacky... get the source within "new_file(......)"
+  private String getStrPtrFromDefaultValue(String s) {
+    return chomp(chompPrefix(s, "new_file("), ")");
   }
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.open();
-      s.a(f.instanceName(), " = ", f.defaultValueOrNull(), ";", CR);
-    s.a("String x = m.opt(", f.nameStringConstantQualified(), ", (String) null);", CR);
-    sourceIfNotNull(s, "x");
-    s.a(f.instanceName(), " = new ", typeName(), "(x);");
-    sourceEndIf(s);
-    s.close();
+    s.a("n.", f.instanceName(), " = new_file(&m.opt(", f.nameStringConstantQualified(), ").or_str(",
+        getStrPtrFromDefaultValue(f.defaultValueSource()), ")?);", CR);
   }
 
   @Override
