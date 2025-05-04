@@ -31,7 +31,7 @@ import js.base.BasePrinter;
 
 public final class Utils {
 
-  public static final boolean DEBUG_RUST_FILES = true && alert("ISSUE 47 is in effect");
+  public static final boolean DEBUG_RUST_FILES = false && alert("ISSUE 47 is in effect");
 
   public static final boolean DEBUG_RUST_IMPORTS = false;
   public static final boolean DEBUG_RUST_LISTS = false;
