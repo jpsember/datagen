@@ -57,9 +57,16 @@ public final class RustFileDataType extends RustStringDataType {
     return "new_file(&" + DataUtil.escapeChars(text, true) + ")";
   }
 
-  // Kind of hacky... get the source within "new_file(......)"
+  /**
+   * The default value is expressed as rust code. Convert it to a string literal
+   */
   private String getStrPtrFromDefaultValue(String s) {
-    return chomp(chompPrefix(s, "new_file("), ")");
+    if (s.equals("null_file()"))
+      return "&\"\"";
+    else if (s.startsWith("new_file(")) {
+      return chomp(chompPrefix(s, "new_file("), ")");
+    } else
+      throw badArg("unexpected arg for getStrPtrFromDefaultValue:", quote(s));
   }
 
   @Override
@@ -72,7 +79,7 @@ public final class RustFileDataType extends RustStringDataType {
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
     return "&" + valueExpression + ".to_string()";
   }
-  
+
   @Override
   public String deserializeJsonToMapValue(String jsonValue) {
     return "new " + typeName() + "((String) " + jsonValue + ")";
@@ -98,5 +105,5 @@ public final class RustFileDataType extends RustStringDataType {
   public void generateSerializeListOf(SourceBuilder s, FieldDef f) {
     s.a("encode_jfile_list(&self.", f.instanceName(), ")");
   }
-  
+
 }
