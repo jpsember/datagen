@@ -373,7 +373,7 @@ public final class RustSourceGen extends SourceGen {
 
   @Override
   protected String getDeprecationSource() {
-    return "#[deprecated]\n";
+    return "#![deprecated]\n";
   }
 
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template_rust.txt");
