@@ -106,4 +106,8 @@ public final class RustFileDataType extends RustStringDataType {
     s.a("encode_jfile_list(&self.", f.instanceName(), ")");
   }
 
+  public String getterReturnTypeExpr() {
+    return "&JFile";
+  }
+
 }
