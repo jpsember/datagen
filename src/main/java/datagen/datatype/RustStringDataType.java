@@ -24,6 +24,7 @@
  **/
 package datagen.datatype;
 
+import static datagen.Utils.*;
 import static js.base.Tools.*;
 
 import datagen.DataType;
@@ -91,6 +92,10 @@ public class RustStringDataType extends RustDataType {
 
   public String sqlType() {
     return "VARCHAR NOT NULL";
+  }
+
+  public String getterReturnTypeExpr() {
+    return "&str";
   }
 
   @Override

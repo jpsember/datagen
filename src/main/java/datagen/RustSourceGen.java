@@ -195,7 +195,6 @@ public final class RustSourceGen extends SourceGen {
       if (f.deprecated())
         s.addSafe(getDeprecationSource());
       s.a("fn ", f.getterName(), "(&self) -> ", f.dataType().getterReturnTypeExpr(), " ", OPEN, //
-          // ampForRef(f), f.dataType().typeName(), " ", OPEN, //
           "  ");
       f.dataType().getterBody(s, f);
       s.a(CLOSE);
