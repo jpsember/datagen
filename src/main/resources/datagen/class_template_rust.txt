@@ -77,13 +77,13 @@ impl fmt::Display for [!class]Builder {
 
 // Return a newly-built default instance.
 //
-pub fn default_[!class]() -> [!class] {
+[!deprecated]pub fn default_[!class]() -> [!class] {
   Arc::new(new_[!class]())
 }
 
 // Return a new builder.
 // 
-pub fn new_[!class]() -> [!class]Builder {
+[!deprecated]pub fn new_[!class]() -> [!class]Builder {
   [!class]Builder {
 [!class_init_fields_to_defaults]
   }
@@ -91,7 +91,7 @@ pub fn new_[!class]() -> [!class]Builder {
   
 // Attempt to parse (deserialize) a [!class] from a JSValue
 //
-pub fn parse_[!class](m: {{crate.json.*|}}JSValue) -> Result<[!class], Box<dyn error::{{std.error|Error}}>> {
+[!deprecated]pub fn parse_[!class](m: {{crate.json.*|}}JSValue) -> Result<[!class], Box<dyn error::{{std.error|Error}}>> {
     let mut n = new_[!class]();
 [!parse]
     Ok(n.build())
@@ -99,6 +99,6 @@ pub fn parse_[!class](m: {{crate.json.*|}}JSValue) -> Result<[!class], Box<dyn e
 
 // Encode (serialize) a [!class] to a JSValue
 //
-pub fn to_json_[!class](obj: &[!class]) -> JSValue {
+[!deprecated]pub fn to_json_[!class](obj: &[!class]) -> JSValue {
     obj.to_json()
 }
