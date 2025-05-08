@@ -192,8 +192,6 @@ public final class RustSourceGen extends SourceGen {
     s.setIndent(2);
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
-      if (f.deprecated())
-        s.addSafe(getDeprecationSourceInner());
       s.a("fn ", f.getterName(), "(&self) -> ", f.dataType().getterReturnTypeExpr(), " ", OPEN, //
           "  ");
       f.dataType().getterBody(s, f);
@@ -326,6 +324,8 @@ public final class RustSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
     for (FieldDef f : def.fields()) {
+      if (f.deprecated())
+        s.addSafe(getDeprecationSourceInner());
       s.a("fn ", f.getterName(), "(&self) -> ", f.dataType().getterReturnTypeExpr(), ";");
       s.a(CR);
     }
