@@ -75,7 +75,7 @@ public final class RustSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
       if (f.deprecated())
-        s.addSafe(getDeprecationSource());
+        s.addSafe(getDeprecationSourceInner());
       DataType d = f.dataType();
       var argName = f.instanceName();
       s.a("pub fn ", f.setterName(), "(&mut self, ", argName, ": ", d.setterArgSignature(argName),
@@ -193,7 +193,7 @@ public final class RustSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
       if (f.deprecated())
-        s.addSafe(getDeprecationSource());
+        s.addSafe(getDeprecationSourceInner());
       s.a("fn ", f.getterName(), "(&self) -> ", f.dataType().getterReturnTypeExpr(), " ", OPEN, //
           "  ");
       f.dataType().getterBody(s, f);
@@ -374,6 +374,10 @@ public final class RustSourceGen extends SourceGen {
   @Override
   protected String getDeprecationSource() {
     return "#![deprecated]\n";
+  }
+
+  private String getDeprecationSourceInner() {
+    return "#[deprecated]\n";
   }
 
   private static String sClassTemplate = Files.readString(SourceGen.class, "class_template_rust.txt");

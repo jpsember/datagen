@@ -941,6 +941,16 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
+//  @Test
+//  public void deprecatedEnum() {
+//    p().pr(//
+//        "- enum {", INDENT, //
+//        "alpha,", CR, //
+//        "beta,", CR, //
+//        OUTDENT, "}");
+//    compile();
+//  }
+
   @Test(expected = RuntimeException.class)
   public void dupDeprecatedClass() {
     p().pr(//
