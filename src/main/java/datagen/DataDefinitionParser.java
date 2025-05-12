@@ -92,7 +92,8 @@ final class DataDefinitionParser extends BaseObject {
       }
 
       if (Context.generatedTypeDef == null)
-        badArg("No 'class {...}' specified");
+        badArg("No class or enum specified");
+
       reportUnusedReferences();
 
       Context.sql.generate();
@@ -164,12 +165,8 @@ final class DataDefinitionParser extends BaseObject {
   private String read(int type) {
     Token t = read();
     if (t.id() != type)
-      fail("expected token of type:", dfa().tokenName(type), "but got", dfa().tokenName(t.id()));
+      t.failWith("expected token of type:", dfa().tokenName(type), "but got", dfa().tokenName(t.id()));
     return t.text();
-  }
-
-  private void fail(Object... messages) {
-    mLastReadToken.failWith(messages);
   }
 
   /**
@@ -437,7 +434,8 @@ final class DataDefinitionParser extends BaseObject {
     if (readIf("enum"))
       t.enumFlag(true);
     if (peek().id(RESERVEDWORD)) {
-      fail("Reserved word encountered:", read().text());
+      var tk = read();
+      tk.failWith("Reserved word encountered:", tk.text());
     }
     t.name(read(ID));
     return t.build();
