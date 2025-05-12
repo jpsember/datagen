@@ -56,8 +56,8 @@ final class DataDefinitionParser extends BaseObject {
     try {
       prepareHandlers();
       startScanner();
-if (ISSUE_48) 
-scanner().setVerbose(true);
+      if (ISSUE_48 && false && alert("verbosity"))
+        scanner().setVerbose(true);
 
       // Start parsing the .dat file.  It can contain something like:
       //
@@ -69,54 +69,41 @@ scanner().setVerbose(true);
       // Note, only one actual definition can appear in a .dat file.
       //
 
+      mHeaderTokens = arrayList();
+
       while (scanner().hasNext()) {
-        todo("!have better handling of tokens before the handler token");
-        if (readIf(DEPRECATION)) {
-          if (mDeprecationToken != null)
-            throw mReadIfToken.fail("unexpected");
-          mDeprecationToken = mReadIfToken;
+        var t = read();
+        var handler = handler(t, false);
+        if (handler == null) {
+          mHeaderTokens.add(t);
+          continue;
         }
-        if (ISSUE_48) {
-          pr("deprecation = ",mDeprecationToken);
-        }
-        
-        if (readIf("unsafe")) {
-          if (mUnsafeToken != null)
-            throw mReadIfToken.fail("unexpected");
-          mUnsafeToken = mReadIfToken;
-        }
-
-        handler(read()).run();
-
-        if (mDeprecationToken != null)
-          throw mDeprecationToken.fail("unused");
-        if (mUnsafeToken != null)
-          throw mUnsafeToken.fail("unused");
+        handler.run();
       }
 
       if (Context.generatedTypeDef == null)
         badArg("No 'class {...}' specified");
-
+      if (nonEmpty(mHeaderTokens)) {
+        mHeaderTokens.get(0).failWith("token was not processed");
+      }
       reportUnusedReferences();
 
       Context.sql.generate();
 
     } catch (Throwable t) {
-      alert("Caught:", t.getMessage());
       if (t instanceof ScanException || SHOW_STACK_TRACES) {
-        if (SHOW_STACK_TRACES) pr(t);
+        if (SHOW_STACK_TRACES)
+          pr(t);
         throw t;
       }
       if (mLastReadToken != null) {
-        Throwable t2 = mLastReadToken.fail(t.toString());
-        throw new RuntimeException(t2.getMessage(), t);
+        mLastReadToken.failWith(t.toString());
       }
       throw t;
     }
   }
 
-  private Token mDeprecationToken;
-  private Token mUnsafeToken;
+  private List<Token> mHeaderTokens;
 
   private void reportUnusedReferences() {
     String summary = Context.dataTypeManager.unusedReferencesSummary();
@@ -132,17 +119,16 @@ scanner().setVerbose(true);
 
   private void prepareHandlers() {
     mHandlers = hashMap();
-
     mHandlers.put("extern", () -> processExternalReference(DataTypeManager.constructContractDataType()));
     mHandlers.put("fields", () -> procDataType(false));
     mHandlers.put("class", () -> procDataType(true));
     mHandlers.put("enum", () -> procEnum());
   }
 
-  private Runnable handler(Token token) {
+  private Runnable handler(Token token, boolean mustExist) {
     Runnable r = mHandlers.get(token.text());
-    if (r == null)
-      throw token.fail("No handler for", quote(token.text()), "id:", token.id());
+    if (r == null && mustExist)
+      token.failWith("No handler for", quote(token.text()), "id:", token.id());
     return r;
   }
 
@@ -195,7 +181,7 @@ scanner().setVerbose(true);
   }
 
   private void fail(Object... messages) {
-    throw mLastReadToken.fail(messages);
+    mLastReadToken.failWith(messages);
   }
 
   /**
@@ -212,6 +198,23 @@ scanner().setVerbose(true);
   }
 
   private static boolean sOldStyleWarningIssued;
+
+  private Map<String, Token> processHeaderTokens() {
+    var db = ISSUE_48;
+    Map<String, Token> tokenMap = hashMap();
+    for (var tk : mHeaderTokens) {
+      var text = tk.text();
+      if (db)
+        pr("...process header token:", tk, "text:", text, "tokenmap:", tokenMap, "contains:",
+            tokenMap.containsKey(text));
+      if (tokenMap.containsKey(text)) {
+        tk.failWith("duplicate token");
+      }
+      tokenMap.put(text, tk);
+    }
+    mHeaderTokens.clear();
+    return tokenMap;
+  }
 
   private void procDataType(boolean classMode) {
 
@@ -230,15 +233,22 @@ scanner().setVerbose(true);
         Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
     setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null, classMode));
 
-    if (mDeprecationToken != null) {
-      Context.generatedTypeDef.setDeprecated(true);
-      mDeprecationToken = null;
-    }
-
     boolean unsafeMode = Context.config.unsafe();
-    if (mUnsafeToken != null) {
-      unsafeMode = true;
-      mUnsafeToken = null;
+
+    for (var ent : processHeaderTokens().entrySet()) {
+      if (ISSUE_48)
+        pr("...processing header token:", ent.getKey());
+      switch (ent.getKey()) {
+      default:
+        ent.getValue().failWith("unexpected token");
+        break;
+      case "unsafe":
+        unsafeMode = true;
+        break;
+      case "-":
+        Context.generatedTypeDef.setDeprecated(true);
+        break;
+      }
     }
 
     Context.generatedTypeDef.setUnsafe(unsafeMode);
@@ -336,7 +346,7 @@ scanner().setVerbose(true);
         // Optionally has extra arguments (...)
         if (readIf(PAROP)) {
           while (!readIf(PARCL)) {
-            throw read().fail("unexpected token");
+            read().failWith("unexpected token");
           }
         }
         continue;
@@ -355,7 +365,7 @@ scanner().setVerbose(true);
         continue;
       }
 
-      throw read().fail("unexpected token");
+      read().failWith("unexpected token");
     }
     if (db)
       scanner().setVerbose(false);
@@ -365,7 +375,7 @@ scanner().setVerbose(true);
     Token t = read();
     var fieldName = t.text();
     if (!isValidIdentifier(fieldName))
-      throw t.fail("Not a valid field name");
+      t.failWith("Not a valid field name");
     fields.add(fieldName);
   }
 
@@ -481,12 +491,17 @@ scanner().setVerbose(true);
     enumDataType.withQualifiedName(className);
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType, false));
 
-    
-    if (  readIf(DEPRECATION) || mDeprecationToken != null) {
-      Context.generatedTypeDef.setDeprecated(true);
-      mDeprecationToken = null;
+    for (var ent : processHeaderTokens().entrySet()) {
+      switch (ent.getKey()) {
+      default:
+        ent.getValue().failWith("unexpected token");
+        break;
+      case "-":
+        Context.generatedTypeDef.setDeprecated(true);
+        break;
+      }
     }
-    
+
     read(BROP);
 
     while (true) {
@@ -517,11 +532,10 @@ scanner().setVerbose(true);
         mPackageName = parentName.substring(c + 1);
       }
         break;
-      case RUST:  
-        {
-          int c = parentName.lastIndexOf(':');
-          mPackageName = parentName.substring(c + 1);
-        }
+      case RUST: {
+        int c = parentName.lastIndexOf(':');
+        mPackageName = parentName.substring(c + 1);
+      }
         break;
       default:
         Utils.languageNotSupported();

@@ -10,6 +10,7 @@
             "deprecatedEnum" : 3530,
               "deprecations" : 1671,
            "deprecationsOld" : 6473,
+        "dupDeprecatedClass" : 4798,
                "enumExample" : 9116,
             "explicitUnsafe" : 4420,
                   "external" : 3809,

@@ -71,11 +71,6 @@ public final class GeneratedTypeDef extends BaseObject {
   }
 
   public void setDeprecated(boolean f) {
-    if (ISSUE_48) {pr("setDeprecated:",f);
-    checkArgument(f);
-    }
-    
-    
     mDeprecated = f;
   }
 
@@ -170,7 +165,8 @@ public final class GeneratedTypeDef extends BaseObject {
           complexType = new GoListDataType(dataType);
           break;
         case RUST:
-          complexType = new RustListDataType(dataType);break;
+          complexType = new RustListDataType(dataType);
+          break;
         }
       }
       break;
