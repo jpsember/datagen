@@ -185,7 +185,7 @@ public abstract class GenBaseTest extends MyTestCase {
     File datFile = new File(mDatRecord.mDatSubdir,
         convertCamelToUnderscore(name) + ParseTools.DOT_EXT_DATA_DEFINITION);
     checkState(!datFile.exists());
-    Files.S.writeString(datFile, "fields{int unused;}");
+    Files.S.writeString(datFile, "class{int unused;}");
   }
 
   private Language mLanguage = Language.JAVA;

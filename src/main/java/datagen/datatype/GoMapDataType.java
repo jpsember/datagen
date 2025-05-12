@@ -38,35 +38,9 @@ public class GoMapDataType extends GoDataType {
         + mWrappedValueType.qualifiedName().className() + ")";
   }
 
-  /**
-   * Constructs a mutable copy of a map. Note that while it creates a copy of
-   * the map, it doesn't create copies of its elements; the references to those
-   * elements are stored in the new map unchanged.
-   */
-  @Override
-  public String sourceExpressionToMutable(String valueExpression) {
-    if (!Context.generatedTypeDef.classMode())
-      return Context.pt.mutableCopyOfMap(valueExpression);
-    return valueExpression;
-  }
-
-  @Override
-  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
-      String valueExpression) {
-    if (!Context.generatedTypeDef.classMode()) {
-      s.a(targetExpression, " = ", Context.pt.immutableCopyOfMap(valueExpression));
-      return;
-    }
-    if (Context.debugMode()) {
-      s.a(targetExpression, " = ", Context.pt.immutableCopyOfMap(valueExpression));
-      return;
-    }
-    super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
-  }
-
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-     // todo("this is a confusingly-named method; should be serializeToJson, or just toJson");
+    // todo("this is a confusingly-named method; should be serializeToJson, or just toJson");
     s.a(OPEN, //
         "m2 := ", Context.pt.PKGGO_JSON, "NewJSMap()", CR, // 
         "for k, v := range v.", f.instanceName(), OPEN, //

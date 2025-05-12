@@ -41,9 +41,8 @@ import js.file.Files;
  */
 public final class GeneratedTypeDef extends BaseObject {
 
-  public GeneratedTypeDef(String name, String packageName, DataType enumTypeOrNull, boolean classMode) {
+  public GeneratedTypeDef(String name, String packageName, DataType enumTypeOrNull ) {
     mEnumDataType = (EnumDataType) enumTypeOrNull;
-    mClassMode = classMode;
 
     DataType dataType;
 
@@ -104,10 +103,6 @@ public final class GeneratedTypeDef extends BaseObject {
 
   public boolean isEnum() {
     return mEnumDataType != null;
-  }
-
-  public boolean classMode() {
-    return mClassMode;
   }
 
   /**
@@ -284,7 +279,6 @@ public final class GeneratedTypeDef extends BaseObject {
   private final EnumDataType mEnumDataType;
   private final List<FieldDef> mFields = arrayList();
   private final Set<String> mFieldNames = hashSet();
-  private final boolean mClassMode;
   private SourceBuilder mClassSpecificSourceBuilder;
   private String mClassSpecificSource;
 

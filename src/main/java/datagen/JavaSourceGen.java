@@ -54,14 +54,7 @@ public final class JavaSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(6);
     for (FieldDef f : def.fields()) {
-      String targetExpression = "r." + f.instanceName();
-      String valueExpression = f.instanceName();
-      if (Context.nonClassMode()) {
-        f.dataType().sourceExpressionToImmutable(s, f, targetExpression, valueExpression);
-      } else {
-        s.a(targetExpression, " = ", valueExpression);
-      }
-      s.a(";");
+      s.a("r.", f.instanceName(), " = ", f.instanceName(), ";");
       s.cr();
     }
     return chomp(content());
@@ -139,7 +132,6 @@ public final class JavaSourceGen extends SourceGen {
       if (qn.combined().startsWith("java.lang."))
         continue;
 
-    //  pr("cn:",cn,CR,"qn:",qn,"gen:",Context.generatedTypeDef.qualifiedName().packagePath());
       // We also don't need to import anything from the local package
       // Assumes the class name includes a package
       if (qn.packagePath().equals(Context.generatedTypeDef.qualifiedName().packagePath()))
@@ -192,18 +184,7 @@ public final class JavaSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(6);
     for (FieldDef f : def.fields()) {
-      String expr = "m." + f.instanceName();
-      if (!Context.classMode()) {
-        expr = f.dataType().sourceExpressionToMutable(expr);
-        s.a(f.instanceName(), " = ", expr, ";", CR);
-      } else {
-        if (Context.debugMode()) {
-          f.dataType().sourceExpressionToImmutable(s, f, f.instanceName(), expr);
-          s.a(";", CR);
-        } else {
-          s.a(f.instanceName(), " = ", expr, ";", CR);
-        }
-      }
+      s.a(f.instanceName(), " = ", "m.", f.instanceName(), ";", CR);
     }
     return chomp(content());
   }

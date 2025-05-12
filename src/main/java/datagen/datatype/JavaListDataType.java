@@ -48,36 +48,6 @@ public class JavaListDataType extends JavaDataType {
     return Context.pt.PKG_DATAUTIL + ".emptyList()";
   }
 
-  /**
-   * Constructs a mutable copy of a list. Note that while it creates a copy of
-   * the list, it doesn't create copies of its elements; the references to those
-   * elements are stored in the new list unchanged.
-   * 
-   * This does not apply unless 'old style' is in effect
-   */
-  @Override
-  public String sourceExpressionToMutable(String valueExpression) {
-    if (!Context.generatedTypeDef.classMode())
-      return Context.pt.mutableCopyOfList(valueExpression);
-    // In debug mode, this is already in immutable form; no need to modify it
-    return valueExpression;
-  }
-
-  @Override
-  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
-      String valueExpression) {
-    if (!Context.generatedTypeDef.classMode()) {
-      s.a(targetExpression, " = ", Context.pt.immutableCopyOfList(valueExpression));
-      return;
-    }
-
-    if (Context.debugMode()) {
-      s.a(targetExpression, " = ", Context.pt.immutableCopyOfList(valueExpression));
-      return;
-    }
-    super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
-  }
-
   public DataType wrappedType() {
     return mWrappedType;
   }
@@ -140,15 +110,7 @@ public class JavaListDataType extends JavaDataType {
       expr = "(x == null) ? " + f.defaultValueOrNull() + " : x";
     }
 
-    if (!Context.classMode()) {
-      s.a(targetExpr, " = ", sourceExpressionToMutable(expr));
-    } else {
-      if (Context.debugMode()) {
-        sourceExpressionToImmutable(s, f, targetExpr, expr);
-      } else
-        s.a(targetExpr, " = ", expr);
-    }
-
+    s.a(targetExpr, " = ", expr);
   }
 
   private final DataType mWrappedType;

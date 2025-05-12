@@ -1,4 +1,4 @@
-fields {
+class {
 
    *string strs;
    *string strs_def = ["default_string_list"];

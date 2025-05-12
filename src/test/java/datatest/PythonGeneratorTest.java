@@ -42,7 +42,7 @@ public class PythonGeneratorTest extends GenBaseTest {
 
   @Test
   public void simple() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "int alpha = 42;", CR, //
         "? int beta;", CR, //
         OUTDENT, "}");
@@ -52,7 +52,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   @Test
   public void externDefaultPrefix() {
     p().pr("extern abc.xyz.Foo;", CR);
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "Foo delta;", CR, //
         "?Foo optional;", CR, //
         OUTDENT, "}");
@@ -61,7 +61,7 @@ public class PythonGeneratorTest extends GenBaseTest {
 
   @Test
   public void ints() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "int alpha;", CR, //
         "int beta = 42;", CR, //
         "?int gamma;", CR, //
@@ -74,7 +74,7 @@ public class PythonGeneratorTest extends GenBaseTest {
 
   @Test
   public void bools() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "bool alpha;", CR, //
         "bool beta = true;", CR, //
         "?bool gamma;", CR, //
@@ -84,7 +84,7 @@ public class PythonGeneratorTest extends GenBaseTest {
 
   @Test
   public void doubles() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "*double foo;", CR, //
         "?double golf;", CR, // 
         "float hotel;", CR, //
@@ -97,7 +97,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   @Test
   public void strings() {
     cryptic();
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "string alpha;", CR, //
         "string beta = \"hello\";", CR, //
         "?string gamma;", CR, //
@@ -120,7 +120,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   public void enumRef() {
     language(Language.PYTHON);
     p().pr("enum Language;", CR, //
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "bool clean;", CR, //
         "Language language;", CR, //
         OUTDENT, //
@@ -132,7 +132,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   public void enumMisc() {
     language(Language.PYTHON);
     p().pr("enum Zebra;", CR, //
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "Zebra alpha;", CR, //
         "?Zebra gamma;", CR, //
         "*Zebra delta;", CR, //
@@ -144,7 +144,7 @@ public class PythonGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeFile() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "File alpha;", CR, //
         "?File beta;", CR, //
         "*File gamma;", CR, //
@@ -156,7 +156,7 @@ public class PythonGeneratorTest extends GenBaseTest {
 
   @Test
   public void ipoints() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "IPoint a;", CR, //
         "?IPoint b;", CR, //
         "*IPoint c;", CR, //
@@ -168,7 +168,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   @Test
   public void alternateSourcePath() {
     addArg("python_source_path", sourceDir().toString() + "/alt");
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "Foo delta;", CR, //
         "?Foo optional;", CR, //
         OUTDENT, "}");
@@ -178,7 +178,7 @@ public class PythonGeneratorTest extends GenBaseTest {
 
   @Test
   public void jsmap() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "JSMap m;", CR, //
         OUTDENT, "}");
     compile();
@@ -186,7 +186,7 @@ public class PythonGeneratorTest extends GenBaseTest {
 
   @Test
   public void matrix() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "float a;", CR, //
         "float b;", CR, //
         "float c;", CR, //
@@ -199,7 +199,7 @@ public class PythonGeneratorTest extends GenBaseTest {
 
   @Test
   public void externType() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "*foo.gen.Layer layers;", CR, //
         OUTDENT, "}");
     compile();

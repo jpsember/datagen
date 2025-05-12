@@ -120,8 +120,7 @@ final class DataDefinitionParser extends BaseObject {
   private void prepareHandlers() {
     mHandlers = hashMap();
     mHandlers.put("extern", () -> processExternalReference(DataTypeManager.constructContractDataType()));
-    mHandlers.put("fields", () -> procDataType(false));
-    mHandlers.put("class", () -> procDataType(true));
+    mHandlers.put("class", () -> procDataType());
     mHandlers.put("enum", () -> procEnum());
   }
 
@@ -216,22 +215,10 @@ final class DataDefinitionParser extends BaseObject {
     return tokenMap;
   }
 
-  private void procDataType(boolean classMode) {
-
-    if (Context.config.classMode())
-      classMode = true;
-
-    if (!classMode) {
-      if (!sOldStyleWarningIssued) {
-        sOldStyleWarningIssued = true;
-        if (false)
-          pr("Generating older version of source code; recommend using 'class' keyword instead of 'fields'...");
-      }
-    }
-
+  private void procDataType() {
     String typeName = DataUtil.convertUnderscoresToCamelCase(
         Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
-    setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null, classMode));
+    setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null));
 
     boolean unsafeMode = Context.config.unsafe();
 
@@ -489,7 +476,7 @@ final class DataDefinitionParser extends BaseObject {
     enumName = DataUtil.convertUnderscoresToCamelCase(className2);
     QualifiedName className = QualifiedName.parse(enumName, packageName());
     enumDataType.withQualifiedName(className);
-    setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType, false));
+    setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType));
 
     for (var ent : processHeaderTokens().entrySet()) {
       switch (ent.getKey()) {

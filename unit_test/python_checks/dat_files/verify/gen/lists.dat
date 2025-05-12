@@ -1,4 +1,4 @@
-fields {
+class {
    *int ints;
   ?*int intsopt;
    *int ints_def = [42,100];

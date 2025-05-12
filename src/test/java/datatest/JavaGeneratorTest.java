@@ -57,7 +57,7 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("/* A multiline", CR);
     p().pr("     comment", CR);
     p().pr("  */   ");
-    p().pr("fields {int alpha;}");
+    p().pr("class {int alpha;}");
     compile();
   }
 
@@ -70,7 +70,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeIntVariousOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "int alpha;", CR, //
         "int beta = " + Integer.MAX_VALUE + ";", CR, //
         "?int gamma;", CR, //
@@ -101,7 +101,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeByteVariousOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "byte alpha;", CR, //
         "byte beta = " + Byte.MAX_VALUE + ";", CR, //
         "?byte gamma;", CR, //
@@ -156,7 +156,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeShortVariousOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "short alpha;", CR, //
         "short beta = " + Byte.MAX_VALUE + ";", CR, //
         "?short gamma;", CR, //
@@ -180,7 +180,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeLongVariousOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "long alpha;", CR, //
         "long beta = " + Long.MAX_VALUE + ";", CR, //
         "?long gamma;", CR, //
@@ -213,7 +213,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeFloatVariousOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "float alpha;", CR, //
         "float beta = " + Float.MAX_VALUE + ";", CR, //
         "?float gamma;", CR, //
@@ -275,7 +275,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeDoubleVariousOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "double alpha;", CR, //
         "double beta = " + Double.MAX_VALUE + ";", CR, //
         "?double gamma;", CR, //
@@ -299,7 +299,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeStringOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "string alpha;", CR, //
         "string beta = \"hello\";", CR, //
         "?string gamma;", CR, //
@@ -312,7 +312,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeBoolOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "bool alpha;", CR, //
         "bool beta = true;", CR, //
         "?bool gamma;", CR, //
@@ -323,7 +323,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void externalOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "Beaver busy;", CR, //
         "?Beaver opt;", CR, //
         OUTDENT, "}");
@@ -336,7 +336,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test(expected = RuntimeException.class)
   public void misspelledString() {
     p().pr(//
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "String not_camel_case;", CR, //
         OUTDENT, "}");
     compile();
@@ -348,7 +348,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test(expected = RuntimeException.class)
   public void misspelledBool() {
     p().pr(//
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "boolean bad_type;", CR, //
         OUTDENT, "}");
     compile();
@@ -360,7 +360,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test(expected = RuntimeException.class)
   public void misspelledBool2() {
     p().pr(//
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "Bool bad_type;", CR, //
         OUTDENT, "}");
     compile();
@@ -369,7 +369,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void externalListOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "*Beaver mult;", CR, //
         OUTDENT, "}");
     compile();
@@ -378,7 +378,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void external2Old() {
     p().pr( // This one omits the 'extern' line, so it assumes the same package
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "Beaver busy;", CR, //
         "?Beaver opt;", CR, //
         OUTDENT, "}");
@@ -389,7 +389,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void externalRepeatedOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "*Beaver b;", OUTDENT, //
         "}");
     compile();
@@ -398,7 +398,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void listOptOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "?*Beaver busy;", OUTDENT, //
         "}");
     compile();
@@ -414,7 +414,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeFileVariousOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "File alpha;", CR, //
         "?File beta;", CR, //
         "*File gamma;", CR, //
@@ -439,7 +439,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void optCommentsOld() {
     addArg("comments");
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "File alpha;", CR, //
         "int beta;", CR, //
         OUTDENT, "}");
@@ -448,7 +448,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void builtInOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "IPoint location;", CR, //
         "IRect x;", CR, //
         "FPoint floc;", CR, //
@@ -463,7 +463,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeJsonMapVariousOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "JSMap alpha;", CR, //
         "?JSMap beta;", CR, //
         "*JSMap gamma;", CR, //
@@ -474,7 +474,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeJsonListVariousOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "JSList alpha;", CR, //
         "?JSList beta;", CR, //
         "*JSList gamma;", CR, //
@@ -493,7 +493,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   public void unusedReference() {
     addArg("treat_warnings_as_errors");
     p().pr("extern abc.xyz.Beaver;", CR, //
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "int value;", CR, //
         OUTDENT, "}");
     compile();
@@ -501,7 +501,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void qualifiedReferenceOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "foo.gen.MongoParams mongo_params;", CR, //
         OUTDENT, "}");
     compile();
@@ -509,7 +509,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void implicitEnumReferenceOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "enum foo.gen.MongoEnum val;", CR, //
         OUTDENT, "}");
     compile();
@@ -517,7 +517,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test(expected = RuntimeException.class)
   public void conflictEnumReference() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "foo.gen.MongoEnum first;", CR, //
         "enum foo.gen.MongoEnum second;", CR, //
         OUTDENT, "}");
@@ -526,7 +526,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void secondEnumReference() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "enum foo.gen.MongoEnum first;", CR, //
         "MongoEnum second;", CR, //
         OUTDENT, "}");
@@ -535,7 +535,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void ipointsOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "IPoint a;", CR, //
         "?IPoint b;", CR, //
         "*IPoint c;", CR, //
@@ -548,7 +548,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void typeMapVariousOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "map string File alpha;", CR, //
         "?map string File beta;", CR, //
         "map string Beaver gamma;", CR, //
@@ -562,7 +562,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void typeSetVariousOld() {
     p().pr("extern abc.xyz.Beaver;", CR, //
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "set File alpha;", CR, //
         "?set File beta;", CR, //
         "set Beaver gamma;", CR, //
@@ -659,7 +659,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void deprecationsOld() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "-int alpha;", CR, //
         "int beta = " + Integer.MAX_VALUE + ";", CR, //
         "-?int gamma;", CR, //
@@ -878,7 +878,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void typeBoxedValuesOld() {
     p().pr(//
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "* string name_list;", CR, //
         "map string long name_map;", CR, //
         "set long ages_set;", CR, //
@@ -889,7 +889,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void testIntMapKey() {
     p().pr(//
-        "fields {", INDENT, //
+        "class {", INDENT, //
         "map int string zebra;", CR, //
         OUTDENT, "}");
     compile();
@@ -1005,7 +1005,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   public void big() {
     p().pr("extern z.Bah;");
 
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "int i1;", CR, //
         "int i2 = " + Integer.MAX_VALUE + ";", CR, //
         "?int i3;", CR, //
@@ -1080,7 +1080,7 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void reservedWords() {
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
 
         "int fields;", CR, //
         "int class;", CR, //
@@ -1108,7 +1108,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void defaultValuesDataType() {
     p().pr("extern z.Bah;");
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "Bah x = {\"hey\":19};", CR, OUTDENT, "}");
     compile();
   }
@@ -1116,7 +1116,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void defaultValuesForgiving() {
     p().pr("extern z.Bah;");
-    p().pr("fields {", INDENT, //
+    p().pr("class {", INDENT, //
         "Bah x = { hey :19,  blue : 42, };", CR, OUTDENT, "}");
     compile();
   }

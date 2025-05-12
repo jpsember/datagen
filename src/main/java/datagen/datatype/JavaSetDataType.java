@@ -48,32 +48,6 @@ public class JavaSetDataType extends JavaDataType {
     return Context.pt.PKG_DATAUTIL + ".emptySet()";
   }
 
-  /**
-   * Constructs a mutable copy of a set. Note that while it creates a copy of
-   * the set, it doesn't create copies of its elements; the references to those
-   * elements are stored in the new set unchanged.
-   */
-  @Override
-  public String sourceExpressionToMutable(String valueExpression) {
-    if (!Context.generatedTypeDef.classMode())
-      return Context.pt.mutableCopyOfList(valueExpression);
-    return valueExpression;
-  }
-
-  @Override
-  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
-      String valueExpression) {
-    if (!Context.generatedTypeDef.classMode()) {
-      s.a(targetExpression, " = ", Context.pt.immutableCopyOfSet(valueExpression));
-      return;
-    }
-    if (Context.debugMode()) {
-      s.a(targetExpression, " = ", Context.pt.immutableCopyOfSet(valueExpression));
-      return;
-    }
-    super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
-  }
-
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
     sourceIfNotNull(s, f);

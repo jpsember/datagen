@@ -52,7 +52,7 @@ From `datagen_config.dat`:
 ```
 enum Language;
 
-fields {
+class {
   File start_dir;
   File dat_path = "dat_files";
 

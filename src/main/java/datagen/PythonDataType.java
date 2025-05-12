@@ -36,11 +36,10 @@ public class PythonDataType extends DataType {
 
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     if (f.optional()) {
-      s.a(targetExpr, " = ", //
-          sourceExpressionToMutable("x"));
+      s.a(targetExpr, " = x");
     } else {
       s.a(targetExpr, " = ", //
-          f.defaultValueOrNull(), " if x is None else ", sourceExpressionToMutable("x"));
+          f.defaultValueOrNull(), " if x is None else x");
     }
   }
 

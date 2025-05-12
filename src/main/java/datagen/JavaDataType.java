@@ -31,15 +31,7 @@ public class JavaDataType extends DataType {
     } else {
       expr = "(x == null) ? " + f.defaultValueOrNull() + " : x";
     }
-
-    if (!Context.classMode()) {
-      s.a(targetExpr, " = ", sourceExpressionToMutable(expr));
-    } else {
-      if (Context.debugMode()) {
-        sourceExpressionToImmutable(s, f, targetExpr, expr);
-      } else
-        s.a(targetExpr, " = ", expr);
-    }
+    s.a(targetExpr, " = ", expr);
   }
 
   /**

@@ -273,15 +273,6 @@ public final class ParseTools {
     return result;
   }
 
-  public final String mutableCopyOfList(String expr) {
-    checkState(!Context.generatedTypeDef.classMode());
-    return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
-  }
-
-  public final String mutableCopyOfMap(String expr) {
-    checkState(!Context.generatedTypeDef.classMode());
-    return PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
-  }
 
   public final String immutableCopyOfMap(String expr) {
     String result = PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";

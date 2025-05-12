@@ -84,7 +84,7 @@ public class PythonSourceGen extends SourceGen {
     s.setIndent(4);
     for (FieldDef f : def.fields()) {
       s.cr();
-      f.dataType().sourceExpressionToImmutable(s, f, "v." + f.instanceName(), "self." + f.instanceName());
+      s.a("v.", f.instanceName(), " = self.", f.instanceName());
     }
     return content();
   }
@@ -198,16 +198,7 @@ public class PythonSourceGen extends SourceGen {
     s.setIndent(4);
     s.a("x = ", def.name(), "Builder()", CR);
     for (FieldDef f : def.fields()) {
-      String arg = "self." + f.instanceName();
-      String expr = f.dataType().sourceExpressionToMutable(arg);
-      boolean cvtRequired = !arg.equals(expr);
-      if (!cvtRequired) {
-        s.a("x.", f.instanceName(), " = ", expr, CR);
-      } else {
-        f.dataType().sourceIfNotNull(s, f);
-        s.a("x.", f.instanceName(), " = ", expr, CR);
-        f.dataType().sourceEndIf(s).cr();
-      }
+      s.a("x.", f.instanceName(), " = ", "self." + f.instanceName(), CR);
     }
     s.a("return x", CR);
     return content();

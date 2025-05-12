@@ -47,6 +47,7 @@ public class DatagenConfig implements AbstractData {
     return mVerboseNames;
   }
 
+  @Deprecated
   public boolean classMode() {
     return mClassMode;
   }
@@ -359,6 +360,7 @@ public class DatagenConfig implements AbstractData {
       return this;
     }
 
+    @Deprecated
     public Builder classMode(boolean x) {
       mClassMode = x;
       return this;

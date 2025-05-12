@@ -153,35 +153,6 @@ public abstract class DataType implements DefaultValueParser {
 
   // ------------------------------------------------------------------
 
-  /**
-   * Generate source code to convert a value to a mutable form, for storing
-   * within a builder.
-   *
-   * Default returns the expression unchanged. ListDataType overrides this to
-   * construct a mutable copy instead. If more structured types are added, I'll
-   * override this method appropriately.
-   * 
-   * Per issue #33, this will only have an effect if user is defining the
-   * datatype using the old 'fields' keyword.
-   */
-  public String sourceExpressionToMutable(String valueExpression) {
-    // Suspect this method isn't required if classMode
-    checkState(!Context.generatedTypeDef.classMode());
-    return valueExpression;
-  }
-
-  /**
-   * Generate source code to convert a value to an immutable form
-   *
-   * Default returns the expression unchanged
-   * 
-   * Per issue #33, this will only have an effect if user is defining the
-   * datatype using the old 'fields' keyword.
-   */
-  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
-      String valueExpression) {
-    s.a(targetExpression, " = ", valueExpression);
-  }
 
   /**
    * If field is optional, generate an 'if' statement that checks if the field

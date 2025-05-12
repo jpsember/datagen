@@ -27,7 +27,6 @@ package datagen.datatype;
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
 
-import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.PythonDataType;
@@ -56,40 +55,10 @@ public class PythonListDataType extends PythonDataType {
     // in that case, we don't want to attempt to construct None.copy()
     //
     if (f.optional()) {
-      s.a(targetExpr, " = x if x is None else ", sourceExpressionToMutable("x"));
+      s.a(targetExpr, " = x if x is None else x");
       return;
     }
     super.sourceSetter(s, f, targetExpr);
-  }
-
-  /**
-   * Constructs a mutable copy of a list. Note that while it creates a copy of
-   * the list, it doesn't create copies of its elements; the references to those
-   * elements are stored in the new list unchanged.
-   * 
-   * Only has this effect if 'old style'
-   */
-  @Override
-  public String sourceExpressionToMutable(String valueExpression) {
-    if (!Context.generatedTypeDef.classMode())
-      return valueExpression + ".copy()";
-    else
-      return valueExpression;
-  }
-
-  @Override
-  public void sourceExpressionToImmutable(SourceBuilder s, FieldDef fieldDef, String targetExpression,
-      String valueExpression) {
-    if (!Context.generatedTypeDef.classMode()) {
-      if (fieldDef.optional()) {
-        s.a("x = ", valueExpression, CR);
-        s.a(targetExpression, " = x if x is None else x.copy()", CR);
-      } else {
-        s.a(targetExpression, " = ", valueExpression, ".copy()");
-      }
-    } else {
-      super.sourceExpressionToImmutable(s, fieldDef, targetExpression, valueExpression);
-    }
   }
 
   private DataType wrappedType() {
