@@ -20,10 +20,6 @@ class {
   //
   bool verbose_names;
 
-  // Use new 'class' code generation instead of 'fields' (issue #33)
-  //
-  bool class_mode;
-
   // Omit debug checks
   //
   bool unsafe;

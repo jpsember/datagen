@@ -47,11 +47,6 @@ public class DatagenConfig implements AbstractData {
     return mVerboseNames;
   }
 
-  @Deprecated
-  public boolean classMode() {
-    return mClassMode;
-  }
-
   public boolean unsafe() {
     return mUnsafe;
   }

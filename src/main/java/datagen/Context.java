@@ -65,13 +65,9 @@ public final class Context {
     Context.dataTypeManager = new DataTypeManager();
   }
 
-  @Deprecated
-  public static boolean nonClassMode() {
-    return false;
-  }
-
+  @Deprecated // Is this used?
   public static boolean debugMode() {
-    return   !generatedTypeDef.isUnsafe();
+    return !generatedTypeDef.isUnsafe();
   }
 
   /**
