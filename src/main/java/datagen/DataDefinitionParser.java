@@ -30,7 +30,6 @@ import static datagen.Utils.*;
 
 import java.io.File;
 import java.util.List;
-import java.util.Map;
 
 import datagen.datatype.EnumDataType;
 import datagen.gen.PartialType;
@@ -54,7 +53,7 @@ final class DataDefinitionParser extends BaseObject {
    */
   public void parse() {
     try {
-      prepareHandlers();
+      //      prepareHandlers();
       startScanner();
       if (ISSUE_48 && false && alert("verbosity"))
         scanner().setVerbose(true);
@@ -69,27 +68,37 @@ final class DataDefinitionParser extends BaseObject {
       // Note, only one actual definition can appear in a .dat file.
       //
 
-      mHeaderTokens = arrayList();
+      //mHeaderTokens = arrayList();
 
-      while (scanner().hasNext()) {
+      outer: while (scanner().hasNext()) {
         var t = read();
-        var handler = handler(t, false);
-        if (handler == null) {
-          mHeaderTokens.add(t);
+
+        if (t.id(DEPRECATION)) {
+          if (mDeprecated)
+            t.failWith("duplicate token");
+          mDeprecated = true;
           continue;
         }
-        handler.run();
+
+        switch (t.text()) {
+        case "extern":
+          processExternalReference(DataTypeManager.constructContractDataType());
+          continue outer;
+        case "class":
+          procDataType();
+          continue outer;
+        case "enum":
+          procEnum();
+          continue outer;
+        }
+        t.failWith("unexpected token:", t.text());
       }
 
       if (Context.generatedTypeDef == null)
         badArg("No 'class {...}' specified");
-      if (nonEmpty(mHeaderTokens)) {
-        mHeaderTokens.get(0).failWith("token was not processed");
-      }
       reportUnusedReferences();
 
       Context.sql.generate();
-
     } catch (Throwable t) {
       if (t instanceof ScanException || SHOW_STACK_TRACES) {
         if (SHOW_STACK_TRACES)
@@ -103,8 +112,6 @@ final class DataDefinitionParser extends BaseObject {
     }
   }
 
-  private List<Token> mHeaderTokens;
-
   private void reportUnusedReferences() {
     String summary = Context.dataTypeManager.unusedReferencesSummary();
     if (!summary.isEmpty()) {
@@ -115,20 +122,6 @@ final class DataDefinitionParser extends BaseObject {
           pr(summary);
       }
     }
-  }
-
-  private void prepareHandlers() {
-    mHandlers = hashMap();
-    mHandlers.put("extern", () -> processExternalReference(DataTypeManager.constructContractDataType()));
-    mHandlers.put("class", () -> procDataType());
-    mHandlers.put("enum", () -> procEnum());
-  }
-
-  private Runnable handler(Token token, boolean mustExist) {
-    Runnable r = mHandlers.get(token.text());
-    if (r == null && mustExist)
-      token.failWith("No handler for", quote(token.text()), "id:", token.id());
-    return r;
   }
 
   private Scanner scanner() {
@@ -143,6 +136,7 @@ final class DataDefinitionParser extends BaseObject {
     mScanner.setSourceDescription(datPath);
     mLastReadToken = null;
     mPackageName = null;
+    mDeprecated = false;
   }
 
   private Token peek() {
@@ -151,21 +145,13 @@ final class DataDefinitionParser extends BaseObject {
 
   private boolean readIf(String tokenText) {
     Token t = peek();
-    boolean result = (t != null && t.text().equals(tokenText));
-    if (result)
-      mReadIfToken = read();
-    return result;
+    return (t != null && t.text().equals(tokenText));
   }
 
   private boolean readIf(int type) {
     Token t = peek();
-    boolean result = (t != null && t.id(type));
-    if (result)
-      mReadIfToken = read();
-    return result;
+    return (t != null && t.id(type));
   }
-
-  private Token mReadIfToken;
 
   private Token read() {
     mLastReadToken = scanner().read();
@@ -196,43 +182,12 @@ final class DataDefinitionParser extends BaseObject {
     Context.dataTypeManager.add(q.className(), dataType);
   }
 
-  private static boolean sOldStyleWarningIssued;
-
-  private Map<String, Token> processHeaderTokens() {
-    var db = ISSUE_48;
-    Map<String, Token> tokenMap = hashMap();
-    for (var tk : mHeaderTokens) {
-      var text = tk.text();
-      if (db)
-        pr("...process header token:", tk, "text:", text, "tokenmap:", tokenMap, "contains:",
-            tokenMap.containsKey(text));
-      if (tokenMap.containsKey(text)) {
-        tk.failWith("duplicate token");
-      }
-      tokenMap.put(text, tk);
-    }
-    mHeaderTokens.clear();
-    return tokenMap;
-  }
-
   private void procDataType() {
     String typeName = DataUtil.convertUnderscoresToCamelCase(
         Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
     setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null));
 
-    todo("header token is now just '-'");
-    for (var ent : processHeaderTokens().entrySet()) {
-      if (ISSUE_48)
-        pr("...processing header token:", ent.getKey());
-      switch (ent.getKey()) {
-      default:
-        ent.getValue().failWith("unexpected token");
-        break;
-      case "-":
-        Context.generatedTypeDef.setDeprecated(true);
-        break;
-      }
-    }
+    Context.generatedTypeDef.setDeprecated(mDeprecated);
 
     read(BROP);
 
@@ -311,6 +266,37 @@ final class DataDefinitionParser extends BaseObject {
 
   }
 
+  private void procEnum() {
+    DataType enumDataType = EnumDataType.construct();
+    // If this is a declaration, an id followed by ;
+    if (peek().id(ID)) {
+      processExternalReference(enumDataType);
+      return;
+    }
+
+    // Otherwise, it's a definition
+    //
+    String enumName;
+    String className2 = chomp(new File(Context.datWithSource.datRelPath()).getName(),
+        DOT_EXT_DATA_DEFINITION);
+    enumName = DataUtil.convertUnderscoresToCamelCase(className2);
+    QualifiedName className = QualifiedName.parse(enumName, packageName());
+    enumDataType.withQualifiedName(className);
+    setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType));
+    Context.generatedTypeDef.setDeprecated(mDeprecated);
+
+    read(BROP);
+
+    while (true) {
+      if (readIf(BRCL))
+        break;
+      String name = read(ID);
+      ((EnumDataType) enumDataType).addLabel(name);
+      while (readIf(COMMA) || readIf(SEMI))
+        continue;
+    }
+  }
+
   private void processSqlInfo() {
     boolean db = false;
     if (db)
@@ -360,7 +346,7 @@ final class DataDefinitionParser extends BaseObject {
     fields.add(fieldName);
   }
 
-  public static boolean isValidIdentifier(String s) {
+  private static boolean isValidIdentifier(String s) {
     return RegExp.patternMatchesString("[_a-zA-Z]\\w*", s);
   }
 
@@ -384,11 +370,16 @@ final class DataDefinitionParser extends BaseObject {
    * 2) allow unquoted strings
    */
   private JSMap parseDefaultValueAsJsonMap() {
+    
+    var db = true;
+    
+    if (db) pr(VERT_SP,"parseDefaultValueAsJsonMap");
     StringBuilder sb = new StringBuilder();
     List<Integer> stack = arrayList();
     boolean done = false;
     while (!done) {
       Token t = read();
+      if (db) pr("...read:",t);
       switch (t.id()) {
       case NUMBER:
       case STRING:
@@ -410,6 +401,7 @@ final class DataDefinitionParser extends BaseObject {
           done = true;
         break;
       default:
+        if (db) pr("...stack size:",stack.size());
         checkState(!stack.isEmpty());
         // If not ',' ':' or boolean, wrap in quotes
         if (!(t.id(COLON) || t.id(COMMA) || t.id(BOOL))) {
@@ -454,47 +446,6 @@ final class DataDefinitionParser extends BaseObject {
     return t.build();
   }
 
-  private void procEnum() {
-    DataType enumDataType = EnumDataType.construct();
-    // If this is a declaration, an id followed by ;
-    if (peek().id(ID)) {
-      processExternalReference(enumDataType);
-      return;
-    }
-
-    // Otherwise, it's a definition
-    //
-    String enumName;
-    String className2 = chomp(new File(Context.datWithSource.datRelPath()).getName(),
-        DOT_EXT_DATA_DEFINITION);
-    enumName = DataUtil.convertUnderscoresToCamelCase(className2);
-    QualifiedName className = QualifiedName.parse(enumName, packageName());
-    enumDataType.withQualifiedName(className);
-    setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType));
-
-    for (var ent : processHeaderTokens().entrySet()) {
-      switch (ent.getKey()) {
-      default:
-        ent.getValue().failWith("unexpected token");
-        break;
-      case "-":
-        Context.generatedTypeDef.setDeprecated(true);
-        break;
-      }
-    }
-
-    read(BROP);
-
-    while (true) {
-      if (readIf(BRCL))
-        break;
-      String name = read(ID);
-      ((EnumDataType) enumDataType).addLabel(name);
-      while (readIf(COMMA) || readIf(SEMI))
-        continue;
-    }
-  }
-
   /**
    * Get package for the data type being genearted
    */
@@ -535,6 +486,6 @@ final class DataDefinitionParser extends BaseObject {
   private Scanner mScanner;
   private Token mLastReadToken;
   private String mPackageName;
-  private Map<String, Runnable> mHandlers;
+  private boolean mDeprecated;
 
 }

@@ -32,14 +32,15 @@ EXCLAIM: \!
 # Some tokens are commented out, but are still 'used', to avoid them being reserved words.
 
 
-#FIELDS: fields
 #CLASS: class
 #ENUM: enum
+#EXTERN: extern
+
 OPTIONAL: \?
 REPEATED: \*
 #MAP: map
 #SET: set
-#EXTERN: extern
+
 DEPRECATION: \-
 
 RESERVEDWORD: (boolean|String|Bool|Boolean|Int|Integer|Long|Double|Float)

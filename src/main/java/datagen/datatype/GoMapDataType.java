@@ -33,7 +33,7 @@ public class GoMapDataType extends GoDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    alert("some duplication here, with the constructor");
+    //alert("some duplication here, with the constructor");
     return "make(map[" + mWrappedKeyType.qualifiedName().className() + "]"
         + mWrappedValueType.qualifiedName().className() + ")";
   }
