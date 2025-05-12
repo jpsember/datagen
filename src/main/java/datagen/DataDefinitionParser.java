@@ -26,6 +26,7 @@ package datagen;
 
 import static js.base.Tools.*;
 import static datagen.ParseTools.*;
+import static datagen.Utils.*;
 
 import java.io.File;
 import java.util.List;
@@ -55,6 +56,8 @@ final class DataDefinitionParser extends BaseObject {
     try {
       prepareHandlers();
       startScanner();
+if (ISSUE_48) 
+scanner().setVerbose(true);
 
       // Start parsing the .dat file.  It can contain something like:
       //
@@ -67,12 +70,16 @@ final class DataDefinitionParser extends BaseObject {
       //
 
       while (scanner().hasNext()) {
+        todo("!have better handling of tokens before the handler token");
         if (readIf(DEPRECATION)) {
           if (mDeprecationToken != null)
             throw mReadIfToken.fail("unexpected");
           mDeprecationToken = mReadIfToken;
         }
-
+        if (ISSUE_48) {
+          pr("deprecation = ",mDeprecationToken);
+        }
+        
         if (readIf("unsafe")) {
           if (mUnsafeToken != null)
             throw mReadIfToken.fail("unexpected");
@@ -474,8 +481,12 @@ final class DataDefinitionParser extends BaseObject {
     enumDataType.withQualifiedName(className);
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType, false));
 
-    Context.generatedTypeDef.setDeprecated(readIf(DEPRECATION));
-
+    
+    if (  readIf(DEPRECATION) || mDeprecationToken != null) {
+      Context.generatedTypeDef.setDeprecated(true);
+      mDeprecationToken = null;
+    }
+    
     read(BROP);
 
     while (true) {

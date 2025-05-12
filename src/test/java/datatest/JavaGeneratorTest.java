@@ -887,7 +887,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void testIntMapKey()  {
+  public void testIntMapKey() {
     p().pr(//
         "fields {", INDENT, //
         "map int string zebra;", CR, //
@@ -941,15 +941,15 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
-//  @Test
-//  public void deprecatedEnum() {
-//    p().pr(//
-//        "- enum {", INDENT, //
-//        "alpha,", CR, //
-//        "beta,", CR, //
-//        OUTDENT, "}");
-//    compile();
-//  }
+  @Test
+  public void deprecatedEnum() {
+    p().pr(//
+        "- enum {", INDENT, //
+        "alpha,", CR, //
+        "beta,", CR, //
+        OUTDENT, "}");
+    compile();
+  }
 
   @Test(expected = RuntimeException.class)
   public void dupDeprecatedClass() {

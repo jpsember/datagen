@@ -66,6 +66,9 @@ public abstract class SourceGen extends BaseObject {
     m.put("class", def.name());
 
     String content = getTemplate();
+    if (ISSUE_48) {
+      pr("def isDepr?", def.isDeprecated());
+    }
     m.put("deprecated", def.isDeprecated() ? getDeprecationSource() : "");
 
     if (def.isEnum()) {
@@ -97,7 +100,8 @@ public abstract class SourceGen extends BaseObject {
     //
     {
       MacroParser parser = new MacroParser();
-      //parser.alertVerbose();
+      if (ISSUE_48)
+        parser.alertVerbose();
       parser.withTemplate(content).withMapper(m);
       content = parser.content();
     }

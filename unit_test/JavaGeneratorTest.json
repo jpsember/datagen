@@ -7,6 +7,7 @@
     "defaultValuesForgiving" : 1635,
           "defaultValuesMap" : 4187,
            "deprecatedClass" : 5703,
+            "deprecatedEnum" : 3530,
               "deprecations" : 1671,
            "deprecationsOld" : 6473,
                "enumExample" : 9116,

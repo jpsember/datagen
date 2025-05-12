@@ -71,6 +71,11 @@ public final class GeneratedTypeDef extends BaseObject {
   }
 
   public void setDeprecated(boolean f) {
+    if (ISSUE_48) {pr("setDeprecated:",f);
+    checkArgument(f);
+    }
+    
+    
     mDeprecated = f;
   }
 
