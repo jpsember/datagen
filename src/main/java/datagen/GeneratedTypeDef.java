@@ -73,16 +73,8 @@ public final class GeneratedTypeDef extends BaseObject {
     mDeprecated = f;
   }
 
-  public void setUnsafe(boolean f) {
-    mUnsafe = f;
-  }
-
   public boolean isDeprecated() {
     return mDeprecated;
-  }
-
-  public boolean isUnsafe() {
-    return mUnsafe;
   }
 
   public QualifiedName qualifiedName() {
@@ -95,7 +87,6 @@ public final class GeneratedTypeDef extends BaseObject {
 
   private DataType mDataType;
   private boolean mDeprecated;
-  private boolean mUnsafe;
 
   public List<FieldDef> fields() {
     return mFields;

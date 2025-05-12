@@ -47,13 +47,7 @@ import static js.base.Tools.*;
 public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
-  public void singleLineComment() {
-    classMode();
-    singleLineCommentOld();
-  }
-
-  @Test
-  public void multiLineCommentOld() {
+  public void multiLineComment() {
     p().pr("/* A multiline", CR);
     p().pr("     comment", CR);
     p().pr("  */   ");
@@ -63,13 +57,6 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeIntVarious() {
-    debug();
-    classMode();
-    typeIntVariousOld();
-  }
-
-  @Test
-  public void typeIntVariousOld() {
     p().pr("class {", INDENT, //
         "int alpha;", CR, //
         "int beta = " + Integer.MAX_VALUE + ";", CR, //
@@ -80,7 +67,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeIntListSerializationOld() {
+  public void typeIntListSerialization() {
     SampleDataType.Builder b = SampleDataType.newBuilder();
     b.i3(SAMPLE_INTS);
     SampleDataType x = b.build();
@@ -94,13 +81,6 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeByteVarious() {
-    debug();
-    classMode();
-    typeByteVariousOld();
-  }
-
-  @Test
-  public void typeByteVariousOld() {
     p().pr("class {", INDENT, //
         "byte alpha;", CR, //
         "byte beta = " + Byte.MAX_VALUE + ";", CR, //
@@ -150,12 +130,6 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeShortVarious() {
-    classMode();
-    typeShortVariousOld();
-  }
-
-  @Test
-  public void typeShortVariousOld() {
     p().pr("class {", INDENT, //
         "short alpha;", CR, //
         "short beta = " + Byte.MAX_VALUE + ";", CR, //
@@ -179,7 +153,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeLongVariousOld() {
+  public void typeLongVarious() {
     p().pr("class {", INDENT, //
         "long alpha;", CR, //
         "long beta = " + Long.MAX_VALUE + ";", CR, //
@@ -212,7 +186,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeFloatVariousOld() {
+  public void typeFloatVarious() {
     p().pr("class {", INDENT, //
         "float alpha;", CR, //
         "float beta = " + Float.MAX_VALUE + ";", CR, //
@@ -274,7 +248,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeDoubleVariousOld() {
+  public void typeDoubleVarious() {
     p().pr("class {", INDENT, //
         "double alpha;", CR, //
         "double beta = " + Double.MAX_VALUE + ";", CR, //
@@ -287,18 +261,6 @@ public class JavaGeneratorTest extends GenBaseTest {
 
   @Test
   public void typeString() {
-    debug();
-    typeStringUnsafe();
-  }
-
-  @Test
-  public void typeStringUnsafe() {
-    classMode();
-    typeStringOld();
-  }
-
-  @Test
-  public void typeStringOld() {
     p().pr("class {", INDENT, //
         "string alpha;", CR, //
         "string beta = \"hello\";", CR, //
@@ -311,7 +273,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeBoolOld() {
+  public void typeBool() {
     p().pr("class {", INDENT, //
         "bool alpha;", CR, //
         "bool beta = true;", CR, //
@@ -321,7 +283,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void externalOld() {
+  public void external() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "class {", INDENT, //
         "Beaver busy;", CR, //
@@ -367,7 +329,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void externalListOld() {
+  public void externalList() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "class {", INDENT, //
         "*Beaver mult;", CR, //
@@ -376,7 +338,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void external2Old() {
+  public void external2() {
     p().pr( // This one omits the 'extern' line, so it assumes the same package
         "class {", INDENT, //
         "Beaver busy;", CR, //
@@ -387,7 +349,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void externalRepeatedOld() {
+  public void externalRepeated() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "class {", INDENT, //
         "*Beaver b;", OUTDENT, //
@@ -396,7 +358,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void listOptOld() {
+  public void listOpt() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "class {", INDENT, //
         "?*Beaver busy;", OUTDENT, //
@@ -413,7 +375,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeFileVariousOld() {
+  public void typeFileVarious() {
     p().pr("class {", INDENT, //
         "File alpha;", CR, //
         "?File beta;", CR, //
@@ -425,19 +387,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeFileVariousUnsafe() {
-    classMode();
-    typeFileVariousOld();
-  }
-
-  @Test
-  public void typeFileVariousDebug() {
-    debug();
-    typeFileVariousUnsafe();
-  }
-
-  @Test
-  public void optCommentsOld() {
+  public void optComments() {
     addArg("comments");
     p().pr("class {", INDENT, //
         "File alpha;", CR, //
@@ -447,7 +397,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void builtInOld() {
+  public void builtIn() {
     p().pr("class {", INDENT, //
         "IPoint location;", CR, //
         "IRect x;", CR, //
@@ -462,7 +412,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   private static final JSList sampleList = list().add(15).add("hello");
 
   @Test
-  public void typeJsonMapVariousOld() {
+  public void typeJsonMapVarious() {
     p().pr("class {", INDENT, //
         "JSMap alpha;", CR, //
         "?JSMap beta;", CR, //
@@ -473,7 +423,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeJsonListVariousOld() {
+  public void typeJsonListVarious() {
     p().pr("class {", INDENT, //
         "JSList alpha;", CR, //
         "?JSList beta;", CR, //
@@ -500,7 +450,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void qualifiedReferenceOld() {
+  public void qualifiedReference() {
     p().pr("class {", INDENT, //
         "foo.gen.MongoParams mongo_params;", CR, //
         OUTDENT, "}");
@@ -508,7 +458,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void implicitEnumReferenceOld() {
+  public void implicitEnumReference() {
     p().pr("class {", INDENT, //
         "enum foo.gen.MongoEnum val;", CR, //
         OUTDENT, "}");
@@ -534,7 +484,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void ipointsOld() {
+  public void ipoints() {
     p().pr("class {", INDENT, //
         "IPoint a;", CR, //
         "?IPoint b;", CR, //
@@ -546,7 +496,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeMapVariousOld() {
+  public void typeMapVarious() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "class {", INDENT, //
         "map string File alpha;", CR, //
@@ -560,7 +510,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeSetVariousOld() {
+  public void typeSetVarious() {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "class {", INDENT, //
         "set File alpha;", CR, //
@@ -658,7 +608,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void deprecationsOld() {
+  public void deprecations() {
     p().pr("class {", INDENT, //
         "-int alpha;", CR, //
         "int beta = " + Integer.MAX_VALUE + ";", CR, //
@@ -685,198 +635,14 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void singleLineCommentOld() {
+  public void singleLineComment() {
     p().pr("// A single-line comment", CR);
     p().pr("class {int alpha;}");
     compile();
   }
 
   @Test
-  public void multiLineComment() {
-    classMode();
-    multiLineCommentOld();
-  }
-
-  @Test
-  public void typeIntListSerialization() {
-    SampleDataType.Builder b = SampleDataType.newBuilder();
-    b.i3(SAMPLE_INTS);
-    SampleDataType x = b.build();
-    String s = DataUtil.toString(x);
-    JSMap m = new JSMap(s);
-    SampleDataType u2 = SampleDataType.DEFAULT_INSTANCE.parse(m);
-    log("Original:", INDENT, x);
-    log("Parsed:", INDENT, u2);
-    assertEquals(x, u2);
-  }
-
-  @Test
-  public void typeLongVarious() {
-    p().pr("class {", INDENT, //
-        "long alpha;", CR, //
-        "long beta = " + Long.MAX_VALUE + ";", CR, //
-        "?long gamma;", CR, //
-        "?*long epsilon;", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
-  public void typeFloatVarious() {
-    p().pr("class {", INDENT, //
-        "float alpha;", CR, //
-        "float beta = " + Float.MAX_VALUE + ";", CR, //
-        "?float gamma;", CR, //
-        "?*float epsilon;", CR, //
-        "*float hotel;", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
-  public void typeDoubleVarious() {
-    p().pr("class {", INDENT, //
-        "double alpha;", CR, //
-        "double beta = " + Double.MAX_VALUE + ";", CR, //
-        "?double gamma;", CR, //
-        "?*double epsilon;", CR, //
-        "*double hotel = [3, 1e-3];", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
-  public void typeBool() {
-    classMode();
-    typeBoolOld();
-  }
-
-  @Test
-  public void external() {
-    classMode();
-    externalOld();
-  }
-
-  @Test
-  public void externalListDebug() {
-    debug();
-    externalList();
-  }
-
-  @Test
-  public void externalList() {
-    classMode();
-    externalListOld();
-  }
-
-  @Test
-  public void external2() {
-    classMode();
-    external2Old();
-  }
-
-  @Test
-  public void externalRepeatedDebug() {
-    debug();
-    externalRepeatedUnsafe();
-  }
-
-  @Test
-  public void externalRepeatedUnsafe() {
-    classMode();
-    externalRepeatedOld();
-  }
-
-  @Test
-  public void listOpt() {
-    classMode();
-    listOptOld();
-  }
-
-  @Test
-  public void typeFileVarious() {
-    p().pr("class {", INDENT, //
-        "File alpha;", CR, //
-        "?File beta;", CR, //
-        "*File gamma;", CR, //
-        "?*File delta;", CR, //
-        "File epsilon = ", quote("abc/xyz.txt"), ";", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
-  public void optComments() {
-    classMode();
-    optCommentsOld();
-  }
-
-  @Test
-  public void builtIn() {
-    classMode();
-    builtInOld();
-  }
-
-  @Test
-  public void typeJsonMapVarious() {
-    p().pr("class {", INDENT, //
-        "JSMap alpha;", CR, //
-        "?JSMap beta;", CR, //
-        "*JSMap gamma;", CR, //
-        "JSMap epsilon = ", map().put("a", 15).put("b", "hello"), ";", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
-  public void typeJsonListVarious() {
-    p().pr("class {", INDENT, //
-        "JSList alpha;", CR, //
-        "?JSList beta;", CR, //
-        "*JSList gamma;", CR, //
-        "JSList epsilon = ", sampleList.toString(), ";", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
-  public void qualifiedReference() {
-    classMode();
-    qualifiedReferenceOld();
-  }
-
-  @Test
-  public void implicitEnumReference() {
-    classMode();
-    implicitEnumReferenceOld();
-  }
-
-  @Test
-  public void ipoints() {
-    classMode();
-    ipointsOld();
-  }
-
-  @Test
-  public void typeMapVarious() {
-    p().pr("extern abc.xyz.Beaver;", CR, //
-        "class {", INDENT, //
-        "map string File alpha;", CR, //
-        "?map string File beta;", CR, //
-        "map string Beaver gamma;", CR, //
-        "map string string delta;", CR, //
-        OUTDENT, "}");
-    compile();
-  }
-
-  @Test
   public void typeBoxedValues() {
-    classMode();
-    typeBoxedValuesOld();
-  }
-
-  @Test
-  public void typeBoxedValuesOld() {
     p().pr(//
         "class {", INDENT, //
         "* string name_list;", CR, //
@@ -896,24 +662,6 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void typeBoxedValuesDebug() {
-    debug();
-    typeBoxedValues();
-  }
-
-  @Test
-  public void typeSetVarious() {
-    classMode();
-    typeSetVariousOld();
-  }
-
-  @Test
-  public void deprecations() {
-    classMode();
-    deprecationsOld();
-  }
-
-  @Test
   public void immutable() {
     p().pr(//
         "class {", INDENT, //
@@ -922,12 +670,6 @@ public class JavaGeneratorTest extends GenBaseTest {
         "set string str_set;", CR, //
         OUTDENT, "}");
     compile();
-  }
-
-  @Test
-  public void immutableDebug() {
-    debug();
-    immutable();
   }
 
   @Test
@@ -981,7 +723,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void implicitDebug() {
+  public void implicit() {
     p().pr(//
         "class {", INDENT, //
         "* string y = [\"hello\",\"bob\"];", CR, //
@@ -990,9 +732,9 @@ public class JavaGeneratorTest extends GenBaseTest {
   }
 
   @Test
-  public void explicitUnsafe() {
+  public void explicit() {
     p().pr(//
-        "unsafe class {", INDENT, //
+        "class {", INDENT, //
         "* string y = [\"hello\",\"bob\"];", CR, //
         OUTDENT, "}");
     compile();

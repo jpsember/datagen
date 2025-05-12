@@ -63,9 +63,6 @@ public final class JavaStringDataType extends JavaDataType {
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     String expr = Context.pt.PKG_DATAUTIL + ".parseListOfObjects(m.optJSList("
         + f.nameStringConstantQualified() + "), " + f.optional() + ")";
-    if (Context.debugMode()) {
-      expr = Context.pt.immutableCopyOfList(expr);
-    }
     s.a(f.instanceName(), " = ", expr, ";", CR);
   }
 

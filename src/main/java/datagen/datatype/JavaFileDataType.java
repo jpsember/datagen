@@ -82,7 +82,7 @@ public final class JavaFileDataType extends JavaDataType {
     sourceIfNotNull(s, "j");
     s.a("result = ", Context.pt.PKG_DATAUTIL, ".parseFileListFrom(j);");
     s.a(CLOSE);
-    s.a(f.instanceName(), " = ", Context.pt.assignToListExpr("result"), ";");
+    s.a(f.instanceName(), " = result;");
     sourceEndIf(s);
   }
 

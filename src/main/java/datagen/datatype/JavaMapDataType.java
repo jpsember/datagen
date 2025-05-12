@@ -90,12 +90,8 @@ public class JavaMapDataType extends JavaDataType {
         "mp.put(", wrappedKeyType().deserializeStringToMapKey("e.getKey()"), ", ",
         wrappedValueType().deserializeJsonToMapValue("e.getValue()"), ");", OUT //
     );
-    String expr = "mp";
-    if (Context.debugMode())
-      expr = Context.pt.immutableCopyOfMap(expr);
-    s.a(f.instanceName(), " = ", expr, ";", CLOSE, //
+    s.a(f.instanceName(), " = mp;", CLOSE, //
         CLOSE);
-
     s.close();
   }
 

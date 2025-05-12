@@ -81,7 +81,7 @@ public final class ParseTools {
     PKG_RUST_JSON = "{{crate.json.*|}}";
     PKG_RUST_ERROR = "{{std.error|}}";
   }
-  
+
   public static String goModuleExpr(String s) {
     return "github.com/jpsember/golang-base/base." + s;
   }
@@ -90,7 +90,8 @@ public final class ParseTools {
     return quote(goModuleExpr(s));
   }
 
-  public static final boolean SHOW_STACK_TRACES = (ISSUE_48 || DEBUG_RUST) && alert("showing full stack traces");
+  public static final boolean SHOW_STACK_TRACES = (ISSUE_48 || DEBUG_RUST)
+      && alert("showing full stack traces");
 
   public static final String EXT_DATA_DEFINITION = "dat";
   public static final String DOT_EXT_DATA_DEFINITION = "." + EXT_DATA_DEFINITION;
@@ -265,40 +266,6 @@ public final class ParseTools {
   public Object PKG_RUST_ERROR;
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
-
-  public final String immutableCopyOfList(String expr) {
-    String result = PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
-    if (Context.debugMode())
-      result += debugComment();
-    return result;
-  }
-
-
-  public final String immutableCopyOfMap(String expr) {
-    String result = PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
-    if (Context.debugMode())
-      result += debugComment();
-    return result;
-  }
-
-  public final String immutableCopyOfSet(String expr) {
-    String result = PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
-    if (Context.debugMode())
-      result += debugComment();
-    return result;
-  }
-
-  public Object assignToListExpr(String expr) {
-    if (Context.generatedTypeDef.isUnsafe())
-      return expr;
-    return immutableCopyOfList(expr);
-  }
-
-  public static Object debugComment() {
-    if (Context.debugMode())
-      return " /*DEBUG*/ ";
-    return "";
-  }
 
   public Language language() {
     return mLanguage;

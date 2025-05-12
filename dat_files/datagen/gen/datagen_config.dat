@@ -20,10 +20,6 @@ class {
   //
   bool verbose_names;
 
-  // Omit debug checks
-  //
-  bool unsafe;
-
   // Suppress some output (to quiet unit tests)
   //
   bool quiet_mode;

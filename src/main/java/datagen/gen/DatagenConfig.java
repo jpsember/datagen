@@ -47,10 +47,6 @@ public class DatagenConfig implements AbstractData {
     return mVerboseNames;
   }
 
-  public boolean unsafe() {
-    return mUnsafe;
-  }
-
   public boolean quietMode() {
     return mQuietMode;
   }
@@ -78,11 +74,9 @@ public class DatagenConfig implements AbstractData {
   protected static final String _7 = "comments";
   protected static final String _8 = "python_source_path";
   protected static final String _9 = "verbose_names";
-  protected static final String _10 = "class_mode";
-  protected static final String _11 = "unsafe";
-  protected static final String _12 = "quiet_mode";
-  protected static final String _13 = "format";
-  protected static final String _14 = "dbsim";
+  protected static final String _10 = "quiet_mode";
+  protected static final String _11 = "format";
+  protected static final String _12 = "dbsim";
 
   @Override
   public String toString() {
@@ -102,11 +96,9 @@ public class DatagenConfig implements AbstractData {
     m.putUnsafe(_7, mComments);
     m.putUnsafe(_8, mPythonSourcePath.toString());
     m.putUnsafe(_9, mVerboseNames);
-    m.putUnsafe(_10, mClassMode);
-    m.putUnsafe(_11, mUnsafe);
-    m.putUnsafe(_12, mQuietMode);
-    m.putUnsafe(_13, mFormat);
-    m.putUnsafe(_14, mDbsim);
+    m.putUnsafe(_10, mQuietMode);
+    m.putUnsafe(_11, mFormat);
+    m.putUnsafe(_12, mDbsim);
     return m;
   }
 
@@ -158,11 +150,9 @@ public class DatagenConfig implements AbstractData {
       }
     }
     mVerboseNames = m.opt(_9, false);
-    mClassMode = m.opt(_10, false);
-    mUnsafe = m.opt(_11, false);
-    mQuietMode = m.opt(_12, false);
-    mFormat = m.opt(_13, false);
-    mDbsim = m.opt(_14, false);
+    mQuietMode = m.opt(_10, false);
+    mFormat = m.opt(_11, false);
+    mDbsim = m.opt(_12, false);
   }
 
   public static Builder newBuilder() {
@@ -198,10 +188,6 @@ public class DatagenConfig implements AbstractData {
       return false;
     if (!(mVerboseNames == other.mVerboseNames))
       return false;
-    if (!(mClassMode == other.mClassMode))
-      return false;
-    if (!(mUnsafe == other.mUnsafe))
-      return false;
     if (!(mQuietMode == other.mQuietMode))
       return false;
     if (!(mFormat == other.mFormat))
@@ -226,8 +212,6 @@ public class DatagenConfig implements AbstractData {
       r = r * 37 + (mComments ? 1 : 0);
       r = r * 37 + mPythonSourcePath.hashCode();
       r = r * 37 + (mVerboseNames ? 1 : 0);
-      r = r * 37 + (mClassMode ? 1 : 0);
-      r = r * 37 + (mUnsafe ? 1 : 0);
       r = r * 37 + (mQuietMode ? 1 : 0);
       r = r * 37 + (mFormat ? 1 : 0);
       r = r * 37 + (mDbsim ? 1 : 0);
@@ -246,8 +230,6 @@ public class DatagenConfig implements AbstractData {
   protected boolean mComments;
   protected File mPythonSourcePath;
   protected boolean mVerboseNames;
-  protected boolean mClassMode;
-  protected boolean mUnsafe;
   protected boolean mQuietMode;
   protected boolean mFormat;
   protected boolean mDbsim;
@@ -266,8 +248,6 @@ public class DatagenConfig implements AbstractData {
       mComments = m.mComments;
       mPythonSourcePath = m.mPythonSourcePath;
       mVerboseNames = m.mVerboseNames;
-      mClassMode = m.mClassMode;
-      mUnsafe = m.mUnsafe;
       mQuietMode = m.mQuietMode;
       mFormat = m.mFormat;
       mDbsim = m.mDbsim;
@@ -297,8 +277,6 @@ public class DatagenConfig implements AbstractData {
       r.mComments = mComments;
       r.mPythonSourcePath = mPythonSourcePath;
       r.mVerboseNames = mVerboseNames;
-      r.mClassMode = mClassMode;
-      r.mUnsafe = mUnsafe;
       r.mQuietMode = mQuietMode;
       r.mFormat = mFormat;
       r.mDbsim = mDbsim;
@@ -352,17 +330,6 @@ public class DatagenConfig implements AbstractData {
 
     public Builder verboseNames(boolean x) {
       mVerboseNames = x;
-      return this;
-    }
-
-    @Deprecated
-    public Builder classMode(boolean x) {
-      mClassMode = x;
-      return this;
-    }
-
-    public Builder unsafe(boolean x) {
-      mUnsafe = x;
       return this;
     }
 

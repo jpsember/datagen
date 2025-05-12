@@ -220,8 +220,7 @@ final class DataDefinitionParser extends BaseObject {
         Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
     setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null));
 
-    boolean unsafeMode = Context.config.unsafe();
-
+    todo("header token is now just '-'");
     for (var ent : processHeaderTokens().entrySet()) {
       if (ISSUE_48)
         pr("...processing header token:", ent.getKey());
@@ -229,16 +228,11 @@ final class DataDefinitionParser extends BaseObject {
       default:
         ent.getValue().failWith("unexpected token");
         break;
-      case "unsafe":
-        unsafeMode = true;
-        break;
       case "-":
         Context.generatedTypeDef.setDeprecated(true);
         break;
       }
     }
-
-    Context.generatedTypeDef.setUnsafe(unsafeMode);
 
     read(BROP);
 
