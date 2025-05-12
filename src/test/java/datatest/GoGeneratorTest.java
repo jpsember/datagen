@@ -172,7 +172,7 @@ public class GoGeneratorTest extends GenBaseTest {
       "map string string q = \"{\\\"bar\\\":\\\"foo\\\"}\";", CR, //
         "map string long h;",CR,//
         "}");
-    alert("map string long fails; the long must be extracted from the JSEntity");
+    //alert("map string long fails; the long must be extracted from the JSEntity");
     compile();
   }
 

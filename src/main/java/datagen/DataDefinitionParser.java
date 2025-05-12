@@ -53,7 +53,6 @@ final class DataDefinitionParser extends BaseObject {
    */
   public void parse() {
     try {
-      //      prepareHandlers();
       startScanner();
       if (ISSUE_48 && false && alert("verbosity"))
         scanner().setVerbose(true);
@@ -67,8 +66,6 @@ final class DataDefinitionParser extends BaseObject {
       //    
       // Note, only one actual definition can appear in a .dat file.
       //
-
-      //mHeaderTokens = arrayList();
 
       outer: while (scanner().hasNext()) {
         var t = read();
@@ -143,14 +140,20 @@ final class DataDefinitionParser extends BaseObject {
     return scanner().peek();
   }
 
+  private boolean readIf(boolean flag) {
+    if (flag)
+      read();
+    return flag;
+  }
+
   private boolean readIf(String tokenText) {
     Token t = peek();
-    return (t != null && t.text().equals(tokenText));
+    return readIf(t != null && t.text().equals(tokenText));
   }
 
   private boolean readIf(int type) {
     Token t = peek();
-    return (t != null && t.id(type));
+    return readIf(t != null && t.id(type));
   }
 
   private Token read() {
@@ -370,16 +373,11 @@ final class DataDefinitionParser extends BaseObject {
    * 2) allow unquoted strings
    */
   private JSMap parseDefaultValueAsJsonMap() {
-    
-    var db = true;
-    
-    if (db) pr(VERT_SP,"parseDefaultValueAsJsonMap");
     StringBuilder sb = new StringBuilder();
     List<Integer> stack = arrayList();
     boolean done = false;
     while (!done) {
       Token t = read();
-      if (db) pr("...read:",t);
       switch (t.id()) {
       case NUMBER:
       case STRING:
@@ -401,7 +399,6 @@ final class DataDefinitionParser extends BaseObject {
           done = true;
         break;
       default:
-        if (db) pr("...stack size:",stack.size());
         checkState(!stack.isEmpty());
         // If not ',' ':' or boolean, wrap in quotes
         if (!(t.id(COLON) || t.id(COMMA) || t.id(BOOL))) {
