@@ -26,7 +26,6 @@ package datagen;
 
 import static js.base.Tools.*;
 import static datagen.ParseTools.*;
-import static datagen.Utils.*;
 
 import java.io.File;
 import java.util.List;
@@ -54,20 +53,25 @@ final class DataDefinitionParser extends BaseObject {
   public void parse() {
     try {
       startScanner();
-      if (ISSUE_48 && false && alert("verbosity"))
-        scanner().setVerbose(true);
 
-      // Start parsing the .dat file.  It can contain something like:
+      //  TODO: document this better, esp. with recent refactoring
       //
-      //  [-  | unsafe ] class {
-      //     ...fields...
+      //  <dat_file> ::= 
+      //     <extern_ref>*    ( <class_def> | <enum_def> )
       //
-      //  }
-      //    
-      // Note, only one actual definition can appear in a .dat file.
+      //  <extern_ref> ::=
+      //     (extern | enum) <type_name>;          <-- maybe require extern to precede enum?
+      //                                               then we could support multiple classes per file
       //
+      //  <class_def> ::= 
+      //        [-] class { <fields>* }
+      //
+      //  <enum_def> ::=
+      //        [-] enum  { <enum_names>* }
+      //
+      //  
 
-      outer: while (scanner().hasNext()) {
+      while (scanner().hasNext()) {
         var t = read();
 
         if (t.id(DEPRECATION)) {
@@ -80,15 +84,20 @@ final class DataDefinitionParser extends BaseObject {
         switch (t.text()) {
         case "extern":
           processExternalReference(DataTypeManager.constructContractDataType());
-          continue outer;
+          break;
         case "class":
           procDataType();
-          continue outer;
+          break;
         case "enum":
-          procEnum();
-          continue outer;
+          // If this is a declaration, an id followed by ;
+          if (peek().id(ID)) {
+            processExternalReference(EnumDataType.construct());
+          } else
+            procEnum();
+          break;
+        default:
+          t.failWith("unexpected token:", t.text());
         }
-        t.failWith("unexpected token:", t.text());
       }
 
       if (Context.generatedTypeDef == null)
@@ -174,6 +183,8 @@ final class DataDefinitionParser extends BaseObject {
    * ContractDataType or an EnumDataType)
    */
   private void processExternalReference(DataType dataType) {
+    if (mDeprecated)
+      mLastReadToken.failWith("cannot mark external reference deprecated");
     String nameExpression = read(ID);
     read(SEMI);
     QualifiedName q = QualifiedName.parse(nameExpression, packageName());
@@ -268,14 +279,7 @@ final class DataDefinitionParser extends BaseObject {
 
   private void procEnum() {
     DataType enumDataType = EnumDataType.construct();
-    // If this is a declaration, an id followed by ;
-    if (peek().id(ID)) {
-      processExternalReference(enumDataType);
-      return;
-    }
 
-    // Otherwise, it's a definition
-    //
     String enumName;
     String className2 = chomp(new File(Context.datWithSource.datRelPath()).getName(),
         DOT_EXT_DATA_DEFINITION);

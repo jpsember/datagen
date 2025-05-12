@@ -90,8 +90,7 @@ public final class ParseTools {
     return quote(goModuleExpr(s));
   }
 
-  public static final boolean SHOW_STACK_TRACES = (ISSUE_48 || DEBUG_RUST)
-      && alert("showing full stack traces");
+  public static final boolean SHOW_STACK_TRACES = DEBUG_RUST && alert("showing full stack traces");
 
   public static final String EXT_DATA_DEFINITION = "dat";
   public static final String DOT_EXT_DATA_DEFINITION = "." + EXT_DATA_DEFINITION;

@@ -97,8 +97,6 @@ public abstract class SourceGen extends BaseObject {
     //
     {
       MacroParser parser = new MacroParser();
-      if (false && ISSUE_48)
-        parser.setVerbose();
       parser.withTemplate(content).withMapper(m);
       content = parser.content();
     }
