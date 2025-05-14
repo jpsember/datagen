@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datagen;
 
@@ -85,21 +84,21 @@ final class DataDefinitionParser extends BaseObject {
         }
 
         switch (t.text()) {
-        case "extern":
-          processExternalReference(DataTypeManager.constructContractDataType());
-          break;
-        case "class":
-          procDataType();
-          break;
-        case "enum":
-          // If this is a declaration, an id followed by ;
-          if (peek().id(ID)) {
-            processExternalReference(EnumDataType.construct());
-          } else
-            procEnum();
-          break;
-        default:
-          t.failWith("unexpected token:", t.text());
+          case "extern":
+            processExternalReference(DataTypeManager.constructContractDataType());
+            break;
+          case "class":
+            procDataType();
+            break;
+          case "enum":
+            // If this is a declaration, an id followed by ;
+            if (peek().id(ID)) {
+              processExternalReference(EnumDataType.construct());
+            } else
+              procEnum();
+            break;
+          default:
+            t.failWith("unexpected token:", t.text());
         }
       }
 
@@ -223,9 +222,8 @@ final class DataDefinitionParser extends BaseObject {
       if (readIf(DEPRECATION))
         deprecated = true;
 
-      if (peek().id(OPTIONAL)) {
-       var t = read();
-       throw badArg("optional fields are no longer supported");
+      if (readIf(OPTIONAL)) {
+        throw badArg("optional fields are no longer supported");
       }
       if (readIf(REPEATED))
         structure = TypeStructure.LIST;
@@ -302,7 +300,7 @@ final class DataDefinitionParser extends BaseObject {
       String name = read(ID);
       ((EnumDataType) enumDataType).addLabel(name);
       while (readIf(COMMA) || readIf(SEMI))
-        continue;
+        ;
     }
   }
 
@@ -361,21 +359,21 @@ final class DataDefinitionParser extends BaseObject {
 
   /**
    * Parse the next series of tokens as a json value, one of:
-   * 
+   *
    * A Json map, starting with {
-   * 
+   *
    * A JSList, starting with [
-   * 
+   *
    * A string, starting with "
-   * 
+   *
    * A boolean or number
-   * 
+   *
    * If the resulting json value is not a JSMap, wrap it in a JSMap with key ""
-   * 
+   *
    * Be forgiving of incorrect json, specifically:
-   * 
+   *
    * 1) allow (one) extra comma at the end of a map or list
-   * 
+   *
    * 2) allow unquoted strings
    */
   private JSMap parseDefaultValueAsJsonMap() {
@@ -385,32 +383,32 @@ final class DataDefinitionParser extends BaseObject {
     while (!done) {
       Token t = read();
       switch (t.id()) {
-      case NUMBER:
-      case STRING:
-      case BOOL:
-        if (stack.isEmpty())
-          done = true;
-        break;
-      case BROP:
-        push(stack, BRCL);
-        break;
-      case SQOP:
-        push(stack, SQCL);
-        break;
-      case BRCL:
-      case SQCL:
-        checkState(last(stack) == t.id());
-        pop(stack);
-        if (stack.isEmpty())
-          done = true;
-        break;
-      default:
-        checkState(!stack.isEmpty());
-        // If not ',' ':' or boolean, wrap in quotes
-        if (!(t.id(COLON) || t.id(COMMA) || t.id(BOOL))) {
-          t = withText(t, quote(t.text()));
-        }
-        break;
+        case NUMBER:
+        case STRING:
+        case BOOL:
+          if (stack.isEmpty())
+            done = true;
+          break;
+        case BROP:
+          push(stack, BRCL);
+          break;
+        case SQOP:
+          push(stack, SQCL);
+          break;
+        case BRCL:
+        case SQCL:
+          checkState(last(stack) == t.id());
+          pop(stack);
+          if (stack.isEmpty())
+            done = true;
+          break;
+        default:
+          checkState(!stack.isEmpty());
+          // If not ',' ':' or boolean, wrap in quotes
+          if (!(t.id(COLON) || t.id(COMMA) || t.id(BOOL))) {
+            t = withText(t, quote(t.text()));
+          }
+          break;
       }
 
       // If we're appending } or ], and previous character is ',', remove previous character (extra comma)
@@ -458,24 +456,24 @@ final class DataDefinitionParser extends BaseObject {
       File datPath = new File(Context.datWithSource.datRelPath());
       String parentName = nullToEmpty(datPath.getParent());
       switch (Context.config.language()) {
-      case JAVA:
-      case PYTHON:
-        mPackageName = parentName.replace('/', '.');
+        case JAVA:
+        case PYTHON:
+          mPackageName = parentName.replace('/', '.');
+          break;
+        case GO: {
+          // I think we want to set the package name to the last component of the package name
+          int c = parentName.lastIndexOf('/');
+          mPackageName = parentName.substring(c + 1);
+        }
         break;
-      case GO: {
-        // I think we want to set the package name to the last component of the package name
-        int c = parentName.lastIndexOf('/');
-        mPackageName = parentName.substring(c + 1);
-      }
+        case RUST: {
+          int c = parentName.lastIndexOf(':');
+          mPackageName = parentName.substring(c + 1);
+        }
         break;
-      case RUST: {
-        int c = parentName.lastIndexOf(':');
-        mPackageName = parentName.substring(c + 1);
-      }
-        break;
-      default:
-        Utils.languageNotSupported();
-        break;
+        default:
+          Utils.languageNotSupported();
+          break;
       }
       checkNotNull(mPackageName, "language not supported");
     }
