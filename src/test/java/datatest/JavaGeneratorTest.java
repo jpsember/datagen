@@ -60,8 +60,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "int alpha;", CR, //
         "int beta = " + Integer.MAX_VALUE + ";", CR, //
-        "?int gamma;", CR, //
-        "?*int epsilon;", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -84,8 +82,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "byte alpha;", CR, //
         "byte beta = " + Byte.MAX_VALUE + ";", CR, //
-        "?byte gamma;", CR, //
-        "?*byte epsilon;", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -133,8 +129,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "short alpha;", CR, //
         "short beta = " + Byte.MAX_VALUE + ";", CR, //
-        "?short gamma;", CR, //
-        "?*short epsilon;", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -157,8 +151,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "long alpha;", CR, //
         "long beta = " + Long.MAX_VALUE + ";", CR, //
-        "?long gamma;", CR, //
-        "?*long epsilon;", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -190,8 +182,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "float alpha;", CR, //
         "float beta = " + Float.MAX_VALUE + ";", CR, //
-        "?float gamma;", CR, //
-        "?*float epsilon;", CR, //
         "*float hotel;", CR, //
         OUTDENT, "}");
     compile();
@@ -252,8 +242,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "double alpha;", CR, //
         "double beta = " + Double.MAX_VALUE + ";", CR, //
-        "?double gamma;", CR, //
-        "?*double epsilon;", CR, //
         "*double hotel = [3, 1e-3];", CR, //
         OUTDENT, "}");
     compile();
@@ -264,9 +252,9 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "string alpha;", CR, //
         "string beta = \"hello\";", CR, //
-        "?string gamma;", CR, //
+//        "?string gamma;", CR, //
         "*string delta;", CR, //
-        "?*string epsilon;", CR, //
+//        "*string epsilon;", CR, //
         "*string hotel = [\"abc\",\"123\"];", CR, //
         OUTDENT, "}");
     compile();
@@ -277,7 +265,7 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "bool alpha;", CR, //
         "bool beta = true;", CR, //
-        "?bool gamma;", CR, //
+//        "?bool gamma;", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -287,7 +275,7 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "class {", INDENT, //
         "Beaver busy;", CR, //
-        "?Beaver opt;", CR, //
+       //  "?Beaver opt;", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -342,7 +330,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr( // This one omits the 'extern' line, so it assumes the same package
         "class {", INDENT, //
         "Beaver busy;", CR, //
-        "?Beaver opt;", CR, //
         OUTDENT, "}");
     generateDummyDatFile("Beaver");
     compile();
@@ -353,15 +340,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "class {", INDENT, //
         "*Beaver b;", OUTDENT, //
-        "}");
-    compile();
-  }
-
-  @Test
-  public void listOpt() {
-    p().pr("extern abc.xyz.Beaver;", CR, //
-        "class {", INDENT, //
-        "?*Beaver busy;", OUTDENT, //
         "}");
     compile();
   }
@@ -378,9 +356,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   public void typeFileVarious() {
     p().pr("class {", INDENT, //
         "File alpha;", CR, //
-        "?File beta;", CR, //
         "*File gamma;", CR, //
-        "?*File delta;", CR, //
         "File epsilon = ", quote("abc/xyz.txt"), ";", CR, //
         OUTDENT, "}");
     compile();
@@ -415,7 +391,6 @@ public class JavaGeneratorTest extends GenBaseTest {
   public void typeJsonMapVarious() {
     p().pr("class {", INDENT, //
         "JSMap alpha;", CR, //
-        "?JSMap beta;", CR, //
         "*JSMap gamma;", CR, //
         "JSMap epsilon = ", sampleMap.toString(), ";", CR, //
         OUTDENT, "}");
@@ -426,7 +401,6 @@ public class JavaGeneratorTest extends GenBaseTest {
   public void typeJsonListVarious() {
     p().pr("class {", INDENT, //
         "JSList alpha;", CR, //
-        "?JSList beta;", CR, //
         "*JSList gamma;", CR, //
         "JSList epsilon = ", sampleList.toString(), ";", CR, //
         OUTDENT, "}");
@@ -487,9 +461,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   public void ipoints() {
     p().pr("class {", INDENT, //
         "IPoint a;", CR, //
-        "?IPoint b;", CR, //
         "*IPoint c;", CR, //
-        "?*IPoint d;", CR, //
         "IPoint e = [32,64];", CR, //
         OUTDENT, "}");
     compile();
@@ -500,7 +472,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "class {", INDENT, //
         "map string File alpha;", CR, //
-        "?map string File beta;", CR, //
         "map string Beaver gamma;", CR, //
         "map string string delta;", CR, //
         "map int Beaver zulu;", CR, //
@@ -514,7 +485,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "class {", INDENT, //
         "set File alpha;", CR, //
-        "?set File beta;", CR, //
         "set Beaver gamma;", CR, //
         "set string delta;", CR, //
         OUTDENT, "}");
@@ -612,8 +582,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "-int alpha;", CR, //
         "int beta = " + Integer.MAX_VALUE + ";", CR, //
-        "-?int gamma;", CR, //
-        "-?*int epsilon;", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -750,33 +718,23 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "int i1;", CR, //
         "int i2 = " + Integer.MAX_VALUE + ";", CR, //
-        "?int i3;", CR, //
-        "?*int i4;", CR, //
 
         "byte by1;", CR, //
         "byte by2 = " + Byte.MAX_VALUE + ";", CR, //
-        "?byte by3;", CR, //
-        "?*byte by4;", CR, //
 
         "string str1;", CR, //
         "string str2 = \"hello\";", CR, //
-        "?string src3;", CR, //
         "*string str4;", CR, //
-        "?*string str5;", CR, //
         "*string str6 = [\"abc\",\"123\"];", CR, //
 
         "bool bool1;", CR, //
         "bool bool2 = true;", CR, //
-        "?bool bool3;", CR, //
 
         "Bah bv1;", CR, //
-        "?Bah bv2;", CR, //
         "*Bah bv3;", CR, //
 
         "File file1;", CR, //
-        "?File file2;", CR, //
         "*File file3;", CR, //
-        "?*File file4;", CR, //
         "File file5 = ", quote("abc/xyz.txt"), ";", CR, //
 
         "IPoint location;", CR, //
@@ -786,12 +744,10 @@ public class JavaGeneratorTest extends GenBaseTest {
         "Matrix mat;", CR, //
 
         "JSMap jalpha;", CR, //
-        "?JSMap jbeta;", CR, //
         "*JSMap jgamma;", CR, //
         "JSMap jepsilon = ", sampleMap.toString(), ";", CR, //
 
         "JSList lalpha;", CR, //
-        "?JSList lbeta;", CR, //
         "*JSList lgamma;", CR, //
         "JSList lepsilon = ", sampleList.toString(), ";", CR, //
 
@@ -799,13 +755,10 @@ public class JavaGeneratorTest extends GenBaseTest {
         "enum foo.gen.Zebra zeb;", CR, //
 
         "IPoint za;", CR, //
-        "?IPoint zb;", CR, //
         "*IPoint zc;", CR, //
-        "?*IPoint zd;", CR, //
         "IPoint ze = [32,64];", CR, //
 
         "map string File mp1;", CR, //
-        "?map string File mp2;", CR, //
         "map string Bah mp3;", CR, //
         "map string string mp4;", CR, //
 
@@ -813,7 +766,6 @@ public class JavaGeneratorTest extends GenBaseTest {
         "set long ages_set;", CR, //
 
         "set File set1;", CR, //
-        "?set File set2;", CR, //
         "set Bah set3;", CR, //
         "set string set4;", CR, //
         OUTDENT, "}");

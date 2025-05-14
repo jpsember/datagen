@@ -231,6 +231,7 @@ public abstract class DataType implements DefaultValueParser {
     return null;
   }
 
+  @Deprecated
   public final DataType getOptionalVariant() {
     if (!mPreparedVariantOptional) {
       mPreparedVariantOptional = true;

@@ -44,7 +44,6 @@ public class PythonGeneratorTest extends GenBaseTest {
   public void simple() {
     p().pr("class {", INDENT, //
         "int alpha = 42;", CR, //
-        "? int beta;", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -54,7 +53,6 @@ public class PythonGeneratorTest extends GenBaseTest {
     p().pr("extern abc.xyz.Foo;", CR);
     p().pr("class {", INDENT, //
         "Foo delta;", CR, //
-        "?Foo optional;", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -64,9 +62,7 @@ public class PythonGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "int alpha;", CR, //
         "int beta = 42;", CR, //
-        "?int gamma;", CR, //
         "*int delta;", CR, //
-        "?*int epsilon;", CR, //
         "long omega;", CR, //
         OUTDENT, "}");
     compile();
@@ -77,7 +73,6 @@ public class PythonGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "bool alpha;", CR, //
         "bool beta = true;", CR, //
-        "?bool gamma;", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -86,10 +81,8 @@ public class PythonGeneratorTest extends GenBaseTest {
   public void doubles() {
     p().pr("class {", INDENT, //
         "*double foo;", CR, //
-        "?double golf;", CR, // 
         "float hotel;", CR, //
         "*float india;", CR, //
-        "?*float juliet;", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -100,9 +93,7 @@ public class PythonGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "string alpha;", CR, //
         "string beta = \"hello\";", CR, //
-        "?string gamma;", CR, //
         "*string delta;", CR, //
-        "?*string epsilon;", CR, //
         "*string fox = ", sampleStringList, ";", CR, //
         OUTDENT, "}");
     compile();
@@ -134,9 +125,7 @@ public class PythonGeneratorTest extends GenBaseTest {
     p().pr("enum Zebra;", CR, //
         "class {", INDENT, //
         "Zebra alpha;", CR, //
-        "?Zebra gamma;", CR, //
         "*Zebra delta;", CR, //
-        "?*Zebra epsilon;", CR, //
         OUTDENT, //
         "}");
     compile();
@@ -146,9 +135,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   public void typeFile() {
     p().pr("class {", INDENT, //
         "File alpha;", CR, //
-        "?File beta;", CR, //
         "*File gamma;", CR, //
-        "?*File delta;", CR, //
         "File epsilon = ", quote("abc/xyz.txt"), ";", CR, //
         OUTDENT, "}");
     compile();
@@ -158,9 +145,7 @@ public class PythonGeneratorTest extends GenBaseTest {
   public void ipoints() {
     p().pr("class {", INDENT, //
         "IPoint a;", CR, //
-        "?IPoint b;", CR, //
         "*IPoint c;", CR, //
-        "?*IPoint d;", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -170,7 +155,6 @@ public class PythonGeneratorTest extends GenBaseTest {
     addArg("python_source_path", sourceDir().toString() + "/alt");
     p().pr("class {", INDENT, //
         "Foo delta;", CR, //
-        "?Foo optional;", CR, //
         OUTDENT, "}");
     generateDummyDatFile("foo");
     compile();

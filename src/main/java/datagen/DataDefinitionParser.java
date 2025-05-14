@@ -210,7 +210,6 @@ final class DataDefinitionParser extends BaseObject {
         break;
 
       TypeStructure structure;
-      boolean optional = false;
       boolean deprecated = false;
 
       // A field specification has this syntax:
@@ -223,8 +222,11 @@ final class DataDefinitionParser extends BaseObject {
       //
       if (readIf(DEPRECATION))
         deprecated = true;
-      if (readIf(OPTIONAL))
-        optional = true;
+
+      if (peek().id(OPTIONAL)) {
+       var t = read();
+       throw badArg("optional fields are no longer supported");
+      }
       if (readIf(REPEATED))
         structure = TypeStructure.LIST;
       else if (readIf("map"))
@@ -249,7 +251,7 @@ final class DataDefinitionParser extends BaseObject {
         }
       }
 
-      FieldDef fieldDef = Context.generatedTypeDef.addField(deprecated, optional, structure, primaryType,
+      FieldDef fieldDef = Context.generatedTypeDef.addField(deprecated, false, structure, primaryType,
           auxType, fieldName);
 
       if (readIf(EQUALS)) {
