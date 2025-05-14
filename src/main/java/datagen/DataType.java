@@ -367,4 +367,20 @@ public abstract class DataType implements DefaultValueParser {
     throw languageNotSupported("wrapInBuildExpression for type:", getClass().getName());
   }
 
+  /**
+   * Modify a code expression, if necessary, to copy a field from a static object to its builder form.
+   *
+   * Default returns the input expression.
+   *
+   * For example, a StringArray should construct a mutable copy of the input array.
+   */
+  public String staticToBuilder(String expr) {
+    return expr;
+  }
+
+  public String builderToStatic(String expr) {
+    return expr;
+  }
+
+
 }
