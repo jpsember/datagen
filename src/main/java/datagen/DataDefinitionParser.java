@@ -54,6 +54,9 @@ final class DataDefinitionParser extends BaseObject {
     try {
       startScanner();
 
+      // TODO: add support for multiple data classes (and enums) defined in a single data definition file
+
+
       //  TODO: document this better, esp. with recent refactoring
       //
       //  <dat_file> ::= 
