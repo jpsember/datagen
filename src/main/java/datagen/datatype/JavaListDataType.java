@@ -25,6 +25,7 @@ package datagen.datatype;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
+import static datagen.Utils.*;
 
 import datagen.Context;
 import datagen.DataType;
@@ -35,8 +36,6 @@ import js.json.JSList;
 import js.json.JSMap;
 import js.json.JSUtils;
 
-import java.util.ArrayList;
-
 public class JavaListDataType extends JavaDataType {
 
   public JavaListDataType(DataType wrappedType) {
@@ -46,7 +45,9 @@ public class JavaListDataType extends JavaDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return Context.pt.PKG_DATAUTIL + ".emptyList()";
+    // Note: the default value is mutable, which may lead to problems as a client
+    // could insert things into the array returned from a static object
+    return "new " + Context.pt.PKG_ARRAYLIST + "(0)";
   }
 
   public DataType wrappedType() {
@@ -114,10 +115,15 @@ public class JavaListDataType extends JavaDataType {
     s.a(targetExpr, " = ", expr);
   }
 
-//  @Override
-//  public String staticToBuilder(String expr) {
-//    return "new ArrayList(" + expr + ")";
-//  }
+  @Override
+  public String staticToBuilder(String expr) {
+    return Context.pt.PKG_DATAUTIL + ".mutableCopyOf(" + expr + ")";
+  }
+
+  @Override
+  public String builderToStatic(String expr) {
+    return Context.pt.PKG_DATAUTIL + ".immutableCopyOf(" + expr + ")";
+  }
 
   private final DataType mWrappedType;
 }

@@ -275,7 +275,7 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("extern abc.xyz.Beaver;", CR, //
         "class {", INDENT, //
         "Beaver busy;", CR, //
-       //  "?Beaver opt;", CR, //
+        "*Beaver vec;", CR, //
         OUTDENT, "}");
     compile();
   }
