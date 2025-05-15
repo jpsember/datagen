@@ -44,7 +44,7 @@ public class JavaListDataType extends JavaDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    return Context.pt.PKG_DATAUTIL + ".EMPTY_LIST";
+    return Context.pt.PKG_DATAUTIL + ".IMMUTABLE_EMPTY_LIST";
   }
 
   @Override
