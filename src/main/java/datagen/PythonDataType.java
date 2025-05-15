@@ -61,12 +61,12 @@ public class PythonDataType extends DataType {
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     if (f.optional()) {
-      s.a("x = obj.get(", f.nameStringConstantQualified(), ", ", f.nullIfOptional("[]"), ")", CR, //
+      s.a("x = obj.get(", f.nameStringConstantQualified(), ", ",  "[]" , ")", CR, //
           "if x is not None:", OPEN, //
           "inst.", f.instanceName(), " = x.copy()", CLOSE);
     } else {
       s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
-          f.nullIfOptional("[]"), ").copy()", CR);
+          "[]", ").copy()", CR);
     }
   }
 

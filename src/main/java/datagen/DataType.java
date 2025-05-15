@@ -151,6 +151,21 @@ public abstract class DataType implements DefaultValueParser {
 
   private String mCachedSourceDefaultValue;
 
+  /**
+   * Get source code for type's default value, in mutable form
+   */
+  public String provideSourceDefaultValueForBuilder() {
+    return provideSourceDefaultValue();
+  }
+
+  public final String sourceDefaultValueForBuilder() {
+    if (mCachedSourceDefaultValueForBuilder == null)
+      mCachedSourceDefaultValueForBuilder = provideSourceDefaultValueForBuilder();
+    return mCachedSourceDefaultValueForBuilder;
+  }
+
+  private String mCachedSourceDefaultValueForBuilder;
+
   // ------------------------------------------------------------------
 
 

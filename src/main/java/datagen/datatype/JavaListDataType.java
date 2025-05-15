@@ -25,7 +25,6 @@ package datagen.datatype;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
-import static datagen.Utils.*;
 
 import datagen.Context;
 import datagen.DataType;
@@ -45,8 +44,11 @@ public class JavaListDataType extends JavaDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    // Note: the default value is mutable, which may lead to problems as a client
-    // could insert things into the array returned from a static object
+    return Context.pt.PKG_DATAUTIL + ".EMPTY_LIST";
+  }
+
+  @Override
+  public String provideSourceDefaultValueForBuilder() {
     return "new " + Context.pt.PKG_ARRAYLIST + "(0)";
   }
 
@@ -109,7 +111,7 @@ public class JavaListDataType extends JavaDataType {
     if (f.optional() || isPrimitive()) {
       expr = "x";
     } else {
-      expr = "(x == null) ? " + f.defaultValueOrNull() + " : x";
+      expr = "(x == null) ? " + f.defaultValueSourceForBuilder() + " : x";
     }
 
     s.a(targetExpr, " = ", expr);

@@ -45,7 +45,7 @@ public class RustFieldDef extends FieldDef {
 
   @Override
   public String defaultValueOrNull() {
-    return dataType().setterArgUsage(nullIfOptional(defaultValueSource()));
+    return dataType().setterArgUsage( defaultValueSource() );
   }
 
 }

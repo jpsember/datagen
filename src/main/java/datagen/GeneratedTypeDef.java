@@ -107,10 +107,10 @@ public final class GeneratedTypeDef extends BaseObject {
   /**
    * Add a field to this data type
    */
-  public FieldDef addField(boolean deprecated, boolean optional, TypeStructure structure,
+  public FieldDef addField(boolean deprecated, boolean unusedOptional, TypeStructure structure,
       PartialType primaryType, PartialType auxType, String fieldName) {
     if (verbose())
-      log(structure, fieldName, logStr(primaryType), logStr(auxType), optional);
+      log(structure, fieldName, logStr(primaryType), logStr(auxType));
     boolean added = mFieldNames.add(fieldName);
     checkState(added, "duplicate field name: " + fieldName);
 
@@ -184,7 +184,7 @@ public final class GeneratedTypeDef extends BaseObject {
     }
     complexType.setUsedFlag();
     FieldDef f = FieldDef.construct();
-    f.init(fieldName, complexType, optional, deprecated, mFields.size());
+    f.init(fieldName, complexType,   deprecated, mFields.size());
     mFields.add(f);
     return f;
   }

@@ -26,7 +26,7 @@ public class JavaDataType extends DataType {
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String expr;
-    if (f.optional() || isPrimitive()) {
+    if (isPrimitive()) {
       expr = "x";
     } else {
       expr = "(x == null) ? " + f.defaultValueOrNull() + " : x";
@@ -68,7 +68,8 @@ public class JavaDataType extends DataType {
 
   @Override
   public final void sourceIfNotNull(SourceBuilder s, FieldDef f) {
-    s.doIf(f.optional(), "if (", f.instanceName(), " != null)", OPEN);
+    // Note: this is always false
+    s.doIf(false, "if (", f.instanceName(), " != null)", OPEN);
   }
 
   @Override
@@ -91,7 +92,7 @@ public class JavaDataType extends DataType {
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a(f.instanceName(), " = js.data.DataUtil.parse", typeName(), "List(m, ",
-        f.nameStringConstantQualified(), ", ", f.optional(), ");");
+        f.nameStringConstantQualified(), ", ", false, ");");
   }
 
   // ------------------------------------------------------------------
@@ -110,10 +111,9 @@ public class JavaDataType extends DataType {
   /**
    * Generate source code to deserialize a JSON value to a value to be stored in
    * a map
-   * 
-   * @param jsonValue
-   *          representation of a JSMap value (from a key/value pair), or a
-   *          JSList value
+   *
+   * @param jsonValue representation of a JSMap value (from a key/value pair), or a
+   *                  JSList value
    */
   public String deserializeJsonToMapValue(String jsonValue) {
     if (isPrimitive())

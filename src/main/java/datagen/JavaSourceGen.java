@@ -49,11 +49,11 @@ public final class JavaSourceGen extends SourceGen {
   }
 
   @Override
-  protected final /* <-- for now */ String generateCopyFromBuilderToImmutable() {
+  protected String generateCopyFromBuilderToImmutable() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(6);
     for (FieldDef f : def.fields()) {
-      s.a("r.", f.instanceName(), " = ", f.instanceName(), ";");
+      s.a("r.", f.instanceName(), " = ", f.dataType().builderToStatic(f.instanceName()), ";");
       s.cr();
     }
     return chomp(content());

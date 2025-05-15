@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datagen;
 
@@ -36,16 +35,16 @@ public abstract class FieldDef extends BaseObject {
 
   public static FieldDef construct() {
     switch (Context.pt.language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      return new JavaFieldDef();
-    case PYTHON:
-      return new PythonFieldDef();
-    case GO:
-      return new GoFieldDef();
-    case RUST:
-      return new RustFieldDef();
+      default:
+        throw languageNotSupported();
+      case JAVA:
+        return new JavaFieldDef();
+      case PYTHON:
+        return new PythonFieldDef();
+      case GO:
+        return new GoFieldDef();
+      case RUST:
+        return new RustFieldDef();
     }
   }
 
@@ -57,11 +56,10 @@ public abstract class FieldDef extends BaseObject {
     return mIndex;
   }
 
-  public final void init(String name, DataType dataType, boolean optional, boolean deprecated, int index) {
+  public final void init(String name, DataType dataType, boolean deprecated, int index) {
     setName(name);
     mIndex = index;
     mDataType = dataType;
-    mOptional = optional;
     mDeprecated = deprecated;
   }
 
@@ -73,8 +71,9 @@ public abstract class FieldDef extends BaseObject {
     return mDataType;
   }
 
+  @Deprecated
   public final boolean optional() {
-    return mOptional;
+    return false; //return mOptional;
   }
 
   public final boolean deprecated() {
@@ -135,26 +134,17 @@ public abstract class FieldDef extends BaseObject {
 
   // ------------------------------------------------------------------
 
+  @Deprecated
+  public String defaultValueOrNull() {
+    return defaultValueSource();
+  }
+
   public void setDefaultValue(String defValueSource) {
     mCachedDefaultValueSource = defValueSource;
   }
 
-  /**
-   * If field is optional, return 'null' (or 'None'); else, the provided
-   * expression
-   */
-  public String nullIfOptional(Object nonNullExpr) {
-    if (!optional())
-      return nonNullExpr.toString();
-    return Utils.nullExpr();
-  }
-
-  /**
-   * Return field's default value, or 'null' (or 'None') if the field is
-   * optional
-   */
-  public String defaultValueOrNull() {
-    return nullIfOptional(defaultValueSource());
+  public void setDefaultValueForBuilder(String defValueSource) {
+    mCachedDefaultValueSourceForBuilder = defValueSource;
   }
 
   public final String defaultValueSource() {
@@ -163,13 +153,19 @@ public abstract class FieldDef extends BaseObject {
     return mCachedDefaultValueSource;
   }
 
+  public final String defaultValueSourceForBuilder() {
+    if (mCachedDefaultValueSourceForBuilder == null)
+      setDefaultValueForBuilder(dataType().sourceDefaultValueForBuilder());
+    return mCachedDefaultValueSourceForBuilder;
+  }
+
   private String mCachedNameString;
   private String mCachedNameStringQualified;
   private int mIndex;
   private DataType mDataType;
-  private boolean mOptional;
   private boolean mDeprecated;
   private String mCachedDefaultValueSource;
+  private String mCachedDefaultValueSourceForBuilder;
   private String mCachedInstanceName;
   private String mCachedGetterName;
   private String mCachedSetterName;
