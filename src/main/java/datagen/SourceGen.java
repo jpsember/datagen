@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datagen;
 
@@ -44,16 +43,16 @@ public abstract class SourceGen extends BaseObject {
 
   public static SourceGen construct() {
     switch (Context.pt.language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      return new JavaSourceGen();
-    case PYTHON:
-      return new PythonSourceGen();
-    case GO:
-      return new GoSourceGen();
-    case RUST:
-      return new RustSourceGen();
+      default:
+        throw languageNotSupported();
+      case JAVA:
+        return new JavaSourceGen();
+      case PYTHON:
+        return new PythonSourceGen();
+      case GO:
+        return new GoSourceGen();
+      case RUST:
+        return new RustSourceGen();
     }
   }
 
@@ -130,6 +129,9 @@ public abstract class SourceGen extends BaseObject {
     //
     content = Context.pt.adjustLinefeeds(content);
     File target = sourceFile();
+    checkArgument(!"Multiple.java".equals(target.getName()));
+    pr(VERT_SP, "writing target source:", target, VERT_SP);
+
     Context.files.mkdirs(Files.parent(target));
     boolean wrote = Context.files.writeIfChanged(target, content);
     Context.generatedFilesSet.add(target);
@@ -165,6 +167,7 @@ public abstract class SourceGen extends BaseObject {
   }
 
   private String sourceFileRelative() {
+//    die("don't use datWithSource");
     return Context.datWithSource.sourceRelPath();
   }
 
@@ -182,13 +185,13 @@ public abstract class SourceGen extends BaseObject {
   /**
    * <pre>
    * Find references to classes that need importing, eg. "import json"
-   * 
+   *
    * We will look for expressions of the form "{{xxxx|yyyy}}" and then:
-   * 
+   *
    * 1) replace that expression with "yyyy" within the source
    * 2) generate an import statement for the expression "xxxx", which might be
    *    a fully qualified class name
-   * 
+   *
    * </pre>
    */
   private String extractImportExpressions(String template) {

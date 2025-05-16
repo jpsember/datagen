@@ -57,6 +57,7 @@ public abstract class GenBaseTest extends MyTestCase {
     app.startApplication(DataUtil.toStringArray(args()));
     if (app.returnCode() != 0)
       throw die(app.getError());
+    //halt("generated:",Files.infoMap(generatedDir()));
     assertGenerated();
   }
 

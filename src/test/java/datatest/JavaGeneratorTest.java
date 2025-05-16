@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datatest;
 
@@ -97,19 +96,19 @@ public class JavaGeneratorTest extends GenBaseTest {
       Short.MIN_VALUE, Short.MIN_VALUE + 1, Short.MIN_VALUE + 2, Short.MIN_VALUE + 3, //
       -4, -3, -2, -1, //
       0, 1, 2, 3, //
-      Short.MAX_VALUE - 3, Short.MAX_VALUE - 2, Short.MAX_VALUE - 1, Short.MAX_VALUE, };
+      Short.MAX_VALUE - 3, Short.MAX_VALUE - 2, Short.MAX_VALUE - 1, Short.MAX_VALUE,};
 
   private static int[] SAMPLE_INTS = { //
       Integer.MIN_VALUE, Integer.MIN_VALUE + 1, Integer.MIN_VALUE + 2, Integer.MIN_VALUE + 3, //
       -4, -3, -2, -1, //
       0, 1, 2, 3, //
-      Integer.MAX_VALUE - 3, Integer.MAX_VALUE - 2, Integer.MAX_VALUE - 1, Integer.MAX_VALUE, };
+      Integer.MAX_VALUE - 3, Integer.MAX_VALUE - 2, Integer.MAX_VALUE - 1, Integer.MAX_VALUE,};
 
   private static long[] SAMPLE_LONGS = { //
       Long.MIN_VALUE, Long.MIN_VALUE + 1, Long.MIN_VALUE + 2, Long.MIN_VALUE + 3, //
       -4, -3, -2, -1, //
       0, 1, 2, 3, //
-      Long.MAX_VALUE - 3, Long.MAX_VALUE - 2, Long.MAX_VALUE - 1, Long.MAX_VALUE, };
+      Long.MAX_VALUE - 3, Long.MAX_VALUE - 2, Long.MAX_VALUE - 1, Long.MAX_VALUE,};
 
   @Test
   public void typeByteListSerialization() {
@@ -190,7 +189,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void typeFloatListSerialization() {
     SampleDataType.Builder u = SampleDataType.newBuilder();
-    float[] SAMPLE_FLOATS = { 3.1415f, 1000f };
+    float[] SAMPLE_FLOATS = {3.1415f, 1000f};
 
     u.f3(SAMPLE_FLOATS);
     SampleDataType v = u.build();
@@ -224,7 +223,7 @@ public class JavaGeneratorTest extends GenBaseTest {
   @Test
   public void typeDoubleListSerialization() {
     SampleDataType.Builder u = SampleDataType.newBuilder();
-    double[] SAMPLE_DOUBLES = { 3.1415, 1000.0 };
+    double[] SAMPLE_DOUBLES = {3.1415, 1000.0};
 
     u.d3(SAMPLE_DOUBLES);
     SampleDataType v = u.build();
@@ -495,12 +494,12 @@ public class JavaGeneratorTest extends GenBaseTest {
   public void base64Encoding() {
     redirectSystemOut();
 
-    byte[] bytes = { 1, 2, -1, -2, 127, -128 };
-    double[] doubles = { 1.234, 1.234e4, 1.234e8 };
-    float[] floats = { 1.234f, 1.234e4f, 1.234e8f };
-    short[] shorts = { 1, 2, 3, 4 };
-    int[] ints = { 1, 2, 3, 4 };
-    long[] longs = { 1, 2, 3, 4 };
+    byte[] bytes = {1, 2, -1, -2, 127, -128};
+    double[] doubles = {1.234, 1.234e4, 1.234e8};
+    float[] floats = {1.234f, 1.234e4f, 1.234e8f};
+    short[] shorts = {1, 2, 3, 4};
+    int[] ints = {1, 2, 3, 4};
+    long[] longs = {1, 2, 3, 4};
 
     SampleDataType.Builder b = SampleDataType.newBuilder();
     b.b3(bytes);
@@ -538,12 +537,12 @@ public class JavaGeneratorTest extends GenBaseTest {
   public void base64Encoding2() {
     redirectSystemOut();
 
-    byte[] bytes = { 1, 2, 3, 4, -1, -2, -3, -4, 127, -128, 55, 66, 77, 88 };
-    double[] doubles = { 1.234, 1.234e4, 1.234e8, 2., 3., 4., 5.2, 6.2, 8., 10. };
-    float[] floats = { 1.234f, 1.234e4f, 1.234e8f, 2f, 3f, 4f, 5.2f, 6.2f, 8f, 10f };
-    short[] shorts = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-    int[] ints = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
-    long[] longs = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    byte[] bytes = {1, 2, 3, 4, -1, -2, -3, -4, 127, -128, 55, 66, 77, 88};
+    double[] doubles = {1.234, 1.234e4, 1.234e8, 2., 3., 4., 5.2, 6.2, 8., 10.};
+    float[] floats = {1.234f, 1.234e4f, 1.234e8f, 2f, 3f, 4f, 5.2f, 6.2f, 8f, 10f};
+    short[] shorts = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    int[] ints = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
+    long[] longs = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
 
     SampleDataType.Builder b = SampleDataType.newBuilder();
     b.b3(bytes);
@@ -812,6 +811,36 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("extern z.Bah;");
     p().pr("class {", INDENT, //
         "Bah x = { hey :19,  blue : 42, };", CR, OUTDENT, "}");
+    compile();
+  }
+
+
+  @Test
+  public void multiple() {
+    p().pr("class saturn {", INDENT, //
+        "long alpha;", CR, //
+        "long beta = " + Long.MAX_VALUE + ";", CR, //
+        OUTDENT, "}");
+
+    p().pr("class jupiter {", INDENT, //
+        "int echo;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
+  @Test
+  public void multipleRef() {
+    p().pr("extern abc.xyz.Beaver;", CR);
+
+    p().pr("class saturn {", INDENT, //
+        "long alpha;", CR, //
+        "long beta = " + Long.MAX_VALUE + ";", CR, //
+        OUTDENT, "}");
+
+    p().pr("class jupiter {", INDENT, //
+        "int echo;", CR, //
+        "Beaver ralph;", CR, //
+        OUTDENT, "}");
     compile();
   }
 }

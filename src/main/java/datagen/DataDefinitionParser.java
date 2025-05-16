@@ -25,11 +25,14 @@ package datagen;
 
 import static js.base.Tools.*;
 import static datagen.ParseTools.*;
+import static datagen.Utils.*;
 
 import java.io.File;
 import java.util.List;
+import java.util.Set;
 
 import datagen.datatype.EnumDataType;
+import datagen.gen.DatWithSource;
 import datagen.gen.PartialType;
 import datagen.gen.TypeStructure;
 import js.file.Files;
@@ -46,68 +49,17 @@ import js.data.DataUtil;
  */
 final class DataDefinitionParser extends BaseObject {
 
+
   /**
    * Parse .dat file; store generated type definition to Context
    */
-  public void parse() {
+  public void parse(File relativeDatPath) {
+    if (todo("reenable try/catch")) {
+      auxParse(relativeDatPath);
+      return;
+    }
     try {
-      startScanner();
-
-      // TODO: add support for multiple data classes (and enums) defined in a single data definition file
-
-
-      //  TODO: document this better, esp. with recent refactoring
-      //
-      //  <dat_file> ::= 
-      //     <extern_ref>*    ( <class_def> | <enum_def> )
-      //
-      //  <extern_ref> ::=
-      //     (extern | enum) <type_name>;          <-- maybe require extern to precede enum?
-      //                                               then we could support multiple classes per file
-      //
-      //  <class_def> ::= 
-      //        [-] class { <fields>* }
-      //
-      //  <enum_def> ::=
-      //        [-] enum  { <enum_names>* }
-      //
-      //  
-
-      while (scanner().hasNext()) {
-        var t = read();
-
-        if (t.id(DEPRECATION)) {
-          if (mDeprecated)
-            t.failWith("duplicate token");
-          mDeprecated = true;
-          continue;
-        }
-
-        switch (t.text()) {
-          case "extern":
-            processExternalReference(DataTypeManager.constructContractDataType());
-            break;
-          case "class":
-            procDataType();
-            break;
-          case "enum":
-            // If this is a declaration, an id followed by ;
-            if (peek().id(ID)) {
-              processExternalReference(EnumDataType.construct());
-            } else
-              procEnum();
-            break;
-          default:
-            t.failWith("unexpected token:", t.text());
-        }
-      }
-
-      if (Context.generatedTypeDef == null)
-        badArg("No class or enum specified");
-
-      reportUnusedReferences();
-
-      Context.sql.generate();
+      auxParse(relativeDatPath);
     } catch (Throwable t) {
       if (t instanceof ScanException || SHOW_STACK_TRACES) {
         if (SHOW_STACK_TRACES)
@@ -120,6 +72,64 @@ final class DataDefinitionParser extends BaseObject {
       throw t;
     }
   }
+
+  private void auxParse(File relativeDatPath) {
+    startScanner(relativeDatPath);
+
+    //  TODO: document this better, esp. with recent refactoring
+    //
+    //  <dat_file> ::=
+    //     <extern_ref>*    ( <class_def> | <enum_def> )
+    //
+    //  <extern_ref> ::=
+    //     (extern | enum) <type_name>;          <-- maybe require extern to precede enum?
+    //                                               then we could support multiple classes per file
+    //
+    //  <class_def> ::=
+    //        [-] class { <fields>* }
+    //
+    //  <enum_def> ::=
+    //        [-] enum  { <enum_names>* }
+    //
+    //
+
+    boolean depr = false;
+    mRelativeDatPath = relativeDatPath;
+    mGeneratedClassNames = hashSet();
+
+    while (scanner().hasNext()) {
+
+      depr = scanner().readIf(DEPRECATION) != null;
+
+      var t = read();
+
+      switch (t.text()) {
+        case "extern":
+          processExternalReference(DataTypeManager.constructContractDataType());
+          break;
+        case "class":
+          procDataType(depr);
+          break;
+        case "enum":
+          // If this is a declaration, an id followed by ;
+          if (peek().id(ID)) {
+            processExternalReference(EnumDataType.construct());
+          } else
+            procEnum(depr);
+          break;
+        default:
+          t.failWith("unexpected token:", t.text());
+      }
+    }
+
+//    if (Context.generatedTypeDef == null)
+//      badArg("No class or enum specified");
+
+    reportUnusedReferences();
+
+
+  }
+
 
   private void reportUnusedReferences() {
     String summary = Context.dataTypeManager.unusedReferencesSummary();
@@ -137,8 +147,9 @@ final class DataDefinitionParser extends BaseObject {
     return mScanner;
   }
 
-  private void startScanner() {
-    String datPath = Context.datWithSource.datRelPath();
+  private void startScanner(File relDatPath) {
+    String datPath = relDatPath.toString();
+//    String datPath = Context.datWithSource.datRelPath();
     File absFile = new File(Context.config.datPath(), datPath);
     String fileContent = Files.readString(absFile);
     mScanner = new Scanner(dfa(), fileContent);
@@ -195,10 +206,84 @@ final class DataDefinitionParser extends BaseObject {
     Context.dataTypeManager.add(q.className(), dataType);
   }
 
-  private void procDataType() {
-    String typeName = DataUtil.convertUnderscoresToCamelCase(
-        Files.removeExtension(new File(Context.datWithSource.datRelPath()).getName()));
-    setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null));
+  private void procDataType(boolean mDeprecated) {
+
+    // If the next token is an identifier, it is the name of the generated class.
+    // Otherwise, derive it from the dat file
+
+    String className;
+    {
+      var t = scanner().readIf(ID);
+      if (t != null) {
+        className = t.text();
+      } else {
+        className = Files.basename(mRelativeDatPath);
+      }
+      checkState(!mGeneratedClassNames.contains(className), "duplicate generated class name");
+      mGeneratedClassNames.add(className);
+    }
+
+
+    var config = Context.config;
+    String sourceClassName;
+    {
+      todo("extract this to method");
+      // Determine source file corresponding to this one.
+      String protoName = className;
+//          Files.basename(mRelativeDatPath);
+
+      switch (config.language()) {
+        default:
+          throw languageNotSupported();
+        case JAVA:
+          sourceClassName = DataUtil.convertUnderscoresToCamelCase(protoName);
+          break;
+        case PYTHON:
+          sourceClassName = protoName;
+          break;
+        case GO:
+          sourceClassName = protoName;
+          break;
+        case RUST:
+          sourceClassName = protoName;
+          break;
+      }
+    }
+
+    String relPathExpr;
+    {
+      File relPath = mRelativeDatPath.getParentFile();
+      if (relPath == null)
+        relPathExpr = "";
+      else {
+        relPathExpr = relPath + "/";
+      }
+    }
+
+    String relativeClassFile = relPathExpr + sourceClassName + "." + sourceFileExtension();
+    File sourceFile = new File(config.sourcePath(), relativeClassFile);
+
+
+    File genDirectory = determineGenDirectory(sourceFile);
+
+    todo("process clean later");
+//      if (config.clean()) {
+//        // If we haven't yet done so, delete the 'gen' directory that will contain this source file
+//        discardGenDirectory(discardedDirectoriesSet, genDirectory);
+//      }
+
+
+    {
+      var b = DatWithSource.newBuilder();
+      b.datRelPath(mRelativeDatPath.toString());
+      b.sourceRelPath(relativeClassFile);
+
+//      halt("DatWithSource",INDENT,b);
+
+      Context.prepare(b.build());
+    }
+    String typeName = DataUtil.convertUnderscoresToCamelCase(className);
+    setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageNameNEW(mRelativeDatPath, className), null));
 
     Context.generatedTypeDef.setDeprecated(mDeprecated);
 
@@ -278,9 +363,27 @@ final class DataDefinitionParser extends BaseObject {
       processSqlInfo();
     }
 
+
+    genSource();
   }
 
-  private void procEnum() {
+  private void genSource() {
+    Context.sql.generate();
+
+    // Generate source file in appropriate language
+    //
+    SourceGen g = SourceGen.construct();
+    g.setVerbose(verbose());
+    g.generate();
+
+//
+//    if (Context.pt.rust())
+//      updateRustModules(entry);
+    todo("reenable rust modules");
+  }
+
+
+  private void procEnum(boolean mDeprecated) {
     DataType enumDataType = EnumDataType.construct();
 
     String enumName;
@@ -448,6 +551,36 @@ final class DataDefinitionParser extends BaseObject {
     return t.build();
   }
 
+
+  /**
+   * Get package for the data type being genearted
+   */
+  private String packageNameNEW(File relativeDatPath, String className) {
+    String packageName;
+    String parentName = nullToEmpty(relativeDatPath.getParent());
+    switch (Context.config.language()) {
+      case JAVA:
+      case PYTHON:
+        packageName = parentName.replace('/', '.');
+        break;
+      case GO: {
+        // I think we want to set the package name to the last component of the package name
+        int c = parentName.lastIndexOf('/');
+        packageName = parentName.substring(c + 1);
+      }
+      break;
+      case RUST: {
+        int c = parentName.lastIndexOf(':');
+        packageName = parentName.substring(c + 1);
+      }
+      break;
+      default:
+        throw Utils.languageNotSupported();
+    }
+    return packageName;
+  }
+
+
   /**
    * Get package for the data type being genearted
    */
@@ -490,4 +623,7 @@ final class DataDefinitionParser extends BaseObject {
   private String mPackageName;
   private boolean mDeprecated;
 
+
+  private File mRelativeDatPath;
+  private Set mGeneratedClassNames;
 }

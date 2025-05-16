@@ -29,6 +29,8 @@ import static js.base.Tools.*;
 import datagen.gen.Language;
 import js.base.BasePrinter;
 
+import java.io.File;
+
 public final class Utils {
 
   public static final boolean DEBUG_RUST_FILES = false && alert("ISSUE 47 is in effect");
@@ -146,4 +148,14 @@ public final class Utils {
       return sb.toString();
     }
   }
+
+
+  public static  File determineGenDirectory(File sourceFile) {
+    String path = sourceFile.toString();
+    int cursor = path.lastIndexOf("/gen/");
+    checkArgument(cursor >= 0,  "Cannot find generated directory for source file:", sourceFile);
+    return new File(path.substring(0, cursor) + "/gen");
+  }
+
 }
+
