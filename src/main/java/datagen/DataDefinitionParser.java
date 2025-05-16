@@ -213,7 +213,7 @@ final class DataDefinitionParser extends BaseObject {
     var b = DatWithSource.newBuilder();
     b.datRelPath(mRelativeDatPath.toString());
 //      b.sourceRelPath(relativeClassFile);
-    Context.prepare(b.build());
+ //   Context.prepare(b.build());
 //    }
 
     read(SEMI);
@@ -304,7 +304,7 @@ final class DataDefinitionParser extends BaseObject {
       var b = DatWithSource.newBuilder();
       b.datRelPath(mRelativeDatPath.toString());
       b.sourceRelPath(relativeClassFile);
-      Context.prepare(b.build());
+      Context.prepareForClassOrEnumDefinition(b.build());
     }
 
     String typeName = DataUtil.convertUnderscoresToCamelCase(className);
@@ -422,7 +422,7 @@ final class DataDefinitionParser extends BaseObject {
       var b = DatWithSource.newBuilder();
       b.datRelPath(mRelativeDatPath.toString());
       b.sourceRelPath(relativeClassFile);
-      Context.prepare(b.build());
+      Context.prepareForClassOrEnumDefinition(b.build());
     }
 
     // ----------------------------------------------------------------------------------------------

@@ -53,7 +53,7 @@ public final class Context {
     return mDataTypeManager;
   }
 
-  public static void prepare(Files files, DatagenConfig config) {
+  public static void prepareApp(Files files, DatagenConfig config) {
     todo("this needs some thinking given that a .dat file now might contain multiple classes, and external references");
     discard();
     Context.pt = new ParseTools(config.language());
@@ -65,10 +65,11 @@ public final class Context {
     Context.sql.prepare();
   }
 
-  public static void prepare(DatWithSource entry) {
+  public static void prepareForClassOrEnumDefinition(DatWithSource entry) {
     discard();
     p54("Context.prepare, entry:",INDENT,datWithSource);
     Context.datWithSource = entry;
+    todo("we need a 'prepare' for a new directory");
     Context.mDataTypeManager = new DataTypeManager();
   }
 

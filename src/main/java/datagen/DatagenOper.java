@@ -64,7 +64,7 @@ public class DatagenOper extends AppOper {
   public void perform() {
     cmdLineArgs().assertArgsDone();
     DatagenConfig config = datagenConfig();
-    Context.prepare(files(), config);
+    Context.prepareApp(files(), config);
 
     List<File> entriesToFreshen = constructFileEntries2();
 
