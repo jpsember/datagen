@@ -93,13 +93,16 @@ final class DataDefinitionParser extends BaseObject {
     //
     //
 
-    boolean depr = false;
+    //  boolean depr = false;
     mRelativeDatPath = relativeDatPath;
     mGeneratedClassNames = hashSet();
 
     while (scanner().hasNext()) {
 
-      depr = scanner().readIf(DEPRECATION) != null;
+      // Prepare for next data type, etc
+      mDepr = scanner().readIf(DEPRECATION) != null;
+      mPackageName = null;
+
 
       var t = read();
 
@@ -108,14 +111,14 @@ final class DataDefinitionParser extends BaseObject {
           processExternalReference(DataTypeManager.constructContractDataType());
           break;
         case "class":
-          procDataType(depr);
+          procDataType();
           break;
         case "enum":
           // If this is a declaration, an id followed by ;
           if (peek().id(ID)) {
             processExternalReference(EnumDataType.construct());
           } else
-            procEnum(depr);
+            procEnum();
           break;
         default:
           t.failWith("unexpected token:", t.text());
@@ -155,8 +158,7 @@ final class DataDefinitionParser extends BaseObject {
     mScanner = new Scanner(dfa(), fileContent);
     mScanner.setSourceDescription(datPath);
     mLastReadToken = null;
-    mPackageName = null;
-    mDeprecated = false;
+
   }
 
   private Token peek() {
@@ -196,7 +198,7 @@ final class DataDefinitionParser extends BaseObject {
    * ContractDataType or an EnumDataType)
    */
   private void processExternalReference(DataType dataType) {
-    if (mDeprecated)
+    if (mDepr)
       mLastReadToken.failWith("cannot mark external reference deprecated");
     String nameExpression = read(ID);
     read(SEMI);
@@ -206,7 +208,7 @@ final class DataDefinitionParser extends BaseObject {
     Context.dataTypeManager.add(q.className(), dataType);
   }
 
-  private void procDataType(boolean mDeprecated) {
+  private void procDataType() {
 
     // If the next token is an identifier, it is the name of the generated class.
     // Otherwise, derive it from the dat file
@@ -285,7 +287,7 @@ final class DataDefinitionParser extends BaseObject {
     String typeName = DataUtil.convertUnderscoresToCamelCase(className);
     setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageNameNEW(mRelativeDatPath, className), null));
 
-    Context.generatedTypeDef.setDeprecated(mDeprecated);
+    Context.generatedTypeDef.setDeprecated(mDepr);
 
     read(BROP);
 
@@ -383,7 +385,7 @@ final class DataDefinitionParser extends BaseObject {
   }
 
 
-  private void procEnum(boolean mDeprecated) {
+  private void procEnum() {
     DataType enumDataType = EnumDataType.construct();
 
     String enumName;
@@ -393,7 +395,7 @@ final class DataDefinitionParser extends BaseObject {
     QualifiedName className = QualifiedName.parse(enumName, packageName());
     enumDataType.withQualifiedName(className);
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType));
-    Context.generatedTypeDef.setDeprecated(mDeprecated);
+    Context.generatedTypeDef.setDeprecated(mDepr);
 
     read(BROP);
 
@@ -621,8 +623,8 @@ final class DataDefinitionParser extends BaseObject {
   private Scanner mScanner;
   private Token mLastReadToken;
   private String mPackageName;
-  private boolean mDeprecated;
-
+  //  private boolean mDeprecated;
+  private boolean mDepr; // 'new' version
 
   private File mRelativeDatPath;
   private Set mGeneratedClassNames;
