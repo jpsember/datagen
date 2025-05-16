@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datagen;
 
@@ -33,22 +32,29 @@ import datagen.gen.Language;
 import js.file.Files;
 
 import static js.base.Tools.*;
+import static datagen.Utils.*;
 
 /**
  * Class containing components used while processing a single .dat file
+ * (no longer true due to issue 54)
  */
 public final class Context {
 
   public static DatagenConfig config;
   public static Files files;
   public static GeneratedTypeDef generatedTypeDef;
-  public static DataTypeManager dataTypeManager;
+  public static DataTypeManager mDataTypeManager;
   public static DatWithSource datWithSource;
   public static Set<File> generatedFilesSet;
   public static ParseTools pt;
   public static SqlGen sql;
 
+  public static DataTypeManager dataTypeManager() {
+    return mDataTypeManager;
+  }
+
   public static void prepare(Files files, DatagenConfig config) {
+    todo("this needs some thinking given that a .dat file now might contain multiple classes, and external references");
     discard();
     Context.pt = new ParseTools(config.language());
     Context.pt.prepare();
@@ -61,8 +67,9 @@ public final class Context {
 
   public static void prepare(DatWithSource entry) {
     discard();
+    p54("Context.prepare, entry:",INDENT,datWithSource);
     Context.datWithSource = entry;
-    Context.dataTypeManager = new DataTypeManager();
+    Context.mDataTypeManager = new DataTypeManager();
   }
 
   /**
@@ -70,7 +77,7 @@ public final class Context {
    */
   public static void discard() {
     generatedTypeDef = null;
-    dataTypeManager = null;
+    mDataTypeManager = null;
     datWithSource = null;
   }
 
@@ -83,7 +90,7 @@ public final class Context {
   public static boolean rust() {
     return pt.rust();
   }
-  
+
   private Context() {
   }
 

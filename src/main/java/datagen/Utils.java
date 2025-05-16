@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datagen;
 
@@ -33,6 +32,7 @@ import java.io.File;
 
 public final class Utils {
 
+  public static final boolean ISSUE_54 = true && alert("ISSUE 54 is in effect");
   public static final boolean DEBUG_RUST_FILES = false && alert("ISSUE 47 is in effect");
   public static final boolean DEBUG_RUST_IMPORTS = false;
   public static final boolean DEBUG_RUST_LISTS = false;
@@ -40,6 +40,11 @@ public final class Utils {
   public static final boolean RUST_COMMENTS = DEBUG_RUST;
   public static final String GEN_SUBDIR_NAME = "gen";
   public static final String RUST_IMPORT_ALL_PREFIX = "!all_";
+
+  public static void p54(Object... messages) {
+    if (ISSUE_54)
+      pr(insertStringToFront("ISSUE_54 --->", messages));
+  }
 
   public static void loadUtils() {
   }
@@ -64,16 +69,16 @@ public final class Utils {
 
   public static String sourceFileExtension(Language language) {
     switch (language) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      return "java";
-    case PYTHON:
-      return "py";
-    case GO:
-      return "go";
-    case RUST:
-      return "rs";
+      default:
+        throw languageNotSupported();
+      case JAVA:
+        return "java";
+      case PYTHON:
+        return "py";
+      case GO:
+        return "go";
+      case RUST:
+        return "rs";
     }
   }
 
@@ -82,16 +87,16 @@ public final class Utils {
    */
   public static String nullExpr() {
     switch (Context.config.language()) {
-    default:
-      throw languageNotSupported();
-    case PYTHON:
-      return "None";
-    case JAVA:
-      return "null";
-    case GO:
-      return "nil";
-    case RUST:
-      return "<rust has no nulls though!>";
+      default:
+        throw languageNotSupported();
+      case PYTHON:
+        return "None";
+      case JAVA:
+        return "null";
+      case GO:
+        return "nil";
+      case RUST:
+        return "<rust has no nulls though!>";
     }
   }
 
@@ -150,10 +155,10 @@ public final class Utils {
   }
 
 
-  public static  File determineGenDirectory(File sourceFile) {
+  public static File determineGenDirectory(File sourceFile) {
     String path = sourceFile.toString();
     int cursor = path.lastIndexOf("/gen/");
-    checkArgument(cursor >= 0,  "Cannot find generated directory for source file:", sourceFile);
+    checkArgument(cursor >= 0, "Cannot find generated directory for source file:", sourceFile);
     return new File(path.substring(0, cursor) + "/gen");
   }
 

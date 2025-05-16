@@ -230,7 +230,7 @@ public final class GeneratedTypeDef extends BaseObject {
   }
 
   private DataType registerType(PartialType partialType) {
-    DataTypeManager dataTypes = Context.dataTypeManager;
+    DataTypeManager dataTypes = Context.dataTypeManager();
     DataType dataType = dataTypes.get(partialType.name());
     if (dataType == null) {
       var defaultPackage = Context.generatedTypeDef.qualifiedName().packagePath();

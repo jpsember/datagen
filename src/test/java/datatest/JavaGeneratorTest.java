@@ -264,7 +264,6 @@ public class JavaGeneratorTest extends GenBaseTest {
     p().pr("class {", INDENT, //
         "bool alpha;", CR, //
         "bool beta = true;", CR, //
-//        "?bool gamma;", CR, //
         OUTDENT, "}");
     compile();
   }
@@ -841,6 +840,7 @@ public class JavaGeneratorTest extends GenBaseTest {
         OUTDENT, "}");
     compile();
   }
+
   @Test
   public void multipleRef() {
     p().pr("extern abc.xyz.Beaver;", CR);

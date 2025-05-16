@@ -131,7 +131,7 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void reportUnusedReferences() {
-    String summary = Context.dataTypeManager.unusedReferencesSummary();
+    String summary = Context.dataTypeManager().unusedReferencesSummary();
     if (!summary.isEmpty()) {
       if (Context.config.treatWarningsAsErrors()) {
         throw badArg(summary);
@@ -197,26 +197,30 @@ final class DataDefinitionParser extends BaseObject {
 
 
     String nameExpression = read(ID);
-pr("...read name expression:",nameExpression);
+
+//// This is the code that was run in the old branch:
+//    var fileEntry = DatWithSource.newBuilder().datRelPath(determineRelativePath())
+////        .sourceRelPath(relativeClassFile)
+//        .build();
+//
 
 
-    String defaultPackageName = DataUtil.convertUnderscoresToCamelCase(determineRelativePath());
+//    String defaultPackageName = DataUtil.convertUnderscoresToCamelCase(determineRelativePath());
 
 
-
-todo("the default packageName() should be derived from the relative path of the .dat file");
+    todo("the default packageName() should be derived from the relative path of the .dat file");
 //    if (true) {
-      var b = DatWithSource.newBuilder();
-      b.datRelPath(mRelativeDatPath.toString());
+    var b = DatWithSource.newBuilder();
+    b.datRelPath(mRelativeDatPath.toString());
 //      b.sourceRelPath(relativeClassFile);
-      Context.prepare(b.build());
+    Context.prepare(b.build());
 //    }
 
     read(SEMI);
-    QualifiedName q = QualifiedName.parse(nameExpression, defaultPackageName);
+    QualifiedName q = QualifiedName.parse(nameExpression, packageName());
     dataType.withQualifiedName(q);
     dataType.setDeclaredFlag();
-    Context.dataTypeManager.add(q.className(), dataType);
+    Context.dataTypeManager().add(q.className(), dataType);
   }
 
   private String determineSourceName(String dataTypeName) {
@@ -364,7 +368,7 @@ todo("the default packageName() should be derived from the relative path of the 
         // See if there is a parser for default values for this field.  This can either be the data type's parseDefaultValue() method,
         // or one mapped to the type's class (in case it is outside of the datagen project)
         String key = fieldDef.dataType().typeName();
-        DefaultValueParser parser = Context.dataTypeManager.parser(key);
+        DefaultValueParser parser = Context.dataTypeManager().parser(key);
         if (parser == null)
           parser = fieldDef.dataType();
         String defaultValueSource = parser.parseDefaultValue(
