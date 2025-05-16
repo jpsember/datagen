@@ -33,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import datagen.gen.DatWithSource;
 import datagen.gen.DatagenConfig;
 import datagen.gen.LangInfo;
 import datagen.gen.Language;
@@ -101,8 +100,8 @@ public class DatagenOper extends AppOper {
 //        g.setVerbose(verbose());
 //        g.generate();
 //
-//        if (Context.pt.rust())
-//          updateRustModules(entry);
+        if (Context.pt.rust())
+          updateRustModules(entry);
       } catch (Throwable t) {
         if (app().showExceptions() || SHOW_STACK_TRACES)
           throw t;
@@ -478,11 +477,11 @@ public class DatagenOper extends AppOper {
     mModFilesMap = hashMap();
   }
 
-  private void updateRustModules(DatWithSource entry) {
+  private void updateRustModules(File sourceRelPath) {
     var db = DEBUG_RUST;
     if (db)
-      log("updateRustModules, source:", entry.sourceRelPath());
-    var srcPath = new File(datagenConfig().sourcePath(), entry.sourceRelPath());
+      log("updateRustModules, source:",  sourceRelPath );
+    var srcPath = new File(datagenConfig().sourcePath(),  sourceRelPath.toString() );
     while (true) {
       if (db)
         log("...", srcPath);

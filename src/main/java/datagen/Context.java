@@ -26,7 +26,6 @@ package datagen;
 import java.io.File;
 import java.util.Set;
 
-import datagen.gen.DatWithSource;
 import datagen.gen.DatagenConfig;
 import datagen.gen.Language;
 import js.file.Files;
@@ -60,7 +59,7 @@ public final class Context {
   }
 
   public static String sourceRelPath() {
-    return checkNonEmpty(mSourceRelPath,"sourceRelPath");
+    return checkNonEmpty(mSourceRelPath, "sourceRelPath");
   }
 
 
@@ -121,7 +120,7 @@ public final class Context {
     //DatWithSource entry
     discardClassOrEnum();
     p54("Context.prepare, sourceRelPath:", INDENT, sourceRelPath);
-    Context.mSourceRelPath = checkNonEmpty(sourceRelPath,"sourceRelPath");
+    mSourceRelPath = checkNonEmpty(sourceRelPath, "sourceRelPath");
   }
 
   /**
@@ -129,7 +128,7 @@ public final class Context {
    */
   public static void discardClassOrEnum() {
     generatedTypeDef = null;
-    mDatWithSource = null;
+    mSourceRelPath = null;
   }
 
 
@@ -149,6 +148,5 @@ public final class Context {
 
 
   private static String mSourceRelPath;
-  private static DatWithSource mDatWithSource;
 
 }

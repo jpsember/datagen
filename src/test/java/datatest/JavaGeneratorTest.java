@@ -405,8 +405,9 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
-  @Test(expected = RuntimeException.class)
+  //@Test(expected = RuntimeException.class)
   public void missingFields() {
+    // This is no longer an error, as it is ok if a dat file doesn't produce any source files
     p().pr("extern abc.xyz.Beaver;");
     compile();
   }

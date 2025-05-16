@@ -32,7 +32,6 @@ import java.util.List;
 import java.util.Set;
 
 import datagen.datatype.EnumDataType;
-import datagen.gen.DatWithSource;
 import datagen.gen.PartialType;
 import datagen.gen.TypeStructure;
 import js.file.Files;
@@ -215,12 +214,10 @@ final class DataDefinitionParser extends BaseObject {
 
     todo("the default packageName() should be derived from the relative path of the .dat file");
 //    if (true) {
-    var b = DatWithSource.newBuilder();
     //b.datRelPath(mRelativeDatPath.toString());
 //      b.sourceRelPath(relativeClassFile);
  //   Context.prepare(b.build());
 //    }
-    p54("DatWithSource:",INDENT,b);
 
     read(SEMI);
 
