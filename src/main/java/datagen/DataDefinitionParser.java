@@ -312,10 +312,10 @@ final class DataDefinitionParser extends BaseObject {
 
 
     {
-      var b = DatWithSource.newBuilder();
+//      var b = DatWithSource.newBuilder();
 //      b.datRelPath(mRelativeDatPath.toString());
-      b.sourceRelPath(relativeClassFile);
-      Context.prepareForClassOrEnumDefinition(b.build());
+//      b.sourceRelPath(relativeClassFile);
+      Context.prepareForClassOrEnumDefinition(relativeClassFile);
     }
 
     String typeName = DataUtil.convertUnderscoresToCamelCase(className);
@@ -424,20 +424,9 @@ final class DataDefinitionParser extends BaseObject {
     ensureClassNameUnique(className2);
     DataType dataType = EnumDataType.construct();
 
-    // ----------------------------------------------------------------------------------------------
-
-    // We didn't seem to do this for enums before... why not?
     String relativeClassFile = determineRelativePath() + determineSourceName(className2) + "." + sourceFileExtension();
-
-    {
-      var b = DatWithSource.newBuilder();
-//      b.datRelPath(mRelativeDatPath.toString());
-      b.sourceRelPath(relativeClassFile);
-      Context.prepareForClassOrEnumDefinition(b.build());
-    }
-
-    // ----------------------------------------------------------------------------------------------
-
+    Context.prepareForClassOrEnumDefinition(relativeClassFile);
+todo("see what common code with procDataType there is");
 
     var enumName = DataUtil.convertUnderscoresToCamelCase(className2);
 

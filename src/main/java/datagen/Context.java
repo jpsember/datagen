@@ -59,12 +59,17 @@ public final class Context {
     return mDatDirectoryRel;
   }
 
-
-  public static DatWithSource datWithSource() {
-    todo("only called from two locations");
-    checkNotNull(mDatWithSource  , "Context.datWithSource");
-    return mDatWithSource;
+  public static String sourceRelPath() {
+    return checkNonEmpty(mSourceRelPath,"sourceRelPath");
   }
+
+
+//  @Deprecated
+//  public static DatWithSource datWithSource() {
+//    todo("only called from two locations");
+//    checkNotNull(mDatWithSource  , "Context.datWithSource");
+//    return mDatWithSource;
+//  }
 
   // ----------------------------------------------------------------------------------------------
   // Lifetimes
@@ -112,10 +117,11 @@ public final class Context {
     mDatDirectoryRel = null;
   }
 
-  public static void prepareForClassOrEnumDefinition(DatWithSource entry) {
+  public static void prepareForClassOrEnumDefinition(String sourceRelPath) {
+    //DatWithSource entry
     discardClassOrEnum();
-    p54("Context.prepare, entry:", INDENT, entry);
-    Context.mDatWithSource = entry;
+    p54("Context.prepare, sourceRelPath:", INDENT, sourceRelPath);
+    Context.mSourceRelPath = checkNonEmpty(sourceRelPath,"sourceRelPath");
   }
 
   /**
@@ -142,6 +148,7 @@ public final class Context {
   }
 
 
+  private static String mSourceRelPath;
   private static DatWithSource mDatWithSource;
 
 }

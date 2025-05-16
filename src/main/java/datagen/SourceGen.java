@@ -166,7 +166,7 @@ public abstract class SourceGen extends BaseObject {
 
   private String sourceFileRelative() {
 //    die("don't use datWithSource");
-    return Context.datWithSource().sourceRelPath();
+    return Context.sourceRelPath(); //().sourceRelPath();
   }
 
   protected SourceBuilder s = new SourceBuilder(Context.pt.language());
