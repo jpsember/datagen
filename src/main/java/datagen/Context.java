@@ -44,13 +44,26 @@ public final class Context {
   public static Files files;
   public static GeneratedTypeDef generatedTypeDef;
   public static DataTypeManager mDataTypeManager;
-  public static DatWithSource datWithSource;
   public static Set<File> generatedFilesSet;
   public static ParseTools pt;
   public static SqlGen sql;
+  private static File mDatDirectoryRel;
 
   public static DataTypeManager dataTypeManager() {
     return mDataTypeManager;
+  }
+
+
+  public static File datDirectoryRelative() {
+    checkNotNull(mDatDirectoryRel, "datDirectoryRelative");
+    return mDatDirectoryRel;
+  }
+
+
+  public static DatWithSource datWithSource() {
+    todo("only called from two locations");
+    checkNotNull(mDatWithSource  , "Context.datWithSource");
+    return mDatWithSource;
   }
 
   // ----------------------------------------------------------------------------------------------
@@ -67,23 +80,42 @@ public final class Context {
     Context.generatedFilesSet = hashSet();
     Context.sql = new SqlGen(config);
     Context.sql.prepare();
+
+    var b = config.toBuilder();
+
+    b.datPath(Files.absolute(b.datPath()));
+    Context.config = b.build();
+
+//    DatagenConfig config = datagenConfig();
+//    File datRoot = config.datPath();
+    p54("prepareApp; dat_path:", INDENT, Context.config.datPath());
   }
 
 
   public static void prepareDir(File dir) {
     discardDir();
-    todo("we need a 'prepare' for a new directory");
+    todo("we need to initialize a relative directory here or some such");
     Context.mDataTypeManager = new DataTypeManager();
+
+//    checkArgument(Files.nonEmpty(config.datPath()));
+
+    p54("prepareDir; dir:", dir);
+//    p54("config.datPath:", config.datPath());
+
+    Files.assertRelative(dir, "expected relative dir");
+    mDatDirectoryRel = dir; //Files.relativeToContainingDirectory(dir, config.datPath());
+    p54("datDirectoryRel:", INDENT, Files.infoMap(mDatDirectoryRel));
   }
 
   public static void discardDir() {
     mDataTypeManager = null;
+    mDatDirectoryRel = null;
   }
 
   public static void prepareForClassOrEnumDefinition(DatWithSource entry) {
     discardClassOrEnum();
-    p54("Context.prepare, entry:", INDENT, datWithSource);
-    Context.datWithSource = entry;
+    p54("Context.prepare, entry:", INDENT, entry);
+    Context.mDatWithSource = entry;
   }
 
   /**
@@ -91,7 +123,7 @@ public final class Context {
    */
   public static void discardClassOrEnum() {
     generatedTypeDef = null;
-    datWithSource = null;
+    mDatWithSource = null;
   }
 
 
@@ -108,5 +140,8 @@ public final class Context {
 
   private Context() {
   }
+
+
+  private static DatWithSource mDatWithSource;
 
 }

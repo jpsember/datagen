@@ -83,7 +83,7 @@ public class DatagenOper extends AppOper {
 
         {
           var dir = Files.parent(entry);
-          p54("proc file:",entry,INDENT,"dir:",dir);
+          p54("proc file:", entry, INDENT, "dir:", dir);
           if (!dir.equals(previousDirectory)) {
             Context.prepareDir(dir);
             previousDirectory = dir;
@@ -266,7 +266,10 @@ public class DatagenOper extends AppOper {
     List<File> fileEntries = arrayList();
 
     DatagenConfig config = datagenConfig();
-    DirWalk dirWalk = new DirWalk(config.datPath()).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
+    File datRoot = Context.config.datPath();
+    //config.datPath();
+    p54("constructFileEntries, datRoot:", datRoot);
+    DirWalk dirWalk = new DirWalk(datRoot).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
     if (dirWalk.files().isEmpty())
       pr("*** no .dat files were found in:", config.datPath());
 
@@ -335,83 +338,84 @@ public class DatagenOper extends AppOper {
 //        fileEntries.add(fileEntry);
 //      }
 //    }
+    p54("fileEntries:", INDENT, fileEntries);
     return fileEntries;
   }
 
 
-  private List<DatWithSource> constructFileEntries() {
-    List<DatWithSource> fileEntries = arrayList();
-
-    DatagenConfig config = datagenConfig();
-    DirWalk dirWalk = new DirWalk(config.datPath()).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
-    if (dirWalk.files().isEmpty())
-      pr("*** no .dat files were found in:", config.datPath());
-
-    Set<File> discardedDirectoriesSet = hashSet();
-
-    for (File rel : dirWalk.filesRelative()) {
-      String relPathExpr;
-      {
-        File relPath = rel.getParentFile();
-        if (relPath == null)
-          relPathExpr = "";
-        else {
-          if (relPath.toString().contains("_SKIP_"))
-            continue;
-          relPathExpr = relPath + "/";
-        }
-      }
-
-      // Determine source file corresponding to this one.
-      String protoName = chomp(rel.getName(), DOT_EXT_DATA_DEFINITION);
-
-      String sourceClassName;
-      switch (config.language()) {
-        default:
-          throw languageNotSupported();
-        case JAVA:
-          sourceClassName = DataUtil.convertUnderscoresToCamelCase(protoName);
-          break;
-        case PYTHON:
-          sourceClassName = protoName;
-          break;
-        case GO:
-          sourceClassName = protoName;
-          break;
-        case RUST:
-          sourceClassName = protoName;
-          break;
-      }
-      String relativeClassFile = relPathExpr + sourceClassName + "." + sourceFileExtension();
-      File sourceFile = new File(config.sourcePath(), relativeClassFile);
-      File genDirectory = determineGenDirectory(sourceFile);
-
-      if (config.clean()) {
-        // If we haven't yet done so, delete the 'gen' directory that will contain this source file
-        discardGenDirectory(discardedDirectoriesSet, genDirectory);
-      }
-
-      DatWithSource fileEntry = DatWithSource.newBuilder().datRelPath(rel.getPath())
-          .sourceRelPath(relativeClassFile).build();
-
-      boolean rebuildRequired = config.clean();
-      if (!rebuildRequired) {
-        if (!sourceFile.exists() || sourceFile.lastModified() < dirWalk.abs(rel).lastModified())
-          rebuildRequired = true;
-      }
-
-      if (rebuildRequired) {
-        if (verbose()) {
-          if (sourceFile.exists())
-            log("file is out of date:", relativeClassFile);
-          else
-            log("could not locate generated file:", relativeClassFile);
-        }
-        fileEntries.add(fileEntry);
-      }
-    }
-    return fileEntries;
-  }
+//  private List<DatWithSource> constructFileEntries() {
+//    List<DatWithSource> fileEntries = arrayList();
+//
+//    DatagenConfig config = datagenConfig();
+//    DirWalk dirWalk = new DirWalk(config.datPath()).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
+//    if (dirWalk.files().isEmpty())
+//      pr("*** no .dat files were found in:", config.datPath());
+//
+//    Set<File> discardedDirectoriesSet = hashSet();
+//
+//    for (File rel : dirWalk.filesRelative()) {
+//      String relPathExpr;
+//      {
+//        File relPath = rel.getParentFile();
+//        if (relPath == null)
+//          relPathExpr = "";
+//        else {
+//          if (relPath.toString().contains("_SKIP_"))
+//            continue;
+//          relPathExpr = relPath + "/";
+//        }
+//      }
+//
+//      // Determine source file corresponding to this one.
+//      String protoName = chomp(rel.getName(), DOT_EXT_DATA_DEFINITION);
+//
+//      String sourceClassName;
+//      switch (config.language()) {
+//        default:
+//          throw languageNotSupported();
+//        case JAVA:
+//          sourceClassName = DataUtil.convertUnderscoresToCamelCase(protoName);
+//          break;
+//        case PYTHON:
+//          sourceClassName = protoName;
+//          break;
+//        case GO:
+//          sourceClassName = protoName;
+//          break;
+//        case RUST:
+//          sourceClassName = protoName;
+//          break;
+//      }
+//      String relativeClassFile = relPathExpr + sourceClassName + "." + sourceFileExtension();
+//      File sourceFile = new File(config.sourcePath(), relativeClassFile);
+//      File genDirectory = determineGenDirectory(sourceFile);
+//
+//      if (config.clean()) {
+//        // If we haven't yet done so, delete the 'gen' directory that will contain this source file
+//        discardGenDirectory(discardedDirectoriesSet, genDirectory);
+//      }
+//
+//      DatWithSource fileEntry = DatWithSource.newBuilder().datRelPath(rel.getPath())
+//          .sourceRelPath(relativeClassFile).build();
+//
+//      boolean rebuildRequired = config.clean();
+//      if (!rebuildRequired) {
+//        if (!sourceFile.exists() || sourceFile.lastModified() < dirWalk.abs(rel).lastModified())
+//          rebuildRequired = true;
+//      }
+//
+//      if (rebuildRequired) {
+//        if (verbose()) {
+//          if (sourceFile.exists())
+//            log("file is out of date:", relativeClassFile);
+//          else
+//            log("could not locate generated file:", relativeClassFile);
+//        }
+//        fileEntries.add(fileEntry);
+//      }
+//    }
+//    return fileEntries;
+//  }
 
   /**
    * Make a file absolute, and within the supplied start directory (if not

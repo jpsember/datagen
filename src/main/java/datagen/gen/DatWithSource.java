@@ -5,10 +5,6 @@ import js.json.JSMap;
 
 public class DatWithSource implements AbstractData {
 
-  public String datRelPath() {
-    return mDatRelPath;
-  }
-
   public String sourceRelPath() {
     return mSourceRelPath;
   }
@@ -18,8 +14,7 @@ public class DatWithSource implements AbstractData {
     return new Builder(this);
   }
 
-  protected static final String _0 = "dat_rel_path";
-  protected static final String _1 = "source_rel_path";
+  protected static final String _0 = "source_rel_path";
 
   @Override
   public String toString() {
@@ -29,8 +24,7 @@ public class DatWithSource implements AbstractData {
   @Override
   public JSMap toJson() {
     JSMap m = new JSMap();
-    m.putUnsafe(_0, mDatRelPath);
-    m.putUnsafe(_1, mSourceRelPath);
+    m.putUnsafe(_0, mSourceRelPath);
     return m;
   }
 
@@ -45,8 +39,7 @@ public class DatWithSource implements AbstractData {
   }
 
   private DatWithSource(JSMap m) {
-    mDatRelPath = m.opt(_0, "");
-    mSourceRelPath = m.opt(_1, "");
+    mSourceRelPath = m.opt(_0, "");
   }
 
   public static Builder newBuilder() {
@@ -62,8 +55,6 @@ public class DatWithSource implements AbstractData {
     DatWithSource other = (DatWithSource) object;
     if (other.hashCode() != hashCode())
       return false;
-    if (!(mDatRelPath.equals(other.mDatRelPath)))
-      return false;
     if (!(mSourceRelPath.equals(other.mSourceRelPath)))
       return false;
     return true;
@@ -74,21 +65,18 @@ public class DatWithSource implements AbstractData {
     int r = m__hashcode;
     if (r == 0) {
       r = 1;
-      r = r * 37 + mDatRelPath.hashCode();
       r = r * 37 + mSourceRelPath.hashCode();
       m__hashcode = r;
     }
     return r;
   }
 
-  protected String mDatRelPath;
   protected String mSourceRelPath;
   protected int m__hashcode;
 
   public static final class Builder extends DatWithSource {
 
     private Builder(DatWithSource m) {
-      mDatRelPath = m.mDatRelPath;
       mSourceRelPath = m.mSourceRelPath;
     }
 
@@ -106,14 +94,8 @@ public class DatWithSource implements AbstractData {
     @Override
     public DatWithSource build() {
       DatWithSource r = new DatWithSource();
-      r.mDatRelPath = mDatRelPath;
       r.mSourceRelPath = mSourceRelPath;
       return r;
-    }
-
-    public Builder datRelPath(String x) {
-      mDatRelPath = (x == null) ? "" : x;
-      return this;
     }
 
     public Builder sourceRelPath(String x) {
@@ -126,7 +108,6 @@ public class DatWithSource implements AbstractData {
   public static final DatWithSource DEFAULT_INSTANCE = new DatWithSource();
 
   private DatWithSource() {
-    mDatRelPath = "";
     mSourceRelPath = "";
   }
 

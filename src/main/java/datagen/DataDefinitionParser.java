@@ -94,6 +94,11 @@ final class DataDefinitionParser extends BaseObject {
     //
 
     //  boolean depr = false;
+    p54("relativeDatPath:",relativeDatPath);
+
+    todo("mRelativeDatPath is unnecessary; only the basename of the dat file is useful, the directory can be found in the context");
+
+//    this mRelativeDatPath seems to be unnecessary; only used for basename of dat file; the directory can be found in the context
     mRelativeDatPath = relativeDatPath;
     mGeneratedClassNames = hashSet();
 
@@ -195,8 +200,8 @@ final class DataDefinitionParser extends BaseObject {
     if (mDepr)
       mLastReadToken.failWith("cannot mark external reference deprecated");
 
-
     String nameExpression = read(ID);
+  p54("processExternalReference, name_expr:",nameExpression);
 
 //// This is the code that was run in the old branch:
 //    var fileEntry = DatWithSource.newBuilder().datRelPath(determineRelativePath())
@@ -211,12 +216,18 @@ final class DataDefinitionParser extends BaseObject {
     todo("the default packageName() should be derived from the relative path of the .dat file");
 //    if (true) {
     var b = DatWithSource.newBuilder();
-    b.datRelPath(mRelativeDatPath.toString());
+    //b.datRelPath(mRelativeDatPath.toString());
 //      b.sourceRelPath(relativeClassFile);
  //   Context.prepare(b.build());
 //    }
+    p54("DatWithSource:",INDENT,b);
 
     read(SEMI);
+
+    p54("what does QualifiedName do again?");
+
+    // The default package name should be the package derived from the current .dat file
+
     QualifiedName q = QualifiedName.parse(nameExpression, packageName());
     dataType.withQualifiedName(q);
     dataType.setDeclaredFlag();
@@ -302,7 +313,7 @@ final class DataDefinitionParser extends BaseObject {
 
     {
       var b = DatWithSource.newBuilder();
-      b.datRelPath(mRelativeDatPath.toString());
+//      b.datRelPath(mRelativeDatPath.toString());
       b.sourceRelPath(relativeClassFile);
       Context.prepareForClassOrEnumDefinition(b.build());
     }
@@ -363,7 +374,7 @@ final class DataDefinitionParser extends BaseObject {
           auxType, fieldName);
 
       if (readIf(EQUALS)) {
-        checkState(!fieldDef.optional(), "cannot mix optional and default values");
+        //checkState(!fieldDef.optional(), "cannot mix optional and default values");
 
         // See if there is a parser for default values for this field.  This can either be the data type's parseDefaultValue() method,
         // or one mapped to the type's class (in case it is outside of the datagen project)
@@ -420,7 +431,7 @@ final class DataDefinitionParser extends BaseObject {
 
     {
       var b = DatWithSource.newBuilder();
-      b.datRelPath(mRelativeDatPath.toString());
+//      b.datRelPath(mRelativeDatPath.toString());
       b.sourceRelPath(relativeClassFile);
       Context.prepareForClassOrEnumDefinition(b.build());
     }
@@ -624,14 +635,15 @@ final class DataDefinitionParser extends BaseObject {
     return packageName;
   }
 
-
   /**
    * Get package for the data type being generated
    */
   private String packageName() {
     if (mPackageName == null) {
-      File datPath = new File(Context.datWithSource.datRelPath());
-      String parentName = nullToEmpty(datPath.getParent());
+      String parentName =  Context.datDirectoryRelative().toString();
+      //datDirectory();
+//      File datPath = new File(Context.datWithSource().datRelPath());
+//      String parentName = nullToEmpty(datPath.getParent());
       switch (Context.config.language()) {
         case JAVA:
         case PYTHON:
