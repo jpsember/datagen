@@ -828,6 +828,19 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
+
+  @Test
+  public void multipleEnum() {
+    p().pr("class saturn {", INDENT, //
+        "long alpha;", CR, //
+        "long beta = " + Long.MAX_VALUE + ";", CR, //
+        OUTDENT, "}");
+
+    p().pr("enum jupiter {", INDENT, //
+        "gamma,hotel,epsilon,", CR, //
+        OUTDENT, "}");
+    compile();
+  }
   @Test
   public void multipleRef() {
     p().pr("extern abc.xyz.Beaver;", CR);

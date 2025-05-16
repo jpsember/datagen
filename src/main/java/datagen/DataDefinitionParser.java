@@ -230,11 +230,11 @@ final class DataDefinitionParser extends BaseObject {
     return sourceClassName;
   }
 
-  private void procDataType() {
 
-    // If the next token is an identifier, it is the name of the generated class.
-    // Otherwise, derive it from the dat file
-
+  // If the next token is an identifier, it is the name of the generated class.
+  // Otherwise, derive it from the dat file
+  //
+  private String parseClassNameOrDerive() {
     String className;
     {
       var t = scanner().readIf(ID);
@@ -243,14 +243,22 @@ final class DataDefinitionParser extends BaseObject {
       } else {
         className = Files.basename(mRelativeDatPath);
       }
-      checkState(!mGeneratedClassNames.contains(className), "duplicate generated class name");
-      mGeneratedClassNames.add(className);
     }
+    return className;
+  }
 
+  private void ensureClassNameUnique(String className) {
+    todo("actually, it only needs be unique within its directory");
+    checkState(!mGeneratedClassNames.contains(className), "duplicate generated class name");
+    mGeneratedClassNames.add(className);
+  }
 
+  private void procDataType() {
     var config = Context.config;
-//    String sourceClassName = determineSourceName(className);
-    
+
+    String className = parseClassNameOrDerive();
+    ensureClassNameUnique(className);
+
     String relPathExpr;
     {
       File relPath = mRelativeDatPath.getParentFile();
@@ -278,11 +286,9 @@ final class DataDefinitionParser extends BaseObject {
       var b = DatWithSource.newBuilder();
       b.datRelPath(mRelativeDatPath.toString());
       b.sourceRelPath(relativeClassFile);
-
-//      halt("DatWithSource",INDENT,b);
-
       Context.prepare(b.build());
     }
+
     String typeName = DataUtil.convertUnderscoresToCamelCase(className);
     setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageNameNEW(mRelativeDatPath, className), null));
 
@@ -364,7 +370,6 @@ final class DataDefinitionParser extends BaseObject {
       processSqlInfo();
     }
 
-
     genSource();
   }
 
@@ -385,12 +390,17 @@ final class DataDefinitionParser extends BaseObject {
 
 
   private void procEnum() {
+
+    String className2 = parseClassNameOrDerive();
+    ensureClassNameUnique(className2);
+
     DataType enumDataType = EnumDataType.construct();
 
-    String enumName;
-    String className2 = chomp(new File(Context.datWithSource.datRelPath()).getName(),
-        DOT_EXT_DATA_DEFINITION);
-    enumName = DataUtil.convertUnderscoresToCamelCase(className2);
+//    String enumName;
+//    String className2 = chomp(new File(Context.datWithSource.datRelPath()).getName(),
+//        DOT_EXT_DATA_DEFINITION);
+    var enumName = DataUtil.convertUnderscoresToCamelCase(className2);
+
     QualifiedName className = QualifiedName.parse(enumName, packageName());
     enumDataType.withQualifiedName(className);
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType));
@@ -406,6 +416,8 @@ final class DataDefinitionParser extends BaseObject {
       while (readIf(COMMA) || readIf(SEMI))
         ;
     }
+
+    genSource();
   }
 
   private void processSqlInfo() {
