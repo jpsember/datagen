@@ -194,9 +194,26 @@ final class DataDefinitionParser extends BaseObject {
   private void processExternalReference(DataType dataType) {
     if (mDepr)
       mLastReadToken.failWith("cannot mark external reference deprecated");
+
+
     String nameExpression = read(ID);
+pr("...read name expression:",nameExpression);
+
+
+    String defaultPackageName = DataUtil.convertUnderscoresToCamelCase(determineRelativePath());
+
+
+
+todo("the default packageName() should be derived from the relative path of the .dat file");
+//    if (true) {
+      var b = DatWithSource.newBuilder();
+      b.datRelPath(mRelativeDatPath.toString());
+//      b.sourceRelPath(relativeClassFile);
+      Context.prepare(b.build());
+//    }
+
     read(SEMI);
-    QualifiedName q = QualifiedName.parse(nameExpression, packageName());
+    QualifiedName q = QualifiedName.parse(nameExpression, defaultPackageName);
     dataType.withQualifiedName(q);
     dataType.setDeclaredFlag();
     Context.dataTypeManager.add(q.className(), dataType);
@@ -605,7 +622,7 @@ final class DataDefinitionParser extends BaseObject {
 
 
   /**
-   * Get package for the data type being genearted
+   * Get package for the data type being generated
    */
   private String packageName() {
     if (mPackageName == null) {

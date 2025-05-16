@@ -18,9 +18,11 @@
                 "implicit" : 5170,
    "implicitEnumReference" : 7462,
                  "ipoints" : 3804,
+           "missingFields" : 4062,
         "multiLineComment" : 7124,
                 "multiple" : 5771,
             "multipleEnum" : 9995,
+             "multipleRef" : 4539,
              "optComments" : 5195,
       "qualifiedReference" : 6273,
            "reservedWords" : 2780,
@@ -40,5 +42,6 @@
           "typeMapVarious" : 8593,
           "typeSetVarious" : 3450,
         "typeShortVarious" : 1818,
-              "typeString" : 9825
+              "typeString" : 9825,
+         "unusedReference" : 2368
 }
