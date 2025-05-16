@@ -208,6 +208,28 @@ final class DataDefinitionParser extends BaseObject {
     Context.dataTypeManager.add(q.className(), dataType);
   }
 
+  private String determineSourceName(String dataTypeName) {
+    String sourceClassName;
+
+    switch (Context.config.language()) {
+      default:
+        throw languageNotSupported();
+      case JAVA:
+        sourceClassName = DataUtil.convertUnderscoresToCamelCase(dataTypeName);
+        break;
+      case PYTHON:
+        sourceClassName = dataTypeName;
+        break;
+      case GO:
+        sourceClassName = dataTypeName;
+        break;
+      case RUST:
+        sourceClassName = dataTypeName;
+        break;
+    }
+    return sourceClassName;
+  }
+
   private void procDataType() {
 
     // If the next token is an identifier, it is the name of the generated class.
@@ -227,31 +249,8 @@ final class DataDefinitionParser extends BaseObject {
 
 
     var config = Context.config;
-    String sourceClassName;
-    {
-      todo("extract this to method");
-      // Determine source file corresponding to this one.
-      String protoName = className;
-//          Files.basename(mRelativeDatPath);
-
-      switch (config.language()) {
-        default:
-          throw languageNotSupported();
-        case JAVA:
-          sourceClassName = DataUtil.convertUnderscoresToCamelCase(protoName);
-          break;
-        case PYTHON:
-          sourceClassName = protoName;
-          break;
-        case GO:
-          sourceClassName = protoName;
-          break;
-        case RUST:
-          sourceClassName = protoName;
-          break;
-      }
-    }
-
+//    String sourceClassName = determineSourceName(className);
+    
     String relPathExpr;
     {
       File relPath = mRelativeDatPath.getParentFile();
@@ -262,7 +261,7 @@ final class DataDefinitionParser extends BaseObject {
       }
     }
 
-    String relativeClassFile = relPathExpr + sourceClassName + "." + sourceFileExtension();
+    String relativeClassFile = relPathExpr + determineSourceName(className) + "." + sourceFileExtension();
     File sourceFile = new File(config.sourcePath(), relativeClassFile);
 
 

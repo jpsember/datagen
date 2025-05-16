@@ -77,10 +77,6 @@ public class DatagenOper extends AppOper {
     for (var entry : entriesToFreshen) {
       log("...processing file:", entry);
 
-      todo("call Context.prepare() with suitable structure");
-//      // Reset context for a new file
-//      Context.prepare(entry);
-
       try {
 
         // Parse .dat file
