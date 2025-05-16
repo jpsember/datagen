@@ -103,7 +103,6 @@ final class DataDefinitionParser extends BaseObject {
       mDepr = scanner().readIf(DEPRECATION) != null;
       mPackageName = null;
 
-
       var t = read();
 
       switch (t.text()) {
@@ -113,22 +112,23 @@ final class DataDefinitionParser extends BaseObject {
         case "class":
           procDataType();
           break;
-        case "enum":
+        case "enum": {
+          // If "enum <name> ;", it's an external reference
+          //
+          var t2 = scanner().peek(1);
+          if (t2 != null && t2.id(SEMI))
+            processExternalReference(EnumDataType.construct());
+          else
             procEnum();
-          break;
+        }
+        break;
         default:
           t.failWith("unexpected token:", t.text());
       }
     }
 
-//    if (Context.generatedTypeDef == null)
-//      badArg("No class or enum specified");
-
     reportUnusedReferences();
-
-
   }
-
 
   private void reportUnusedReferences() {
     String summary = Context.dataTypeManager.unusedReferencesSummary();
@@ -148,13 +148,11 @@ final class DataDefinitionParser extends BaseObject {
 
   private void startScanner(File relDatPath) {
     String datPath = relDatPath.toString();
-//    String datPath = Context.datWithSource.datRelPath();
     File absFile = new File(Context.config.datPath(), datPath);
     String fileContent = Files.readString(absFile);
     mScanner = new Scanner(dfa(), fileContent);
     mScanner.setSourceDescription(datPath);
     mLastReadToken = null;
-
   }
 
   private Token peek() {
@@ -249,12 +247,8 @@ final class DataDefinitionParser extends BaseObject {
     mGeneratedClassNames.add(className);
   }
 
-  private void procDataType() {
-    var config = Context.config;
 
-    String className = parseClassNameOrDerive();
-    ensureClassNameUnique(className);
-
+  private String determineRelativePath() {
     String relPathExpr;
     {
       File relPath = mRelativeDatPath.getParentFile();
@@ -264,16 +258,23 @@ final class DataDefinitionParser extends BaseObject {
         relPathExpr = relPath + "/";
       }
     }
+    return relPathExpr;
+  }
 
-    String relativeClassFile = relPathExpr + determineSourceName(className) + "." + sourceFileExtension();
-    File sourceFile = new File(config.sourcePath(), relativeClassFile);
+  private void procDataType() {
+    var config = Context.config;
 
+    String className = parseClassNameOrDerive();
+    ensureClassNameUnique(className);
 
-    File genDirectory = determineGenDirectory(sourceFile);
+    String relativeClassFile = determineRelativePath() + determineSourceName(className) + "." + sourceFileExtension();
+
 
     todo("process clean later");
 //      if (config.clean()) {
+    //  File sourceFile = new File(config.sourcePath(), relativeClassFile);
 //        // If we haven't yet done so, delete the 'gen' directory that will contain this source file
+    //   File genDirectory = determineGenDirectory(sourceFile);
 //        discardGenDirectory(discardedDirectoriesSet, genDirectory);
 //      }
 
@@ -387,49 +388,15 @@ final class DataDefinitionParser extends BaseObject {
 
   private void procEnum() {
     var config = Context.config;
-
-    boolean wasId = scanner().peek().id(ID);
-
     String className2 = parseClassNameOrDerive();
-
-    if (wasId) {
-      // If the enum was just a declaration, it is
-      //
-      //  enum  <classname> ;
-      //
-      if (peek().id(SEMI)) {
-        processExternalReference(EnumDataType.construct());
-        return;
-      }
-    }
-
     ensureClassNameUnique(className2);
-
-    DataType enumDataType = EnumDataType.construct();
-
-
-
+    DataType dataType = EnumDataType.construct();
 
     // ----------------------------------------------------------------------------------------------
 
     // We didn't seem to do this for enums before... why not?
+    String relativeClassFile = determineRelativePath() + determineSourceName(className2) + "." + sourceFileExtension();
 
-    String relPathExpr;
-    {
-      File relPath = mRelativeDatPath.getParentFile();
-      if (relPath == null)
-        relPathExpr = "";
-      else {
-        relPathExpr = relPath + "/";
-      }
-    }
-
-    String relativeClassFile = relPathExpr + determineSourceName(className2) + "." + sourceFileExtension();
-    File sourceFile = new File(config.sourcePath(), relativeClassFile);
-
-
-
-    // Do we need to call prepare() for enums?
     {
       var b = DatWithSource.newBuilder();
       b.datRelPath(mRelativeDatPath.toString());
@@ -440,37 +407,13 @@ final class DataDefinitionParser extends BaseObject {
     // ----------------------------------------------------------------------------------------------
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-//    String enumName;
-//    String className2 = chomp(new File(Context.datWithSource.datRelPath()).getName(),
-//        DOT_EXT_DATA_DEFINITION);
     var enumName = DataUtil.convertUnderscoresToCamelCase(className2);
 
     QualifiedName className = QualifiedName.parse(enumName, packageName());
-    enumDataType.withQualifiedName(className);
+    dataType.withQualifiedName(className);
 
 
-
-
-
-
-
-
-
-    setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType));
+    setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), dataType));
     Context.generatedTypeDef.setDeprecated(mDepr);
 
     read(BROP);
@@ -479,7 +422,7 @@ final class DataDefinitionParser extends BaseObject {
       if (readIf(BRCL))
         break;
       String name = read(ID);
-      ((EnumDataType) enumDataType).addLabel(name);
+      ((EnumDataType) dataType).addLabel(name);
       while (readIf(COMMA) || readIf(SEMI))
         ;
     }

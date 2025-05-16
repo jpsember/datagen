@@ -129,8 +129,6 @@ public abstract class SourceGen extends BaseObject {
     //
     content = Context.pt.adjustLinefeeds(content);
     File target = sourceFile();
-    checkArgument(!"Multiple.java".equals(target.getName()));
-    pr(VERT_SP, "writing target source:", target, VERT_SP);
 
     Context.files.mkdirs(Files.parent(target));
     boolean wrote = Context.files.writeIfChanged(target, content);
