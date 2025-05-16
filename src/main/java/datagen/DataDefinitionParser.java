@@ -114,10 +114,6 @@ final class DataDefinitionParser extends BaseObject {
           procDataType();
           break;
         case "enum":
-          // If this is a declaration, an id followed by ;
-          if (peek().id(ID)) {
-            processExternalReference(EnumDataType.construct());
-          } else
             procEnum();
           break;
         default:
@@ -390,11 +386,73 @@ final class DataDefinitionParser extends BaseObject {
 
 
   private void procEnum() {
+    var config = Context.config;
+
+    boolean wasId = scanner().peek().id(ID);
 
     String className2 = parseClassNameOrDerive();
+
+    if (wasId) {
+      // If the enum was just a declaration, it is
+      //
+      //  enum  <classname> ;
+      //
+      if (peek().id(SEMI)) {
+        processExternalReference(EnumDataType.construct());
+        return;
+      }
+    }
+
     ensureClassNameUnique(className2);
 
     DataType enumDataType = EnumDataType.construct();
+
+
+
+
+    // ----------------------------------------------------------------------------------------------
+
+    // We didn't seem to do this for enums before... why not?
+
+    String relPathExpr;
+    {
+      File relPath = mRelativeDatPath.getParentFile();
+      if (relPath == null)
+        relPathExpr = "";
+      else {
+        relPathExpr = relPath + "/";
+      }
+    }
+
+    String relativeClassFile = relPathExpr + determineSourceName(className2) + "." + sourceFileExtension();
+    File sourceFile = new File(config.sourcePath(), relativeClassFile);
+
+
+
+    // Do we need to call prepare() for enums?
+    {
+      var b = DatWithSource.newBuilder();
+      b.datRelPath(mRelativeDatPath.toString());
+      b.sourceRelPath(relativeClassFile);
+      Context.prepare(b.build());
+    }
+
+    // ----------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //    String enumName;
 //    String className2 = chomp(new File(Context.datWithSource.datRelPath()).getName(),
@@ -403,6 +461,15 @@ final class DataDefinitionParser extends BaseObject {
 
     QualifiedName className = QualifiedName.parse(enumName, packageName());
     enumDataType.withQualifiedName(className);
+
+
+
+
+
+
+
+
+
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), enumDataType));
     Context.generatedTypeDef.setDeprecated(mDepr);
 
