@@ -53,9 +53,13 @@ public final class Context {
     return mDataTypeManager;
   }
 
+  // ----------------------------------------------------------------------------------------------
+  // Lifetimes
+  // ----------------------------------------------------------------------------------------------
+
   public static void prepareApp(Files files, DatagenConfig config) {
     todo("this needs some thinking given that a .dat file now might contain multiple classes, and external references");
-    discard();
+    discardClassOrEnum();
     Context.pt = new ParseTools(config.language());
     Context.pt.prepare();
     Context.files = files;
@@ -65,23 +69,33 @@ public final class Context {
     Context.sql.prepare();
   }
 
-  public static void prepareForClassOrEnumDefinition(DatWithSource entry) {
-    discard();
-    p54("Context.prepare, entry:",INDENT,datWithSource);
-    Context.datWithSource = entry;
+
+  public static void prepareDir(File dir) {
+    discardDir();
     todo("we need a 'prepare' for a new directory");
     Context.mDataTypeManager = new DataTypeManager();
+  }
+
+  public static void discardDir() {
+    mDataTypeManager = null;
+  }
+
+  public static void prepareForClassOrEnumDefinition(DatWithSource entry) {
+    discardClassOrEnum();
+    p54("Context.prepare, entry:", INDENT, datWithSource);
+    Context.datWithSource = entry;
   }
 
   /**
    * Discard some old elements
    */
-  public static void discard() {
+  public static void discardClassOrEnum() {
     generatedTypeDef = null;
-    mDataTypeManager = null;
     datWithSource = null;
   }
 
+
+  // ----------------------------------------------------------------------------------------------
   public static File rustModFile(File generatedClassFile) {
     if (config.language() != Language.RUST)
       return null;

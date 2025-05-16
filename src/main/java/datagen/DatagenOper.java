@@ -74,11 +74,21 @@ public class DatagenOper extends AppOper {
 //    if (entriesToFreshen.isEmpty())
 //      log("...all files up-to-date (rerun with 'clean' option to force rebuild)");
 
+    File previousDirectory = null;
+
     for (var entry : entriesToFreshen) {
       log("...processing file:", entry);
 
       try {
 
+        {
+          var dir = Files.parent(entry);
+          p54("proc file:",entry,INDENT,"dir:",dir);
+          if (!dir.equals(previousDirectory)) {
+            Context.prepareDir(dir);
+            previousDirectory = dir;
+          }
+        }
         // Parse .dat file
         //
         DataDefinitionParser p = new DataDefinitionParser();
@@ -98,7 +108,7 @@ public class DatagenOper extends AppOper {
           throw t;
         setError("Processing", entry, INDENT, t.getMessage());
       } finally {
-        Context.discard();
+        Context.discardClassOrEnum();
       }
     }
 
