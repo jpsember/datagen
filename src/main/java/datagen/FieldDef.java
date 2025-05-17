@@ -134,11 +134,6 @@ public abstract class FieldDef extends BaseObject {
 
   // ------------------------------------------------------------------
 
-  @Deprecated
-  public final String defaultValueOrNull() {
-    return defaultValueSource();
-  }
-
   public void setDefaultValue(String defValueSource) {
     mCachedDefaultValueSource = defValueSource;
   }

@@ -67,7 +67,7 @@ public class JavaSetDataType extends JavaDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.open();
-    s.a(f.instanceName(), " = ", f.defaultValueOrNull(), ";", CR);
+    s.a(f.instanceName(), " = ", f.defaultValueSource(), ";", CR);
 
     s.a(OPEN, //
         "JSList m2 = m.optJSList(", QUOTE, f.name(), ");", CR, //
