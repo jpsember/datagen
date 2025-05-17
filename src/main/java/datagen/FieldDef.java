@@ -142,8 +142,6 @@ public abstract class FieldDef extends BaseObject {
     mCachedDefaultValueSourceForBuilder = defValueSource;
   }
 
-  // Is caching useful?
-  // I now allow overriding of this field, but then the cache value is not used?
   public String defaultValueSource() {
     if (mCachedDefaultValueSource == null)
       setDefaultValue(dataType().sourceDefaultValue());
