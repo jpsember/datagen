@@ -32,7 +32,7 @@ import java.io.File;
 
 public final class Utils {
 
-  public static final boolean ISSUE_54 = true && alert("ISSUE 54 is in effect");
+  public static final boolean ISSUE_54 = false && alert("ISSUE 54 is in effect");
   public static final boolean DEBUG_RUST_FILES = false && alert("ISSUE 47 is in effect");
   public static final boolean DEBUG_RUST_IMPORTS = false;
   public static final boolean DEBUG_RUST_LISTS = false;
@@ -42,6 +42,11 @@ public final class Utils {
   public static final boolean RUST_COMMENTS = DEBUG_RUST;
   public static final String GEN_SUBDIR_NAME = "gen";
   public static final String RUST_IMPORT_ALL_PREFIX = "!all_";
+
+  public static void pmod(Object... messages) {
+    if (DEBUG_RUST_MOD)
+      pr(insertStringToFront("RUST_MOD --->", messages));
+  }
 
   public static void p54(Object... messages) {
     if (ISSUE_54)

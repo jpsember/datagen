@@ -75,7 +75,7 @@ public final class Context {
   // ----------------------------------------------------------------------------------------------
 
   public static void prepareApp(Files files, DatagenConfig config) {
-    todo("this needs some thinking given that a .dat file now might contain multiple classes, and external references");
+    todo("!this needs some thinking given that a .dat file now might contain multiple classes, and external references");
     discardClassOrEnum();
     Context.pt = new ParseTools(config.language());
     Context.pt.prepare();
@@ -98,7 +98,7 @@ public final class Context {
 
   public static void prepareDir(File dir) {
     discardDir();
-    todo("we need to initialize a relative directory here or some such");
+    todo("!we need to initialize a relative directory here or some such");
     Context.mDataTypeManager = new DataTypeManager();
 
 //    checkArgument(Files.nonEmpty(config.datPath()));

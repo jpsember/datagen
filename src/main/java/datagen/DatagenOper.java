@@ -91,6 +91,7 @@ public class DatagenOper extends AppOper {
         p.setVerbose(verbose());
         p.parse(entry);
 
+        todo("move this updateRustModules to the dataDefnParser");
         if (Context.pt.rust())
           updateRustModules(entry);
       } catch (Throwable t) {
@@ -465,17 +466,19 @@ public class DatagenOper extends AppOper {
   // ------------------------------------------------------------------
 
   private void prepareRustModules() {
+    pmod("prepareRustModules");
     mModFilesMap = hashMap();
   }
 
   private void updateRustModules(File sourceRelPath) {
-    var db = DEBUG_RUST;
-    if (db)
-      log("updateRustModules, source:",  sourceRelPath );
-    var srcPath = new File(datagenConfig().sourcePath(),  sourceRelPath.toString() );
+    pmod("updateRustModules, sourceRelPath:", sourceRelPath);
+//    var db = DEBUG_RUST;
+//    if (db)
+//      log("updateRustModules, source:",  sourceRelPath );
+    var srcPath = new File(datagenConfig().sourcePath(), sourceRelPath.toString());
     while (true) {
-      if (db)
-        log("...", srcPath);
+
+      pmod("...", srcPath);
       var parent = Files.parent(srcPath);
       if (parent.equals(datagenConfig().sourcePath()))
         break;
@@ -491,10 +494,12 @@ public class DatagenOper extends AppOper {
   }
 
   private void flushRustModules() {
+    pmod("flushRustModules");
     for (var ent : mModFilesMap.entrySet()) {
       var file = ent.getKey();
       var set = ent.getValue();
       Set<String> sorted = treeSet();
+      pmod("file:", file, "set:", sorted);
       sorted.addAll(set);
 
       var modFile = new File(file, "mod.rs");
@@ -521,6 +526,7 @@ public class DatagenOper extends AppOper {
       var content = sb.toString();
       if (DEBUG_RUST_IMPORTS && verbose())
         log(VERT_SP, "Updating", modFile, ":", INDENT, content, VERT_SP);
+      pmod("updating",modFile,":",INDENT,content,VERT_SP);
       files().writeString(modFile, content);
     }
   }

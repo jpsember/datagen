@@ -93,7 +93,7 @@ final class DataDefinitionParser extends BaseObject {
 
     p54("relativeDatPath:", relativeDatPath);
 
-    todo("mRelativeDatPath is unnecessary; only the basename of the dat file is useful, the directory can be found in the context");
+    todo("!mRelativeDatPath is unnecessary; only the basename of the dat file is useful, the directory can be found in the context");
     mRelativeDatPath = relativeDatPath;
     mGeneratedClassNames = hashSet();
 
@@ -254,7 +254,7 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void ensureClassNameUnique(String className) {
-    todo("actually, it only needs be unique within its directory");
+    todo("!actually, it only needs be unique within its directory");
     checkState(!mGeneratedClassNames.contains(className), "duplicate generated class name");
     mGeneratedClassNames.add(className);
   }
@@ -279,7 +279,7 @@ final class DataDefinitionParser extends BaseObject {
 
     String relativeClassFile = determineRelativePath() + determineSourceName(className) + "." + sourceFileExtension();
 
-    todo("process clean later");
+    todo("!process clean later");
 //      if (config.clean()) {
     //  File sourceFile = new File(config.sourcePath(), relativeClassFile);
 //        // If we haven't yet done so, delete the 'gen' directory that will contain this source file
@@ -387,8 +387,8 @@ final class DataDefinitionParser extends BaseObject {
 
 //
      // if (Context.pt.rust())
- //     updateRustModules(entry);
-    todo("reenable rust modules");
+     // updateRustModules(entry);
+    todo("!reenable rust modules");
   }
 
 
@@ -600,7 +600,7 @@ final class DataDefinitionParser extends BaseObject {
    * Get package for the data type being generated
    */
   private String packageName() {
-    todo("there is packageName and packageNameNEW");
+    todo("!there is packageName and packageNameNEW");
     if (mPackageName == null) {
       String parentName = Context.datDirectoryRelative().toString();
       switch (Context.config.language()) {
