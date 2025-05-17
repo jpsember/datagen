@@ -169,7 +169,7 @@ public abstract class SourceGen extends BaseObject {
   }
 
   protected final File sourceFile() {
-    return new File(Context.config.sourcePath(), Context.sourceRelPath().toString());
+    return Files.join(Context.config.sourcePath(), Context.sourceRelPath());
   }
 
   protected SourceBuilder s = new SourceBuilder(Context.pt.language());

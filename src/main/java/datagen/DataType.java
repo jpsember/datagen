@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datagen;
 
@@ -49,18 +48,18 @@ public abstract class DataType implements DefaultValueParser {
    * Construct name of type, wrapped if necessary within an "import expression"
    * so that we are sure to generate import statements if the type appears in
    * the source.
-   * 
+   *
    * <pre>
-   * 
+   *
    * This is the name of the type, optionally with a fully-qualified path, e.g.
-   * 
+   *
    *    java.io.File
-   * 
+   *
    * For Python, primitive types will not have package names, e.g.
-   * 
+   *
    *    int
    *    string
-   * 
+   *
    * </pre>
    */
   public final DataType with(String qualNameExpr) {
@@ -368,7 +367,7 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   public String getInitInstanceFieldExpr(FieldDef f) {
-    return f.defaultValueOrNull();
+    return f.defaultValueSource();
   }
 
   public String buildRustJsonValueFrom(String expr) {

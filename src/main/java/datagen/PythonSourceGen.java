@@ -73,7 +73,7 @@ public class PythonSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.a("self.", hashFieldName(), " = None", CR);
     for (FieldDef f : def.fields()) {
-      s.a("self.", f.instanceName(), " = ", f.defaultValueOrNull(), CR);
+      s.a("self.", f.instanceName(), " = ", f.defaultValueSource(), CR);
     }
     return content();
   }

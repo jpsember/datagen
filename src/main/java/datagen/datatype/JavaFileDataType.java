@@ -58,8 +58,7 @@ public final class JavaFileDataType extends JavaDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.open();
-    if (!f.optional())
-      s.a(f.instanceName(), " = ", f.defaultValueOrNull(), ";", CR);
+    s.a(f.instanceName(), " = ", f.defaultValueSource(), ";", CR);
     s.a("String x = m.opt(", f.nameStringConstantQualified(), ", (String) null);", CR);
     sourceIfNotNull(s, "x");
     s.a(f.instanceName(), " = new ", typeName(), "(x);");

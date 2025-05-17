@@ -78,7 +78,7 @@ public class GoListDataType extends GoDataType {
     String argName = f.instanceName();
 
     s.a("if ", argName, " == nil", OPEN, //
-        argName, " = ", f.defaultValueOrNull(), CLOSE, //
+        argName, " = ", f.defaultValueSource(), CLOSE, //
         targetExpr, " = ", argName //
     );
     s.a(" // not implemented: in debug mode, set to an immutable slice?", CR);

@@ -60,10 +60,11 @@ public class JavaFloatArrayDataType extends JavaContractDataType {
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    String defaultValue = f.defaultValueOrNull();
-    if (defaultValue.equals("null"))
-      s.a(targetExpr, " = x");
-    else
+    String defaultValue = f.defaultValueSource();
+    checkArgument(!defaultValue.equals("null"));
+//    if (defaultValue.equals("null"))
+//      s.a(targetExpr, " = x");
+//    else
       s.a(targetExpr, " = ", "(x == null) ? ", defaultValue, " : x");
   }
 

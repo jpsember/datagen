@@ -61,8 +61,7 @@ public final class JavaJsonMapDataType extends JavaDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.open();
-    if (!f.optional())
-      s.a(f.instanceName(), " = ", f.defaultValueOrNull(), ";", CR);
+      s.a(f.instanceName(), " = ", f.defaultValueSource(), ";", CR);
     s.a(typeName(), " x = m.optJSMap(", f.nameStringConstantQualified(), ");", CR);
     sourceIfNotNull(s, "x");
     s.a(f.instanceName(), " = x.lock();");

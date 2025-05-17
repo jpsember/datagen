@@ -88,7 +88,7 @@ public class PythonContractDataType extends PythonDataType {
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     if (!f.optional()) {
       s.a("if x is None:", OPEN);
-      s.a("x = ", f.defaultValueOrNull(), CLOSE);
+      s.a("x = ", f.defaultValueSource(), CLOSE);
       s.a(targetExpr, " = x.build()");
     } else {
       sourceIfNotNull(s, "x");

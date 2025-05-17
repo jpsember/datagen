@@ -135,7 +135,7 @@ public abstract class FieldDef extends BaseObject {
   // ------------------------------------------------------------------
 
   @Deprecated
-  public String defaultValueOrNull() {
+  public final String defaultValueOrNull() {
     return defaultValueSource();
   }
 
@@ -147,7 +147,9 @@ public abstract class FieldDef extends BaseObject {
     mCachedDefaultValueSourceForBuilder = defValueSource;
   }
 
-  public final String defaultValueSource() {
+  // Is caching useful?
+  // I now allow overriding of this field, but then the cache value is not used?
+  public String defaultValueSource() {
     if (mCachedDefaultValueSource == null)
       setDefaultValue(dataType().sourceDefaultValue());
     return mCachedDefaultValueSource;

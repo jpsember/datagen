@@ -54,7 +54,7 @@ public class PyBooleanDataType extends PythonDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ");
-    s.a(f.defaultValueOrNull());
+    s.a(f.defaultValueSource());
     s.a(")", CR);
   }
 

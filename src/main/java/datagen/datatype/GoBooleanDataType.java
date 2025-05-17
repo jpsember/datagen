@@ -60,7 +60,7 @@ public final class GoBooleanDataType extends GoDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.a("n.", f.instanceName(), " = s.OptBool(", f.nameStringConstantQualified(), ", ",
-        f.defaultValueOrNull(), ")");
+        f.defaultValueSource(), ")");
   }
 
   public String sqlType() {

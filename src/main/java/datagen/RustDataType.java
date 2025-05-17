@@ -12,7 +12,7 @@ public abstract class RustDataType extends DataType {
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     notFinished();
     s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
-        f.defaultValueOrNull(), ")");
+        f.defaultValueSource(), ")");
   }
 
   @Override

@@ -15,7 +15,7 @@ public class PythonDataType extends DataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
-        f.defaultValueOrNull(), ")");
+        f.defaultValueSource(), ")");
   }
 
   @Override
@@ -39,7 +39,7 @@ public class PythonDataType extends DataType {
       s.a(targetExpr, " = x");
     } else {
       s.a(targetExpr, " = ", //
-          f.defaultValueOrNull(), " if x is None else x");
+          f.defaultValueSource(), " if x is None else x");
     }
   }
 

@@ -52,10 +52,7 @@ public final class JavaStringDataType extends JavaDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.a(f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ", ");
-    if (!f.optional())
-      s.a(f.defaultValueOrNull());
-    else
-      s.a("(String) null");
+      s.a(f.defaultValueSource());
     s.a(");", CR);
   }
 

@@ -81,7 +81,6 @@ public final class Context {
       sModules = new RustModuleMgr();
   }
 
-
   public static void prepareDir(File dir) {
     discardDir();
     mDataTypeManager = new DataTypeManager();
@@ -116,6 +115,7 @@ public final class Context {
   }
 
   public static void updateRustModule(File sourceRelPath) {
+    todo("we could refactor this by keeping track of list of source files generated");
     if (sModules != null)
       sModules.updateRustModules(sourceRelPath);
   }

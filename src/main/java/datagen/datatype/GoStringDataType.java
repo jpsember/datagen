@@ -64,7 +64,7 @@ public final class GoStringDataType extends GoDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.a("n.", f.instanceName(), " = s.OptString(", f.nameStringConstantQualified(), ", ",
-        f.defaultValueOrNull(), ")");
+        f.defaultValueSource(), ")");
   }
 
   @Override

@@ -12,7 +12,7 @@ public abstract class GoDataType extends DataType {
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     notFinished();
     s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
-        f.defaultValueOrNull(), ")");
+        f.defaultValueSource(), ")");
   }
 
   @Override
@@ -31,7 +31,7 @@ public abstract class GoDataType extends DataType {
       s.a(targetExpr, " = ", arg, CR);
     } else {
       s.a("if x == nil {", IN, //
-          "x = ", f.defaultValueOrNull(), OUT, //
+          "x = ", f.defaultValueSource(), OUT, //
           targetExpr, " = x", CR);
     }
   }

@@ -43,9 +43,13 @@ public class RustFieldDef extends FieldDef {
     return "c_" + Context.generatedTypeDef.qualifiedName().combined().replace('.', '_') + "_" + index();
   }
 
+//  @Override
+//  public String defaultValueOrNull() {
+//    return dataType().setterArgUsage( defaultValueSource() );
+//  }
   @Override
-  public String defaultValueOrNull() {
-    return dataType().setterArgUsage( defaultValueSource() );
+  public String defaultValueSource() {
+    return dataType().setterArgUsage( super.defaultValueSource() );
   }
 
 }

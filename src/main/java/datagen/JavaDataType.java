@@ -29,7 +29,7 @@ public class JavaDataType extends DataType {
     if (isPrimitive()) {
       expr = "x";
     } else {
-      expr = "(x == null) ? " + f.defaultValueOrNull() + " : x";
+      expr = "(x == null) ? " + f.defaultValueSource() + " : x";
     }
     s.a(targetExpr, " = ", expr);
   }
@@ -39,7 +39,7 @@ public class JavaDataType extends DataType {
    */
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a(f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(), ");");
+    s.a(f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ", ", f.defaultValueSource(), ");");
   }
 
   @Override

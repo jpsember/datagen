@@ -69,7 +69,7 @@ public final class GoFloatDataType extends GoDataType {
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.a("n.", f.instanceName(), " = s.Opt", DataUtil.capitalizeFirst(qualifiedName().className()), "(",
-        f.nameStringConstantQualified(), ", ", f.defaultValueOrNull(),")",CR);
+        f.nameStringConstantQualified(), ", ", f.defaultValueSource(),")",CR);
   }
  
 
