@@ -123,12 +123,8 @@ public final class DataDefinitionParser extends BaseObject {
   private void reportUnusedReferences() {
     String summary = Context.dataTypeManager().unusedReferencesSummary();
     if (!summary.isEmpty()) {
-      if (Context.config.treatWarningsAsErrors()) {
-        throw badArg(summary);
-      } else {
-        if (!Context.config.quietMode())
-          pr(summary);
-      }
+      if (!Context.config.quietMode())
+        pr(summary);
     }
   }
 

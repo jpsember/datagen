@@ -17,32 +17,11 @@ pub enum [!class] {
 [!enum_values]
 }
 
-/*
-pub enum Uranus {
-    Alpha,
-    Bravo,
-}
-*/
-
-
-
-
 impl Jsonable for [!class] {
     fn to_json(&self) -> JSValue {
         new_string(&self.to_string())
     }
 }
-
-/*
-impl Jsonable for Uranus {
-    fn to_json(&self) -> JSValue {
-        new_string(&self.to_string())
-    }
-}
-*/
-
-
-
 
 impl [!class] {
     pub fn to_string(&self) -> String {
@@ -51,18 +30,6 @@ impl [!class] {
         }
     }
 }
-
-/*
-impl Uranus {
-    pub fn to_string(&self) -> String {
-        match self {
-            Uranus::Alpha => "Alpha".to_string(),
-            Uranus::Bravo => "Bravo".to_string(),
-        }
-    }
-}
-*/
-
 
 impl fmt::Display for [!class] {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -76,20 +43,6 @@ impl fmt::Debug for [!class] {
     }
 }
 
-/*
-impl fmt::Display for Uranus {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.to_string())
-    }
-}
-
-impl fmt::Debug for Uranus {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{}", self.to_string())
-    }
-}
-*/
-
 // ---------------------------------------------------------------------------------------
 // Global functions
 // ---------------------------------------------------------------------------------------
@@ -97,14 +50,6 @@ impl fmt::Debug for Uranus {
 pub fn default_[!class]() -> [!class] {
 [!default_enum]
 }
-
-/*
-pub fn default_Uranus() -> Uranus {
-    Uranus::Alpha
-}
-*/
-
-
 
 // Attempt to parse (deserialize) a [!class] from a JSValue
 //
@@ -122,21 +67,6 @@ pub fn parse_[!class](m: JSValue) -> Result<[!class] , AnyError> {
 	}
 }
 
-/*
-// Attempt to parse (deserialize) a Uranus from a JSValue
-//
-pub fn parse_Uranus(m: JSValue) -> Result< Uranus , AnyError> {
-    let q = PRIVATE.read().unwrap();
-    let string = m.as_str()?;
-    let k = q.get(&string);
-    match k {
-        None => Err(new_error(&format!("No Uranus enum for: {}",&string))),
-        Some(x) => Ok(x.clone())
-    }
-}
-*/
-
-
 type Private = HashMap<String, [!class]>;
 
 fn new_private() -> Private {
@@ -144,16 +74,5 @@ fn new_private() -> Private {
 [!init_enum_map_fields]
     a
 }
-
-/*
-type Private = HashMap<String, Uranus>;
-
-fn new_private() -> Private {
-    let mut a = HashMap::new();
-    a.insert("Alpha".to_string(), Uranus::Alpha );
-    a.insert("Bravo".to_string(),  Uranus::Bravo );
-    a
-}
-*/
 
 static PRIVATE: Singleton<Private> = LazyLock::new(|| RwLock::new(new_private()));
