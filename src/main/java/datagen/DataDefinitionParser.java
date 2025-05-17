@@ -48,15 +48,14 @@ import js.data.DataUtil;
  */
 final class DataDefinitionParser extends BaseObject {
 
-
   /**
-   * Parse .dat file; store generated type definition to Context
+   * Parse .dat file
    */
   public void parse(File relativeDatPath) {
-    if (todo("reenable try/catch")) {
-      auxParse(relativeDatPath);
-      return;
-    }
+//    if (todo("reenable try/catch")) {
+//      auxParse(relativeDatPath);
+//      return;
+//    }
     try {
       auxParse(relativeDatPath);
     } catch (Throwable t) {
@@ -92,26 +91,16 @@ final class DataDefinitionParser extends BaseObject {
     //
     //
 
-    //  boolean depr = false;
     p54("relativeDatPath:", relativeDatPath);
 
     todo("mRelativeDatPath is unnecessary; only the basename of the dat file is useful, the directory can be found in the context");
-
-//    this mRelativeDatPath seems to be unnecessary; only used for basename of dat file; the directory can be found in the context
     mRelativeDatPath = relativeDatPath;
     mGeneratedClassNames = hashSet();
 
     while (scanner().hasNext()) {
 
-
-      if (false) for (int i = 0;i<50; i++) {
-        var t = scanner().peek(i);
-        if (t == null) break;
-        p54("token",i,":",t);
-      }
-
       // Prepare for next data type, etc
-      mDepr = scanner().readIf(DEPRECATION) != null;
+      mDeprecated = scanner().readIf(DEPRECATION) != null;
       mPackageName = null;
 
       p54(VERT_SP,"reading next token");
@@ -209,34 +198,15 @@ final class DataDefinitionParser extends BaseObject {
    * ContractDataType or an EnumDataType)
    */
   private void processExternalReference(DataType dataType) {
-    if (mDepr)
+    if (mDeprecated)
       mLastReadToken.failWith("cannot mark external reference deprecated");
 
     String nameExpression = read(ID);
     p54("processExternalReference, name_expr:", nameExpression);
 
-//// This is the code that was run in the old branch:
-//    var fileEntry = DatWithSource.newBuilder().datRelPath(determineRelativePath())
-////        .sourceRelPath(relativeClassFile)
-//        .build();
-//
-
-
-//    String defaultPackageName = DataUtil.convertUnderscoresToCamelCase(determineRelativePath());
-
-
-    todo("the default packageName() should be derived from the relative path of the .dat file");
-//    if (true) {
-    //b.datRelPath(mRelativeDatPath.toString());
-//      b.sourceRelPath(relativeClassFile);
-    //   Context.prepare(b.build());
-//    }
-
     read(SEMI);
 
-    p54("what does QualifiedName do again?");
-
-    // The default package name should be the package derived from the current .dat file
+    todo("the default packageName() should be derived from the relative path of the .dat file");
 
     QualifiedName q = QualifiedName.parse(nameExpression, packageName());
     dataType.withQualifiedName(q);
@@ -304,13 +274,10 @@ final class DataDefinitionParser extends BaseObject {
   }
 
   private void procDataType() {
-    var config = Context.config;
-
     String className = parseClassNameOrDerive();
     ensureClassNameUnique(className);
 
     String relativeClassFile = determineRelativePath() + determineSourceName(className) + "." + sourceFileExtension();
-
 
     todo("process clean later");
 //      if (config.clean()) {
@@ -322,16 +289,13 @@ final class DataDefinitionParser extends BaseObject {
 
 
     {
-//      var b = DatWithSource.newBuilder();
-//      b.datRelPath(mRelativeDatPath.toString());
-//      b.sourceRelPath(relativeClassFile);
       Context.prepareForClassOrEnumDefinition(relativeClassFile);
     }
 
     String typeName = DataUtil.convertUnderscoresToCamelCase(className);
     setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageNameNEW(mRelativeDatPath, className), null));
 
-    Context.generatedTypeDef.setDeprecated(mDepr);
+    Context.generatedTypeDef.setDeprecated(mDeprecated);
 
     read(BROP);
 
@@ -422,14 +386,13 @@ final class DataDefinitionParser extends BaseObject {
     g.generate();
 
 //
-//    if (Context.pt.rust())
-//      updateRustModules(entry);
+     // if (Context.pt.rust())
+ //     updateRustModules(entry);
     todo("reenable rust modules");
   }
 
 
   private void procEnum() {
-    var config = Context.config;
     String className2 = parseClassNameOrDerive();
     ensureClassNameUnique(className2);
     DataType dataType = EnumDataType.construct();
@@ -443,9 +406,8 @@ final class DataDefinitionParser extends BaseObject {
     QualifiedName className = QualifiedName.parse(enumName, packageName());
     dataType.withQualifiedName(className);
 
-
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), dataType));
-    Context.generatedTypeDef.setDeprecated(mDepr);
+    Context.generatedTypeDef.setDeprecated(mDeprecated);
 
     read(BROP);
 
@@ -607,7 +569,7 @@ final class DataDefinitionParser extends BaseObject {
 
 
   /**
-   * Get package for the data type being genearted
+   * Get package for the data type being generated
    */
   private String packageNameNEW(File relativeDatPath, String className) {
     String packageName;
@@ -638,11 +600,9 @@ final class DataDefinitionParser extends BaseObject {
    * Get package for the data type being generated
    */
   private String packageName() {
+    todo("there is packageName and packageNameNEW");
     if (mPackageName == null) {
       String parentName = Context.datDirectoryRelative().toString();
-      //datDirectory();
-//      File datPath = new File(Context.datWithSource().datRelPath());
-//      String parentName = nullToEmpty(datPath.getParent());
       switch (Context.config.language()) {
         case JAVA:
         case PYTHON:
@@ -676,9 +636,7 @@ final class DataDefinitionParser extends BaseObject {
   private Scanner mScanner;
   private Token mLastReadToken;
   private String mPackageName;
-  //  private boolean mDeprecated;
-  private boolean mDepr; // 'new' version
-
+  private boolean mDeprecated;
   private File mRelativeDatPath;
   private Set mGeneratedClassNames;
 }

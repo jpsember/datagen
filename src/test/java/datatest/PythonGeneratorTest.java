@@ -188,4 +188,16 @@ public class PythonGeneratorTest extends GenBaseTest {
         OUTDENT, "}");
     compile();
   }
+
+  @Test
+  public void externMulti() {
+    p().pr("class alpha {", INDENT, //
+        "*foo.gen.Layer layers;", CR, //
+        OUTDENT, "}");
+    p().pr("enum bravo {", INDENT, //
+        "a,b,c,", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
 }

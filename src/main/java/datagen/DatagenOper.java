@@ -70,9 +70,6 @@ public class DatagenOper extends AppOper {
     if (Context.rust())
       prepareRustModules();
 
-//    if (entriesToFreshen.isEmpty())
-//      log("...all files up-to-date (rerun with 'clean' option to force rebuild)");
-
     File previousDirectory = null;
 
     for (var entry : entriesToFreshen) {
@@ -94,12 +91,6 @@ public class DatagenOper extends AppOper {
         p.setVerbose(verbose());
         p.parse(entry);
 
-//        // Generate source file in appropriate language
-//        //
-//        SourceGen g = SourceGen.construct();
-//        g.setVerbose(verbose());
-//        g.generate();
-//
         if (Context.pt.rust())
           updateRustModules(entry);
       } catch (Throwable t) {

@@ -118,4 +118,17 @@ public class RustGeneratorTest extends GenBaseTest {
         "}");
     compile();
   }
+
+  @Test
+  public void externMulti() {
+    die("the mod file isn't storing the individual classes, just the name of the dat file");
+    p().pr("class alpha {", INDENT, //
+        "*foo.gen.Layer layers;", CR, //
+        OUTDENT, "}");
+    p().pr("enum bravo {", INDENT, //
+        "a,b,c,", CR, //
+        OUTDENT, "}");
+    compile();
+  }
+
 }
