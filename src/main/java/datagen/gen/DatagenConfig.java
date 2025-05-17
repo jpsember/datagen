@@ -27,10 +27,6 @@ public class DatagenConfig implements AbstractData {
     return mClean;
   }
 
-  public boolean deleteOld() {
-    return mDeleteOld;
-  }
-
   public boolean treatWarningsAsErrors() {
     return mTreatWarningsAsErrors;
   }
@@ -69,14 +65,13 @@ public class DatagenConfig implements AbstractData {
   protected static final String _2 = "language";
   protected static final String _3 = "source_path";
   protected static final String _4 = "clean";
-  protected static final String _5 = "delete_old";
-  protected static final String _6 = "treat_warnings_as_errors";
-  protected static final String _7 = "comments";
-  protected static final String _8 = "python_source_path";
-  protected static final String _9 = "verbose_names";
-  protected static final String _10 = "quiet_mode";
-  protected static final String _11 = "format";
-  protected static final String _12 = "dbsim";
+  protected static final String _5 = "treat_warnings_as_errors";
+  protected static final String _6 = "comments";
+  protected static final String _7 = "python_source_path";
+  protected static final String _8 = "verbose_names";
+  protected static final String _9 = "quiet_mode";
+  protected static final String _10 = "format";
+  protected static final String _11 = "dbsim";
 
   @Override
   public String toString() {
@@ -91,14 +86,13 @@ public class DatagenConfig implements AbstractData {
     m.putUnsafe(_2, mLanguage.toString().toLowerCase());
     m.putUnsafe(_3, mSourcePath.toString());
     m.putUnsafe(_4, mClean);
-    m.putUnsafe(_5, mDeleteOld);
-    m.putUnsafe(_6, mTreatWarningsAsErrors);
-    m.putUnsafe(_7, mComments);
-    m.putUnsafe(_8, mPythonSourcePath.toString());
-    m.putUnsafe(_9, mVerboseNames);
-    m.putUnsafe(_10, mQuietMode);
-    m.putUnsafe(_11, mFormat);
-    m.putUnsafe(_12, mDbsim);
+    m.putUnsafe(_5, mTreatWarningsAsErrors);
+    m.putUnsafe(_6, mComments);
+    m.putUnsafe(_7, mPythonSourcePath.toString());
+    m.putUnsafe(_8, mVerboseNames);
+    m.putUnsafe(_9, mQuietMode);
+    m.putUnsafe(_10, mFormat);
+    m.putUnsafe(_11, mDbsim);
     return m;
   }
 
@@ -139,20 +133,19 @@ public class DatagenConfig implements AbstractData {
       }
     }
     mClean = m.opt(_4, false);
-    mDeleteOld = m.opt(_5, false);
-    mTreatWarningsAsErrors = m.opt(_6, false);
-    mComments = m.opt(_7, false);
+    mTreatWarningsAsErrors = m.opt(_5, false);
+    mComments = m.opt(_6, false);
     {
       mPythonSourcePath = Files.DEFAULT;
-      String x = m.opt(_8, (String) null);
+      String x = m.opt(_7, (String) null);
       if (x != null) {
         mPythonSourcePath = new File(x);
       }
     }
-    mVerboseNames = m.opt(_9, false);
-    mQuietMode = m.opt(_10, false);
-    mFormat = m.opt(_11, false);
-    mDbsim = m.opt(_12, false);
+    mVerboseNames = m.opt(_8, false);
+    mQuietMode = m.opt(_9, false);
+    mFormat = m.opt(_10, false);
+    mDbsim = m.opt(_11, false);
   }
 
   public static Builder newBuilder() {
@@ -177,8 +170,6 @@ public class DatagenConfig implements AbstractData {
     if (!(mSourcePath.equals(other.mSourcePath)))
       return false;
     if (!(mClean == other.mClean))
-      return false;
-    if (!(mDeleteOld == other.mDeleteOld))
       return false;
     if (!(mTreatWarningsAsErrors == other.mTreatWarningsAsErrors))
       return false;
@@ -207,7 +198,6 @@ public class DatagenConfig implements AbstractData {
       r = r * 37 + mLanguage.ordinal();
       r = r * 37 + mSourcePath.hashCode();
       r = r * 37 + (mClean ? 1 : 0);
-      r = r * 37 + (mDeleteOld ? 1 : 0);
       r = r * 37 + (mTreatWarningsAsErrors ? 1 : 0);
       r = r * 37 + (mComments ? 1 : 0);
       r = r * 37 + mPythonSourcePath.hashCode();
@@ -225,7 +215,6 @@ public class DatagenConfig implements AbstractData {
   protected Language mLanguage;
   protected File mSourcePath;
   protected boolean mClean;
-  protected boolean mDeleteOld;
   protected boolean mTreatWarningsAsErrors;
   protected boolean mComments;
   protected File mPythonSourcePath;
@@ -243,7 +232,6 @@ public class DatagenConfig implements AbstractData {
       mLanguage = m.mLanguage;
       mSourcePath = m.mSourcePath;
       mClean = m.mClean;
-      mDeleteOld = m.mDeleteOld;
       mTreatWarningsAsErrors = m.mTreatWarningsAsErrors;
       mComments = m.mComments;
       mPythonSourcePath = m.mPythonSourcePath;
@@ -272,7 +260,6 @@ public class DatagenConfig implements AbstractData {
       r.mLanguage = mLanguage;
       r.mSourcePath = mSourcePath;
       r.mClean = mClean;
-      r.mDeleteOld = mDeleteOld;
       r.mTreatWarningsAsErrors = mTreatWarningsAsErrors;
       r.mComments = mComments;
       r.mPythonSourcePath = mPythonSourcePath;
@@ -305,11 +292,6 @@ public class DatagenConfig implements AbstractData {
 
     public Builder clean(boolean x) {
       mClean = x;
-      return this;
-    }
-
-    public Builder deleteOld(boolean x) {
-      mDeleteOld = x;
       return this;
     }
 

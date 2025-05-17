@@ -47,14 +47,7 @@ import js.data.DataUtil;
  */
 public final class DataDefinitionParser extends BaseObject {
 
-  /**
-   * Parse .dat file
-   */
   public void parse(File relativeDatPath) {
-//    if (todo("reenable try/catch")) {
-//      auxParse(relativeDatPath);
-//      return;
-//    }
     try {
       auxParse(relativeDatPath);
     } catch (Throwable t) {
@@ -92,7 +85,6 @@ public final class DataDefinitionParser extends BaseObject {
 
     p54("relativeDatPath:", relativeDatPath);
 
-    todo("!mRelativeDatPath is unnecessary; only the basename of the dat file is useful, the directory can be found in the context");
     mRelativeDatPath = relativeDatPath;
 
     while (scanner().hasNext()) {
@@ -125,7 +117,6 @@ public final class DataDefinitionParser extends BaseObject {
           t.failWith("unexpected token:", t.text());
       }
     }
-
     reportUnusedReferences();
   }
 
@@ -152,10 +143,6 @@ public final class DataDefinitionParser extends BaseObject {
     mScanner = new Scanner(dfa(), fileContent);
     mScanner.setSourceDescription(datPath);
     mLastReadToken = null;
-    if (false && alert("verbosity")) {
-      mScanner.setVerbose(true);
-      p54("scanning:", INDENT, fileContent);
-    }
   }
 
   private Token peek() {
@@ -231,7 +218,6 @@ public final class DataDefinitionParser extends BaseObject {
     return sourceClassName;
   }
 
-
   // If the next token is an identifier, it is the name of the generated class.
   // Otherwise, derive it from the dat file
   //
@@ -248,7 +234,6 @@ public final class DataDefinitionParser extends BaseObject {
     return className;
   }
 
-
   private String determineRelativePath() {
     String relPathExpr;
     {
@@ -263,23 +248,12 @@ public final class DataDefinitionParser extends BaseObject {
   }
 
   private void procDataType() {
-    String className = parseClassNameOrDerive();
-    File relativeClassFile = new File(determineRelativePath() + determineSourceName(className) + "." + sourceFileExtension());
-
-    todo("!process clean later");
-//      if (config.clean()) {
-    //  File sourceFile = new File(config.sourcePath(), relativeClassFile);
-//        // If we haven't yet done so, delete the 'gen' directory that will contain this source file
-    //   File genDirectory = determineGenDirectory(sourceFile);
-//        discardGenDirectory(discardedDirectoriesSet, genDirectory);
-//      }
-
-
+    String datClassName = parseClassNameOrDerive();
+    var relativeClassFile = new File(determineRelativePath() + determineSourceName(datClassName) + "." + sourceFileExtension());
     Context.prepareForClassOrEnumDefinition(relativeClassFile);
-
-    String typeName = DataUtil.convertUnderscoresToCamelCase(className);
-    setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null));
-
+    var typeName = DataUtil.convertUnderscoresToCamelCase(datClassName);
+    var pn = packageName();
+    setGeneratedTypeDef(new GeneratedTypeDef(typeName, pn, null));
     Context.generatedTypeDef.setDeprecated(mDeprecated);
 
     read(BROP);
@@ -289,7 +263,6 @@ public final class DataDefinitionParser extends BaseObject {
         break;
 
       TypeStructure structure;
-      boolean deprecated = false;
 
       // A field specification has this syntax:
       //
@@ -299,8 +272,7 @@ public final class DataDefinitionParser extends BaseObject {
       //
       //  <typespec> ::=  [enum] <type>
       //
-      if (readIf(DEPRECATION))
-        deprecated = true;
+      var deprecated = readIf(DEPRECATION);
 
       if (readIf(OPTIONAL)) {
         throw badArg("optional fields are no longer supported");
@@ -357,14 +329,11 @@ public final class DataDefinitionParser extends BaseObject {
     }
 
     genSource();
-
     Context.updateRustModule(relativeClassFile);
-
   }
 
   private void genSource() {
     Context.sql.generate();
-
     // Generate source file in appropriate language
     //
     SourceGen g = SourceGen.construct();
@@ -374,19 +343,14 @@ public final class DataDefinitionParser extends BaseObject {
 
 
   private void procEnum() {
-    String className2 = parseClassNameOrDerive();
-    DataType dataType = EnumDataType.construct();
-
-    var relativeClassFile = new File(determineRelativePath() + determineSourceName(className2) + "." + sourceFileExtension());
+    String datClassName = parseClassNameOrDerive();
+    var relativeClassFile = new File(determineRelativePath() + determineSourceName(datClassName) + "." + sourceFileExtension());
     Context.prepareForClassOrEnumDefinition(relativeClassFile);
-    todo("see what common code with procDataType there is");
-
-    var enumName = DataUtil.convertUnderscoresToCamelCase(className2);
-
+    var typeName = DataUtil.convertUnderscoresToCamelCase(datClassName);
     var pn = packageName();
-    QualifiedName className = QualifiedName.parse(enumName, pn);
+    QualifiedName className = QualifiedName.parse(typeName, pn);
+    DataType dataType = EnumDataType.construct();
     dataType.withQualifiedName(className);
-
     setGeneratedTypeDef(new GeneratedTypeDef(className.className(), pn, dataType));
     Context.generatedTypeDef.setDeprecated(mDeprecated);
 
@@ -402,9 +366,7 @@ public final class DataDefinitionParser extends BaseObject {
     }
 
     genSource();
-
     Context.updateRustModule(relativeClassFile);
-
   }
 
   private void processSqlInfo() {

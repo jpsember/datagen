@@ -50,7 +50,8 @@ public class PythonDataType extends DataType {
 
   @Override
   public void sourceIfNotNull(SourceBuilder s, FieldDef f) {
-    s.doIf(f.optional(), "if self.", f.instanceName(), " is not None:", OPEN);
+    //todo("this method and its corresponding endifs can be removed, as optional is no longer supported");
+    s.doIf(false, "if self.", f.instanceName(), " is not None:", OPEN);
   }
 
   @Override
@@ -60,14 +61,8 @@ public class PythonDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    if (f.optional()) {
-      s.a("x = obj.get(", f.nameStringConstantQualified(), ", ",  "[]" , ")", CR, //
-          "if x is not None:", OPEN, //
-          "inst.", f.instanceName(), " = x.copy()", CLOSE);
-    } else {
       s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
           "[]", ").copy()", CR);
-    }
   }
 
   @Override

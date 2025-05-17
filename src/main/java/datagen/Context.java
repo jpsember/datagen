@@ -133,5 +133,25 @@ public final class Context {
   private static File mSourceRelPath;
   private static RustModuleMgr sModules;
 
+  public static void cleanIfNecessary(File dir) {
+    if (!config.clean())
+      return;
+    var genDirectory = determineGenDirectory(dir);
+    if (sCleanedDirectorySet.add(genDirectory)) {
+      if (genDirectory.exists()) {
+        Files.S.deleteDirectory(genDirectory);
+      }
+    }
+  }
+
+  private static File determineGenDirectory(File sourceFile) {
+    String path = sourceFile.toString();
+    int cursor = path.lastIndexOf("/gen/");
+    checkArgument(cursor >= 0, "Cannot find generated directory for source file:", sourceFile);
+    return new File(path.substring(0, cursor) + "/gen");
+  }
+
+  private static Set<File> sCleanedDirectorySet = hashSet();
+
 }
 

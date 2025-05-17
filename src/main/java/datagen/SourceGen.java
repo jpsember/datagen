@@ -31,6 +31,7 @@ import static js.base.Tools.*;
 import static datagen.Utils.*;
 
 import js.base.BaseObject;
+import js.file.DirWalk;
 import js.file.Files;
 import js.json.JSMap;
 import js.parsing.MacroParser;
@@ -131,15 +132,20 @@ public abstract class SourceGen extends BaseObject {
     File target = sourceFile();
 
     boolean success = Context.generatedFilesSet.add(target);
-    checkState(success,"duplicate file generated:",target);
-    Context.files.mkdirs(Files.parent(target));
+    checkState(success, "duplicate file generated:", target);
+
+    Context.cleanIfNecessary(target);
+    var parent = Files.parent(target);
+
+
+    Context.files.mkdirs(parent);
     boolean wrote = Context.files.writeIfChanged(target, content);
-     var sourceFileRelative = Context.sourceRelPath();
+    var sourceFileRelative = Context.sourceRelPath();
     if (wrote)
-      log(".....updated:", sourceFileRelative );
+      log(".....updated:", sourceFileRelative);
     else {
       target.setLastModified(System.currentTimeMillis());
-      log("...freshened:", sourceFileRelative );
+      log("...freshened:", sourceFileRelative);
     }
 
     postGenerate();

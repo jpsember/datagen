@@ -64,11 +64,8 @@ public final class GoSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
     for (FieldDef f : def.fields()) {
-      if (f.optional())
-        continue;
-
       // We don't need an explicit initializer if the desired initial value equals the Java default value
-      String initialValue = f.defaultValueOrNull();
+      String initialValue = f.defaultValueSource();
       if (initialValue.equals(f.dataType().compilerInitialValue()))
         continue;
       s.a(CR, f.instanceName(), " = ", initialValue, ";");
@@ -258,7 +255,7 @@ public final class GoSourceGen extends SourceGen {
     s.setIndent(2);
     for (FieldDef f : def.fields()) {
       // We don't need an explicit initializer if the desired initial value equals Go's default value
-      String defaultValue = f.defaultValueOrNull();
+      String defaultValue = f.defaultValueSource();
       String compilerInitialValue = f.dataType().compilerInitialValue();
       if (defaultValue.equals(compilerInitialValue))
         continue;

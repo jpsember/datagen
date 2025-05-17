@@ -61,8 +61,6 @@ public final class RustSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
     for (FieldDef f : def.fields()) {
-      if (f.optional())
-        continue;
       String initialValue = f.dataType().getInitInstanceFieldExpr(f);
       s.a(CR, f.instanceName(), " = ", initialValue, ";");
     }

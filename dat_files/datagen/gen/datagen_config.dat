@@ -5,7 +5,6 @@ class {
   enum Language language;
   File source_path;
   bool clean;
-  bool delete_old;
   bool treat_warnings_as_errors;
 
   // Include extended comments in generated source files

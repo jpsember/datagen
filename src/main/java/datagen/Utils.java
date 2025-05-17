@@ -107,7 +107,7 @@ public final class Utils {
     }
   }
 
-  public static final String verboseVariant(String succinctOption, String verboseOption) {
+  public static String verboseVariant(String succinctOption, String verboseOption) {
     return Context.config.verboseNames() ? verboseOption : succinctOption;
   }
 
@@ -159,14 +159,6 @@ public final class Utils {
       sb.append(')');
       return sb.toString();
     }
-  }
-
-
-  public static File determineGenDirectory(File sourceFile) {
-    String path = sourceFile.toString();
-    int cursor = path.lastIndexOf("/gen/");
-    checkArgument(cursor >= 0, "Cannot find generated directory for source file:", sourceFile);
-    return new File(path.substring(0, cursor) + "/gen");
   }
 
 }
