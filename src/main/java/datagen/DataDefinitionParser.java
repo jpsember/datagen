@@ -93,7 +93,7 @@ final class DataDefinitionParser extends BaseObject {
     //
 
     //  boolean depr = false;
-    p54("relativeDatPath:",relativeDatPath);
+    p54("relativeDatPath:", relativeDatPath);
 
     todo("mRelativeDatPath is unnecessary; only the basename of the dat file is useful, the directory can be found in the context");
 
@@ -103,11 +103,20 @@ final class DataDefinitionParser extends BaseObject {
 
     while (scanner().hasNext()) {
 
+
+      if (false) for (int i = 0;i<50; i++) {
+        var t = scanner().peek(i);
+        if (t == null) break;
+        p54("token",i,":",t);
+      }
+
       // Prepare for next data type, etc
       mDepr = scanner().readIf(DEPRECATION) != null;
       mPackageName = null;
 
+      p54(VERT_SP,"reading next token");
       var t = read();
+      p54("read:",t,VERT_SP);
 
       switch (t.text()) {
         case "extern":
@@ -157,6 +166,10 @@ final class DataDefinitionParser extends BaseObject {
     mScanner = new Scanner(dfa(), fileContent);
     mScanner.setSourceDescription(datPath);
     mLastReadToken = null;
+    if (false && alert("verbosity")) {
+      mScanner.setVerbose(true);
+    p54("scanning:",INDENT,fileContent);
+    }
   }
 
   private Token peek() {
@@ -200,7 +213,7 @@ final class DataDefinitionParser extends BaseObject {
       mLastReadToken.failWith("cannot mark external reference deprecated");
 
     String nameExpression = read(ID);
-  p54("processExternalReference, name_expr:",nameExpression);
+    p54("processExternalReference, name_expr:", nameExpression);
 
 //// This is the code that was run in the old branch:
 //    var fileEntry = DatWithSource.newBuilder().datRelPath(determineRelativePath())
@@ -216,7 +229,7 @@ final class DataDefinitionParser extends BaseObject {
 //    if (true) {
     //b.datRelPath(mRelativeDatPath.toString());
 //      b.sourceRelPath(relativeClassFile);
- //   Context.prepare(b.build());
+    //   Context.prepare(b.build());
 //    }
 
     read(SEMI);
@@ -423,7 +436,7 @@ final class DataDefinitionParser extends BaseObject {
 
     String relativeClassFile = determineRelativePath() + determineSourceName(className2) + "." + sourceFileExtension();
     Context.prepareForClassOrEnumDefinition(relativeClassFile);
-todo("see what common code with procDataType there is");
+    todo("see what common code with procDataType there is");
 
     var enumName = DataUtil.convertUnderscoresToCamelCase(className2);
 
@@ -626,7 +639,7 @@ todo("see what common code with procDataType there is");
    */
   private String packageName() {
     if (mPackageName == null) {
-      String parentName =  Context.datDirectoryRelative().toString();
+      String parentName = Context.datDirectoryRelative().toString();
       //datDirectory();
 //      File datPath = new File(Context.datWithSource().datRelPath());
 //      String parentName = nullToEmpty(datPath.getParent());

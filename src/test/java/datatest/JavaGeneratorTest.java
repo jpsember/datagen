@@ -28,6 +28,7 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.util.Set;
 
+import datagen.gen.Language;
 import org.junit.Test;
 
 import datagen.gen.SampleDataType;
@@ -855,6 +856,19 @@ public class JavaGeneratorTest extends GenBaseTest {
         "int echo;", CR, //
         "Beaver ralph;", CR, //
         OUTDENT, "}");
+    compile();
+  }
+
+
+  @Test
+  public void enumRefImplicitPackage() {
+    language(Language.PYTHON);
+    p().pr("enum Zebra;", CR, //
+        "class {", INDENT, //
+        "Zebra alpha;", CR, //
+        "*Zebra delta;", CR, //
+        OUTDENT, //
+        "}");
     compile();
   }
 }
