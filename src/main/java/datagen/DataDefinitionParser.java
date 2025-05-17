@@ -291,7 +291,7 @@ public final class DataDefinitionParser extends BaseObject {
     Context.prepareForClassOrEnumDefinition(relativeClassFile);
 
     String typeName = DataUtil.convertUnderscoresToCamelCase(className);
-    setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageNameNEW(mRelativeDatPath, className), null));
+    setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageName(), null));
 
     Context.generatedTypeDef.setDeprecated(mDeprecated);
 
@@ -397,6 +397,7 @@ public final class DataDefinitionParser extends BaseObject {
 
     var enumName = DataUtil.convertUnderscoresToCamelCase(className2);
 
+    todo("packageName() need not be cached");
     QualifiedName className = QualifiedName.parse(enumName, packageName());
     dataType.withQualifiedName(className);
 
@@ -567,36 +568,7 @@ public final class DataDefinitionParser extends BaseObject {
   /**
    * Get package for the data type being generated
    */
-  private String packageNameNEW(File relativeDatPath, String className) {
-    String packageName;
-    String parentName = nullToEmpty(relativeDatPath.getParent());
-    switch (Context.config.language()) {
-      case JAVA:
-      case PYTHON:
-        packageName = parentName.replace('/', '.');
-        break;
-      case GO: {
-        // I think we want to set the package name to the last component of the package name
-        int c = parentName.lastIndexOf('/');
-        packageName = parentName.substring(c + 1);
-      }
-      break;
-      case RUST: {
-        int c = parentName.lastIndexOf(':');
-        packageName = parentName.substring(c + 1);
-      }
-      break;
-      default:
-        throw Utils.languageNotSupported();
-    }
-    return packageName;
-  }
-
-  /**
-   * Get package for the data type being generated
-   */
   private String packageName() {
-    todo("!there is packageName and packageNameNEW");
     if (mPackageName == null) {
       String parentName = Context.datDirectoryRelative().toString();
       switch (Context.config.language()) {
