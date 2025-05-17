@@ -1,0 +1,81 @@
+class datagen_config {
+  File start_dir;
+  File dat_path = "dat_files";
+
+  enum Language language;
+  File source_path;
+  bool clean;
+  bool treat_warnings_as_errors;
+
+  // Include extended comments in generated source files
+  //
+  bool comments;
+
+  // For Python, if nonempty, used instead of source_path
+  //
+  File python_source_path;
+
+  // Produce verbose internal names in generated source files
+  //
+  bool verbose_names;
+
+  // Suppress some output (to quiet unit tests)
+  //
+  bool quiet_mode;
+
+  // If true, performs gofmt step afterwards (go language only)
+  //
+  bool format;
+
+  // Where sql code would be generated, it generates code for a simple filesystem simulation instead
+  //
+  bool dbsim;
+}
+
+class lang_info {
+  enum Language language;
+  File sentinel_file;
+  int depth;
+}
+
+enum language {
+  auto, java, python, go, rust;
+}
+
+class partial_type {
+  string name;
+  bool enum_flag;
+}
+
+enum type_structure {
+  // 'map' and 'set' are reserved words, so use different names
+  scalar, list, key_value_map, value_set;
+}
+
+// Used to verify that there are no compilation errors in the result;
+// also used in some unit tests that require a data type with fields of various types;
+//
+
+class sample_data_type {
+
+  byte b1;
+  *byte b3;
+
+   short s1;
+  *short s3;
+
+   int i1;
+  *int i3;
+
+   long l1;
+  *long l3;
+
+   float f1;
+  *float f3;
+
+   double d1;
+  *double d3;
+
+  set File s;
+}
+

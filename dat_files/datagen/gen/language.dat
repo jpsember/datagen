@@ -1,3 +1,0 @@
-enum {
-  auto, java, python, go, rust;
-}

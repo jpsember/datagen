@@ -1,4 +1,0 @@
-enum {
-  // 'map' and 'set' are reserved words, so use different names
-  scalar, list, key_value_map, value_set;
-}

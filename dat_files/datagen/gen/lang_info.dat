@@ -1,5 +1,0 @@
-class {
-  enum Language language;
-  File sentinel_file;
-  int depth;
-}
