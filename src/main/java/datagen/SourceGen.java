@@ -130,10 +130,11 @@ public abstract class SourceGen extends BaseObject {
     content = Context.pt.adjustLinefeeds(content);
     File target = sourceFile();
 
+    boolean success = Context.generatedFilesSet.add(target);
+    checkState(success,"duplicate file generated:",target);
     Context.files.mkdirs(Files.parent(target));
     boolean wrote = Context.files.writeIfChanged(target, content);
-    Context.generatedFilesSet.add(target);
-    var sourceFileRelative = Context.sourceRelPath();
+     var sourceFileRelative = Context.sourceRelPath();
     if (wrote)
       log(".....updated:", sourceFileRelative );
     else {

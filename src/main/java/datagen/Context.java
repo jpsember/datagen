@@ -24,21 +24,14 @@
 package datagen;
 
 import java.io.File;
-import java.util.Map;
 import java.util.Set;
 
 import datagen.gen.DatagenConfig;
-import datagen.gen.Language;
 import js.file.Files;
-import js.parsing.RegExp;
 
 import static js.base.Tools.*;
 import static datagen.Utils.*;
 
-/**
- * Class containing components used while processing a single .dat file
- * (no longer true due to issue 54)
- */
 public final class Context {
 
   public static DatagenConfig config;
@@ -54,14 +47,13 @@ public final class Context {
     return mDataTypeManager;
   }
 
-
   public static File datDirectoryRelative() {
     checkNotNull(mDatDirectoryRel, "datDirectoryRelative");
     return mDatDirectoryRel;
   }
 
   public static File sourceRelPath() {
-    return  mSourceRelPath;
+    return mSourceRelPath;
   }
 
   // ----------------------------------------------------------------------------------------------
@@ -92,7 +84,7 @@ public final class Context {
 
   public static void prepareDir(File dir) {
     discardDir();
-    Context.mDataTypeManager = new DataTypeManager();
+    mDataTypeManager = new DataTypeManager();
     p54("prepareDir; dir:", dir);
     Files.assertRelative(dir, "expected relative dir");
     mDatDirectoryRel = dir;
@@ -138,9 +130,8 @@ public final class Context {
   private Context() {
   }
 
-
   private static File mSourceRelPath;
-
   private static RustModuleMgr sModules;
+
 }
 

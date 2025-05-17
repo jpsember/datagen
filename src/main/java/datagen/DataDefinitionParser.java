@@ -29,7 +29,6 @@ import static datagen.Utils.*;
 
 import java.io.File;
 import java.util.List;
-import java.util.Set;
 
 import datagen.datatype.EnumDataType;
 import datagen.gen.PartialType;
@@ -95,7 +94,6 @@ public final class DataDefinitionParser extends BaseObject {
 
     todo("!mRelativeDatPath is unnecessary; only the basename of the dat file is useful, the directory can be found in the context");
     mRelativeDatPath = relativeDatPath;
-    mGeneratedClassNames = hashSet();
 
     while (scanner().hasNext()) {
 
@@ -250,12 +248,6 @@ public final class DataDefinitionParser extends BaseObject {
     return className;
   }
 
-  private void ensureClassNameUnique(String className) {
-    todo("!actually, it only needs be unique within its directory");
-    boolean success = mGeneratedClassNames.add(className);
-    checkState(success, "duplicate generated class name:", className);
-  }
-
 
   private String determineRelativePath() {
     String relPathExpr;
@@ -272,8 +264,6 @@ public final class DataDefinitionParser extends BaseObject {
 
   private void procDataType() {
     String className = parseClassNameOrDerive();
-    ensureClassNameUnique(className);
-
     File relativeClassFile = new File(determineRelativePath() + determineSourceName(className) + "." + sourceFileExtension());
 
     todo("!process clean later");
@@ -385,7 +375,6 @@ public final class DataDefinitionParser extends BaseObject {
 
   private void procEnum() {
     String className2 = parseClassNameOrDerive();
-    ensureClassNameUnique(className2);
     DataType dataType = EnumDataType.construct();
 
     var relativeClassFile = new File(determineRelativePath() + determineSourceName(className2) + "." + sourceFileExtension());
@@ -601,5 +590,4 @@ public final class DataDefinitionParser extends BaseObject {
   private Token mLastReadToken;
   private boolean mDeprecated;
   private File mRelativeDatPath;
-  private Set mGeneratedClassNames;
 }
