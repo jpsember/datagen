@@ -22,17 +22,13 @@ public class RustModuleMgr extends BaseObject {
     return Context.config;
   }
 
-  public void prepareRustModules() {
-    pmod("prepareRustModules");
+  public RustModuleMgr() {
     mModFilesMap = hashMap();
   }
 
   public void updateRustModules(File sourceRelPath) {
     pmod("updateRustModules, sourceRelPath:", sourceRelPath);
-//    var db = DEBUG_RUST;
-//    if (db)
-//      log("updateRustModules, source:",  sourceRelPath );
-    var srcPath = new File(datagenConfig().sourcePath(), sourceRelPath.toString());
+    var srcPath = Files.join(datagenConfig().sourcePath(), sourceRelPath);
     while (true) {
 
       pmod("...", srcPath);

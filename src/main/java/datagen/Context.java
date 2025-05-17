@@ -60,25 +60,15 @@ public final class Context {
     return mDatDirectoryRel;
   }
 
-  public static String sourceRelPath() {
-    return checkNonEmpty(mSourceRelPath, "sourceRelPath");
+  public static File sourceRelPath() {
+    return  mSourceRelPath;
   }
-
-
-//  @Deprecated
-//  public static DatWithSource datWithSource() {
-//    todo("only called from two locations");
-//    checkNotNull(mDatWithSource  , "Context.datWithSource");
-//    return mDatWithSource;
-//  }
 
   // ----------------------------------------------------------------------------------------------
   // Lifetimes
   // ----------------------------------------------------------------------------------------------
 
   public static void prepareApp(Files files, DatagenConfig config) {
-    todo("!this needs some thinking given that a .dat file now might contain multiple classes, and external references");
-    discardClassOrEnum();
     Context.pt = new ParseTools(config.language());
     Context.pt.prepare();
     Context.files = files;
@@ -92,24 +82,11 @@ public final class Context {
     b.datPath(Files.absolute(b.datPath()));
     Context.config = b.build();
 
-//    DatagenConfig config = datagenConfig();
-//    File datRoot = config.datPath();
     p54("prepareApp; dat_path:", INDENT, Context.config.datPath());
 
-
-
-
-    if (Context.rust()) {
-
+    sModules = null;
+    if (Context.rust())
       sModules = new RustModuleMgr();
-
-    sModules.  prepareRustModules();
-    }
-
-
-
-
-
   }
 
 
@@ -133,11 +110,10 @@ public final class Context {
     mDatDirectoryRel = null;
   }
 
-  public static void prepareForClassOrEnumDefinition(String sourceRelPath) {
-    //DatWithSource entry
+  public static void prepareForClassOrEnumDefinition(File sourceRelPath) {
     discardClassOrEnum();
     p54("Context.prepare, sourceRelPath:", INDENT, sourceRelPath);
-    mSourceRelPath = checkNonEmpty(sourceRelPath, "sourceRelPath");
+    mSourceRelPath = sourceRelPath;
   }
 
   /**
@@ -148,25 +124,18 @@ public final class Context {
     mSourceRelPath = null;
   }
 
-public static void flushRustModules() {
-  if ( rust())
-   sModules.  flushRustModules();
-}
+  public static void flushRustModules() {
+    if (sModules != null)
+      sModules.flushRustModules();
+  }
 
-public static void updateRustModule(File sourceRelPath) {
-  if ( rust())
-    sModules.updateRustModules(sourceRelPath);
-}
-
-
+  public static void updateRustModule(File sourceRelPath) {
+    if (sModules != null)
+      sModules.updateRustModules(sourceRelPath);
+  }
 
 
   // ----------------------------------------------------------------------------------------------
-  public static File rustModFile(File generatedClassFile) {
-    if (config.language() != Language.RUST)
-      return null;
-    return new File(Files.parent(generatedClassFile), "mod.rs");
-  }
 
   public static boolean rust() {
     return pt.rust();
@@ -176,7 +145,7 @@ public static void updateRustModule(File sourceRelPath) {
   }
 
 
-  private static String mSourceRelPath;
+  private static File mSourceRelPath;
 
   private static RustModuleMgr sModules;
 }

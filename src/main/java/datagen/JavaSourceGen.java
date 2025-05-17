@@ -64,11 +64,8 @@ public final class JavaSourceGen extends SourceGen {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(4);
     for (FieldDef f : def.fields()) {
-      if (f.optional())
-        continue;
-
       // We don't need an explicit initializer if the desired initial value equals the Java default value
-      String initialValue = f.defaultValueOrNull();
+      String initialValue = f.defaultValueSource();
       if (initialValue.equals(f.dataType().compilerInitialValue()))
         continue;
       s.a(f.instanceName(), " = ", initialValue, ";");
@@ -244,20 +241,12 @@ public final class JavaSourceGen extends SourceGen {
     String a = "" + f.instanceName();
     String b = "other." + f.instanceName();
 
-    if (f.optional()) {
-      s.a("if ((", a, " == null) ^ (", b, " == null))", IN, //
-          "return false;", OUT);
-      s.a("if (", a, " != null)", OPEN);
-    }
 
     s.a("if (!(");
     f.dataType().sourceGenerateEquals(s, a, b);
     s.a("))");
 
     s.a(IN, "return false;", OUT);
-
-    if (f.optional())
-      s.a(CLOSE);
   }
 
   @Override

@@ -82,15 +82,13 @@ public class DatagenOper extends AppOper {
             previousDirectory = dir;
           }
         }
+
         // Parse .dat file
         //
         DataDefinitionParser p = new DataDefinitionParser();
         p.setVerbose(verbose());
         p.parse(entry);
 
-        todo("move this updateRustModules to the dataDefnParser");
-//        if (Context.pt.rust())
-//          updateRustModules(entry);
       } catch (Throwable t) {
         if (app().showExceptions() || SHOW_STACK_TRACES)
           throw t;
@@ -101,8 +99,7 @@ public class DatagenOper extends AppOper {
     }
 
     Context.sql.complete();
-//    if (Context.rust())
-    Context.  flushRustModules();
+    Context.flushRustModules();
 
     if (!files().dryRun() && config.format()) {
       if (!DEBUG_RUST_FILES)

@@ -46,7 +46,7 @@ import js.data.DataUtil;
 /**
  * Parse .dat file
  */
-final class DataDefinitionParser extends BaseObject {
+public final class DataDefinitionParser extends BaseObject {
 
   /**
    * Parse .dat file
@@ -103,9 +103,9 @@ final class DataDefinitionParser extends BaseObject {
       mDeprecated = scanner().readIf(DEPRECATION) != null;
       mPackageName = null;
 
-      p54(VERT_SP,"reading next token");
+      p54(VERT_SP, "reading next token");
       var t = read();
-      p54("read:",t,VERT_SP);
+      p54("read:", t, VERT_SP);
 
       switch (t.text()) {
         case "extern":
@@ -157,7 +157,7 @@ final class DataDefinitionParser extends BaseObject {
     mLastReadToken = null;
     if (false && alert("verbosity")) {
       mScanner.setVerbose(true);
-    p54("scanning:",INDENT,fileContent);
+      p54("scanning:", INDENT, fileContent);
     }
   }
 
@@ -206,7 +206,7 @@ final class DataDefinitionParser extends BaseObject {
 
     read(SEMI);
 
-    todo("the default packageName() should be derived from the relative path of the .dat file");
+    todo("default packageName should be derived from\n the relative path of the dat file");
 
     QualifiedName q = QualifiedName.parse(nameExpression, packageName());
     dataType.withQualifiedName(q);
@@ -277,7 +277,7 @@ final class DataDefinitionParser extends BaseObject {
     String className = parseClassNameOrDerive();
     ensureClassNameUnique(className);
 
-    String relativeClassFile = determineRelativePath() + determineSourceName(className) + "." + sourceFileExtension();
+    File relativeClassFile = new File(determineRelativePath() + determineSourceName(className) + "." + sourceFileExtension());
 
     todo("!process clean later");
 //      if (config.clean()) {
@@ -288,9 +288,7 @@ final class DataDefinitionParser extends BaseObject {
 //      }
 
 
-    {
-      Context.prepareForClassOrEnumDefinition(relativeClassFile);
-    }
+    Context.prepareForClassOrEnumDefinition(relativeClassFile);
 
     String typeName = DataUtil.convertUnderscoresToCamelCase(className);
     setGeneratedTypeDef(new GeneratedTypeDef(typeName, packageNameNEW(mRelativeDatPath, className), null));
@@ -348,8 +346,6 @@ final class DataDefinitionParser extends BaseObject {
           auxType, fieldName);
 
       if (readIf(EQUALS)) {
-        //checkState(!fieldDef.optional(), "cannot mix optional and default values");
-
         // See if there is a parser for default values for this field.  This can either be the data type's parseDefaultValue() method,
         // or one mapped to the type's class (in case it is outside of the datagen project)
         String key = fieldDef.dataType().typeName();
@@ -375,8 +371,7 @@ final class DataDefinitionParser extends BaseObject {
 
     genSource();
 
-    todo("clean this up");
-    Context.updateRustModule(  new File( chomp( relativeClassFile, ".rs")));
+    Context.updateRustModule(relativeClassFile);
 
   }
 
@@ -388,11 +383,6 @@ final class DataDefinitionParser extends BaseObject {
     SourceGen g = SourceGen.construct();
     g.setVerbose(verbose());
     g.generate();
-
-//
-     // if (Context.pt.rust())
-     // updateRustModules(entry);
-    todo("!reenable rust modules");
   }
 
 
@@ -401,7 +391,7 @@ final class DataDefinitionParser extends BaseObject {
     ensureClassNameUnique(className2);
     DataType dataType = EnumDataType.construct();
 
-    String relativeClassFile = determineRelativePath() + determineSourceName(className2) + "." + sourceFileExtension();
+    var relativeClassFile = new File(determineRelativePath() + determineSourceName(className2) + "." + sourceFileExtension());
     Context.prepareForClassOrEnumDefinition(relativeClassFile);
     todo("see what common code with procDataType there is");
 
@@ -426,8 +416,7 @@ final class DataDefinitionParser extends BaseObject {
 
     genSource();
 
-    todo("clean this up too");
-    Context.updateRustModule(  new File( chomp( relativeClassFile, ".rs")));
+    Context.updateRustModule(relativeClassFile);
 
   }
 
@@ -574,7 +563,6 @@ final class DataDefinitionParser extends BaseObject {
     t.name(read(ID));
     return t.build();
   }
-
 
   /**
    * Get package for the data type being generated

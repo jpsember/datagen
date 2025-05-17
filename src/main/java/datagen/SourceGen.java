@@ -133,11 +133,12 @@ public abstract class SourceGen extends BaseObject {
     Context.files.mkdirs(Files.parent(target));
     boolean wrote = Context.files.writeIfChanged(target, content);
     Context.generatedFilesSet.add(target);
+    var sourceFileRelative = Context.sourceRelPath();
     if (wrote)
-      log(".....updated:", sourceFileRelative());
+      log(".....updated:", sourceFileRelative );
     else {
       target.setLastModified(System.currentTimeMillis());
-      log("...freshened:", sourceFileRelative());
+      log("...freshened:", sourceFileRelative );
     }
 
     postGenerate();
@@ -161,12 +162,7 @@ public abstract class SourceGen extends BaseObject {
   }
 
   protected final File sourceFile() {
-    return new File(Context.config.sourcePath(), sourceFileRelative());
-  }
-
-  private String sourceFileRelative() {
-//    die("don't use datWithSource");
-    return Context.sourceRelPath(); //().sourceRelPath();
+    return new File(Context.config.sourcePath(), Context.sourceRelPath().toString());
   }
 
   protected SourceBuilder s = new SourceBuilder(Context.pt.language());
