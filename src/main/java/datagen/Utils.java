@@ -36,7 +36,7 @@ public final class Utils {
   public static final boolean DEBUG_RUST_FILES = false && alert("ISSUE 47 is in effect");
   public static final boolean DEBUG_RUST_IMPORTS = false;
   public static final boolean DEBUG_RUST_LISTS = false;
-  public static final boolean DEBUG_RUST_MOD = true && alert("DEBUG_RUST_MOD is in effect");
+  public static final boolean DEBUG_RUST_MOD = false && alert("DEBUG_RUST_MOD is in effect");
 
   public static final boolean DEBUG_RUST = DEBUG_RUST_FILES || DEBUG_RUST_IMPORTS || DEBUG_RUST_LISTS || DEBUG_RUST_MOD;
   public static final boolean RUST_COMMENTS = DEBUG_RUST;
@@ -54,8 +54,6 @@ public final class Utils {
   }
 
   public static void loadUtils() {
-    todo("weird stuff with alert json map not being found in unit tests");
-    todo("also not always clickable in IDEA");
   }
 
   /**

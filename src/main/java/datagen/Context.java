@@ -92,16 +92,10 @@ public final class Context {
 
   public static void prepareDir(File dir) {
     discardDir();
-    todo("!we need to initialize a relative directory here or some such");
     Context.mDataTypeManager = new DataTypeManager();
-
-//    checkArgument(Files.nonEmpty(config.datPath()));
-
     p54("prepareDir; dir:", dir);
-//    p54("config.datPath:", config.datPath());
-
     Files.assertRelative(dir, "expected relative dir");
-    mDatDirectoryRel = dir; //Files.relativeToContainingDirectory(dir, config.datPath());
+    mDatDirectoryRel = dir;
     p54("datDirectoryRel:", INDENT, Files.infoMap(mDatDirectoryRel));
   }
 

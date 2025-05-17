@@ -859,6 +859,24 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
+  /**
+   * We can't have more than one unnamed class (or enum) within a .dat file
+   */
+  @Test(expected = RuntimeException.class)
+  public void multipleUnnamed() {
+    p().pr("extern abc.xyz.Beaver;", CR);
+
+    p().pr("class {", INDENT, //
+        "long alpha;", CR, //
+        "long beta = " + Long.MAX_VALUE + ";", CR, //
+        OUTDENT, "}");
+
+    p().pr("class {", INDENT, //
+        "int echo;", CR, //
+        "Beaver ralph;", CR, //
+        OUTDENT, "}");
+    compile();
+  }
 
   @Test
   public void enumRefImplicitPackage() {

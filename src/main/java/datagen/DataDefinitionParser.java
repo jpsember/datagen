@@ -205,8 +205,6 @@ public final class DataDefinitionParser extends BaseObject {
 
     read(SEMI);
 
-    todo("default packageName should be derived from\n the relative path of the dat file");
-
     QualifiedName q = QualifiedName.parse(nameExpression, packageName());
     dataType.withQualifiedName(q);
     dataType.setDeclaredFlag();
@@ -254,8 +252,8 @@ public final class DataDefinitionParser extends BaseObject {
 
   private void ensureClassNameUnique(String className) {
     todo("!actually, it only needs be unique within its directory");
-    checkState(!mGeneratedClassNames.contains(className), "duplicate generated class name");
-    mGeneratedClassNames.add(className);
+    boolean success = mGeneratedClassNames.add(className);
+    checkState(success, "duplicate generated class name:", className);
   }
 
 
