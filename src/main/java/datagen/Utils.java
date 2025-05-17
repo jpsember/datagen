@@ -54,6 +54,8 @@ public final class Utils {
   }
 
   public static void loadUtils() {
+    todo("weird stuff with alert json map not being found in unit tests");
+    todo("also not always clickable in IDEA");
   }
 
   /**

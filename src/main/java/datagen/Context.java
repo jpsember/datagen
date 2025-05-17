@@ -24,11 +24,13 @@
 package datagen;
 
 import java.io.File;
+import java.util.Map;
 import java.util.Set;
 
 import datagen.gen.DatagenConfig;
 import datagen.gen.Language;
 import js.file.Files;
+import js.parsing.RegExp;
 
 import static js.base.Tools.*;
 import static datagen.Utils.*;
@@ -93,6 +95,21 @@ public final class Context {
 //    DatagenConfig config = datagenConfig();
 //    File datRoot = config.datPath();
     p54("prepareApp; dat_path:", INDENT, Context.config.datPath());
+
+
+
+
+    if (Context.rust()) {
+
+      sModules = new RustModuleMgr();
+
+    sModules.  prepareRustModules();
+    }
+
+
+
+
+
   }
 
 
@@ -131,6 +148,18 @@ public final class Context {
     mSourceRelPath = null;
   }
 
+public static void flushRustModules() {
+  if ( rust())
+   sModules.  flushRustModules();
+}
+
+public static void updateRustModule(File sourceRelPath) {
+  if ( rust())
+    sModules.updateRustModules(sourceRelPath);
+}
+
+
+
 
   // ----------------------------------------------------------------------------------------------
   public static File rustModFile(File generatedClassFile) {
@@ -149,4 +178,6 @@ public final class Context {
 
   private static String mSourceRelPath;
 
+  private static RustModuleMgr sModules;
 }
+

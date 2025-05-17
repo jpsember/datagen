@@ -374,6 +374,10 @@ final class DataDefinitionParser extends BaseObject {
     }
 
     genSource();
+
+    todo("clean this up");
+    Context.updateRustModule(  new File( chomp( relativeClassFile, ".rs")));
+
   }
 
   private void genSource() {
@@ -421,6 +425,10 @@ final class DataDefinitionParser extends BaseObject {
     }
 
     genSource();
+
+    todo("clean this up too");
+    Context.updateRustModule(  new File( chomp( relativeClassFile, ".rs")));
+
   }
 
   private void processSqlInfo() {
