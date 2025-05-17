@@ -101,7 +101,6 @@ public final class DataDefinitionParser extends BaseObject {
 
       // Prepare for next data type, etc
       mDeprecated = scanner().readIf(DEPRECATION) != null;
-      mPackageName = null;
 
       p54(VERT_SP, "reading next token");
       var t = read();
@@ -397,11 +396,11 @@ public final class DataDefinitionParser extends BaseObject {
 
     var enumName = DataUtil.convertUnderscoresToCamelCase(className2);
 
-    todo("packageName() need not be cached");
-    QualifiedName className = QualifiedName.parse(enumName, packageName());
+    var pn = packageName();
+    QualifiedName className = QualifiedName.parse(enumName, pn);
     dataType.withQualifiedName(className);
 
-    setGeneratedTypeDef(new GeneratedTypeDef(className.className(), packageName(), dataType));
+    setGeneratedTypeDef(new GeneratedTypeDef(className.className(), pn, dataType));
     Context.generatedTypeDef.setDeprecated(mDeprecated);
 
     read(BROP);
@@ -569,31 +568,30 @@ public final class DataDefinitionParser extends BaseObject {
    * Get package for the data type being generated
    */
   private String packageName() {
-    if (mPackageName == null) {
-      String parentName = Context.datDirectoryRelative().toString();
-      switch (Context.config.language()) {
-        case JAVA:
-        case PYTHON:
-          mPackageName = parentName.replace('/', '.');
-          break;
-        case GO: {
-          // I think we want to set the package name to the last component of the package name
-          int c = parentName.lastIndexOf('/');
-          mPackageName = parentName.substring(c + 1);
-        }
+    String name = null;
+    String parentName = Context.datDirectoryRelative().toString();
+    switch (Context.config.language()) {
+      case JAVA:
+      case PYTHON:
+        name = parentName.replace('/', '.');
         break;
-        case RUST: {
-          int c = parentName.lastIndexOf(':');
-          mPackageName = parentName.substring(c + 1);
-        }
-        break;
-        default:
-          Utils.languageNotSupported();
-          break;
+      case GO: {
+        // I think we want to set the package name to the last component of the package name
+        int c = parentName.lastIndexOf('/');
+        name = parentName.substring(c + 1);
       }
-      checkNotNull(mPackageName, "language not supported");
+      break;
+      case RUST: {
+        int c = parentName.lastIndexOf(':');
+        name = parentName.substring(c + 1);
+      }
+      break;
+      default:
+        Utils.languageNotSupported();
+        break;
     }
-    return mPackageName;
+    checkNotNull(name, "language not supported");
+    return name;
   }
 
   private void setGeneratedTypeDef(GeneratedTypeDef d) {
@@ -603,7 +601,6 @@ public final class DataDefinitionParser extends BaseObject {
 
   private Scanner mScanner;
   private Token mLastReadToken;
-  private String mPackageName;
   private boolean mDeprecated;
   private File mRelativeDatPath;
   private Set mGeneratedClassNames;
