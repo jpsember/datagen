@@ -109,7 +109,7 @@ public final class Context {
 
   public static void flushRustModules() {
     if (!rust()) return;
-    RustUtil.generateModFiles(sGeneratedSources);
+    generateRustModFiles(sGeneratedSources);
   }
 
 
