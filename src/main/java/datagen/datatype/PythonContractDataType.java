@@ -41,11 +41,6 @@ public class PythonContractDataType extends PythonDataType {
     return Context.pt.importExprWithClassName(qualifiedName()) + ".default_instance";
   }
 
-  public String getConstructFromX() {
-    todo("!this won't work for non-primitive data types");
-    return "x.copy()";
-  }
-
   // Make this final for now to avoid unintended overriding
   @Override
   public final void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {

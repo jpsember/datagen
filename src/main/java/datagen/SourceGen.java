@@ -147,9 +147,9 @@ public abstract class SourceGen extends BaseObject {
       log("...freshened:", sourceFileRelative);
     }
 
-    Context.registerGeneratedSource(target,Context.generatedTypeDef);
+    Context.registerGeneratedSource(target, Context.generatedTypeDef);
     todo("is postGenerate used anywhere?");
-     postGenerate();
+    postGenerate();
   }
 
   /**
@@ -162,7 +162,7 @@ public abstract class SourceGen extends BaseObject {
    * Perform any additional tasks after source file has been generated. Default
    * implementation does nothing
    */
-  protected void postGenerate() {
+  protected final void postGenerate() {
   }
 
   protected String getDeprecationSource() {

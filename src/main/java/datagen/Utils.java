@@ -27,6 +27,7 @@ import static js.base.Tools.*;
 
 import datagen.gen.Language;
 import js.base.BasePrinter;
+import js.data.DataUtil;
 import js.file.Files;
 
 import java.io.File;
@@ -38,7 +39,7 @@ public final class Utils {
   public static final boolean DEBUG_RUST_FILES = false && alert("ISSUE 47 is in effect");
   public static final boolean DEBUG_RUST_IMPORTS = false;
   public static final boolean DEBUG_RUST_LISTS = false;
-  public static final boolean DEBUG_RUST_MOD = true && alert("DEBUG_RUST_MOD is in effect");
+  public static final boolean DEBUG_RUST_MOD = false && alert("DEBUG_RUST_MOD is in effect");
 
   public static final boolean DEBUG_RUST = DEBUG_RUST_FILES || DEBUG_RUST_IMPORTS || DEBUG_RUST_LISTS || DEBUG_RUST_MOD;
   public static final boolean RUST_COMMENTS = DEBUG_RUST;
@@ -65,10 +66,7 @@ public final class Utils {
     throw notSupported(insertStringToFront("Language not supported:", messages));
   }
 
-  private static DebugCounter crCounter = new DebugCounter("crs", 0);
-
   public static void addCr(StringBuilder dest) {
-    crCounter.event(dest);
     dest.append('\n');
   }
 
@@ -161,39 +159,6 @@ public final class Utils {
       sb.append(')');
       return sb.toString();
     }
-  }
-
-  public static void generateRustModFiles(List<GeneratedTypeDef> entries) {
-    pmod("generateRustModFiles");
-
-    List<GeneratedTypeDef> listForCurrentDir = arrayList();
-    File currentDir = Files.DEFAULT;
-
-    for (var genType : entries) {
-      var file = genType.sourceFile();
-      var dir = Files.parent(file);
-      if (!dir.equals(currentDir)) {
-        flushDir(currentDir, listForCurrentDir);
-        currentDir = dir;
-        listForCurrentDir.clear();
-      }
-      listForCurrentDir.add(genType);
-    }
-    flushDir(currentDir, listForCurrentDir);
-  }
-
-  private static void flushDir(File directory, List<GeneratedTypeDef> entries) {
-    if (entries.isEmpty()) return;
-
-    List<String> lines = arrayList();
-    for (var x : entries)
-      lines.add("pub mod " + Files.basename(x.sourceFile()) + ";");
-    lines.sort(null);
-
-    var content = String.join("\n", lines) + "\n";
-    var modFile = new File(directory, "mod.rs");
-    pmod("updating", modFile, ":", INDENT, content, VERT_SP);
-    Files.S.writeString(modFile, content);
   }
 
 }

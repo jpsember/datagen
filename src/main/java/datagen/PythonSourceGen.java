@@ -252,21 +252,6 @@ public class PythonSourceGen extends SourceGen {
     return c;
   }
 
-  @Override
-  protected void postGenerate() {
-    GeneratedTypeDef def = Context.generatedTypeDef;
-    Files files = Context.files;
-    // This is annoying, but to make relative imports work in Python we need to ensure
-    // there's an (empty) file '__init__.py' in the same directory as any Python file.
-    //
-    if (!files.dryRun()) {
-      File parent = Files.parent(def.sourceFile());
-      File sentinelFile = new File(parent, "__init__.py");
-      Context.generatedFilesSet.add(sentinelFile);
-      if (!sentinelFile.exists())
-        files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
-    }
-  }
 
   private String propertyGetName(FieldDef f) {
     return verboseVariant("_g" + f.index(), "_get_" + f.name());

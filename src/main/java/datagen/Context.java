@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import datagen.gen.DatagenConfig;
-import js.base.Pair;
+import js.data.DataUtil;
 import js.file.Files;
 
 import static js.base.Tools.*;
@@ -107,9 +107,50 @@ public final class Context {
     mSourceRelPath = null;
   }
 
-  public static void flushRustModules() {
-    if (!rust()) return;
-    generateRustModFiles(sGeneratedSources);
+  public static void generateAuxilliarySourceFiles() {
+    pmod("generateAuxilliarySourceFiles");
+    var entries = sGeneratedSources;
+    List<GeneratedTypeDef> listForCurrentDir = arrayList();
+    File currentDir = Files.DEFAULT;
+
+    for (var genType : entries) {
+      var file = genType.sourceFile();
+      var dir = Files.parent(file);
+      if (!dir.equals(currentDir)) {
+        flushDir(currentDir, listForCurrentDir);
+        currentDir = dir;
+        listForCurrentDir.clear();
+      }
+      listForCurrentDir.add(genType);
+    }
+    flushDir(currentDir, listForCurrentDir);
+  }
+
+  private static void flushDir(File directory, List<GeneratedTypeDef> entries) {
+    if (entries.isEmpty()) return;
+
+    switch (Context.pt.language()) {
+      default:
+        return;
+      case RUST: {
+        List<String> lines = arrayList();
+        for (var x : entries)
+          lines.add("pub mod " + Files.basename(x.sourceFile()) + ";");
+        lines.sort(null);
+
+        var content = String.join("\n", lines) + "\n";
+        var modFile = new File(directory, "mod.rs");
+        pmod("updating", modFile, ":", INDENT, content, VERT_SP);
+        Files.S.writeString(modFile, content);
+      }
+      break;
+      case PYTHON: {
+        File sentinelFile = new File(directory, "__init__.py");
+        Files.S.mkdirs(directory);
+        Files.S.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
+      }
+      break;
+    }
   }
 
 

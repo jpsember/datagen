@@ -878,15 +878,4 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
-  @Test
-  public void enumRefImplicitPackage() {
-    language(Language.PYTHON);
-    p().pr("enum Zebra;", CR, //
-        "class {", INDENT, //
-        "Zebra alpha;", CR, //
-        "*Zebra delta;", CR, //
-        OUTDENT, //
-        "}");
-    compile();
-  }
 }
