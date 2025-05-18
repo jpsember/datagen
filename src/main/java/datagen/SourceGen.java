@@ -148,7 +148,9 @@ public abstract class SourceGen extends BaseObject {
       log("...freshened:", sourceFileRelative);
     }
 
-    postGenerate();
+    Context.registerGeneratedSource(target,Context.generatedTypeDef);
+    todo("is postGenerate used anywhere?");
+     postGenerate();
   }
 
   /**

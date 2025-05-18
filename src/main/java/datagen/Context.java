@@ -24,9 +24,11 @@
 package datagen;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
 import datagen.gen.DatagenConfig;
+import js.base.Pair;
 import js.file.Files;
 
 import static js.base.Tools.*;
@@ -110,6 +112,9 @@ public final class Context {
   }
 
   public static void flushRustModules() {
+    if (!rust()) return;
+    RustUtil.generateModFiles(sGeneratedSources);
+
     if (sModules != null)
       sModules.flushRustModules();
   }
@@ -153,5 +158,11 @@ public final class Context {
 
   private static Set<File> sCleanedDirectorySet = hashSet();
 
+  public static void registerGeneratedSource(File target, GeneratedTypeDef generatedTypeDef) {
+    pmod("generated:", target.getName(), "type:", Context.generatedTypeDef.qualifiedName().className());
+    sGeneratedSources.add(pair(target, generatedTypeDef));
+  }
+
+  private static List<Pair<File, GeneratedTypeDef>> sGeneratedSources = arrayList();
 }
 

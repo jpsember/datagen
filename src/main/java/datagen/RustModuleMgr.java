@@ -12,6 +12,7 @@ import java.util.Set;
 import static datagen.Utils.*;
 import static js.base.Tools.*;
 
+@Deprecated
 public class RustModuleMgr extends BaseObject {
 
   // ------------------------------------------------------------------
@@ -47,6 +48,7 @@ public class RustModuleMgr extends BaseObject {
   }
 
   public void flushRustModules() {
+    if (alert("flushRustModules now has no effect")) return;
     pmod("flushRustModules");
     for (var ent : mModFilesMap.entrySet()) {
       var file = ent.getKey();

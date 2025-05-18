@@ -97,6 +97,7 @@ public class DatagenOper extends AppOper {
     Context.sql.complete();
     Context.flushRustModules();
 
+
     if (!files().dryRun() && config.format()) {
       if (!DEBUG_RUST_FILES)
         formatSourceFiles();

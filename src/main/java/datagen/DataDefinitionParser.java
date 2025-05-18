@@ -49,7 +49,59 @@ public final class DataDefinitionParser extends BaseObject {
 
   public void parse(File relativeDatPath) {
     try {
-      auxParse(relativeDatPath);
+      startScanner(relativeDatPath);
+
+      //  TODO: document this better, esp. with recent refactoring
+      //
+      //  <dat_file> ::=
+      //     <extern_ref>*    ( <class_def> | <enum_def> )
+      //
+      //  <extern_ref> ::=
+      //     (extern | enum) <type_name>;          <-- maybe require extern to precede enum?
+      //                                               then we could support multiple classes per file
+      //
+      //  <class_def> ::=
+      //        [-] class { <fields>* }
+      //
+      //  <enum_def> ::=
+      //        [-] enum  { <enum_names>* }
+      //
+      //
+
+      p54("relativeDatPath:", relativeDatPath);
+
+      mRelativeDatPath = relativeDatPath;
+
+      while (scanner().hasNext()) {
+
+        mDeprecated = scanner().readIf(DEPRECATION) != null;
+
+        p54(VERT_SP, "reading next token");
+        var t = read();
+        p54("read:", t, VERT_SP);
+
+        switch (t.text()) {
+          case "extern":
+            processExternalReference(DataTypeManager.constructContractDataType());
+            break;
+          case "class":
+            procDataType();
+            break;
+          case "enum": {
+            // If "enum <name> ;", it's an external reference
+            //
+            var t2 = scanner().peek(1);
+            if (t2 != null && t2.id(SEMI))
+              processExternalReference(EnumDataType.construct());
+            else
+              procEnum();
+          }
+          break;
+          default:
+            t.failWith("unexpected token:", t.text());
+        }
+      }
+      reportUnusedReferences();
     } catch (Throwable t) {
       if (t instanceof ScanException || SHOW_STACK_TRACES) {
         if (SHOW_STACK_TRACES)
@@ -61,63 +113,6 @@ public final class DataDefinitionParser extends BaseObject {
       }
       throw t;
     }
-  }
-
-  private void auxParse(File relativeDatPath) {
-    startScanner(relativeDatPath);
-
-    //  TODO: document this better, esp. with recent refactoring
-    //
-    //  <dat_file> ::=
-    //     <extern_ref>*    ( <class_def> | <enum_def> )
-    //
-    //  <extern_ref> ::=
-    //     (extern | enum) <type_name>;          <-- maybe require extern to precede enum?
-    //                                               then we could support multiple classes per file
-    //
-    //  <class_def> ::=
-    //        [-] class { <fields>* }
-    //
-    //  <enum_def> ::=
-    //        [-] enum  { <enum_names>* }
-    //
-    //
-
-    p54("relativeDatPath:", relativeDatPath);
-
-    mRelativeDatPath = relativeDatPath;
-
-    while (scanner().hasNext()) {
-
-      // Prepare for next data type, etc
-      mDeprecated = scanner().readIf(DEPRECATION) != null;
-
-      p54(VERT_SP, "reading next token");
-      var t = read();
-      p54("read:", t, VERT_SP);
-
-      switch (t.text()) {
-        case "extern":
-          processExternalReference(DataTypeManager.constructContractDataType());
-          break;
-        case "class":
-          procDataType();
-          break;
-        case "enum": {
-          // If "enum <name> ;", it's an external reference
-          //
-          var t2 = scanner().peek(1);
-          if (t2 != null && t2.id(SEMI))
-            processExternalReference(EnumDataType.construct());
-          else
-            procEnum();
-        }
-        break;
-        default:
-          t.failWith("unexpected token:", t.text());
-      }
-    }
-    reportUnusedReferences();
   }
 
   private void reportUnusedReferences() {
