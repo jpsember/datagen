@@ -31,7 +31,6 @@ import static js.base.Tools.*;
 import static datagen.Utils.*;
 
 import js.base.BaseObject;
-import js.file.DirWalk;
 import js.file.Files;
 import js.json.JSMap;
 import js.parsing.MacroParser;
@@ -129,7 +128,7 @@ public abstract class SourceGen extends BaseObject {
     //         the neighboring (non-blank) lines
     //
     content = Context.pt.adjustLinefeeds(content);
-    File target = sourceFile();
+    File target = def.sourceFile();
 
     boolean success = Context.generatedFilesSet.add(target);
     checkState(success, "duplicate file generated:", target);

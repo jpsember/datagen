@@ -238,10 +238,10 @@ public final class DataDefinitionParser extends BaseObject {
     return relPathExpr;
   }
 
-  private void prepare(GeneratedTypeDef gt) {
-    setGeneratedTypeDef(gt);
-    gt.setDeprecated(mDeprecated);
-    gt.setGeneratedSourceFile(Files.join(Context.config.sourcePath(), Context.sourceRelPath()));
+  private void prepare(GeneratedTypeDef type) {
+    setGeneratedTypeDef(type);
+    type.setDeprecated(mDeprecated);
+    type.setSourceFile(Files.join(Context.config.sourcePath(), Context.sourceRelPath()));
   }
 
   private void procDataType() {

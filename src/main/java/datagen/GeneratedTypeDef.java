@@ -259,12 +259,12 @@ public final class GeneratedTypeDef extends BaseObject {
     return dataType;
   }
 
-  public void setGeneratedSourceFile(File f) {
-    mGeneratedSourceFile = f;
+  public void setSourceFile(File f) {
+    mSourceFile = f;
   }
 
-  public File generatedSourceFile() {
-    return mGeneratedSourceFile;
+  public File sourceFile() {
+    return mSourceFile;
   }
 
   private final EnumDataType mEnumDataType;
@@ -272,5 +272,5 @@ public final class GeneratedTypeDef extends BaseObject {
   private final Set<String> mFieldNames = hashSet();
   private SourceBuilder mClassSpecificSourceBuilder;
   private String mClassSpecificSource;
-  private File mGeneratedSourceFile;
+  private File mSourceFile;
 }

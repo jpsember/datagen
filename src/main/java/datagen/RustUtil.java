@@ -17,7 +17,7 @@ public final class RustUtil {
     File currentDir = Files.DEFAULT;
 
     for (var genType : entries) {
-      var file = genType.generatedSourceFile();
+      var file = genType.sourceFile();
       var dir = Files.parent(file);
       if (!dir.equals(currentDir)) {
         flushDir(currentDir, listForCurrentDir);
@@ -34,7 +34,7 @@ public final class RustUtil {
 
     List<String> lines = arrayList();
     for (var x : entries)
-      lines.add("pub mod " + Files.basename(x.generatedSourceFile()) + ";");
+      lines.add("pub mod " + Files.basename(x.sourceFile()) + ";");
     lines.sort(null);
 
     var content = String.join("\n", lines) + "\n";
