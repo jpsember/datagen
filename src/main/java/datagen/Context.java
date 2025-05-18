@@ -77,10 +77,6 @@ public final class Context {
     Context.config = b.build();
 
     p54("prepareApp; dat_path:", INDENT, Context.config.datPath());
-
-    sModules = null;
-    if (Context.rust())
-      sModules = new RustModuleMgr();
   }
 
   public static void prepareDir(File dir) {
@@ -114,15 +110,6 @@ public final class Context {
   public static void flushRustModules() {
     if (!rust()) return;
     RustUtil.generateModFiles(sGeneratedSources);
-
-    if (sModules != null)
-      sModules.flushRustModules();
-  }
-
-  public static void updateRustModule(File sourceRelPath) {
-    todo("we could refactor this by keeping track of list of source files generated");
-    if (sModules != null)
-      sModules.updateRustModules(sourceRelPath);
   }
 
 
@@ -136,7 +123,6 @@ public final class Context {
   }
 
   private static File mSourceRelPath;
-  private static RustModuleMgr sModules;
 
   public static void cleanIfNecessary(File dir) {
     if (!config.clean())
@@ -159,10 +145,10 @@ public final class Context {
   private static Set<File> sCleanedDirectorySet = hashSet();
 
   public static void registerGeneratedSource(File target, GeneratedTypeDef generatedTypeDef) {
-    pmod("generated:", target.getName(), "type:", Context.generatedTypeDef.qualifiedName().className());
-    sGeneratedSources.add(pair(target, generatedTypeDef));
+    pmod("generated:", target.getName(), "type:", generatedTypeDef.qualifiedName().className());
+    sGeneratedSources.add(generatedTypeDef);
   }
 
-  private static List<Pair<File, GeneratedTypeDef>> sGeneratedSources = arrayList();
+  private static List<GeneratedTypeDef> sGeneratedSources = arrayList();
 }
 

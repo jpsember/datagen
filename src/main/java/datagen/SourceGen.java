@@ -170,6 +170,7 @@ public abstract class SourceGen extends BaseObject {
     return "@Deprecated\n";
   }
 
+  @Deprecated
   protected final File sourceFile() {
     return Files.join(Context.config.sourcePath(), Context.sourceRelPath());
   }

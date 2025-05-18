@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,10 +20,10 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datagen;
 
+import java.io.File;
 import java.util.List;
 import java.util.Set;
 
@@ -41,26 +41,26 @@ import js.file.Files;
  */
 public final class GeneratedTypeDef extends BaseObject {
 
-  public GeneratedTypeDef(String name, String packageName, DataType enumTypeOrNull ) {
+  public GeneratedTypeDef(String name, String packageName, DataType enumTypeOrNull) {
     mEnumDataType = (EnumDataType) enumTypeOrNull;
 
     DataType dataType;
 
     switch (Context.pt.language()) {
-    case GO:
-      dataType = new GoContractDataType();
-      break;
-    case JAVA:
-      dataType = new JavaContractDataType();
-      break;
-    case PYTHON:
-      dataType = new PythonContractDataType();
-      break;
-    case RUST:
-      dataType = new RustContractDataType();
-      break;
-    default:
-      throw notFinished();
+      case GO:
+        dataType = new GoContractDataType();
+        break;
+      case JAVA:
+        dataType = new JavaContractDataType();
+        break;
+      case PYTHON:
+        dataType = new PythonContractDataType();
+        break;
+      case RUST:
+        dataType = new RustContractDataType();
+        break;
+      default:
+        throw notFinished();
     }
 
     QualifiedName qn = QualifiedName.parse(packageName + "." + name);
@@ -108,7 +108,7 @@ public final class GeneratedTypeDef extends BaseObject {
    * Add a field to this data type
    */
   public FieldDef addField(boolean deprecated, boolean unusedOptional, TypeStructure structure,
-      PartialType primaryType, PartialType auxType, String fieldName) {
+                           PartialType primaryType, PartialType auxType, String fieldName) {
     if (verbose())
       log(structure, fieldName, logStr(primaryType), logStr(auxType));
     boolean added = mFieldNames.add(fieldName);
@@ -120,71 +120,63 @@ public final class GeneratedTypeDef extends BaseObject {
     if (auxType != null)
       dataType2 = registerType(auxType).modifyTypeFilter(structure);
 
-//    if (structure == TypeStructure.KEY_VALUE_MAP || structure == TypeStructure.VALUE_SET) {
-//      dataType = dataType.getOptionalVariant();
-//      if (dataType2 != null)
-//        dataType2 = dataType2.getOptionalVariant();
-//    }
-//
-//    if (optional)
-//      dataType = dataType.getOptionalVariant();
     DataType complexType;
 
     switch (structure) {
-    case SCALAR:
-      complexType = dataType;
-      break;
-    case LIST:
-      // Convert list to particular scalar types in special cases
-      complexType = dataType.getListVariant();
-      if (complexType == null) {
+      case SCALAR:
+        complexType = dataType;
+        break;
+      case LIST:
+        // Convert list to particular scalar types in special cases
+        complexType = dataType.getListVariant();
+        if (complexType == null) {
+          switch (Context.pt.language()) {
+            default:
+              throw notSupported("lists not supported for this language");
+            case JAVA:
+              complexType = new JavaListDataType(dataType);
+              break;
+            case PYTHON:
+              complexType = new PythonListDataType(dataType);
+              break;
+            case GO:
+              complexType = new GoListDataType(dataType);
+              break;
+            case RUST:
+              complexType = new RustListDataType(dataType);
+              break;
+          }
+        }
+        break;
+      case KEY_VALUE_MAP: {
         switch (Context.pt.language()) {
-        default:
-          throw notSupported("lists not supported for this language");
-        case JAVA:
-          complexType = new JavaListDataType(dataType);
-          break;
-        case PYTHON:
-          complexType = new PythonListDataType(dataType);
-          break;
-        case GO:
-          complexType = new GoListDataType(dataType);
-          break;
-        case RUST:
-          complexType = new RustListDataType(dataType);
-          break;
+          default:
+            throw languageNotSupported();
+          case JAVA:
+            complexType = new JavaMapDataType((JavaDataType) dataType, (JavaDataType) dataType2);
+            break;
+          case GO:
+            complexType = new GoMapDataType((GoDataType) dataType, (GoDataType) dataType2);
+            break;
         }
       }
       break;
-    case KEY_VALUE_MAP: {
-      switch (Context.pt.language()) {
-      default:
-        throw languageNotSupported();
-      case JAVA:
-        complexType = new JavaMapDataType((JavaDataType) dataType, (JavaDataType) dataType2);
-        break;
-      case GO:
-        complexType = new GoMapDataType((GoDataType) dataType, (GoDataType) dataType2);
-        break;
+      case VALUE_SET: {
+        switch (Context.pt.language()) {
+          default:
+            throw languageNotSupported();
+          case JAVA:
+            complexType = new JavaSetDataType((JavaDataType) dataType);
+            break;
+        }
       }
-    }
       break;
-    case VALUE_SET: {
-      switch (Context.pt.language()) {
       default:
-        throw languageNotSupported();
-      case JAVA:
-        complexType = new JavaSetDataType((JavaDataType) dataType);
-        break;
-      }
-    }
-      break;
-    default:
-      throw notSupported("datatype structure", structure);
+        throw notSupported("datatype structure", structure);
     }
     complexType.setUsedFlag();
     FieldDef f = FieldDef.construct();
-    f.init(fieldName, complexType,   deprecated, mFields.size());
+    f.init(fieldName, complexType, deprecated, mFields.size());
     mFields.add(f);
     return f;
   }
@@ -267,10 +259,18 @@ public final class GeneratedTypeDef extends BaseObject {
     return dataType;
   }
 
+  public void setGeneratedSourceFile(File f) {
+    mGeneratedSourceFile = f;
+  }
+
+  public File generatedSourceFile() {
+    return mGeneratedSourceFile;
+  }
+
   private final EnumDataType mEnumDataType;
   private final List<FieldDef> mFields = arrayList();
   private final Set<String> mFieldNames = hashSet();
   private SourceBuilder mClassSpecificSourceBuilder;
   private String mClassSpecificSource;
-
+  private File mGeneratedSourceFile;
 }

@@ -238,14 +238,19 @@ public final class DataDefinitionParser extends BaseObject {
     return relPathExpr;
   }
 
+  private void prepare(GeneratedTypeDef gt) {
+    setGeneratedTypeDef(gt);
+    gt.setDeprecated(mDeprecated);
+    gt.setGeneratedSourceFile(Files.join(Context.config.sourcePath(), Context.sourceRelPath()));
+  }
+
   private void procDataType() {
     String datClassName = parseClassNameOrDerive();
     var relativeClassFile = new File(determineRelativePath() + determineSourceName(datClassName) + "." + sourceFileExtension());
     Context.prepareForClassOrEnumDefinition(relativeClassFile);
     var typeName = DataUtil.convertUnderscoresToCamelCase(datClassName);
     var pn = packageName();
-    setGeneratedTypeDef(new GeneratedTypeDef(typeName, pn, null));
-    Context.generatedTypeDef.setDeprecated(mDeprecated);
+    prepare(new GeneratedTypeDef(typeName, pn, null));
 
     read(BROP);
 
@@ -320,7 +325,6 @@ public final class DataDefinitionParser extends BaseObject {
     }
 
     genSource();
-    Context.updateRustModule(relativeClassFile);
   }
 
   private void genSource() {
@@ -328,6 +332,7 @@ public final class DataDefinitionParser extends BaseObject {
     // Generate source file in appropriate language
     //
     SourceGen g = SourceGen.construct();
+
     g.setVerbose(verbose());
     g.generate();
   }
@@ -342,8 +347,7 @@ public final class DataDefinitionParser extends BaseObject {
     QualifiedName className = QualifiedName.parse(typeName, pn);
     DataType dataType = EnumDataType.construct();
     dataType.withQualifiedName(className);
-    setGeneratedTypeDef(new GeneratedTypeDef(className.className(), pn, dataType));
-    Context.generatedTypeDef.setDeprecated(mDeprecated);
+    prepare(new GeneratedTypeDef(className.className(), pn, dataType));
 
     read(BROP);
 
@@ -357,7 +361,6 @@ public final class DataDefinitionParser extends BaseObject {
     }
 
     genSource();
-    Context.updateRustModule(relativeClassFile);
   }
 
   private void processSqlInfo() {
