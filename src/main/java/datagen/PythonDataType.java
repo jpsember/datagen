@@ -35,12 +35,8 @@ public class PythonDataType extends DataType {
   }
 
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    if (f.optional()) {
-      s.a(targetExpr, " = x");
-    } else {
-      s.a(targetExpr, " = ", //
-          f.defaultValueSource(), " if x is None else x");
-    }
+    s.a(targetExpr, " = ", //
+        f.defaultValueSource(), " if x is None else x");
   }
 
   @Override
@@ -61,8 +57,8 @@ public class PythonDataType extends DataType {
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-      s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
-          "[]", ").copy()", CR);
+    s.a("inst.", f.instanceName(), " = obj.get(", f.nameStringConstantQualified(), ", ",
+        "[]", ").copy()", CR);
   }
 
   @Override

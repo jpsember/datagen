@@ -49,18 +49,6 @@ public class PythonListDataType extends PythonDataType {
     return "[]";
   }
 
-  @Override
-  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    // We need special code to handle the case where user supplies None to a setter, and it's an optional list;
-    // in that case, we don't want to attempt to construct None.copy()
-    //
-    if (f.optional()) {
-      s.a(targetExpr, " = x if x is None else x");
-      return;
-    }
-    super.sourceSetter(s, f, targetExpr);
-  }
-
   private DataType wrappedType() {
     return mWrappedType;
   }

@@ -43,9 +43,7 @@ public class JavaEnumDataType extends JavaDataType implements EnumDataType {
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.doIf(f.optional(), "if (", f.instanceName(), " != null)", OPEN);
     s.a("r = r * 37 + ", f.instanceName(), ".ordinal();");
-    s.endIf(CLOSE);
   }
 
   @Override

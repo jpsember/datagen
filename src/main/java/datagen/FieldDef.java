@@ -71,11 +71,6 @@ public abstract class FieldDef extends BaseObject {
     return mDataType;
   }
 
-  @Deprecated
-  public final boolean optional() {
-    return false; //return mOptional;
-  }
-
   public final boolean deprecated() {
     return mDeprecated;
   }

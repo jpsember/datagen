@@ -108,7 +108,7 @@ public class JavaListDataType extends JavaDataType {
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String expr;
-    if (f.optional() || isPrimitive()) {
+    if (isPrimitive()) {
       expr = "x";
     } else {
       expr = "(x == null) ? " + f.defaultValueSourceForBuilder() + " : x";

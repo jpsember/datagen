@@ -77,7 +77,7 @@ public class JavaContractDataType extends JavaDataType {
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a(f.instanceName(), " = ", Context.pt.PKG_DATAUTIL, ".parseListOfObjects(", typeName(),
-        ".DEFAULT_INSTANCE, m.optJSList(", f.nameStringConstantQualified(), "), ", f.optional(), ");");
+        ".DEFAULT_INSTANCE, m.optJSList(", f.nameStringConstantQualified(), "), ", false, ");");
   }
 
   @Override

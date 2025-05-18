@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datagen.datatype;
 
@@ -70,8 +69,7 @@ public class PythonContractDataType extends PythonDataType {
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a("inst.", f.instanceName(), " = ", Context.pt.PKGPY_DATAUTIL, ".parse_list_of_objects(", typeName(),
-        ".default_instance, obj.get(", f.nameStringConstantQualified(), "), ",
-        f.optional() ? "True" : "False", ")");
+        ".default_instance, obj.get(", f.nameStringConstantQualified(), "), False)");
   }
 
   @Override
@@ -86,58 +84,10 @@ public class PythonContractDataType extends PythonDataType {
 
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
-    if (!f.optional()) {
-      s.a("if x is None:", OPEN);
-      s.a("x = ", f.defaultValueSource(), CLOSE);
-      s.a(targetExpr, " = x.build()");
-    } else {
-      sourceIfNotNull(s, "x");
-      s.a("x = x.build()");
-      sourceEndIf(s);
-      s.a(targetExpr, " = x");
-    }
+    s.a("if x is None:", OPEN);
+    s.a("x = ", f.defaultValueSource(), CLOSE);
+    s.a(targetExpr, " = x.build()");
   }
 
-  //  @Override
-  //  public String parseDefaultValue(Scanner scanner, SourceBuilder sb, FieldDef fieldDef) {
-  //
-  //    // Attempt to infer from the tokens how to parse a default value
-  //
-  //    Token t = scanner.peek();
-  //
-  //    // If it looks like [ ...., ...]
-  //    //
-  //    // then scan a sequence of comma-delimited strings, and pass as arguments to a constructor
-  //    // 
-  //    if (t.id(SQOP)) {
-  //      scanner.read();
-  //      List<String> exprs = arrayList();
-  //      boolean commaExp = false;
-  //      while (scanner.readIf(SQCL) == null) {
-  //        if (commaExp) {
-  //          scanner.read(COMMA);
-  //          commaExp = false;
-  //          continue;
-  //        }
-  //        exprs.add(scanner.read().text());
-  //        commaExp = true;
-  //      }
-  //
-  //      String constName;
-  //      constName = "DEF" + fieldDef.nameStringConstantUnqualified();
-  //      sb.a(constName, "  = ", typeName(), "(");
-  //      int i = INIT_INDEX;
-  //      for (String expr : exprs) {
-  //        i++;
-  //        if (i > 0)
-  //          sb.a(", ");
-  //        sb.a(expr);
-  //      }
-  //      sb.a(")", CR);
-  //
-  //      return constName;
-  //    }
-  //    throw notSupported("can't parse default value for token:", t);
-  //  }
 
 }

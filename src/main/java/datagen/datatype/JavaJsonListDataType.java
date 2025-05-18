@@ -68,7 +68,7 @@ public class JavaJsonListDataType extends JavaDataType {
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a(f.instanceName(), " = ", Context.pt.PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(",
-        f.nameStringConstantQualified(), "), ", f.optional(), ");", CR);
+        f.nameStringConstantQualified(), "), ", false, ");", CR);
   }
 
 }
