@@ -136,7 +136,6 @@ public abstract class SourceGen extends BaseObject {
     Context.cleanIfNecessary(target);
     var parent = Files.parent(target);
 
-
     Context.files.mkdirs(parent);
     boolean wrote = Context.files.writeIfChanged(target, content);
     var sourceFileRelative = Context.sourceRelPath();
@@ -148,21 +147,12 @@ public abstract class SourceGen extends BaseObject {
     }
 
     Context.registerGeneratedSource(target, Context.generatedTypeDef);
-    todo("is postGenerate used anywhere?");
-    postGenerate();
   }
 
   /**
    * Add any additional key/value pairs to a template, i.e. for other languages
    */
   protected void addAdditionalTemplateValues(JSMap templateMap) {
-  }
-
-  /**
-   * Perform any additional tasks after source file has been generated. Default
-   * implementation does nothing
-   */
-  protected final void postGenerate() {
   }
 
   protected String getDeprecationSource() {
