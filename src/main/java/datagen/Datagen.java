@@ -39,7 +39,7 @@ public class Datagen extends App {
 
   @Override
   public String getVersion() {
-    return "1.0";
+    return "2.0";
   }
 
   @Override
