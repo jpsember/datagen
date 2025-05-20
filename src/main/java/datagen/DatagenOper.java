@@ -71,7 +71,6 @@ public class DatagenOper extends AppOper {
 
         {
           var dir = Files.parent(entry);
-          p54("proc file:", entry, INDENT, "dir:", dir);
           if (!dir.equals(previousDirectory)) {
             prepareDir(dir);
             previousDirectory = dir;
@@ -239,12 +238,10 @@ public class DatagenOper extends AppOper {
   private List<File> constructFileEntries() {
     DatagenConfig config = config();
     File datRoot = config.datPath();
-    p54("constructFileEntries, datRoot:", datRoot);
     DirWalk dirWalk = new DirWalk(datRoot).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
     if (dirWalk.files().isEmpty())
       pr("*** no .dat files were found in:", config.datPath());
     var fileEntries = dirWalk.filesRelative();
-    p54("fileEntries:", INDENT, fileEntries);
     return fileEntries;
   }
 

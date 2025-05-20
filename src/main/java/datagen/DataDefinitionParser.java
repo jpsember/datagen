@@ -68,17 +68,13 @@ public final class DataDefinitionParser extends BaseObject {
       //
       //
 
-      p54("relativeDatPath:", relativeDatPath);
-
       mRelativeDatPath = relativeDatPath;
 
       while (scanner().hasNext()) {
 
         mDeprecated = scanner().readIf(DEPRECATION) != null;
 
-        p54(VERT_SP, "reading next token");
         var t = read();
-        p54("read:", t, VERT_SP);
 
         switch (t.text()) {
           case "extern":
@@ -177,7 +173,6 @@ public final class DataDefinitionParser extends BaseObject {
       mLastReadToken.failWith("cannot mark external reference deprecated");
 
     String nameExpression = read(ID);
-    p54("processExternalReference, name_expr:", nameExpression);
 
     read(SEMI);
 

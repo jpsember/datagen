@@ -50,7 +50,6 @@ public abstract class GenBaseTest extends MyTestCase {
     if (!mCryptic)
       addArg("verbose_names");
     addArg("dat_path", datFilesDir(), "source_path", sourceDir());
-    pr(VERT_SP, "dat_path:", datFilesDir(), CR, "source_path:", sourceDir(), VERT_SP);
     if (verbose())
       addArg("--verbose");
     App app = new Datagen();
@@ -112,21 +111,14 @@ public abstract class GenBaseTest extends MyTestCase {
    */
   protected void pushDatSubdir(String relPath) {
     File currentSubdir = (mDatRecord == null) ? datFilesDir() : mDatRecord.mDatSubdir;
-
-    var newDatDir = Files.getCanonicalFile(new File(currentSubdir, relPath));
-    pdir("pushDatSubdir, relPath:", relPath, CR, "newDatDir:", newDatDir);
-
     var dr = new DatRecord();
-    dr.mDatSubdir = newDatDir;
+    dr.mDatSubdir = Files.getCanonicalFile(new File(currentSubdir, relPath));
     mDatRecords.add(dr);
     mDatRecord = dr;
   }
 
 
-  private DatRecord mDatRecord;
-
   private void generateDirs() {
-    pdir("generateDirs");
     Files.S.mkdirs(Files.assertNonEmpty(datRecord().mDatSubdir));
   }
 
@@ -142,7 +134,7 @@ public abstract class GenBaseTest extends MyTestCase {
     if (nullOrEmpty(filename))
       filename = name();
     File datFile = new File(ty.mDatSubdir,
-        convertCamelToUnderscore(filename) + ParseTools.DOT_EXT_DATA_DEFINITION);
+        convertCamelToUnderscore(filename) + DOT_EXT_DATA_DEFINITION);
     Files.S.writeString(datFile, content);
   }
 
@@ -163,7 +155,6 @@ public abstract class GenBaseTest extends MyTestCase {
   private File datFilesDir() {
     if (mDatFilesDir == null) {
       mDatFilesDir = Files.S.mkdirs(new File(generatedDir(), "dat_files"));
-      pdir("datFilesDir, initializing mDatFilesDir to:", mDatFilesDir);
     }
     return mDatFilesDir;
   }
@@ -185,11 +176,9 @@ public abstract class GenBaseTest extends MyTestCase {
 
   private Language mLanguage = Language.JAVA;
   private boolean mCryptic;
-
   private File mSourceDir;
   private File mDatFilesDir;
-  // ------------------------------------------------------------------
-
+  private DatRecord mDatRecord;
   private List<String> mArgs = arrayList();
 
   // List of completed dat records

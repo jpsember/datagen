@@ -37,18 +37,10 @@ import static js.base.Tools.*;
 
 public final class Context {
 
-  public static final boolean ISSUE_DIRS = true && alert("ISSUE_DIRS is in effect");
-  public static void pdir(Object... messages) {
-    if (ISSUE_DIRS)
-      pr(insertStringToFront("ISSUE_DIRS --->", messages));
-  }
-
-  public static final boolean ISSUE_54 = false && alert("ISSUE 54 is in effect");
   public static final boolean DEBUG_RUST_FILES = false && alert("ISSUE 47 is in effect");
   public static final boolean DEBUG_RUST_IMPORTS = false;
-  public static final boolean DEBUG_RUST_LISTS = false;
   public static final boolean DEBUG_RUST_MOD = false && alert("DEBUG_RUST_MOD is in effect");
-  public static final boolean DEBUG_RUST = DEBUG_RUST_FILES || DEBUG_RUST_IMPORTS || DEBUG_RUST_LISTS || DEBUG_RUST_MOD;
+  public static final boolean DEBUG_RUST = DEBUG_RUST_FILES || DEBUG_RUST_IMPORTS || DEBUG_RUST_MOD;
   public static final boolean RUST_COMMENTS = DEBUG_RUST;
 
   public static final String GEN_SUBDIR_NAME = "gen";
@@ -59,13 +51,8 @@ public final class Context {
       pr(insertStringToFront("RUST_MOD --->", messages));
   }
 
-  public static void p54(Object... messages) {
-    if (ISSUE_54)
-      pr(insertStringToFront("ISSUE_54 --->", messages));
-  }
-
-  public static void loadContext() {
-  }
+  public static final String EXT_DATA_DEFINITION = "dat";
+  public static final String DOT_EXT_DATA_DEFINITION = "." + EXT_DATA_DEFINITION;
 
   /**
    * Throw UnsupportedOperationException due to an unsupported target language
@@ -186,17 +173,13 @@ public final class Context {
     sql.prepare();
     sCleanedDirectorySet = hashSet();
     sGeneratedSources = arrayList();
-
-    p54("prepareApp; dat_path:", INDENT, Context.config.datPath());
   }
 
   public static void prepareDir(File dir) {
     discardDir();
     mDataTypeManager = new DataTypeManager();
-    p54("prepareDir; dir:", dir);
     Files.assertRelative(dir, "expected relative dir");
     sDatRelPath = dir;
-    p54("datDirectoryRel:", INDENT, Files.infoMap(sDatRelPath));
   }
 
   public static void discardDir() {
@@ -206,7 +189,6 @@ public final class Context {
 
   public static void prepareForClassOrEnumDefinition(File sourceRelPath) {
     discardClassOrEnum();
-    p54("Context.prepare, sourceRelPath:", INDENT, sourceRelPath);
     sSourceRelPath = sourceRelPath;
   }
 
