@@ -80,6 +80,10 @@ public final class DataDefinitionParser extends BaseObject {
           case "extern":
             processExternalReference(DataTypeManager.constructContractDataType());
             break;
+          case "fields" :
+            pr("*** Please use the word 'class' instead of 'fields'; ",t.locInfo());
+            procDataType();
+            break;
           case "class":
             procDataType();
             break;

@@ -899,4 +899,13 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
+
+  @Test
+  public void olderVersion() {
+    p().pr("fields {", INDENT, //
+        "int alpha;", OUTDENT, //
+        "}");
+    compile();
+  }
+
 }
