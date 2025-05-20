@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datagen;
 
@@ -35,13 +34,10 @@ import js.json.JSMap;
 import js.parsing.DFA;
 import js.parsing.MacroParser;
 import js.parsing.RegExp;
-import static datagen.Utils.*;
+
+import static datagen.Context.*;
 
 public final class ParseTools {
-
-  public ParseTools(Language language) {
-    mLanguage = language;
-  }
 
   /**
    * The 'constants' PKG_xxx call various things, including (indirectly) other
@@ -49,7 +45,7 @@ public final class ParseTools {
    * of these constants until *after* the ParseTools constructor has run (so the
    * Context.pt field has been given a value).
    */
-  public void prepare() {
+  public ParseTools() {
     PKG_TOOLS = javaClassExpr("js.base.Tools");
     PKG_DATAUTIL = javaClassExpr("js.data.DataUtil");
     PKG_JSMAP = javaClassExpr("js.json.JSMap");
@@ -130,7 +126,7 @@ public final class ParseTools {
   /**
    * Reformat lines to eliminate trailing whitespace and to adjust the number of
    * blank lines
-   * 
+   *
    * For Python, lines starting with \\n are interpreted as a request for n
    * blank lines (if n is omitted, it is assumed n = 1)
    */
@@ -149,48 +145,48 @@ public final class ParseTools {
 
     StringBuilder sb = new StringBuilder();
 
-    switch (mLanguage) {
-    default:
-      throw languageNotSupported();
+    switch (language()) {
+      default:
+        throw languageNotSupported();
 
-    case JAVA:
-    case GO:
-    case RUST: {
-      int blanks = 1;
-      for (String line : lines) {
-        if (line.isEmpty()) {
-          if (blanks == 0)
+      case JAVA:
+      case GO:
+      case RUST: {
+        int blanks = 1;
+        for (String line : lines) {
+          if (line.isEmpty()) {
+            if (blanks == 0)
+              addCr(sb);
+            blanks++;
+          } else {
+            blanks = 0;
+            sb.append(line);
             addCr(sb);
-          blanks++;
-        } else {
-          blanks = 0;
+          }
+        }
+      }
+      break;
+      case PYTHON: {
+        int blankRequest = 0;
+        for (String line : lines) {
+          String trimmed = line.trim();
+          if (trimmed.isEmpty())
+            continue;
+          final String prefix = "\\\\";
+          if (trimmed.startsWith(prefix)) {
+            String s = ifNullOrEmpty(chompPrefix(trimmed, prefix), "1");
+            blankRequest = Integer.parseInt(s);
+            continue;
+          }
+          if (sb.length() != 0) {
+            for (int i = 0; i < blankRequest; i++)
+              addCr(sb);
+          }
+          blankRequest = 0;
           sb.append(line);
           addCr(sb);
         }
       }
-    }
-      break;
-    case PYTHON: {
-      int blankRequest = 0;
-      for (String line : lines) {
-        String trimmed = line.trim();
-        if (trimmed.isEmpty())
-          continue;
-        final String prefix = "\\\\";
-        if (trimmed.startsWith(prefix)) {
-          String s = ifNullOrEmpty(chompPrefix(trimmed, prefix), "1");
-          blankRequest = Integer.parseInt(s);
-          continue;
-        }
-        if (sb.length() != 0) {
-          for (int i = 0; i < blankRequest; i++)
-            addCr(sb);
-        }
-        blankRequest = 0;
-        sb.append(line);
-        addCr(sb);
-      }
-    }
       break;
     }
 
@@ -232,13 +228,13 @@ public final class ParseTools {
   }
 
   private Object javaClassExpr(String qualifiedClassName) {
-    if (mLanguage != Language.JAVA)
+    if (language() != Language.JAVA)
       return null;
     return importedClassExpr(qualifiedClassName);
   }
 
   private Object pythonClassExpr(String qualifiedClassName) {
-    if (mLanguage != Language.PYTHON)
+    if (language() != Language.PYTHON)
       return null;
     return importedClassExpr(qualifiedClassName);
   }
@@ -266,22 +262,5 @@ public final class ParseTools {
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 
-  public Language language() {
-    return mLanguage;
-  }
-
-  public boolean python() {
-    return language() == Language.PYTHON;
-  }
-
-  public boolean go() {
-    return language() == Language.GO;
-  }
-
-  public boolean rust() {
-    return language() == Language.RUST;
-  }
-
-  private final Language mLanguage;
 
 }

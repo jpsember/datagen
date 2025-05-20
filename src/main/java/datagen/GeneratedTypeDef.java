@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Set;
 
 import static js.base.Tools.*;
-import static datagen.Utils.*;
+import static datagen.Context.*;
 
 import datagen.datatype.*;
 import datagen.gen.PartialType;
@@ -46,7 +46,7 @@ public final class GeneratedTypeDef extends BaseObject {
 
     DataType dataType;
 
-    switch (Context.pt.language()) {
+    switch (language()) {
       case GO:
         dataType = new GoContractDataType();
         break;
@@ -130,7 +130,7 @@ public final class GeneratedTypeDef extends BaseObject {
         // Convert list to particular scalar types in special cases
         complexType = dataType.getListVariant();
         if (complexType == null) {
-          switch (Context.pt.language()) {
+          switch (language()) {
             default:
               throw notSupported("lists not supported for this language");
             case JAVA:
@@ -149,7 +149,7 @@ public final class GeneratedTypeDef extends BaseObject {
         }
         break;
       case KEY_VALUE_MAP: {
-        switch (Context.pt.language()) {
+        switch (language()) {
           default:
             throw languageNotSupported();
           case JAVA:
@@ -162,7 +162,7 @@ public final class GeneratedTypeDef extends BaseObject {
       }
       break;
       case VALUE_SET: {
-        switch (Context.pt.language()) {
+        switch (language()) {
           default:
             throw languageNotSupported();
           case JAVA:
@@ -197,7 +197,7 @@ public final class GeneratedTypeDef extends BaseObject {
   public SourceBuilder classSpecificSourceBuilder() {
     if (mClassSpecificSourceBuilder == null) {
       checkState(mClassSpecificSource == null, "source already retrieved");
-      mClassSpecificSourceBuilder = new SourceBuilder(Context.pt.language());
+      mClassSpecificSourceBuilder = new SourceBuilder();
     }
     return mClassSpecificSourceBuilder;
   }
@@ -235,7 +235,7 @@ public final class GeneratedTypeDef extends BaseObject {
       // (I'm not sure this is the permanant solution, but until some related problem occurs, I'll go with it)
       // but DON'T do this if the 'alternate source path' parameter is in effect.
       // 
-      if (Context.pt.python() && Files.empty(Context.config.pythonSourcePath())) {
+      if (python() && Files.empty(Context.config.pythonSourcePath())) {
         int i = defaultPackage.lastIndexOf('.');
         if (i >= 0)
           defaultPackage = defaultPackage.substring(0, i);

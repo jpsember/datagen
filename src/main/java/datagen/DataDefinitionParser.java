@@ -25,7 +25,7 @@ package datagen;
 
 import static js.base.Tools.*;
 import static datagen.ParseTools.*;
-import static datagen.Utils.*;
+import static datagen.Context.*;
 
 import java.io.File;
 import java.util.List;
@@ -337,7 +337,6 @@ public final class DataDefinitionParser extends BaseObject {
     g.generate();
   }
 
-
   private void procEnum() {
     String datClassName = parseClassNameOrDerive();
     var relativeClassFile = new File(determineRelativePath() + determineSourceName(datClassName) + "." + sourceFileExtension());
@@ -514,6 +513,8 @@ public final class DataDefinitionParser extends BaseObject {
     String name = null;
     String parentName = Context.datDirectoryRelative().toString();
     switch (Context.config.language()) {
+      default:
+        throw languageNotSupported();
       case JAVA:
       case PYTHON:
         name = parentName.replace('/', '.');
@@ -529,11 +530,7 @@ public final class DataDefinitionParser extends BaseObject {
         name = parentName.substring(c + 1);
       }
       break;
-      default:
-        Utils.languageNotSupported();
-        break;
     }
-    checkNotNull(name, "language not supported");
     return name;
   }
 

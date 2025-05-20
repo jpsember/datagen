@@ -32,7 +32,7 @@ import java.util.List;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
-import static datagen.Utils.*;
+import static datagen.Context.*;
 
 public class JavaEnumDataType extends JavaDataType implements EnumDataType {
 

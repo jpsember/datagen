@@ -29,7 +29,7 @@ import java.util.Map;
 
 import datagen.gen.TypeStructure;
 
-import static datagen.Utils.*;
+import static datagen.Context.*;
 
 /**
  * Abstract base class for generating source code for a data type
@@ -127,7 +127,18 @@ public abstract class DataType implements DefaultValueParser {
    * fields are set to, implicitly, before any subsequent assignments)
    */
   public String compilerInitialValue() {
-    return nullExpr();
+    switch (Context.config.language()) {
+      default:
+        throw languageNotSupported();
+      case PYTHON:
+        return "None";
+      case JAVA:
+        return "null";
+      case GO:
+        return "nil";
+      case RUST:
+        return "<rust has no nulls though!>";
+    }
   }
 
   /**

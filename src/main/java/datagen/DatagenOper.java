@@ -25,7 +25,7 @@ package datagen;
 
 import static datagen.ParseTools.*;
 import static js.base.Tools.*;
-import static datagen.Utils.*;
+import static datagen.Context.*;
 
 import java.io.File;
 import java.util.Comparator;
@@ -58,8 +58,7 @@ public class DatagenOper extends AppOper {
   @Override
   public void perform() {
     cmdLineArgs().assertArgsDone();
-    DatagenConfig config = datagenConfig();
-    Context.prepareApp(files(), config);
+    prepareApp(files(), constructDatagenConfig());
 
     List<File> entriesToFreshen = constructFileEntries();
 
@@ -74,7 +73,7 @@ public class DatagenOper extends AppOper {
           var dir = Files.parent(entry);
           p54("proc file:", entry, INDENT, "dir:", dir);
           if (!dir.equals(previousDirectory)) {
-            Context.prepareDir(dir);
+            prepareDir(dir);
             previousDirectory = dir;
           }
         }
@@ -90,12 +89,12 @@ public class DatagenOper extends AppOper {
           throw t;
         setError("Processing", entry, INDENT, t.getMessage());
       } finally {
-        Context.discardClassOrEnum();
+        discardClassOrEnum();
       }
     }
 
-    Context.sql.complete();
-    Context.generateAuxilliarySourceFiles();
+    sql.complete();
+    generateAuxilliarySourceFiles();
 
     if (!files().dryRun() && config.format()) {
       if (!DEBUG_RUST_FILES)
@@ -108,23 +107,23 @@ public class DatagenOper extends AppOper {
    */
   private void formatSourceFiles() {
 
-    if (Context.generatedFilesSet.isEmpty())
+    if (generatedSourceFiles.isEmpty())
       return;
 
     SystemCall sc = new SystemCall();
 
     // todo("allow user to configure location of format tool");
 
-    switch (datagenConfig().language()) {
+    switch (language()) {
       case GO:
         sc.arg("/usr/local/go/bin/gofmt", "-w");
-        for (File f : Context.generatedFilesSet) {
+        for (File f : generatedSourceFiles) {
           sc.arg(f.toString());
         }
         break;
       case RUST:
         sc.arg(new File(Files.homeDirectory(), ".cargo/bin/rustfmt"));
-        for (File f : Context.generatedFilesSet) {
+        for (File f : generatedSourceFiles) {
           sc.arg(f.toString());
         }
         break;
@@ -142,51 +141,48 @@ public class DatagenOper extends AppOper {
    * Prepare DatagenConfig object by reading it from the configuration
    * arguments, and applying any default values or additional processing
    */
-  private DatagenConfig datagenConfig() {
+  private DatagenConfig constructDatagenConfig() {
 
-    if (mConfig == null) {
-      DatagenConfig.Builder config = (DatagenConfig.Builder) config().toBuilder();
+    DatagenConfig.Builder config = (DatagenConfig.Builder) config().toBuilder();
 
-      if (Files.nonEmpty(config.startDir()))
-        config.startDir(config.startDir().getAbsoluteFile());
+    if (Files.nonEmpty(config.startDir()))
+      config.startDir(config.startDir().getAbsoluteFile());
 
-      if (config.language() == Language.AUTO) {
-        determineLanguage(config);
-      }
-
-      config.datPath(Files.assertDirectoryExists(getFile(config.startDir(), config.datPath()), "dat_path"));
-
-      if (Files.empty(config.sourcePath())) {
-        File f;
-        switch (config.language()) {
-          default:
-            throw languageNotSupported();
-          case JAVA:
-            f = new File("src/main/java");
-            break;
-          case GO:
-          case PYTHON:
-            f = Files.currentDirectory();
-            break;
-          case RUST:
-            f = new File("src");
-            break;
-        }
-        config.sourcePath(f);
-      }
-
-      File sourcePathRel = config.sourcePath();
-      if (config.language() == Language.PYTHON && !Files.empty(config.pythonSourcePath()))
-        sourcePathRel = config.pythonSourcePath();
-
-      // If the output source directory doesn't exist, make it
-      config.sourcePath(files().mkdirs(getFile(config.startDir(), sourcePathRel)));
-
-      log("...source directory:", config.sourcePath());
-      log("...   dat directory:", config.datPath());
-      mConfig = config.build();
+    if (config.language() == Language.AUTO) {
+      determineLanguage(config);
     }
-    return mConfig;
+
+    config.datPath(Files.assertDirectoryExists(getFile(config.startDir(), config.datPath()), "dat_path"));
+
+    if (Files.empty(config.sourcePath())) {
+      File f;
+      switch (config.language()) {
+        default:
+          throw languageNotSupported();
+        case JAVA:
+          f = new File("src/main/java");
+          break;
+        case GO:
+        case PYTHON:
+          f = Files.currentDirectory();
+          break;
+        case RUST:
+          f = new File("src");
+          break;
+      }
+      config.sourcePath(f);
+    }
+
+    File sourcePathRel = config.sourcePath();
+    if (config.language() == Language.PYTHON && !Files.empty(config.pythonSourcePath()))
+      sourcePathRel = config.pythonSourcePath();
+
+    // If the output source directory doesn't exist, make it
+    config.sourcePath(files().mkdirs(getFile(config.startDir(), sourcePathRel)));
+
+    log("...source directory:", config.sourcePath());
+    log("...   dat directory:", config.datPath());
+    return config.build();
   }
 
   private void determineLanguage(DatagenConfig.Builder config) {
@@ -241,9 +237,8 @@ public class DatagenOper extends AppOper {
   }
 
   private List<File> constructFileEntries() {
-
-    DatagenConfig config = datagenConfig();
-    File datRoot = Context.config.datPath();
+    DatagenConfig config = config();
+    File datRoot = config.datPath();
     p54("constructFileEntries, datRoot:", datRoot);
     DirWalk dirWalk = new DirWalk(datRoot).withRecurse(true).withExtensions(EXT_DATA_DEFINITION);
     if (dirWalk.files().isEmpty())
@@ -268,6 +263,4 @@ public class DatagenOper extends AppOper {
     return result;
   }
 
-
-  private DatagenConfig mConfig;
 }

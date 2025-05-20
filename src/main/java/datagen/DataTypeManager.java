@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datagen;
 
@@ -38,7 +37,7 @@ import js.geometry.Polygon;
 import js.json.JSMap;
 
 import static js.base.Tools.*;
-import static datagen.Utils.*;
+import static datagen.Context.*;
 
 /**
  * A map of class names to DataTypes
@@ -51,69 +50,69 @@ public final class DataTypeManager extends BaseObject {
 
     DataType tmp;
 
-    switch (Context.pt.language()) {
-    default:
-      throw languageNotSupported(Context.pt.language());
-    case GO: {
-      add("byte", new GoIntDataType(8));
-      add("short", new GoIntDataType(16));
-      add("int", new GoIntDataType(32));
-      add("long", new GoIntDataType(64));
-      add("float", new GoFloatDataType(32));
-      add("double", new GoFloatDataType(64));
-      add("bool", GoBooleanDataType.TYPE);
-      add("string", GoStringDataType.TYPE);
-      add("File", GoFileDataType.TYPE);
-      add("IPoint", GoIPointDataType.TYPE);
-    }
+    switch (language()) {
+      default:
+        throw languageNotSupported(language());
+      case GO: {
+        add("byte", new GoIntDataType(8));
+        add("short", new GoIntDataType(16));
+        add("int", new GoIntDataType(32));
+        add("long", new GoIntDataType(64));
+        add("float", new GoFloatDataType(32));
+        add("double", new GoFloatDataType(64));
+        add("bool", GoBooleanDataType.TYPE);
+        add("string", GoStringDataType.TYPE);
+        add("File", GoFileDataType.TYPE);
+        add("IPoint", GoIPointDataType.TYPE);
+      }
       break;
-    case RUST: {
-      add("bool", RustBoolDataType.TYPE);
-      add("string", RustStringDataType.TYPE);
-      add("int", RustIntDataType.INT_TYPE);
-      add("long", RustIntDataType.LONG_TYPE);
-      add("short", RustIntDataType.SHORT_TYPE);
-      add("byte", RustIntDataType.BYTE_TYPE);
-      add("File",RustFileDataType.TYPE);
-    }
+      case RUST: {
+        add("bool", RustBoolDataType.TYPE);
+        add("string", RustStringDataType.TYPE);
+        add("int", RustIntDataType.INT_TYPE);
+        add("long", RustIntDataType.LONG_TYPE);
+        add("short", RustIntDataType.SHORT_TYPE);
+        add("byte", RustIntDataType.BYTE_TYPE);
+        add("File", RustFileDataType.TYPE);
+      }
       break;
-    case PYTHON:
-      tmp = PyIntDataType.TYPE;
-      add("byte", tmp);
-      add("short", tmp);
-      add("int", tmp);
-      add("long", tmp);
-      // There is no distinction between floats and doubles in Python 
-      tmp = PyFloatDataType.TYPE;
-      add("float", tmp);
-      add("double", tmp);
-      add("File", PyStringDataType.TYPE);
-      add("IPoint", PyIPointDataType.TYPE);
-      add("bool", PyBooleanDataType.TYPE);
-      add("string", PyStringDataType.TYPE);
-      add("JSMap", PythonJsonMapDataType.TYPE);
-      add("Matrix", PyMatrixDataType.TYPE);
-      break;
+      case PYTHON:
+        tmp = PyIntDataType.TYPE;
+        add("byte", tmp);
+        add("short", tmp);
+        add("int", tmp);
+        add("long", tmp);
+        // There is no distinction between floats and doubles in Python
+        tmp = PyFloatDataType.TYPE;
+        add("float", tmp);
+        add("double", tmp);
+        add("File", PyStringDataType.TYPE);
+        add("IPoint", PyIPointDataType.TYPE);
+        add("bool", PyBooleanDataType.TYPE);
+        add("string", PyStringDataType.TYPE);
+        add("JSMap", PythonJsonMapDataType.TYPE);
+        add("Matrix", PyMatrixDataType.TYPE);
+        break;
 
-    case JAVA:
-      add("byte", JavaPrimitiveByteDataType.PRIM_TYPE);
-      add("short", JavaPrimitiveShortDataType.PRIM_TYPE);
-      add("int", JavaPrimitiveIntegerDataType.PRIM_TYPE);
-      add("long", JavaPrimitiveLongDataType.PRIM_TYPE);
-      add("float", JavaPrimitiveFloatDataType.PRIM_TYPE);
-      add("double", JavaPrimitiveDoubleDataType.PRIM_TYPE);
-      add("File", JavaFileDataType.TYPE);
-      add(IPoint.DEFAULT_INSTANCE, IPOINT_PARSER);
-      add("bool", JavaPrimitiveBooleanDataType.PRIM_TYPE);
-      add("string", new JavaStringDataType());
-      add("JSMap", JavaJsonMapDataType.TYPE);
-      add("JSList", JavaJsonListDataType.TYPE);
-      add(IRect.DEFAULT_INSTANCE);
-      add(FPoint.DEFAULT_INSTANCE);
-      add(FRect.DEFAULT_INSTANCE);
-      add(Matrix.DEFAULT_INSTANCE);
-      add(Polygon.DEFAULT_INSTANCE);
-      break;
+      case JAVA:
+        add("byte", JavaPrimitiveByteDataType.PRIM_TYPE);
+        add("short", JavaPrimitiveShortDataType.PRIM_TYPE);
+        add("int", JavaPrimitiveIntegerDataType.PRIM_TYPE);
+        add("long", JavaPrimitiveLongDataType.PRIM_TYPE);
+        add("float", JavaPrimitiveFloatDataType.PRIM_TYPE);
+        add("double", JavaPrimitiveDoubleDataType.PRIM_TYPE);
+        add("File", JavaFileDataType.TYPE);
+        add(IPoint.DEFAULT_INSTANCE, IPOINT_PARSER);
+        add("bool", JavaPrimitiveBooleanDataType.PRIM_TYPE);
+        add("string", new JavaStringDataType());
+        add("JSMap", JavaJsonMapDataType.TYPE);
+        add("JSList", JavaJsonListDataType.TYPE);
+        add(IRect.DEFAULT_INSTANCE);
+        add(FPoint.DEFAULT_INSTANCE);
+        add(FRect.DEFAULT_INSTANCE);
+        add(Matrix.DEFAULT_INSTANCE);
+        add(Polygon.DEFAULT_INSTANCE);
+        break;
     }
 
   }
@@ -160,17 +159,17 @@ public final class DataTypeManager extends BaseObject {
   }
 
   public static DataType constructContractDataType() {
-    switch (Context.pt.language()) {
-    default:
-      throw languageNotSupported();
-    case JAVA:
-      return new JavaContractDataType();
-    case PYTHON:
-      return new PythonContractDataType();
-    case GO:
-      return new GoContractDataType();
-    case RUST:
-      return new RustContractDataType();
+    switch (language()) {
+      default:
+        throw languageNotSupported();
+      case JAVA:
+        return new JavaContractDataType();
+      case PYTHON:
+        return new PythonContractDataType();
+      case GO:
+        return new GoContractDataType();
+      case RUST:
+        return new RustContractDataType();
     }
   }
 
@@ -198,10 +197,6 @@ public final class DataTypeManager extends BaseObject {
       return fieldDef.constantName();
     }
   };
-
-  public Map<String, DataType> debugMap() {
-    return mTypeMap;
-  }
 
   private final Map<String, DataType> mTypeMap;
   private final Map<String, DefaultValueParser> mDefaultValueParserMap;

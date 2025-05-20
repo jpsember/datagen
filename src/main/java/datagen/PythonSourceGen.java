@@ -23,19 +23,17 @@
  **/
 package datagen;
 
-import java.io.File;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import datagen.datatype.EnumDataType;
-import js.data.DataUtil;
 import js.file.Files;
 import js.parsing.RegExp;
 
 import static js.base.Tools.*;
 import static datagen.SourceBuilder.*;
-import static datagen.Utils.*;
+import static datagen.Context.*;
 
 public class PythonSourceGen extends SourceGen {
 

@@ -28,7 +28,6 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.util.Set;
 
-import datagen.gen.Language;
 import org.junit.Test;
 
 import datagen.gen.SampleDataType;
@@ -330,7 +329,6 @@ public class JavaGeneratorTest extends GenBaseTest {
         "class {", INDENT, //
         "Beaver busy;", CR, //
         OUTDENT, "}");
-    generateDummyDatFile("Beaver");
     compile();
   }
 
@@ -606,6 +604,29 @@ public class JavaGeneratorTest extends GenBaseTest {
   public void singleLineComment() {
     p().pr("// A single-line comment", CR);
     p().pr("class {int alpha;}");
+    compile();
+  }
+
+  @Test
+  public void subdirs() {
+    withDatFilename("all");
+    p().pr("// A single-line comment", CR);
+    p().pr("class echo {int alpha;}");
+    pushDatSubdir("foo");
+    withDatFilename("all");
+    p().pr("class fox {int bravo;}");
+    compile();
+  }
+
+  @Test
+  public void subdirs2() {
+    withDatFilename("all");
+    p().pr("// A single-line comment", CR);
+    p().pr("class echo {int alpha;}");
+    pushDatSubdir("foo");
+    withDatFilename("all");
+    p().pr("class fox {int bravo;}");
+    p().pr("class echo {int charlie;}");
     compile();
   }
 

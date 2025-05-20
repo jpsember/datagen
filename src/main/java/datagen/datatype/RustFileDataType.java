@@ -25,7 +25,7 @@
 package datagen.datatype;
 
 import static js.base.Tools.*;
-import static datagen.Utils.*;
+import static datagen.Context.*;
 
 import datagen.DataType;
 import datagen.FieldDef;

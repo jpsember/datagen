@@ -1,6 +1,6 @@
 package datagen;
 
-import static datagen.Utils.*;
+import static datagen.Context.*;
 
 public class PythonFieldDef extends FieldDef {
 

@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datatest;
 
@@ -31,13 +30,14 @@ import java.util.List;
 
 import datagen.Datagen;
 import datagen.ParseTools;
-import datagen.Utils;
 import datagen.gen.Language;
 import js.file.Files;
 import js.app.App;
 import js.base.BasePrinter;
 import js.data.DataUtil;
 import js.testutil.MyTestCase;
+
+import static datagen.Context.*;
 
 public abstract class GenBaseTest extends MyTestCase {
 
@@ -50,6 +50,7 @@ public abstract class GenBaseTest extends MyTestCase {
     if (!mCryptic)
       addArg("verbose_names");
     addArg("dat_path", datFilesDir(), "source_path", sourceDir());
+    pr(VERT_SP, "dat_path:", datFilesDir(), CR, "source_path:", sourceDir(), VERT_SP);
     if (verbose())
       addArg("--verbose");
     App app = new Datagen();
@@ -57,7 +58,6 @@ public abstract class GenBaseTest extends MyTestCase {
     app.startApplication(DataUtil.toStringArray(args()));
     if (app.returnCode() != 0)
       throw die(app.getError());
-    //halt("generated:",Files.infoMap(generatedDir()));
     assertGenerated();
   }
 
@@ -67,71 +67,93 @@ public abstract class GenBaseTest extends MyTestCase {
     }
   }
 
+  /**
+   * Get BasePrinter for current dat file (creating one if necessary)
+   */
   protected final BasePrinter p() {
-    if (dr().mPrBuffer == null) {
+    if (datRecord().mPrBuffer == null) {
       generateDirs();
-      dr().mPrBuffer = new BasePrinter();
+      datRecord().mPrBuffer = new BasePrinter();
     }
-    return dr().mPrBuffer;
+    return datRecord().mPrBuffer;
   }
 
-  protected void setDatSubdir(String relPath) {
-    dr().mDatSubdirRelPath = relPath;
-  }
+//  protected void newDatSubdir(String relPath) {
+//    pdir("new dat subdir, path:", relPath);
+//    mDatRecord = null;
+//    datRecord().mDatSubdirRelPath = relPath;
+//  }
 
-  private DatRecord dr() {
+  /**
+   * Get current DatRecord, creating one if necessary
+   */
+  private DatRecord datRecord() {
     if (mDatRecord == null) {
-      mDatRecord = new DatRecord();
-      mDatRecords.add(mDatRecord);
+      var dr = new DatRecord();
+      dr.mDatSubdir = new File(datFilesDir(), GEN_SUBDIR_NAME);
+      mDatRecords.add(dr);
+      mDatRecord = dr;
     }
     return mDatRecord;
   }
 
+  /**
+   * Set filename for current dat file (defaults to <<testname>>)
+   *
+   * @param filename name without extension
+   */
+  protected void withDatFilename(String filename) {
+    checkArgument(Files.basename(filename).equals(filename), "dat filename must be a base name (no extension or dirs)");
+    datRecord().mDatFilename = filename;
+  }
+
+  /**
+   * Start a new DatRecord, with a subdirectory that is relative to the previous one
+   */
+  protected void pushDatSubdir(String relPath) {
+    File currentSubdir = (mDatRecord == null) ? datFilesDir() : mDatRecord.mDatSubdir;
+
+    var newDatDir = Files.getCanonicalFile(new File(currentSubdir, relPath));
+    pdir("pushDatSubdir, relPath:", relPath, CR, "newDatDir:", newDatDir);
+
+    var dr = new DatRecord();
+    dr.mDatSubdir = newDatDir;
+    mDatRecords.add(dr);
+    mDatRecord = dr;
+  }
+
+
   private DatRecord mDatRecord;
 
   private void generateDirs() {
-    if (dr().mDatSubdirRelPath == null)
-      setDatSubdir(Utils.GEN_SUBDIR_NAME);
-    if (dr().mDatSubdirRelPath.isEmpty())
-      dr().mDatSubdir = datFilesDir();
-    else
-      dr().mDatSubdir = Files.S.mkdirs(new File(datFilesDir(), dr().mDatSubdirRelPath));
+    pdir("generateDirs");
+    Files.S.mkdirs(Files.assertNonEmpty(datRecord().mDatSubdir));
   }
 
   private List<String> args() {
     return mArgs;
   }
 
-  private void supplyTypeName(String name) {
-    if (dr().mTypeName == null)
-      dr().mTypeName = name;
-  }
-
   private void writeDat(DatRecord ty) {
     String content = ty.mPrBuffer.toString();
-    checkState(!content.isEmpty());
+    if (content.isEmpty()) return;
+
+    var filename = ty.mDatFilename;
+    if (nullOrEmpty(filename))
+      filename = name();
     File datFile = new File(ty.mDatSubdir,
-        convertCamelToUnderscore(ty.mTypeName) + ParseTools.DOT_EXT_DATA_DEFINITION);
+        convertCamelToUnderscore(filename) + ParseTools.DOT_EXT_DATA_DEFINITION);
     Files.S.writeString(datFile, content);
   }
 
-  protected final void startType(String name) {
-    closeCurrentDat();
-    dr().mTypeName = name;
-  }
-
   private void closeCurrentDat() {
-    if (mDatRecord != null) {
-      supplyTypeName(name());
-    }
     mDatRecord = null;
   }
 
   private static class DatRecord {
     BasePrinter mPrBuffer;
     File mDatSubdir;
-    String mDatSubdirRelPath;
-    String mTypeName;
+    String mDatFilename;
   }
 
   // ------------------------------------------------------------------
@@ -141,13 +163,14 @@ public abstract class GenBaseTest extends MyTestCase {
   private File datFilesDir() {
     if (mDatFilesDir == null) {
       mDatFilesDir = Files.S.mkdirs(new File(generatedDir(), "dat_files"));
+      pdir("datFilesDir, initializing mDatFilesDir to:", mDatFilesDir);
     }
     return mDatFilesDir;
   }
 
   protected final File sourceDir() {
     if (mSourceDir == null) {
-      mSourceDir = Files.S.mkdirs(new File(generatedDir(), Utils.sourceFileExtension(mLanguage)));
+      mSourceDir = Files.S.mkdirs(new File(generatedDir(), sourceFileExtension(mLanguage)));
     }
     return mSourceDir;
   }
@@ -158,13 +181,6 @@ public abstract class GenBaseTest extends MyTestCase {
 
   protected final void cryptic() {
     mCryptic = true;
-  }
-
-  protected final void generateDummyDatFile(String name) {
-    File datFile = new File(mDatRecord.mDatSubdir,
-        convertCamelToUnderscore(name) + ParseTools.DOT_EXT_DATA_DEFINITION);
-    checkState(!datFile.exists());
-    Files.S.writeString(datFile, "class{int unused;}");
   }
 
   private Language mLanguage = Language.JAVA;

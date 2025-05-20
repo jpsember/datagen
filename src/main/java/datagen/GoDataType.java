@@ -2,6 +2,7 @@ package datagen;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
+import static datagen.Context.*;
 
 public abstract class GoDataType extends DataType {
 
@@ -17,12 +18,12 @@ public abstract class GoDataType extends DataType {
 
   @Override
   public void sourceGenerateEquals(SourceBuilder s, String a, String b) {
-    s.a(Utils.notSupportedMessage());
+    s.a(notSupportedMessage());
   }
 
   @Override
   public void sourceHashCalculationCode(SourceBuilder s, FieldDef f) {
-    s.a(Utils.notSupportedMessage());
+    s.a(notSupportedMessage());
   }
 
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
@@ -38,12 +39,12 @@ public abstract class GoDataType extends DataType {
 
   @Override
   public void sourceIfNotNull(SourceBuilder s, String expr) {
-    s.a(Utils.notSupportedMessage());
+    s.a(notSupportedMessage());
   }
 
   @Override
   public void sourceIfNotNull(SourceBuilder s, FieldDef f) {
-    s.a(Utils.notSupportedMessage());
+    s.a(notSupportedMessage());
   }
 
   @Override
@@ -67,7 +68,7 @@ public abstract class GoDataType extends DataType {
    * Construct go source code to extract a datatype's value from a JSEntity
    */
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-    return Utils.notSupportedMessage();
+    return notSupportedMessage();
   }
 
   @Override
@@ -90,10 +91,9 @@ public abstract class GoDataType extends DataType {
   /**
    * Generate source code to deserialize a JSON value to a value to be stored in
    * a map
-   * 
-   * @param jsonValue
-   *          representation of a JSMap value (from a key/value pair), or a
-   *          JSList value
+   *
+   * @param jsonValue representation of a JSMap value (from a key/value pair), or a
+   *                  JSList value
    */
   public String deserializeJsonToMapValue(String jsonValue) {
     if (isPrimitive())

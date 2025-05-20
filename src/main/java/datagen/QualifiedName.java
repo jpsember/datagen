@@ -4,6 +4,7 @@ import js.base.BaseObject;
 import js.json.JSMap;
 
 import static js.base.Tools.*;
+import static datagen.Context.*;
 
 public final class QualifiedName extends BaseObject {
 
@@ -12,7 +13,7 @@ public final class QualifiedName extends BaseObject {
   }
 
   public static QualifiedName parse(String expr, String defaultPackage) {
-    
+
     if (Context.rust()) {
       checkArgument(!expr.contains(":"), "Convert '::' expressions to '.'");
       expr = expr.replace('/', '.');
@@ -32,7 +33,7 @@ public final class QualifiedName extends BaseObject {
       return result;
     }
 
-    if (Context.pt.go()) {
+    if (go()) {
       var a = expr.lastIndexOf('/');
       var b = expr.lastIndexOf('.');
       var nameStartPos = Math.max(a, b);
@@ -58,7 +59,7 @@ public final class QualifiedName extends BaseObject {
     // For class name "Foo", if package contains "gen" and 
     // package doesn't already end with ".foo", add ".foo" to it
     //
-    if (Context.pt.python())
+    if (python())
       result = result.convertToPython();
     return result;
   }
@@ -87,29 +88,29 @@ public final class QualifiedName extends BaseObject {
       String arg = combined();
       String prefix = arg;
       String suffix = "";
-      switch (Context.pt.language()) {
-      case JAVA:
-      // If there's a type parameter <xxx>, use only the text preceding it as the embedded type expression
-      {
-        int i = arg.indexOf('<');
-        if (i >= 0) {
-          prefix = arg.substring(0, i);
-          suffix = arg.substring(i);
+      switch (language()) {
+        case JAVA:
+          // If there's a type parameter <xxx>, use only the text preceding it as the embedded type expression
+        {
+          int i = arg.indexOf('<');
+          if (i >= 0) {
+            prefix = arg.substring(0, i);
+            suffix = arg.substring(i);
+          }
         }
-      }
         break;
-      case PYTHON:
-      // Handle list types
-      {
-        int i = arg.indexOf('[');
-        if (i >= 0) {
-          prefix = arg.substring(0, i);
-          suffix = arg.substring(i);
+        case PYTHON:
+          // Handle list types
+        {
+          int i = arg.indexOf('[');
+          if (i >= 0) {
+            prefix = arg.substring(0, i);
+            suffix = arg.substring(i);
+          }
         }
-      }
         break;
-      default:
-        break;
+        default:
+          break;
       }
 
       String typeName = ParseTools.importedClassExpr(prefix).toString();

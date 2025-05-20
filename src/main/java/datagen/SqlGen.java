@@ -131,7 +131,7 @@ public class SqlGen extends BaseObject {
 
     Context.files.mkdirs(Files.parent(target));
     boolean wrote = Context.files.writeIfChanged(target, content);
-    Context.generatedFilesSet.add(target);
+    Context.addGeneratedFile(target);
     if (wrote)
       log(".....updated:", target);
     else {
@@ -189,7 +189,7 @@ public class SqlGen extends BaseObject {
   private void readByField(String fieldNameSnake) {
 
     var s = sourceBuilder();
-    FieldDef our =mGeneratedTypeDef.fieldWithName(fieldNameSnake);
+    FieldDef our = mGeneratedTypeDef.fieldWithName(fieldNameSnake);
 
     var fieldNameCamel = snakeToCamel(fieldNameSnake);
     var fieldTypeStr = typeName(our); //our.dataType().qualifiedName().className();
@@ -251,7 +251,7 @@ public class SqlGen extends BaseObject {
     if (mCachedDir == null) {
       // Determine where the go source files were written, in order to place
       // the sql source file there as well
-      File sample = Context.generatedFilesSet.iterator().next();
+      File sample = Context.generatedSourceFiles.iterator().next();
       mCachedDir = Files.assertDirectoryExists(sample.getParentFile());
     }
     return mCachedDir;
@@ -357,7 +357,7 @@ public class SqlGen extends BaseObject {
   }
 
   private SourceBuilder sourceBuilder() {
-    return new SourceBuilder(Language.GO);
+    return new SourceBuilder();
   }
 
   private void readRecord() {
@@ -407,7 +407,7 @@ public class SqlGen extends BaseObject {
   }
 
   private void deleteRecord() {
-   
+
     var s = sourceBuilder();
 
     var objNameGo = ci.objNameGo;
@@ -485,7 +485,7 @@ public class SqlGen extends BaseObject {
 
     if (simulated()) {
 
-      var fd = mGeneratedTypeDef.fieldWithName( fieldNameSnake);
+      var fd = mGeneratedTypeDef.fieldWithName(fieldNameSnake);
       var compareFuncName = determineCompareFuncForField(fd);
 
       s.a("x := newDbIter()", CR, //
@@ -524,6 +524,7 @@ public class SqlGen extends BaseObject {
   }
 
   private static Map<String, String> sCompareFuncMap;
+
   static {
     sCompareFuncMap = hashMap();
     reg("int", "func compareInts(x, y any) int { return x.(int) - y.(int) }");
@@ -777,27 +778,27 @@ public class SqlGen extends BaseObject {
     return DataUtil.convertCamelCaseToUnderscores(camel);
   }
 
-  private static String typeName(FieldDef field)   {
+  private static String typeName(FieldDef field) {
     return field.dataType().qualifiedName().className();
   }
-  
+
   private String buildConvertExpr(String sourceType, String expr) {
     String convExpr = null;
     if (sourceType.equals("string")) {
-      convExpr = expr+".AsString()";
+      convExpr = expr + ".AsString()";
     } else if (sourceType.equals("int")) {
-      convExpr = "int("+expr+".AsInteger())";
+      convExpr = "int(" + expr + ".AsInteger())";
     }
     if (convExpr == null)
       badArg("don't know how to convert field of type:", sourceType);
     return convExpr;
   }
-  
+
   private void createWithField(String fieldNameSnake) {
     var fieldNameCamel = snakeToCamel(fieldNameSnake);
     var field = mGeneratedTypeDef.fieldWithName(fieldNameSnake);
     var sourceType = typeName(field);
-    
+
     var s = sourceBuilder();
 
     var nm = ci.objNameGo;
@@ -805,8 +806,8 @@ public class SqlGen extends BaseObject {
         "// Returns default object if such an object already exists.", CR, //
         "// Returns a non-nil error if some other problem occurs.", CR);
 
-    
-    s.a("func Create", nm, "With", fieldNameCamel, "(value ", sourceType  , ") (", nm, ", error)", OPEN);
+
+    s.a("func Create", nm, "With", fieldNameCamel, "(value ", sourceType, ") (", nm, ", error)", OPEN);
 
     if (simulated()) {
       s.a("mp := ", GLOBAL_DB, ".getTable(", ci.simTableNameStr, ")", CR, //
@@ -820,7 +821,7 @@ public class SqlGen extends BaseObject {
           "return Default", ci.objNameGo, ", nil", CLOSE, //
           CLOSE);
 
-      s.a("obj := New", nm,"().SetId(mp.nextUniqueKey()).Set",fieldNameCamel,"(value).Build()", CR, //
+      s.a("obj := New", nm, "().SetId(mp.nextUniqueKey()).Set", fieldNameCamel, "(value).Build()", CR, //
           "mp.Put(obj.Id(), obj)", CR, //
           "mp.modified = true", CR, //
           "return obj, nil", CLOSE);
@@ -841,7 +842,7 @@ public class SqlGen extends BaseObject {
           "existingObj, err1 := Read", objNameGo, "With", fieldNameCamel, "(obj.", fieldNameCamel, "())", CR, //
           "err = err1", CR, //
           "if err == nil && existingObj.Id() == 0", OPEN, //
-          "obj := New",nm,"().Set",fieldNameCamel,"(value)",CR,//
+          "obj := New", nm, "().Set", fieldNameCamel, "(value)", CR,//
           "c, err2 := Create", objNameGo, "(obj)", CR, //
           "err = err2", CR, "created = c", CLOSE, "return created,err", CR, CLOSE);
     }

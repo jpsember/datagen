@@ -9,7 +9,6 @@ import js.json.JSMap;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
-import static datagen.Utils.*;
 
 import datagen.QualifiedName;
 import datagen.RustDataType;
@@ -21,7 +20,6 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public DataType withQualifiedName(QualifiedName qn) {
-    loadUtils();
     with(NAME_MAIN, qn);
     return this;
   }

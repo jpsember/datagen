@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Set;
 
 import static js.base.Tools.*;
-import static datagen.Utils.*;
 
 import js.base.BaseObject;
 import js.file.Files;
@@ -36,13 +35,15 @@ import js.json.JSMap;
 import js.parsing.MacroParser;
 import datagen.datatype.EnumDataType;
 
+import static datagen.Context.*;
+
 /**
  * Generate source code from previously parsed data fields and source templates
  */
 public abstract class SourceGen extends BaseObject {
 
   public static SourceGen construct() {
-    switch (Context.pt.language()) {
+    switch (language()) {
       default:
         throw languageNotSupported();
       case JAVA:
@@ -130,7 +131,7 @@ public abstract class SourceGen extends BaseObject {
     content = Context.pt.adjustLinefeeds(content);
     File target = def.sourceFile();
 
-    boolean success = Context.generatedFilesSet.add(target);
+    boolean success = Context.generatedSourceFiles.add(target);
     checkState(success, "duplicate file generated:", target);
 
     Context.cleanIfNecessary(target);
@@ -159,19 +160,14 @@ public abstract class SourceGen extends BaseObject {
     return "@Deprecated\n";
   }
 
-  @Deprecated
-  protected final File sourceFile() {
-    return Files.join(Context.config.sourcePath(), Context.sourceRelPath());
-  }
-
-  protected SourceBuilder s = new SourceBuilder(Context.pt.language());
+  protected SourceBuilder s = new SourceBuilder();
 
   /**
    * Get content of SourceBuilder, and reset the SourceBuilder
    */
   protected final String content() {
     String content = s.getContent();
-    s = new SourceBuilder(Context.pt.language());
+    s = new SourceBuilder();
     return content;
   }
 

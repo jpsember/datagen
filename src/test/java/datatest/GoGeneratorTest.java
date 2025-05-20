@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datatest;
 
@@ -106,7 +105,7 @@ public class GoGeneratorTest extends GenBaseTest {
 
   @Test
   public void session() {
-    setDatSubdir("gen/webservgen");
+    pushDatSubdir("gen/webservgen");
     p().pr("class {", INDENT, //
         "string id;", CR, OUTDENT, "}");
     compile();
@@ -114,7 +113,7 @@ public class GoGeneratorTest extends GenBaseTest {
 
   @Test
   public void persistSessionMap() {
-    setDatSubdir("gen/webservgen");
+    pushDatSubdir("gen/webservgen");
     p().pr("class {", INDENT, //
         "map string gen.webservgen.Session session_map;", CR, OUTDENT, "}");
     compile();
@@ -122,7 +121,7 @@ public class GoGeneratorTest extends GenBaseTest {
 
   @Test
   public void depr1() {
-    setDatSubdir("gen/webservgen");
+    pushDatSubdir("gen/webservgen");
     p().pr("class {", INDENT, //
         "- string id;", CR, //
         " int count;", OUTDENT, "}");
@@ -131,7 +130,7 @@ public class GoGeneratorTest extends GenBaseTest {
 
   @Test
   public void depr2() {
-    setDatSubdir("gen/webservgen");
+    pushDatSubdir("gen/webservgen");
     p().pr("- class {", INDENT, //
         " string id;", CR, //
         " int count;", OUTDENT, "}");
@@ -164,13 +163,13 @@ public class GoGeneratorTest extends GenBaseTest {
         "}");
     compile();
   }
-  
+
   @Test
   public void maps() {
     p().pr("class {", INDENT, //
-         "map string string s;", CR, //
-      "map string string q = \"{\\\"bar\\\":\\\"foo\\\"}\";", CR, //
-        "map string long h;",CR,//
+        "map string string s;", CR, //
+        "map string string q = \"{\\\"bar\\\":\\\"foo\\\"}\";", CR, //
+        "map string long h;", CR,//
         "}");
     //alert("map string long fails; the long must be extracted from the JSEntity");
     compile();
@@ -203,7 +202,7 @@ public class GoGeneratorTest extends GenBaseTest {
     compile();
   }
 
- 
+
   @Test
   public void bravo2() {
     //rv();
@@ -217,6 +216,7 @@ public class GoGeneratorTest extends GenBaseTest {
         "} sql{index name}");
     compile();
   }
+
   /**
    * Generating sql code, with simulated database
    */

@@ -26,7 +26,7 @@ package datagen;
 
 import static datagen.SourceBuilder.*;
 import static js.base.Tools.*;
-import static datagen.Utils.*;
+import static datagen.Context.*;
 
 import java.util.List;
 import java.util.Set;

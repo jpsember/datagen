@@ -25,8 +25,8 @@ package datagen;
 
 import js.base.BaseObject;
 
-import static datagen.Utils.*;
 import static js.base.Tools.*;
+import static datagen.Context.*;
 
 /**
  * Represents a field within a generated data type
@@ -34,7 +34,7 @@ import static js.base.Tools.*;
 public abstract class FieldDef extends BaseObject {
 
   public static FieldDef construct() {
-    switch (Context.pt.language()) {
+    switch (language()) {
       default:
         throw languageNotSupported();
       case JAVA:
