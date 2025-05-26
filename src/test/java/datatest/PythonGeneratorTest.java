@@ -198,4 +198,18 @@ public class PythonGeneratorTest extends GenBaseTest {
     compile();
   }
 
+  @Test
+  public void deprecations() {
+    p().pr("- class mars {", INDENT, //
+        "bool alpha;", CR, //
+        "bool beta = true;", CR, //
+        OUTDENT, "}");
+    p().pr("class venus {", INDENT, //
+        "bool alpha;", CR, //
+        "- bool beta = true;", CR, //
+        OUTDENT, "}");
+    // There is no way (that I know of) currently to mark enums as deprecated...
+    // p().pr("- enum pluto {a,b,c}",CR);
+    compile();
+  }
 }

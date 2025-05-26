@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 import datagen.datatype.EnumDataType;
 import js.file.Files;
+import js.json.JSMap;
 import js.parsing.RegExp;
 
 import static js.base.Tools.*;
@@ -36,6 +37,17 @@ import static datagen.SourceBuilder.*;
 import static datagen.Context.*;
 
 public class PythonSourceGen extends SourceGen {
+
+  private static final String DEPRECATED_STR = "@{{pycore.base.deprecated|deprecated}}";
+
+  @Override
+  protected void addAdditionalTemplateValues(JSMap templateMap) {
+    var val = "";
+    if (generatedTypeDef.isDeprecated()) {
+      val = "@deprecated(\"This class is deprecated\")\n  ";
+    }
+    templateMap.put("py_depr", val);
+  }
 
   @Override
   protected String getTemplate() {
@@ -93,6 +105,8 @@ public class PythonSourceGen extends SourceGen {
     for (FieldDef f : def.fields()) {
       s.a("\\\\", CR);
       DataType d = f.dataType();
+      if (f.deprecated())
+        s.a(DEPRECATED_STR + "(\"field ", f.name(), " is deprecated\")", CR);
       s.a("def ", f.setterName(), "(self, x: ", f.dataType().typeName(), ") -> ", def.name(), "Builder:",
           OPEN);
       String targetExpr = "self." + f.instanceName();
@@ -178,6 +192,8 @@ public class PythonSourceGen extends SourceGen {
 
     for (FieldDef f : def.fields()) {
       s.a("\\\\").cr();
+      if (f.deprecated())
+        s.a(DEPRECATED_STR + "(\"field ", f.name(), " is deprecated\")", CR);
       s.a("def ", propertyGetName(f), "(self) -> ", f.dataType().typeName(), ":", OPEN, //
           "return self.", f.instanceName(), CLOSE);
     }

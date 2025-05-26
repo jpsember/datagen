@@ -31,7 +31,7 @@ class [!class]({{pycore.base.AbstractData|AbstractData}}):
 
 \\
   @classmethod
-  def new_builder(cls) -> [!class]Builder:
+  [!py_depr]def new_builder(cls) -> [!class]Builder:
     return [!class]Builder()
 
   \\
