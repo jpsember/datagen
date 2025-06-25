@@ -115,7 +115,7 @@ public final class ParseTools {
 
   public static DFA dfa() {
     if (sDFA == null) {
-      sDFA = new DFA(new JSMap(Files.readString(Datagen.class, "tokens.dfa")));
+      sDFA = DFA.parse(Files.readString(Datagen.class, "tokens.dfa"));
     }
     return sDFA;
   }

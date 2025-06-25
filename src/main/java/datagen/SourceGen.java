@@ -23,19 +23,18 @@
  **/
 package datagen;
 
-import java.io.File;
-import java.util.List;
-import java.util.Set;
-
-import static js.base.Tools.*;
-
+import datagen.datatype.EnumDataType;
 import js.base.BaseObject;
 import js.file.Files;
 import js.json.JSMap;
 import js.parsing.MacroParser;
-import datagen.datatype.EnumDataType;
+
+import java.io.File;
+import java.util.List;
+import java.util.Set;
 
 import static datagen.Context.*;
+import static js.base.Tools.*;
 
 /**
  * Generate source code from previously parsed data fields and source templates
