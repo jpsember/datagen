@@ -35,10 +35,10 @@ import datagen.gen.PartialType;
 import datagen.gen.TypeStructure;
 import js.file.Files;
 import js.json.JSMap;
+import js.parsing.Lexeme;
+import js.parsing.Lexer;
+import js.parsing.LexerException;
 import js.parsing.RegExp;
-import js.parsing.ScanException;
-import js.parsing.Scanner;
-import js.parsing.Token;
 import js.base.BaseObject;
 import js.data.DataUtil;
 
@@ -72,7 +72,7 @@ public final class DataDefinitionParser extends BaseObject {
 
       while (scanner().hasNext()) {
 
-        mDeprecated = scanner().readIf(DEPRECATION) != null;
+        mDeprecated = scanner().readIf(DEPRECATION);
 
         var t = read();
 
@@ -80,8 +80,8 @@ public final class DataDefinitionParser extends BaseObject {
           case "extern":
             processExternalReference(DataTypeManager.constructContractDataType());
             break;
-          case "fields" :
-            pr("*** Please use the word 'class' instead of 'fields'; ",t.locInfo());
+          case "fields":
+            pr("*** Please use the word 'class' instead of 'fields'; ", t.locInfo());
             procDataType();
             break;
           case "class":
@@ -103,7 +103,7 @@ public final class DataDefinitionParser extends BaseObject {
       }
       reportUnusedReferences();
     } catch (Throwable t) {
-      if (t instanceof ScanException || SHOW_STACK_TRACES) {
+      if (t instanceof LexerException || SHOW_STACK_TRACES) {
         if (SHOW_STACK_TRACES)
           pr(t);
         throw t;
@@ -123,7 +123,7 @@ public final class DataDefinitionParser extends BaseObject {
     }
   }
 
-  private Scanner scanner() {
+  private Lexer scanner() {
     return mScanner;
   }
 
@@ -131,12 +131,11 @@ public final class DataDefinitionParser extends BaseObject {
     String datPath = relDatPath.toString();
     File absFile = new File(Context.config.datPath(), datPath);
     String fileContent = Files.readString(absFile);
-    mScanner = new Scanner(dfa(), fileContent);
-    mScanner.setSourceDescription(datPath);
+    mScanner = new Lexer(dfa()).withText(fileContent).withSourceDescription(datPath);
     mLastReadToken = null;
   }
 
-  private Token peek() {
+  private Lexeme peek() {
     return scanner().peek();
   }
 
@@ -147,23 +146,23 @@ public final class DataDefinitionParser extends BaseObject {
   }
 
   private boolean readIf(String tokenText) {
-    Token t = peek();
+    var t = peek();
     return readIf(t != null && t.text().equals(tokenText));
   }
 
   private boolean readIf(int type) {
-    Token t = peek();
+    var t = peek();
     return readIf(t != null && t.id(type));
   }
 
-  private Token read() {
+  private Lexeme read() {
     mLastReadToken = scanner().read();
     return mLastReadToken;
   }
 
   private String read(int type) {
-    Token t = read();
-    if (t.id() != type)
+    var t = read();
+    if (!t.id(type))
       t.failWith("expected token of type:", dfa().tokenName(type), "but got", dfa().tokenName(t.id()));
     return t.text();
   }
@@ -212,16 +211,10 @@ public final class DataDefinitionParser extends BaseObject {
   // Otherwise, derive it from the dat file
   //
   private String parseClassNameOrDerive() {
-    String className;
-    {
-      var t = scanner().readIf(ID);
-      if (t != null) {
-        className = t.text();
-      } else {
-        className = Files.basename(mRelativeDatPath);
-      }
-    }
-    return className;
+    if (scanner().readIf(ID))
+      return scanner().token().text();
+    else
+      return Files.basename(mRelativeDatPath);
   }
 
   private String determineRelativePath() {
@@ -403,7 +396,7 @@ public final class DataDefinitionParser extends BaseObject {
   }
 
   private void readFieldName(List<String> fields) {
-    Token t = read();
+    var t = read();
     var fieldName = t.text();
     if (!isValidIdentifier(fieldName))
       t.failWith("Not a valid field name");
@@ -438,7 +431,8 @@ public final class DataDefinitionParser extends BaseObject {
     List<Integer> stack = arrayList();
     boolean done = false;
     while (!done) {
-      Token t = read();
+      var t = read();
+      var text = t.text();
       switch (t.id()) {
         case NUMBER:
         case STRING:
@@ -463,7 +457,7 @@ public final class DataDefinitionParser extends BaseObject {
           checkState(!stack.isEmpty());
           // If not ',' ':' or boolean, wrap in quotes
           if (!(t.id(COLON) || t.id(COMMA) || t.id(BOOL))) {
-            t = withText(t, quote(t.text()));
+            text = quote(text);
           }
           break;
       }
@@ -476,7 +470,7 @@ public final class DataDefinitionParser extends BaseObject {
         }
       }
 
-      sb.append(t.text());
+      sb.append(text);
     }
     String result = sb.toString();
 
@@ -487,10 +481,6 @@ public final class DataDefinitionParser extends BaseObject {
     }
 
     return new JSMap(result);
-  }
-
-  private static Token withText(Token t, String text) {
-    return new Token(t.source(), t.id(), t.name(), text, t.row(), t.column());
   }
 
   private PartialType parsePartialType() {
@@ -538,8 +528,8 @@ public final class DataDefinitionParser extends BaseObject {
     Context.generatedTypeDef = d;
   }
 
-  private Scanner mScanner;
-  private Token mLastReadToken;
+  private Lexer mScanner;
+  private Lexeme mLastReadToken;
   private boolean mDeprecated;
   private File mRelativeDatPath;
 }
