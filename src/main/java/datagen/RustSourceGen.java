@@ -144,9 +144,11 @@ public final class RustSourceGen extends SourceGen {
         }
       }
 
+
       // If one of the package directories is 'gen', we apply our special rules
       if (("." + qn.packagePath() + ".").contains(".gen.")) {
 
+        var oldqn = qn;
         // Extend the package path to include a snake case form of the class name
         // e.g. gen.Saturn => gen.saturn.Saturn.
         // 
@@ -160,6 +162,8 @@ public final class RustSourceGen extends SourceGen {
           if (db)
             pr("modified for Rust:", qn);
         }
+        //halt("special case, orig:",INDENT,oldqn,CR,qn);
+
       }
       expr = qn.combined().replace(".", "::");
 
@@ -177,9 +181,11 @@ public final class RustSourceGen extends SourceGen {
       if (uniqueSet.add(expr)) {
         if (db)
           log("...------------------------------> importing:", expr);
+        //checkArgument(!expr.contains("json"));
         s.a("use ", expr, ";").cr();
       }
     }
+
     if (false && DEBUG_RUST_IMPORTS)
       halt("returning content:", INDENT, content());
     return content();

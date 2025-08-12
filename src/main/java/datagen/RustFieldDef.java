@@ -39,7 +39,7 @@ public class RustFieldDef extends FieldDef {
 
   @Override
   public String provideConstantName() {
-    todo("!this doesn't need to be so involved");
+    //todo("!this doesn't need to be so involved");
     return "c_" + Context.generatedTypeDef.qualifiedName().combined().replace('.', '_') + "_" + index();
   }
 

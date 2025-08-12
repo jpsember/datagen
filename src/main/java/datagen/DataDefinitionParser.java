@@ -82,7 +82,7 @@ public final class DataDefinitionParser extends BaseObject {
             break;
           case "fields":
             pr("*** Please use the word 'class' instead of 'fields'; ", t.locInfo());
-            procDataType();
+            t.failWith("use 'class' instead of 'fields'");
             break;
           case "class":
             procDataType();

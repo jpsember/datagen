@@ -72,6 +72,7 @@ public final class DataTypeManager extends BaseObject {
         add("int", RustIntDataType.INT_TYPE);
         add("long", RustIntDataType.LONG_TYPE);
         add("short", RustIntDataType.SHORT_TYPE);
+        add("float", RustFloatDataType.FLOAT_TYPE);
         add("byte", RustIntDataType.BYTE_TYPE);
         add("File", RustFileDataType.TYPE);
       }

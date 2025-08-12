@@ -38,7 +38,7 @@ public final class RustFileDataType extends RustStringDataType {
   public static final DataType TYPE = new RustFileDataType();
 
   private RustFileDataType() {
-    with(RUST_IMPORT_ALL_PREFIX + "crate.files.JFile");
+    with(RUST_IMPORT_ALL_PREFIX + "crate.jfile.JFile");
   }
 
   @Override
