@@ -33,6 +33,7 @@ import java.util.List;
 import datagen.datatype.EnumDataType;
 import datagen.gen.PartialType;
 import datagen.gen.TypeStructure;
+import js.app.App;
 import js.file.Files;
 import js.json.JSMap;
 import js.parsing.Lexeme;
@@ -103,6 +104,8 @@ public final class DataDefinitionParser extends BaseObject {
       }
       reportUnusedReferences();
     } catch (Throwable t) {
+      if (showExceptions)
+        throw t;
       if (t instanceof LexerException || SHOW_STACK_TRACES) {
         if (SHOW_STACK_TRACES)
           pr(t);

@@ -43,7 +43,7 @@ public final class RustFPointDataType extends RustStringDataType {
 
   @Override
   public final String provideSourceDefaultValue() {
-    return "FPoint.new(0.0,0.0)";
+    return "FPoint::new(0.0, 0.0)";
   }
 
   @Override
@@ -61,20 +61,16 @@ public final class RustFPointDataType extends RustStringDataType {
    * The default value is expressed as rust code. Convert it to a string literal
    */
   private String getStrPtrFromDefaultValue(String s) {
-    notFinished();
-    if (s.equals("null_file()"))
-      return "&\"\"";
-    else if (s.startsWith("new_file(")) {
-      return chomp(chompPrefix(s, "new_file("), ")");
+    var pref = "FPoint::new(";
+      if (s.startsWith(pref)) {
+      return chomp(chompPrefix(s, pref), ")");
     } else
       throw badArg("unexpected arg for getStrPtrFromDefaultValue:", quote(s));
   }
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    notFinished();
-    s.a("n.", f.instanceName(), " = new_file(&m.opt(", f.nameStringConstantQualified(), ").or_str(",
-        getStrPtrFromDefaultValue(f.defaultValueSource()), ")?);", CR);
+    s.a("n.", f.instanceName(), " = parse_FPoint(m.opt(", f.nameStringConstantQualified(), "))?;",CR);
   }
 
   @Override

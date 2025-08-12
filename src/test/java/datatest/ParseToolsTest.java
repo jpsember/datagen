@@ -51,7 +51,7 @@ public class ParseToolsTest extends MyTestCase {
   private void perform() {
     loadTools();
     // We have to prepare a context before calling ParseTools
-    Context.prepareApp(files(), DatagenConfig.newBuilder().language(Language.JAVA));
+    Context.prepareApp(true, files(), DatagenConfig.newBuilder().language(Language.JAVA));
     assertMessage(Context.pt.adjustLinefeeds(mBuffer.toString()));
   }
 

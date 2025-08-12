@@ -51,7 +51,7 @@ public final class RustBoolDataType extends RustDataType {
 
   @Override
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
-    return json.getBoolean("") ? "JS_TRUE" : "JS_FALSE";
+    return json.getBoolean("") ? "true" : "false";
   }
 
   @Override

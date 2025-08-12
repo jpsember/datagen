@@ -34,6 +34,7 @@ import java.util.List;
 import datagen.gen.DatagenConfig;
 import datagen.gen.LangInfo;
 import datagen.gen.Language;
+import js.app.App;
 import js.app.AppOper;
 import js.base.SystemCall;
 import js.file.DirWalk;
@@ -58,7 +59,7 @@ public class DatagenOper extends AppOper {
   @Override
   public void perform() {
     cmdLineArgs().assertArgsDone();
-    prepareApp(files(), constructDatagenConfig());
+    prepareApp(app().showExceptions(), files(), constructDatagenConfig());
 
     List<File> entriesToFreshen = constructFileEntries();
 

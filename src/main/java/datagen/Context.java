@@ -29,6 +29,7 @@ import java.util.Set;
 
 import datagen.gen.DatagenConfig;
 import datagen.gen.Language;
+import js.app.App;
 import js.base.BasePrinter;
 import js.data.DataUtil;
 import js.file.Files;
@@ -160,7 +161,8 @@ public final class Context {
   // Lifetimes
   // ----------------------------------------------------------------------------------------------
 
-  public static void prepareApp(Files files, DatagenConfig config) {
+  public static void prepareApp(boolean showExceptions, Files files, DatagenConfig config) {
+    Context.showExceptions = showExceptions;
     var b = config.toBuilder();
     b.datPath(Files.absolute(b.datPath()));
     Context.config = b.build();
@@ -303,6 +305,7 @@ public final class Context {
   private static Set<File> sCleanedDirectorySet = hashSet();
   private static List<GeneratedTypeDef> sGeneratedSources = arrayList();
   private static File sSourceRelPath;
+  public static boolean showExceptions;
 
 }
 
