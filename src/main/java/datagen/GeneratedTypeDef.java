@@ -225,8 +225,6 @@ public final class GeneratedTypeDef extends BaseObject {
     DataTypeManager dataTypes = Context.dataTypeManager();
     DataType dataType = dataTypes.get(partialType.name());
     if (dataType == null) {
-      pmod("No datatype found for name:",partialType.name());
-
       var defaultPackage = Context.generatedTypeDef.qualifiedName().packagePath();
 
       // Issue #45: 
@@ -242,17 +240,6 @@ public final class GeneratedTypeDef extends BaseObject {
         if (i >= 0)
           defaultPackage = defaultPackage.substring(0, i);
       }
-
-      // A rust issue:
-      //
-      // We may be referring to a sibling generated class, e.g. crate::gen::foo
-      //
-      if (rust()) {
-        pr("default package:",defaultPackage);
-        pr("partialType:",partialType);
-      }
-
-
 
       QualifiedName qualName = QualifiedName.parse(partialType.name(), defaultPackage);
       dataType = dataTypes.get(qualName.className());

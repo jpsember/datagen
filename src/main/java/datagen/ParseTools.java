@@ -74,7 +74,7 @@ public final class ParseTools {
     PKGGO_FILE = PKGGO_TOOLS;
 
     PKG_RUST_TOOLS = "{{crate.tools.*|}}";
-    PKG_RUST_JSON = PKG_RUST_TOOLS; //"{{crate.json.*|}}";
+    PKG_RUST_JSON = PKG_RUST_TOOLS;
     PKG_RUST_ERROR = "{{std.error|}}";
   }
 

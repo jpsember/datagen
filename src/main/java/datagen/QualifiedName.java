@@ -14,9 +14,7 @@ public final class QualifiedName extends BaseObject {
 
   public static QualifiedName parse(String expr, String defaultPackage) {
 
-    if (Context.rust()  ) {
-      pmod("parse expr:",expr,CR,"def pkg:",defaultPackage);
-
+    if (Context.rust()) {
       checkArgument(!expr.contains(":"), "Convert '::' expressions to '.'");
       expr = expr.replace('/', '.');
 
@@ -28,14 +26,12 @@ public final class QualifiedName extends BaseObject {
       if (a > 0)
         packagePath = expr.substring(0, a);
 
-      pmod("packagePath now:",packagePath);
+      pmod("packagePath now:", packagePath);
       if (packagePath.startsWith("gen.") || packagePath.equals("gen"))
         packagePath = "crate." + packagePath;
-
       else if (defaultPackage != null && defaultPackage.startsWith("crate.")) {
         packagePath = defaultPackage;
       }
-
 
       QualifiedName result = new QualifiedName(packagePath, className);
       pmod("result:",INDENT,result);
