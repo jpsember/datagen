@@ -43,26 +43,27 @@ public class RustFloatDataType  extends RustDataType {
   private String bitSizeSuffix() {
     return "f"+mBitSize;
   }
-  @Override
-  public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("n.", f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ").or_",bitSizeSuffix(),"(", f.defaultValueSource(), ")?");
-    if (mBitSize != 64)
-      s.a(" as i", mBitSize);
-  }
 
   @Override
-  public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    var x = valueExpression;
+  public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
+    s.a("n.", f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ").or_float(", f.defaultValueSource(), ")?");
     if (mBitSize != 64)
-      x += " as i64";
-    return x;
+      s.a(" as f", mBitSize);
   }
+
+//  @Override
+//  public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
+//    var x = valueExpression;
+//    if (mBitSize != 64)
+//      x += " as f64";
+//    return x;
+//  }
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-    var x = jsentityExpression + ".as_int()?";
+    var x = jsentityExpression + ".as_float()?";
     if (mBitSize != 64)
-      x += " as i" + mBitSize;
+      x += " as f" + mBitSize;
     return x;
   }
 
@@ -73,12 +74,12 @@ public class RustFloatDataType  extends RustDataType {
 
   @Override
   public String deserializeJsonToMapValue(String jsonValue) {
-    return jsonValue + ".as_int()?";
+    return jsonValue + ".as_float()?";
   }
 
   @Override
   public String setterArgSignature(String expr) {
-    return "i" + mBitSize;
+    return "f" + mBitSize;
   }
 
   @Override
@@ -88,13 +89,13 @@ public class RustFloatDataType  extends RustDataType {
 
   @Override
   public String buildRustJsonValueFrom(String expr) {
-    return "new_int(*" + expr + ((mBitSize != 64) ? " as i64" : "") + ")";
+    return "new_float(*" + expr + ((mBitSize != 64) ? " as f64" : "") + ")";
   }
 
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
-    s.a("n.", f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ").or_empty_list()?.parse_i",
-        mBitSize, "_list()?;");
+    s.a("n.", f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ").or_empty_list()?.parse_",
+       bitSizeSuffix(), "_list()?;");
   }
 
   @Override

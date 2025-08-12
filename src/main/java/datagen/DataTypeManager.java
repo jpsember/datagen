@@ -75,6 +75,7 @@ public final class DataTypeManager extends BaseObject {
         add("float", RustFloatDataType.FLOAT_TYPE);
         add("byte", RustIntDataType.BYTE_TYPE);
         add("File", RustFileDataType.TYPE);
+        add("FPoint",RustFPointDataType.TYPE);
       }
       break;
       case PYTHON:
