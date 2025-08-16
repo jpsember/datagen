@@ -163,25 +163,12 @@ public final class RustSourceGen extends SourceGen {
       }
       expr = qn.combined().replace(".", "::");
 
-      // If the import string starts with "all." then
-      // instead of importing the last element, replace it with '*'
-      //
-      if (expr.startsWith(RUST_IMPORT_ALL_PREFIX)) {
-        expr = chompPrefix(expr, RUST_IMPORT_ALL_PREFIX);
-        var i = expr.lastIndexOf(':');
-        checkArgument(i >= 0);
-        // Retain the ':' but replace what follows with *
-        expr = expr.substring(0, i + 1) + "*";
-      }
-
       if (uniqueSet.add(expr)) {
         if (db)
           log("...------------------------------> importing:", expr);
         s.a("use ", expr, ";").cr();
       }
     }
-    if (false && DEBUG_RUST_IMPORTS)
-      halt("returning content:", INDENT, content());
     return content();
   }
 

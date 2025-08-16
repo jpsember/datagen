@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datagen.datatype;
 
@@ -30,7 +29,6 @@ import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.json.JSMap;
 
-import static datagen.Context.RUST_IMPORT_ALL_PREFIX;
 import static datagen.Context.RUST_JTOOLS_PREFIX;
 import static js.base.Tools.*;
 
@@ -39,7 +37,7 @@ public final class RustFPointDataType extends RustStringDataType {
   public static final DataType TYPE = new RustFPointDataType();
 
   private RustFPointDataType() {
-    with(RUST_IMPORT_ALL_PREFIX + RUST_JTOOLS_PREFIX + "tools.FPoint");
+    with("crate." + RUST_JTOOLS_PREFIX + "tools.FPoint");
   }
 
   @Override
@@ -63,7 +61,7 @@ public final class RustFPointDataType extends RustStringDataType {
    */
   private String getStrPtrFromDefaultValue(String s) {
     var pref = "FPoint::new(";
-      if (s.startsWith(pref)) {
+    if (s.startsWith(pref)) {
       return chomp(chompPrefix(s, pref), ")");
     } else
       throw badArg("unexpected arg for getStrPtrFromDefaultValue:", quote(s));
@@ -71,7 +69,7 @@ public final class RustFPointDataType extends RustStringDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("n.", f.instanceName(), " = parse_fpoint(m.opt(", f.nameStringConstantQualified(), "))?;",CR);
+    s.a("n.", f.instanceName(), " = parse_fpoint(m.opt(", f.nameStringConstantQualified(), "))?;", CR);
   }
 
   @Override
