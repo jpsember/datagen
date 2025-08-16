@@ -31,6 +31,7 @@ import js.data.DataUtil;
 import js.json.JSMap;
 
 import static datagen.Context.RUST_IMPORT_ALL_PREFIX;
+import static datagen.Context.RUST_JTOOLS_PREFIX;
 import static js.base.Tools.*;
 
 public final class RustFPointDataType extends RustStringDataType {
@@ -38,7 +39,7 @@ public final class RustFPointDataType extends RustStringDataType {
   public static final DataType TYPE = new RustFPointDataType();
 
   private RustFPointDataType() {
-    with(RUST_IMPORT_ALL_PREFIX + "crate.tools.FPoint");
+    with(RUST_IMPORT_ALL_PREFIX + RUST_JTOOLS_PREFIX + "tools.FPoint");
   }
 
   @Override
@@ -70,7 +71,7 @@ public final class RustFPointDataType extends RustStringDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("n.", f.instanceName(), " = parse_FPoint(m.opt(", f.nameStringConstantQualified(), "))?;",CR);
+    s.a("n.", f.instanceName(), " = parse_fpoint(m.opt(", f.nameStringConstantQualified(), "))?;",CR);
   }
 
   @Override

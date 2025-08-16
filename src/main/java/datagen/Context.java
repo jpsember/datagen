@@ -46,6 +46,7 @@ public final class Context {
 
   public static final String GEN_SUBDIR_NAME = "gen";
   public static final String RUST_IMPORT_ALL_PREFIX = "!all_";
+  public static final String RUST_JTOOLS_PREFIX = "jtools.";
 
   public static void pmod(Object... messages) {
     if (DEBUG_RUST_MOD)
