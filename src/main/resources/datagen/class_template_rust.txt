@@ -18,7 +18,7 @@ pub trait [!interface_name]OrBuilder  {
 [!class_getter_declaration]
   fn build(&self) -> [!class];
   fn to_builder(&self) -> [!builder_name];
-  fn to_json(&self) -> {{crate.tools.*|}}JSValue;
+  fn to_json(&self) -> {{crate.jtools.tools.*|}}JSValue;
 }
 
 #[derive(Clone)]
@@ -41,7 +41,7 @@ impl [!class]OrBuilder for [!class]Builder {
       self.clone()
   }
 
-  fn to_json(&self) -> {{crate.tools.*|}}JSValue {
+  fn to_json(&self) -> {{crate.jtools.tools.*|}}JSValue {
     let m = new_map();
 [!to_json]
     m
@@ -91,7 +91,7 @@ pub fn new_[!class]() -> [!class]Builder {
   
 // Attempt to parse (deserialize) a [!class] from a JSValue
 //
-pub fn parse_[!class](m: {{crate.tools.*|}}JSValue) -> Result<[!class], Box<dyn error::{{std.error|Error}}>> {
+pub fn parse_[!class](m: {{crate.jtools.tools.*|}}JSValue) -> Result<[!class], Box<dyn error::{{std.error|Error}}>> {
     let mut n = new_[!class]();
 [!parse]
     Ok(n.build())
