@@ -91,7 +91,7 @@ pub fn new_[!class]() -> [!class]Builder {
   
 // Attempt to parse (deserialize) a [!class] from a JSValue
 //
-pub fn parse_[!class](m: {{crate.jtools.tools.*|}}JSValue) -> Result<[!class], Box<dyn error::{{std.error|Error}}>> {
+pub fn parse_[!class](m: {{crate.jtools.tools.*|}}JSValue) -> Result<[!class], {{crate.jtools.jerror.JError|JError}}> {
     let mut n = new_[!class]();
 [!parse]
     Ok(n.build())

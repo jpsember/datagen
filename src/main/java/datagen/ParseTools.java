@@ -30,7 +30,6 @@ import java.util.regex.Pattern;
 
 import datagen.gen.Language;
 import js.file.Files;
-import js.json.JSMap;
 import js.parsing.DFA;
 import js.parsing.MacroParser;
 import js.parsing.RegExp;
@@ -74,6 +73,8 @@ public final class ParseTools {
     PKGGO_FILE = PKGGO_TOOLS;
 
     PKG_RUST_TOOLS = "{{crate." + RUST_JTOOLS_PREFIX + "tools.*|}}";
+    PKG_RUST_JFILE = "{{crate." + RUST_JTOOLS_PREFIX + "jfile.*|}}";
+
     PKG_RUST_JSON = PKG_RUST_TOOLS;
     PKG_RUST_ERROR = "{{std.error|}}";
   }
@@ -256,6 +257,7 @@ public final class ParseTools {
   public Object PKG_RUST_TOOLS;
   public Object PKG_RUST_JSON;
   public Object PKG_RUST_ERROR;
+  public Object PKG_RUST_JFILE;
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 
