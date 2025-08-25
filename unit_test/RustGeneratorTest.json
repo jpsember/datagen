@@ -1,10 +1,10 @@
 {       "basic" : 1190,
          "crow" : 6405,
         "enum1" : 1985,
-  "externMulti" : 7224,
+  "externMulti" : 3909,
         "file1" : 9092,
           "fox" : 7830,
-        "lists" : 6401,
+        "lists" : 3149,
       "neptune" : 4207,
         "pluto" : 9580
 }
