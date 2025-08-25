@@ -59,7 +59,7 @@ public class RustContractDataType extends RustDataType {
     s.a(
         OPEN, //
         "let x = m.opt(", f.nameStringConstantQualified(), ").or_empty_list()?.extract_list_elements()?;", CR, //
-        "for y in x ", OPEN, target,".push(parse_", qualifiedName(NAME_HUMAN).className(), "(y)?)", CLOSE, //
+        "for y in x ", OPEN, target,".push(parse_", qualifiedName(NAME_HUMAN).className(), "(y)?);", CLOSE, //
         CLOSE //
     );
   }

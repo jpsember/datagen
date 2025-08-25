@@ -61,13 +61,13 @@ impl [!class]Builder {
 
 impl {{std.fmt|fmt}}::Display for dyn [!class]OrBuilder {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "{}", self.to_json().to_string())
+    write!(f, "{}", self.to_json())
   }
 }
 
 impl fmt::Display for [!class]Builder {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "{}", self.to_json().to_string())
+    write!(f, "{}", self.to_json())
   }
 }
 
@@ -91,7 +91,7 @@ pub fn new_[!class]() -> [!class]Builder {
   
 // Attempt to parse (deserialize) a [!class] from a JSValue
 //
-pub fn parse_[!class](m: {{crate.jtools.tools.*|}}JSValue) -> Result<[!class], {{crate.jtools.jerror.JError|JError}}> {
+pub fn parse_[!class](m: &{{crate.jtools.tools.*|}}JSValue) -> Result<[!class], {{crate.jtools.jerror.JError|JError}}> {
     let mut n = new_[!class]();
 [!parse]
     Ok(n.build())
