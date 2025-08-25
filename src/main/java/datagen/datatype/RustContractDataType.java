@@ -43,7 +43,7 @@ public class RustContractDataType extends RustDataType {
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.a(OPEN, "let x = m.opt(", f.nameStringConstantQualified(), ");", CR, //
         "if !x.is_null()", OPEN, //
-        "n.", f.instanceName(), " = parse_", qualifiedName(NAME_HUMAN).className(), "(x.clone())?;", CLOSE, //
+        "n.", f.instanceName(), " = parse_", qualifiedName(NAME_HUMAN).className(), "(&x)?;", CLOSE, //
         CLOSE);
   }
 
