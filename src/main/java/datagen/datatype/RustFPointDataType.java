@@ -69,7 +69,7 @@ public final class RustFPointDataType extends RustStringDataType {
 
   @Override
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-    s.a("n.", f.instanceName(), " = parse_fpoint(m.opt(", f.nameStringConstantQualified(), "))?;", CR);
+    s.a("n.", f.instanceName(), " = parse_fpoint(&m.opt(", f.nameStringConstantQualified(), "))?;", CR);
   }
 
   @Override

@@ -8,7 +8,7 @@
 [!deprecated]
 [!imports]
 
-pub type [!class] = {{std.sync.Arc|Arc}}<dyn [!interface_name]OrBuilder>;
+pub type [!class] = {{std.rc.Rc|Rc}}<dyn [!interface_name]OrBuilder>;
 
 // ---------------------------------------------------------------------------------------
 // [!interface_name] interface
@@ -34,7 +34,7 @@ impl [!class]OrBuilder for [!class]Builder {
 [!class_getter_implementation]
 
   fn build(&self) -> [!class] {
-    Arc::new(self.clone())
+    Rc::new(self.clone())
   }
 
   fn to_builder(&self) -> [!class]Builder {
@@ -78,17 +78,17 @@ impl fmt::Display for [!class]Builder {
 // Return a newly-built default instance.
 //
 pub fn default_[!class]() -> [!class] {
-  Arc::new(new_[!class]())
+  Rc::new(new_[!class]())
 }
 
 // Return a new builder.
-// 
+//
 pub fn new_[!class]() -> [!class]Builder {
   [!class]Builder {
 [!class_init_fields_to_defaults]
   }
 }
-  
+
 // Attempt to parse (deserialize) a [!class] from a JSValue
 //
 pub fn parse_[!class](m: &{{crate.jtools.tools.*|}}JSValue) -> Result<[!class], {{crate.jtools.jerror.JError|JError}}> {

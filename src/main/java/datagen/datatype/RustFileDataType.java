@@ -58,7 +58,7 @@ public final class RustFileDataType extends RustStringDataType {
   @Override
   public final String parseDefaultValue(SourceBuilder classSpecificSource, FieldDef fieldDef, JSMap json) {
     String text = json.get("");
-    return "new_file(&" + DataUtil.escapeChars(text, true) + ")";
+    return "new_file(" + DataUtil.escapeChars(text, true) + ")";
   }
 
   /**
@@ -70,7 +70,7 @@ public final class RustFileDataType extends RustStringDataType {
     // include these bits of code, we're in big trouble
 
     if (s.contains("null_file()")) {
-      return "&\"\"";
+      return "\"\"";
     }
 
     var target = "new_file(";

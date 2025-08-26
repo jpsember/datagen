@@ -75,8 +75,9 @@ public final class RustIntDataType extends RustDataType {
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
     var x = valueExpression;
-    if (mBitSize != 64)
-      x += " as i64";
+    if (mBitSize != 64) {
+      x = "i64::from(" + x + ")";
+    }
     return x;
   }
 
