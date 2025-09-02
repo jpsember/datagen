@@ -26,7 +26,6 @@ public final class QualifiedName extends BaseObject {
       if (a > 0)
         packagePath = expr.substring(0, a);
 
-      pmod("packagePath now:", packagePath);
       if (packagePath.startsWith("gen.") || packagePath.equals("gen"))
         packagePath = "crate." + packagePath;
       else if (defaultPackage != null && defaultPackage.startsWith("crate.")) {
@@ -34,8 +33,6 @@ public final class QualifiedName extends BaseObject {
       }
 
       QualifiedName result = new QualifiedName(packagePath, className);
-      pmod("result:",INDENT,result);
-
       return result;
     }
 

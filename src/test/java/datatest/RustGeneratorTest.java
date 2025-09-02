@@ -131,6 +131,7 @@ public class RustGeneratorTest extends GenBaseTest {
 
   @Test
   public void subdirs() {
+    rv();
     withDatFilename("classes");
     p().pr("class echo {int alpha;}");
     p().pr("class gamma {int b;}");

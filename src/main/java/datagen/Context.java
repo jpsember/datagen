@@ -24,15 +24,17 @@
 package datagen;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import datagen.gen.DatagenConfig;
 import datagen.gen.Language;
-import js.app.App;
 import js.base.BasePrinter;
 import js.data.DataUtil;
 import js.file.Files;
+import js.json.JSList;
 
 import static js.base.Tools.*;
 
@@ -40,7 +42,7 @@ public final class Context {
 
   public static final boolean DEBUG_RUST_FILES = false && alert("ISSUE 47 is in effect");
   public static final boolean DEBUG_RUST_IMPORTS = false;
-  public static final boolean DEBUG_RUST_MOD = false && alert("DEBUG_RUST_MOD is in effect");
+  public static final boolean DEBUG_RUST_MOD = true && alert("DEBUG_RUST_MOD is in effect");
   public static final boolean DEBUG_RUST = DEBUG_RUST_FILES || DEBUG_RUST_IMPORTS || DEBUG_RUST_MOD;
   public static final boolean RUST_COMMENTS = DEBUG_RUST;
 
@@ -204,23 +206,20 @@ public final class Context {
 
   public static void generateAuxilliarySourceFiles() {
     pmod("generateAuxilliarySourceFiles");
-
-
     switch (language()) {
       default:
         return;
       case RUST:
-        generateAuxilliarFilesRust();
+        genAuxFilesRust();
         break;
       case PYTHON:
-        generateAuxilliarFilesPython();
+        genAuxFilesPython();
         break;
     }
   }
 
 
-  private static void generateAuxilliarFilesPython() {
-
+  private static void genAuxFilesPython() {
     var entries = sGeneratedSources;
     List<GeneratedTypeDef> listForCurrentDir = arrayList();
     File currentDir = Files.DEFAULT;
@@ -246,32 +245,154 @@ public final class Context {
     files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
   }
 
-  private static void generateAuxilliarFilesRust() {
-    var entries = sGeneratedSources;
-    List<GeneratedTypeDef> listForCurrentDir = arrayList();
-    File currentDir = Files.DEFAULT;
+  private static void genAuxFilesRust() {
+//    var entries = sGeneratedSources;
 
-    for (var genType : entries) {
-      var file = genType.sourceFile();
-      var dir = Files.parent(file);
+    sRustModFilesMap = hashMap();
+    helpGenAuxFilesRust(sGeneratedSources);
 
-      if (!dir.equals(currentDir)) {
-        flushDirRust(currentDir, listForCurrentDir);
-        currentDir = dir;
-        listForCurrentDir.clear();
-      }
-      listForCurrentDir.add(genType);
+//    List<GeneratedTypeDef> listForCurrentDir = arrayList();
+//    File currentDir = Files.DEFAULT;
+//
+//    for (var genType : entries) {
+//      pmod("source file:", genType.sourceFile());
+//      var file = genType.sourceFile();
+//
+//      var dir = Files.parent(file);
+//
+//      if (!dir.equals(currentDir)) {
+//        flushDirRust(currentDir, listForCurrentDir);
+//        currentDir = dir;
+//        listForCurrentDir.clear();
+//      }
+//      listForCurrentDir.add(genType);
+//    }
+//    flushDirRust(currentDir, listForCurrentDir);
+
+
+    // display the mod files maps
+    for (var ent : sRustModFilesMap.entrySet()) {
+      pr("file:", ent.getKey());
+      pr("...entries:", JSList.with(ent.getValue()));
     }
-    flushDirRust(currentDir, listForCurrentDir);
+
+
+    for (var ent : sRustModFilesMap.entrySet()) {
+      var dir = ent.getKey();
+      var entries = ent.getValue();
+
+//      // Ensure they are unique
+//      {
+//        var hm = hashSet();
+//        hm.addAll(entries);
+//        checkState(hm.size() == entries.size(), "duplicate entries for directory:", dir, INDENT, entries);
+//      }
+      checkState(!entries.isEmpty(), "no entries for directory:", dir);
+
+      List<String> sortedList = arrayList();
+      sortedList.addAll(entries);
+      sortedList.sort(null);
+
+      var sb = new StringBuilder();
+
+//      List<String> lines = arrayList();
+      for (var x : entries) {
+        sb.append("pub mod ");
+        sb.append(x);
+        sb.append(";\n");
+      }
+//        lines.add("pub mod " + x+";");
+      //Files.basename(x.sourceFile()) + ";");
+      // lines.sort(null);
+
+      var content = sb.toString();
+      var modFile = new File(dir, "mod.rs");
+      pmod("updating", modFile, ":", INDENT, content, VERT_SP);
+      files.writeString(modFile, content);
+    }
+
+
   }
 
-  public static Language language() {
-    return config.language();
+  private static void helpGenAuxFilesRust(List<GeneratedTypeDef> typesList) {
+    // Examine the types for the ones with the longest paths, and process them;
+    // then recursively call with the remaining ones
+    if (typesList.isEmpty()) return;
+
+    int[] numComp = new int[typesList.size()];
+
+    var maxLen = 0;
+
+    {
+      var i = INIT_INDEX;
+      for (var g : typesList) {
+        i++;
+        var f = g.sourceFile().toString();
+        var numComponents = split(f, '/').size();
+        numComp[i] = numComponents;
+        maxLen = Math.max(maxLen, numComponents);
+      }
+    }
+
+    pr("aux, types list:", INDENT, typesList);
+    pr("...num comp:", JSList.with(numComp));
+
+    List<GeneratedTypeDef> process = arrayList();
+    List<GeneratedTypeDef> remaining = arrayList();
+
+    {
+      var i = INIT_INDEX;
+      for (var g : typesList) {
+        i++;
+        var f = g.sourceFile().toString();
+        var numComponents = numComp[i];
+        if (numComponents < maxLen) {
+          remaining.add(g);
+        } else {
+          process.add(g);
+        }
+      }
+    }
+
+    pr(VERT_SP, "processing deepest components");
+    for (var g : process) {
+      var file = g.sourceFile();
+//      var filenameToAdd = Files.basename(file);
+
+      while (true) {
+        var filenameToAdd = Files.basename(file);
+
+        var dir = Files.parent(file);
+
+        // If the parent directory is the generated directory, stop
+        pr("...process:", file, "filenameToAdd:", filenameToAdd, "(config source:", config.sourcePath() + ")");
+        if (dir.equals(config.sourcePath())) {
+          pr("....equals source path, stopping");
+          break;
+        }
+        var filenameSet = sRustModFilesMap.get(dir);
+        if (filenameSet == null) {
+          filenameSet = hashSet();
+          sRustModFilesMap.put(dir, filenameSet);
+        }
+        // if (!filenameToAdd.isEmpty()) {
+        filenameSet.add(filenameToAdd);
+//        }
+        pr("...added:", quote(filenameToAdd), "list is now:", filenameSet);
+        // Repeat with an empty filename so we generate mod.rs files for all the parent directories (until we've
+        // reached the source path)
+        //  filenameToAdd = "";
+        file = dir;
+      }
+    }
+
+
+    helpGenAuxFilesRust(remaining);
   }
+
 
   private static void flushDirRust(File directory, List<GeneratedTypeDef> entries) {
     if (entries.isEmpty()) return;
-
 
     List<String> lines = arrayList();
     for (var x : entries)
@@ -284,8 +405,11 @@ public final class Context {
     files.writeString(modFile, content);
   }
 
+// ----------------------------------------------------------------------------------------------
 
-  // ----------------------------------------------------------------------------------------------
+  public static Language language() {
+    return config.language();
+  }
 
   public static boolean python() {
     return language() == Language.PYTHON;
@@ -340,5 +464,6 @@ public final class Context {
   private static File sSourceRelPath;
   public static boolean showExceptions;
 
+  private static Map<File, Set<String>> sRustModFilesMap;
 }
 
