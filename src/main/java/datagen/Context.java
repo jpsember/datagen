@@ -204,6 +204,23 @@ public final class Context {
 
   public static void generateAuxilliarySourceFiles() {
     pmod("generateAuxilliarySourceFiles");
+
+
+    switch (language()) {
+      default:
+        return;
+      case RUST:
+        generateAuxilliarFilesRust();
+        break;
+      case PYTHON:
+        generateAuxilliarFilesPython();
+        break;
+    }
+  }
+
+
+  private static void generateAuxilliarFilesPython() {
+
     var entries = sGeneratedSources;
     List<GeneratedTypeDef> listForCurrentDir = arrayList();
     File currentDir = Files.DEFAULT;
@@ -211,44 +228,60 @@ public final class Context {
     for (var genType : entries) {
       var file = genType.sourceFile();
       var dir = Files.parent(file);
+      pr("file:", file, CR, "dir :", dir);
+
       if (!dir.equals(currentDir)) {
-        flushDir(currentDir, listForCurrentDir);
+        flushDirPython(currentDir, listForCurrentDir);
         currentDir = dir;
         listForCurrentDir.clear();
       }
       listForCurrentDir.add(genType);
     }
-    flushDir(currentDir, listForCurrentDir);
+    flushDirPython(currentDir, listForCurrentDir);
+  }
+
+  private static void flushDirPython(File directory, List<GeneratedTypeDef> entries) {
+    if (entries.isEmpty()) return;
+    File sentinelFile = new File(directory, "__init__.py");
+    files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
+  }
+
+  private static void generateAuxilliarFilesRust() {
+    var entries = sGeneratedSources;
+    List<GeneratedTypeDef> listForCurrentDir = arrayList();
+    File currentDir = Files.DEFAULT;
+
+    for (var genType : entries) {
+      var file = genType.sourceFile();
+      var dir = Files.parent(file);
+
+      if (!dir.equals(currentDir)) {
+        flushDirRust(currentDir, listForCurrentDir);
+        currentDir = dir;
+        listForCurrentDir.clear();
+      }
+      listForCurrentDir.add(genType);
+    }
+    flushDirRust(currentDir, listForCurrentDir);
   }
 
   public static Language language() {
     return config.language();
   }
 
-  private static void flushDir(File directory, List<GeneratedTypeDef> entries) {
+  private static void flushDirRust(File directory, List<GeneratedTypeDef> entries) {
     if (entries.isEmpty()) return;
 
-    switch (language()) {
-      default:
-        return;
-      case RUST: {
-        List<String> lines = arrayList();
-        for (var x : entries)
-          lines.add("pub mod " + Files.basename(x.sourceFile()) + ";");
-        lines.sort(null);
 
-        var content = String.join("\n", lines) + "\n";
-        var modFile = new File(directory, "mod.rs");
-        pmod("updating", modFile, ":", INDENT, content, VERT_SP);
-        files.writeString(modFile, content);
-      }
-      break;
-      case PYTHON: {
-        File sentinelFile = new File(directory, "__init__.py");
-        files.write(DataUtil.EMPTY_BYTE_ARRAY, sentinelFile);
-      }
-      break;
-    }
+    List<String> lines = arrayList();
+    for (var x : entries)
+      lines.add("pub mod " + Files.basename(x.sourceFile()) + ";");
+    lines.sort(null);
+
+    var content = String.join("\n", lines) + "\n";
+    var modFile = new File(directory, "mod.rs");
+    pmod("updating", modFile, ":", INDENT, content, VERT_SP);
+    files.writeString(modFile, content);
   }
 
 

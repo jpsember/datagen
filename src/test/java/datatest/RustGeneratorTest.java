@@ -129,4 +129,16 @@ public class RustGeneratorTest extends GenBaseTest {
     compile();
   }
 
+  @Test
+  public void subdirs() {
+    withDatFilename("classes");
+    p().pr("class echo {int alpha;}");
+    p().pr("class gamma {int b;}");
+    pushDatSubdir("foo");
+    withDatFilename("classes");
+    p().pr("class fox {int bravo;}");
+    p().pr("class echo {int charlie;}");
+    compile();
+  }
+
 }

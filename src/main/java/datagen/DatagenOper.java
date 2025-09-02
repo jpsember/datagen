@@ -58,6 +58,7 @@ public class DatagenOper extends AppOper {
 
   @Override
   public void perform() {
+    todo("!if class name omitted in 'class {' expr, make sure it is the only class expression in the .dat file");
     cmdLineArgs().assertArgsDone();
     prepareApp(app().showExceptions(), files(), constructDatagenConfig());
 
