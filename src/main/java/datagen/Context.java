@@ -227,7 +227,7 @@ public final class Context {
     for (var genType : entries) {
       var file = genType.sourceFile();
       var dir = Files.parent(file);
-      pr("file:", file, CR, "dir :", dir);
+      pmod("file:", file, CR, "dir :", dir);
 
       if (!dir.equals(currentDir)) {
         flushDirPython(currentDir, listForCurrentDir);
@@ -246,47 +246,20 @@ public final class Context {
   }
 
   private static void genAuxFilesRust() {
-//    var entries = sGeneratedSources;
-
     sRustModFilesMap = hashMap();
     helpGenAuxFilesRust(sGeneratedSources);
 
-//    List<GeneratedTypeDef> listForCurrentDir = arrayList();
-//    File currentDir = Files.DEFAULT;
-//
-//    for (var genType : entries) {
-//      pmod("source file:", genType.sourceFile());
-//      var file = genType.sourceFile();
-//
-//      var dir = Files.parent(file);
-//
-//      if (!dir.equals(currentDir)) {
-//        flushDirRust(currentDir, listForCurrentDir);
-//        currentDir = dir;
-//        listForCurrentDir.clear();
-//      }
-//      listForCurrentDir.add(genType);
-//    }
-//    flushDirRust(currentDir, listForCurrentDir);
-
-
-    // display the mod files maps
-    for (var ent : sRustModFilesMap.entrySet()) {
-      pr("file:", ent.getKey());
-      pr("...entries:", JSList.with(ent.getValue()));
+    if (DEBUG_RUST_MOD) {
+      // display the mod files maps
+      for (var ent : sRustModFilesMap.entrySet()) {
+        pmod("file:", ent.getKey());
+        pmod("...entries:", JSList.with(ent.getValue()));
+      }
     }
-
 
     for (var ent : sRustModFilesMap.entrySet()) {
       var dir = ent.getKey();
       var entries = ent.getValue();
-
-//      // Ensure they are unique
-//      {
-//        var hm = hashSet();
-//        hm.addAll(entries);
-//        checkState(hm.size() == entries.size(), "duplicate entries for directory:", dir, INDENT, entries);
-//      }
       checkState(!entries.isEmpty(), "no entries for directory:", dir);
 
       List<String> sortedList = arrayList();
@@ -295,34 +268,24 @@ public final class Context {
 
       var sb = new StringBuilder();
 
-//      List<String> lines = arrayList();
       for (var x : entries) {
         sb.append("pub mod ");
         sb.append(x);
         sb.append(";\n");
       }
-//        lines.add("pub mod " + x+";");
-      //Files.basename(x.sourceFile()) + ";");
-      // lines.sort(null);
-
       var content = sb.toString();
       var modFile = new File(dir, "mod.rs");
       pmod("updating", modFile, ":", INDENT, content, VERT_SP);
       files.writeString(modFile, content);
     }
-
-
   }
 
   private static void helpGenAuxFilesRust(List<GeneratedTypeDef> typesList) {
     // Examine the types for the ones with the longest paths, and process them;
     // then recursively call with the remaining ones
     if (typesList.isEmpty()) return;
-
     int[] numComp = new int[typesList.size()];
-
     var maxLen = 0;
-
     {
       var i = INIT_INDEX;
       for (var g : typesList) {
@@ -333,10 +296,10 @@ public final class Context {
         maxLen = Math.max(maxLen, numComponents);
       }
     }
-
-    pr("aux, types list:", INDENT, typesList);
-    pr("...num comp:", JSList.with(numComp));
-
+    if (DEBUG_RUST_MOD) {
+      pmod("aux, types list:", INDENT, typesList);
+      pmod("...num comp:", JSList.with(numComp));
+    }
     List<GeneratedTypeDef> process = arrayList();
     List<GeneratedTypeDef> remaining = arrayList();
 
@@ -344,7 +307,6 @@ public final class Context {
       var i = INIT_INDEX;
       for (var g : typesList) {
         i++;
-        var f = g.sourceFile().toString();
         var numComponents = numComp[i];
         if (numComponents < maxLen) {
           remaining.add(g);
@@ -354,20 +316,16 @@ public final class Context {
       }
     }
 
-    pr(VERT_SP, "processing deepest components");
+    pmod(VERT_SP, "processing deepest components");
     for (var g : process) {
       var file = g.sourceFile();
-//      var filenameToAdd = Files.basename(file);
-
       while (true) {
         var filenameToAdd = Files.basename(file);
-
         var dir = Files.parent(file);
-
         // If the parent directory is the generated directory, stop
-        pr("...process:", file, "filenameToAdd:", filenameToAdd, "(config source:", config.sourcePath() + ")");
+        pmod("...process:", file, "filenameToAdd:", filenameToAdd, "(config source:", config.sourcePath() + ")");
         if (dir.equals(config.sourcePath())) {
-          pr("....equals source path, stopping");
+          pmod("....equals source path, stopping");
           break;
         }
         var filenameSet = sRustModFilesMap.get(dir);
@@ -375,34 +333,14 @@ public final class Context {
           filenameSet = hashSet();
           sRustModFilesMap.put(dir, filenameSet);
         }
-        // if (!filenameToAdd.isEmpty()) {
         filenameSet.add(filenameToAdd);
-//        }
-        pr("...added:", quote(filenameToAdd), "list is now:", filenameSet);
+        pmod("...added:", quote(filenameToAdd), "list is now:", filenameSet);
         // Repeat with an empty filename so we generate mod.rs files for all the parent directories (until we've
         // reached the source path)
-        //  filenameToAdd = "";
         file = dir;
       }
     }
-
-
     helpGenAuxFilesRust(remaining);
-  }
-
-
-  private static void flushDirRust(File directory, List<GeneratedTypeDef> entries) {
-    if (entries.isEmpty()) return;
-
-    List<String> lines = arrayList();
-    for (var x : entries)
-      lines.add("pub mod " + Files.basename(x.sourceFile()) + ";");
-    lines.sort(null);
-
-    var content = String.join("\n", lines) + "\n";
-    var modFile = new File(directory, "mod.rs");
-    pmod("updating", modFile, ":", INDENT, content, VERT_SP);
-    files.writeString(modFile, content);
   }
 
 // ----------------------------------------------------------------------------------------------
