@@ -62,7 +62,7 @@ public final class DataDefinitionParser extends BaseObject {
       //                                               then we could support multiple classes per file
       //
       //  <class_def> ::=
-      //        [-] class { <fields>* }
+      //        [-] class [<type_name>] { <fields>* }
       //
       //  <enum_def> ::=
       //        [-] enum  { <enum_names>* }
@@ -214,10 +214,20 @@ public final class DataDefinitionParser extends BaseObject {
   // Otherwise, derive it from the dat file
   //
   private String parseClassNameOrDerive() {
-    if (scanner().readIf(ID))
+    if (scanner().readIf(ID)) {
+      ensureDerived(false);
       return scanner().token().text();
-    else
+    } else {
+      ensureDerived(true);
       return Files.basename(mRelativeDatPath);
+    }
+  }
+
+  private void ensureDerived(boolean f) {
+    if (mDerivedTypeName == null) mDerivedTypeName = f;
+    if (mDerivedTypeName != f) {
+      scanner().peek().failWith("type name must be explicit for all types if there is more than one in the file");
+    }
   }
 
   private String determineRelativePath() {
@@ -535,4 +545,5 @@ public final class DataDefinitionParser extends BaseObject {
   private Lexeme mLastReadToken;
   private boolean mDeprecated;
   private File mRelativeDatPath;
+  private Boolean mDerivedTypeName;
 }
