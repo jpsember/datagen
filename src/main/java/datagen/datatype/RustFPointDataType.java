@@ -37,7 +37,7 @@ public final class RustFPointDataType extends RustStringDataType {
   public static final DataType TYPE = new RustFPointDataType();
 
   private RustFPointDataType() {
-    with("crate." + RUST_JTOOLS_PREFIX + "tools.FPoint");
+    with("crate." + RUST_JTOOLS_PREFIX + "jmath.FPoint");
   }
 
   @Override
