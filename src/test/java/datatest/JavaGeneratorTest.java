@@ -607,6 +607,12 @@ public class JavaGeneratorTest extends GenBaseTest {
     compile();
   }
 
+  @Test(expected = RuntimeException.class)
+  public void unnamedClassInMultiple() {
+    p().pr("class zebra {int alpha;}\n class {int bravo;}\n class yak {int charlie;}");
+    compile();
+  }
+
   @Test
   public void subdirs() {
     withDatFilename("all");
