@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datagen;
 
@@ -52,12 +51,12 @@ public final class RustSourceGen extends SourceGen {
   }
 
   @Override
-  protected final String generateCopyFromBuilderToImmutable() {
+  protected String generateCopyFromBuilderToImmutable() {
     return "!!! not required !!!";
   }
 
   @Override
-  protected final String generateInitInstanceFields() {
+  protected String generateInitInstanceFields() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     s.setIndent(2);
     for (FieldDef f : def.fields()) {
@@ -68,7 +67,7 @@ public final class RustSourceGen extends SourceGen {
   }
 
   @Override
-  protected final String generateSetters() {
+  protected String generateSetters() {
     s.setIndent(2);
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
@@ -177,7 +176,7 @@ public final class RustSourceGen extends SourceGen {
     s.setIndent(2);
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
-      s.a("fn ", f.getterName(), "(&self) -> ", f.dataType().getterReturnTypeExpr(), " ", OPEN, //
+      s.a("pub fn ", f.getterName(), "(&self) -> ", f.dataType().getterReturnTypeExpr(), " ", OPEN, //
           "  ");
       f.dataType().getterBody(s, f);
       s.a(CLOSE);
@@ -266,11 +265,8 @@ public final class RustSourceGen extends SourceGen {
     } else {
       m.put("static_class", type.qualifiedName(DataType.NAME_ALT).className());
       m.put("class_init_fields_to_defaults", generateInitFieldsToDefaults());
-      m.put("class_getter_declaration", generateClassGetterDeclaration());
+      m.put("class_getter_declaration", generateGetters());
       m.put("go_builder_getter_implementation", generateBuilderGetterImplementation());
-      m.put("builder_name", type.qualifiedName(DataType.NAME_HUMAN).className() + "Builder");
-      m.put("interface_name", type.qualifiedName(DataType.NAME_MAIN).className());
-      m.put("default_var_name", "default_" + type.qualifiedName(DataType.NAME_HUMAN).className());
     }
   }
 
@@ -305,22 +301,10 @@ public final class RustSourceGen extends SourceGen {
     return trimRight(content());
   }
 
-  private String generateClassGetterDeclaration() {
-    GeneratedTypeDef def = Context.generatedTypeDef;
-    s.setIndent(2);
-    for (FieldDef f : def.fields()) {
-      if (f.deprecated())
-        s.addSafe("  " + getDeprecationSourceInner() + "  ");
-      s.a("fn ", f.getterName(), "(&self) -> ", f.dataType().getterReturnTypeExpr(), ";");
-      s.a(CR);
-    }
-    return trimRight(content());
-  }
-
   private String generateBuilderGetterImplementation() {
     GeneratedTypeDef def = Context.generatedTypeDef;
     for (FieldDef f : def.fields()) {
-      s.a("func (v ", builderName(), ") ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
+      s.a("pub func (v ", builderName(), ") ", f.getterName(), "() ", f.dataType().typeName(), " ", OPEN, //
           "return v.", f.instanceName(), CLOSE);
       s.br();
     }
@@ -329,7 +313,7 @@ public final class RustSourceGen extends SourceGen {
 
   private String builderName() {
     GeneratedTypeDef def = Context.generatedTypeDef;
-    return def.wrappedType().qualifiedName(DataType.NAME_HUMAN).className() + "Builder";
+    return def.wrappedType().qualifiedName(DataType.NAME_HUMAN).className(); // + "Builder";
   }
 
   private String generateEnumSpecific() {

@@ -8,83 +8,60 @@
 [!deprecated]
 [!imports]
 
-pub type [!class] = {{std.rc.Rc|Rc}}<dyn [!interface_name]OrBuilder>;
-
 // ---------------------------------------------------------------------------------------
-// [!interface_name] interface
+// [!class] data type
 // ---------------------------------------------------------------------------------------
-
-pub trait [!interface_name]OrBuilder  {
-[!class_getter_declaration]
-  fn build(&self) -> [!class];
-  fn to_builder(&self) -> [!builder_name];
-  fn to_json(&self) -> {{crate.jtools.tools.*|}}JSValue;
-}
 
 #[derive(Clone)]
-pub struct [!builder_name] {
+pub struct [!class] {
 [!instance_fields]}
 
+impl [!class] {
 
-[!class_specific]
+[!class_getter_declaration]
 
-
-impl [!class]OrBuilder for [!class]Builder {
-
-[!class_getter_implementation]
-
-  fn build(&self) -> [!class] {
-    Rc::new(self.clone())
-  }
-
-  fn to_builder(&self) -> [!class]Builder {
+  pub fn build(&self) -> [!class] {
       self.clone()
   }
 
-  fn to_json(&self) -> {{crate.jtools.tools.*|}}JSValue {
+  pub fn to_builder(&self) -> [!class] {
+      self.clone()
+  }
+
+  pub fn to_json(&self) -> {{crate.jtools.tools.*|}}JSValue {
     let m = new_map();
 [!to_json]
     m
   }
 
-}
-
-
-// ---------------------------------------------------------------------------------------
-// Implementation of builder
-// ---------------------------------------------------------------------------------------
-
-impl [!class]Builder {
-
 [!setters]
+
 }
 
-impl {{std.fmt|fmt}}::Display for dyn [!class]OrBuilder {
+[!class_specific]
+
+
+impl {{std.fmt|fmt}}::Display for [!class] {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
     write!(f, "{}", self.to_json())
   }
 }
 
-impl fmt::Display for [!class]Builder {
-  fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-    write!(f, "{}", self.to_json())
-  }
+
+impl fmt::Debug for [!class] {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        fmt::Display::fmt(self, f)
+    }
 }
 
 // ---------------------------------------------------------------------------------------
 // Global functions
 // ---------------------------------------------------------------------------------------
 
-// Return a newly-built default instance.
+// Return a newly-built default instance
 //
-pub fn default_[!class]() -> [!class] {
-  Rc::new(new_[!class]())
-}
-
-// Return a new builder.
-//
-pub fn new_[!class]() -> [!class]Builder {
-  [!class]Builder {
+pub fn new_[!class]() -> [!class] {
+  [!class] {
 [!class_init_fields_to_defaults]
   }
 }
@@ -94,7 +71,7 @@ pub fn new_[!class]() -> [!class]Builder {
 pub fn parse_[!class](m: &{{crate.jtools.tools.*|}}JSValue) -> Result<[!class], {{crate.jtools.jerror.JError|JError}}> {
     let mut n = new_[!class]();
 [!parse]
-    Ok(n.build())
+    Ok(n)
 }
 
 // Encode (serialize) a [!class] to a JSValue

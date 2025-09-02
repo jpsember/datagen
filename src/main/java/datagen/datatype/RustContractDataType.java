@@ -35,7 +35,7 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    var result = "default_" + Context.pt.importExprWithClassName(qualifiedName(NAME_HUMAN)) + "()";
+    var result = "new_" + Context.pt.importExprWithClassName(qualifiedName(NAME_HUMAN)) + "()";
     return result;
   }
 
@@ -55,11 +55,11 @@ public class RustContractDataType extends RustDataType {
     //          n.foxes.push(parse_Fox(item)?)
     //      }
     //  }
-    var target = "n."+f.instanceName();
+    var target = "n." + f.instanceName();
     s.a(
         OPEN, //
         "let x = m.opt(", f.nameStringConstantQualified(), ").or_empty_list()?.extract_list_elements()?;", CR, //
-        "for y in x ", OPEN, target,".push(parse_", qualifiedName(NAME_HUMAN).className(), "(&y)?);", CLOSE, //
+        "for y in x ", OPEN, target, ".push(parse_", qualifiedName(NAME_HUMAN).className(), "(&y)?);", CLOSE, //
         CLOSE //
     );
   }
