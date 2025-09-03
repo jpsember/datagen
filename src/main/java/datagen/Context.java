@@ -47,7 +47,7 @@ public final class Context {
 
   public static final String GEN_SUBDIR_NAME = "gen";
 
-  public static final boolean ISSUE_JTOOLS = true && alert("ISSUE_JTOOLS is in effect");
+  public static final boolean ISSUE_JTOOLS = false && alert("ISSUE_JTOOLS is in effect");
 
   public static void pJTOOLS(Object... messages) {
     if (ISSUE_JTOOLS)
