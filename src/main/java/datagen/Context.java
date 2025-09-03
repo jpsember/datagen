@@ -24,7 +24,6 @@
 package datagen;
 
 import java.io.File;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -47,7 +46,15 @@ public final class Context {
   public static final boolean RUST_COMMENTS = DEBUG_RUST;
 
   public static final String GEN_SUBDIR_NAME = "gen";
+  @Deprecated
   public static final String RUST_JTOOLS_PREFIX = "jtools.";
+
+    public static final boolean ISSUE_JTOOLS = true && alert("ISSUE_JTOOLS is in effect");
+      public static void pJTOOLS(Object... messages) {
+        if (ISSUE_JTOOLS)
+          pr(insertStringToFront("ISSUE_JTOOLS --->", messages));
+      }
+
 
   public static void pmod(Object... messages) {
     if (DEBUG_RUST_MOD)

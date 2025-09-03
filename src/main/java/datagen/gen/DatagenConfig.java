@@ -51,6 +51,10 @@ public class DatagenConfig implements AbstractData {
     return mDbsim;
   }
 
+  public String specialHandling() {
+    return mSpecialHandling;
+  }
+
   @Override
   public Builder toBuilder() {
     return new Builder(this);
@@ -67,6 +71,7 @@ public class DatagenConfig implements AbstractData {
   protected static final String _8 = "quiet_mode";
   protected static final String _9 = "format";
   protected static final String _10 = "dbsim";
+  protected static final String _11 = "special_handling";
 
   @Override
   public String toString() {
@@ -87,6 +92,7 @@ public class DatagenConfig implements AbstractData {
     m.putUnsafe(_8, mQuietMode);
     m.putUnsafe(_9, mFormat);
     m.putUnsafe(_10, mDbsim);
+    m.putUnsafe(_11, mSpecialHandling);
     return m;
   }
 
@@ -139,6 +145,7 @@ public class DatagenConfig implements AbstractData {
     mQuietMode = m.opt(_8, false);
     mFormat = m.opt(_9, false);
     mDbsim = m.opt(_10, false);
+    mSpecialHandling = m.opt(_11, "");
   }
 
   public static Builder newBuilder() {
@@ -176,6 +183,8 @@ public class DatagenConfig implements AbstractData {
       return false;
     if (!(mDbsim == other.mDbsim))
       return false;
+    if (!(mSpecialHandling.equals(other.mSpecialHandling)))
+      return false;
     return true;
   }
 
@@ -195,6 +204,7 @@ public class DatagenConfig implements AbstractData {
       r = r * 37 + (mQuietMode ? 1 : 0);
       r = r * 37 + (mFormat ? 1 : 0);
       r = r * 37 + (mDbsim ? 1 : 0);
+      r = r * 37 + mSpecialHandling.hashCode();
       m__hashcode = r;
     }
     return r;
@@ -211,6 +221,7 @@ public class DatagenConfig implements AbstractData {
   protected boolean mQuietMode;
   protected boolean mFormat;
   protected boolean mDbsim;
+  protected String mSpecialHandling;
   protected int m__hashcode;
 
   public static final class Builder extends DatagenConfig {
@@ -227,6 +238,7 @@ public class DatagenConfig implements AbstractData {
       mQuietMode = m.mQuietMode;
       mFormat = m.mFormat;
       mDbsim = m.mDbsim;
+      mSpecialHandling = m.mSpecialHandling;
     }
 
     @Override
@@ -254,6 +266,7 @@ public class DatagenConfig implements AbstractData {
       r.mQuietMode = mQuietMode;
       r.mFormat = mFormat;
       r.mDbsim = mDbsim;
+      r.mSpecialHandling = mSpecialHandling;
       return r;
     }
 
@@ -312,6 +325,11 @@ public class DatagenConfig implements AbstractData {
       return this;
     }
 
+    public Builder specialHandling(String x) {
+      mSpecialHandling = (x == null) ? "" : x;
+      return this;
+    }
+
   }
 
   private static final File _D1 = new File("dat_files");
@@ -324,6 +342,7 @@ public class DatagenConfig implements AbstractData {
     mLanguage = Language.DEFAULT_INSTANCE;
     mSourcePath = Files.DEFAULT;
     mPythonSourcePath = Files.DEFAULT;
+    mSpecialHandling = "";
   }
 
 }

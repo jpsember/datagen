@@ -267,6 +267,9 @@ public final class RustSourceGen extends SourceGen {
       m.put("class_init_fields_to_defaults", generateInitFieldsToDefaults());
       m.put("class_getter_declaration", generateGetters());
       m.put("go_builder_getter_implementation", generateBuilderGetterImplementation());
+      var x = "jtools";
+      pJTOOLS("setting jtools=",x);
+m.put("jtools",x);
     }
   }
 
@@ -321,7 +324,8 @@ public final class RustSourceGen extends SourceGen {
     EnumDataType enumType = def.enumDataType();
 
     // Add some imports
-    s.a(Context.pt.PKGGO_TOOLS, Context.pt.PKGGO_JSON, Context.pt.PKGGO_DATA);
+    s.a("// commented out some PKGGO stuff...\n");
+    // s.a(Context.pt.PKGGO_TOOLS, Context.pt.PKGGO_JSON, Context.pt.PKGGO_DATA);
 
     s.a("var ", def.name(), "EnumInfo = NewEnumInfo(\"", //);
         convertCamelToUnderscore(String.join(" ", enumType.labels())), //

@@ -141,4 +141,34 @@ public class RustGeneratorTest extends GenBaseTest {
     compile();
   }
 
+  @Test
+  public void jtools() {
+    withDatFilename("classes");
+    addArg("special_handling", "jtools");
+    p().pr(
+        "\n" +
+            "class global_vars {\n" +
+            "  string loc_prefix_old;\n" +
+            "  string loc_prefix_new;\n" +
+            "}\n" +
+            "\n" +
+            "class source_location_info {\n" +
+            "    File source_file;\n" +
+            "    int line_number;\n" +
+            "    int column_number;\n" +
+            "    string function_name;\n" +
+            "\n" +
+            "    // The string that was parsed to produce the above fields\n" +
+            "    string origin;\n" +
+            "}\n" +
+            "\n" +
+            "// Information about a particular error type\n" +
+            "//\n" +
+            "class error_info {\n" +
+            "    int code;\n" +
+            "    string name;\n" +
+            "    string description;\n" +
+            "}\n");
+    compile();
+  }
 }

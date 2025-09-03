@@ -29,7 +29,7 @@ import datagen.SourceBuilder;
 import js.data.DataUtil;
 import js.json.JSMap;
 
-import static datagen.Context.RUST_JTOOLS_PREFIX;
+import static datagen.Context.*;
 import static js.base.Tools.*;
 
 public final class RustFPointDataType extends RustStringDataType {
@@ -37,7 +37,9 @@ public final class RustFPointDataType extends RustStringDataType {
   public static final DataType TYPE = new RustFPointDataType();
 
   private RustFPointDataType() {
-    with("crate." + RUST_JTOOLS_PREFIX + "jmath.FPoint");
+    var x = RUST_JTOOLS_PREFIX + "jmath.FPoint";
+    pJTOOLS("FPoint, with qualified name:",x);
+    with(x);
   }
 
   @Override

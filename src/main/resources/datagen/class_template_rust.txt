@@ -28,7 +28,7 @@ impl [!class] {
       self.clone()
   }
 
-  pub fn to_json(&self) -> {{crate.jtools.tools.*|}}JSValue {
+  pub fn to_json(&self) -> {{[!jtools].tools.*|}}JSValue {
     let m = new_map();
 [!to_json]
     m
@@ -68,7 +68,7 @@ pub fn new_[!class]() -> [!class] {
 
 // Attempt to parse (deserialize) a [!class] from a JSValue
 //
-pub fn parse_[!class](m: &{{crate.jtools.tools.*|}}JSValue) -> Result<[!class], {{crate.jtools.jerror.JError|JError}}> {
+pub fn parse_[!class](m: &{{[!jtools].tools.*|}}JSValue) -> Result<[!class], {{[!jtools].jerror.JError|JError}}> {
     let mut n = new_[!class]();
 [!parse]
     Ok(n)

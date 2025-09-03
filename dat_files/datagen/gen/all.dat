@@ -29,6 +29,10 @@ class datagen_config {
   // Where sql code would be generated, it generates code for a simple filesystem simulation instead
   //
   bool dbsim;
+
+  // For special handling, e.g. compiling Rust tools (that are used by the generated code)
+  //
+  string special_handling;
 }
 
 class lang_info {

@@ -72,8 +72,11 @@ public final class ParseTools {
     PKGGO_JSON = PKGGO_TOOLS;
     PKGGO_FILE = PKGGO_TOOLS;
 
-    PKG_RUST_TOOLS = "{{crate." + RUST_JTOOLS_PREFIX + "tools.*|}}";
-    PKG_RUST_JFILE = "{{crate." + RUST_JTOOLS_PREFIX + "jfile.*|}}";
+    PKG_RUST_TOOLS = "{{" + RUST_JTOOLS_PREFIX + "tools.*|}}";
+    PKG_RUST_JFILE = "{{" + RUST_JTOOLS_PREFIX + "jfile.*|}}";
+
+    pJTOOLS("PKG_RUST_TOOLS:",PKG_RUST_TOOLS);
+  pJTOOLS("PKG_RUST_JFILE:",PKG_RUST_JFILE);
 
     PKG_RUST_JSON = PKG_RUST_TOOLS;
     PKG_RUST_ERROR = "{{std.error|}}";

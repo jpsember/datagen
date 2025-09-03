@@ -6,7 +6,10 @@
 #![allow(dead_code)]
 #![allow(non_snake_case)]
 [!deprecated]
-use crate::jtools::tools::*;
+!!!!
+extern crate jtools;
+
+use jtools::tools::*;
 use std::collections::HashMap;
 use std::sync::{LazyLock,RwLock};
 use std::{fmt};
