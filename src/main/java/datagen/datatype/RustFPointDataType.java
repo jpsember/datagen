@@ -23,6 +23,7 @@
  **/
 package datagen.datatype;
 
+import datagen.Context;
 import datagen.DataType;
 import datagen.FieldDef;
 import datagen.SourceBuilder;
@@ -37,7 +38,7 @@ public final class RustFPointDataType extends RustStringDataType {
   public static final DataType TYPE = new RustFPointDataType();
 
   private RustFPointDataType() {
-    var x = RUST_JTOOLS_PREFIX + "jmath.FPoint";
+    var x =  pt.PKG_RUST_JTOOLS_LITERAL + "jmath.FPoint";
     pJTOOLS("FPoint, with qualified name:",x);
     with(x);
   }

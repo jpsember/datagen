@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import datagen.gen.Language;
+import datagen.gen.Special;
 import js.file.Files;
 import js.parsing.DFA;
 import js.parsing.MacroParser;
@@ -72,14 +73,28 @@ public final class ParseTools {
     PKGGO_JSON = PKGGO_TOOLS;
     PKGGO_FILE = PKGGO_TOOLS;
 
-    PKG_RUST_TOOLS = "{{" + RUST_JTOOLS_PREFIX + "tools.*|}}";
-    PKG_RUST_JFILE = "{{" + RUST_JTOOLS_PREFIX + "jfile.*|}}";
+    var spec = config.specialHandling() == Special.RUST_JTOOLS;
+    var x = "jtools.";
+    if (spec) {
+      x = "crate.";
+    }
+    PKG_RUST_JTOOLS_LITERAL = x;
 
-    pJTOOLS("PKG_RUST_TOOLS:",PKG_RUST_TOOLS);
-  pJTOOLS("PKG_RUST_JFILE:",PKG_RUST_JFILE);
 
-    PKG_RUST_JSON = PKG_RUST_TOOLS;
+    PKG_RUST_JTOOLS = "{{" + PKG_RUST_JTOOLS_LITERAL + "tools.*|}}";
+    if (spec) {
+      PKG_RUST_JTOOLS = "";
+    }
+
+    PKG_RUST_JFILE = "{{" + PKG_RUST_JTOOLS_LITERAL + "jfile.*|}}";
+
+   // pJTOOLS("PKG_RUST_TOOLS:", PKG_RUST_TOOLS);
+    pJTOOLS("PKG_RUST_JFILE:", PKG_RUST_JFILE);
+
+    PKG_RUST_JSON = PKG_RUST_JTOOLS;
     PKG_RUST_ERROR = "{{std.error|}}";
+
+    //pJTOOLS("jtools:", PKG_RUST_JTOOLS, PKG_RUST_TOOLS, PKG_RUST_JTOOLS_LITERAL);
   }
 
   public static String goModuleExpr(String s) {
@@ -257,10 +272,12 @@ public final class ParseTools {
 
   public Object PKGGO_TOOLS, PKGGO_JSON, PKGGO_DATA, PKGGO_FILE;
 
-  public Object PKG_RUST_TOOLS;
   public Object PKG_RUST_JSON;
   public Object PKG_RUST_ERROR;
   public Object PKG_RUST_JFILE;
+  public Object PKG_RUST_JTOOLS;
+
+  public Object PKG_RUST_JTOOLS_LITERAL;
 
   public static Pattern IMPORT_REGEXP = RegExp.pattern("\\{\\{([^\\}]*)\\}\\}");
 

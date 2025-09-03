@@ -93,6 +93,9 @@ public final class SourceBuilder {
   public SourceBuilder a(Object... messages) {
 
     for (Object msg : messages) {
+      if (msg == null) {
+        badArg("SourceBuilder called with null");
+      }
       if (msg == CR) {
         cr();
         continue;

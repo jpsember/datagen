@@ -144,7 +144,7 @@ public class RustGeneratorTest extends GenBaseTest {
   @Test
   public void jtools() {
     withDatFilename("classes");
-    addArg("special_handling", "jtools");
+    addArg("special_handling", "rust_jtools");
     p().pr(
         "\n" +
             "class global_vars {\n" +

@@ -51,7 +51,7 @@ public class DatagenConfig implements AbstractData {
     return mDbsim;
   }
 
-  public String specialHandling() {
+  public Special specialHandling() {
     return mSpecialHandling;
   }
 
@@ -92,7 +92,7 @@ public class DatagenConfig implements AbstractData {
     m.putUnsafe(_8, mQuietMode);
     m.putUnsafe(_9, mFormat);
     m.putUnsafe(_10, mDbsim);
-    m.putUnsafe(_11, mSpecialHandling);
+    m.putUnsafe(_11, mSpecialHandling.toString().toLowerCase());
     return m;
   }
 
@@ -145,7 +145,10 @@ public class DatagenConfig implements AbstractData {
     mQuietMode = m.opt(_8, false);
     mFormat = m.opt(_9, false);
     mDbsim = m.opt(_10, false);
-    mSpecialHandling = m.opt(_11, "");
+    {
+      String x = m.opt(_11, "");
+      mSpecialHandling = x.isEmpty() ? Special.DEFAULT_INSTANCE : Special.valueOf(x.toUpperCase());
+    }
   }
 
   public static Builder newBuilder() {
@@ -204,7 +207,7 @@ public class DatagenConfig implements AbstractData {
       r = r * 37 + (mQuietMode ? 1 : 0);
       r = r * 37 + (mFormat ? 1 : 0);
       r = r * 37 + (mDbsim ? 1 : 0);
-      r = r * 37 + mSpecialHandling.hashCode();
+      r = r * 37 + mSpecialHandling.ordinal();
       m__hashcode = r;
     }
     return r;
@@ -221,7 +224,7 @@ public class DatagenConfig implements AbstractData {
   protected boolean mQuietMode;
   protected boolean mFormat;
   protected boolean mDbsim;
-  protected String mSpecialHandling;
+  protected Special mSpecialHandling;
   protected int m__hashcode;
 
   public static final class Builder extends DatagenConfig {
@@ -325,8 +328,8 @@ public class DatagenConfig implements AbstractData {
       return this;
     }
 
-    public Builder specialHandling(String x) {
-      mSpecialHandling = (x == null) ? "" : x;
+    public Builder specialHandling(Special x) {
+      mSpecialHandling = (x == null) ? Special.DEFAULT_INSTANCE : x;
       return this;
     }
 
@@ -342,7 +345,7 @@ public class DatagenConfig implements AbstractData {
     mLanguage = Language.DEFAULT_INSTANCE;
     mSourcePath = Files.DEFAULT;
     mPythonSourcePath = Files.DEFAULT;
-    mSpecialHandling = "";
+    mSpecialHandling = Special.DEFAULT_INSTANCE;
   }
 
 }

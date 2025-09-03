@@ -38,11 +38,13 @@ public final class RustFileDataType extends RustStringDataType {
   public static final DataType TYPE = new RustFileDataType();
 
   private RustFileDataType() {
-    with("JFile");
+    var x = "JFile";
+    pJTOOLS("JFile, with qualified name:", x);
+    with(x);
   }
 
   public static String nullFileMethod() {
-    return pt.PKG_RUST_JFILE + "null_file";
+    return "null_file"; //pt.PKG_RUST_JTOOLS_LITERAL + "jfile.null_file";
   }
 
   @Override

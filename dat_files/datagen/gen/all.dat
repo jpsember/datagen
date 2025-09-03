@@ -1,3 +1,9 @@
+
+enum special {
+  none,
+  rust_jtools,
+}
+
 class datagen_config {
   File start_dir;
   File dat_path = "dat_files";
@@ -32,7 +38,7 @@ class datagen_config {
 
   // For special handling, e.g. compiling Rust tools (that are used by the generated code)
   //
-  string special_handling;
+  enum Special special_handling;
 }
 
 class lang_info {

@@ -29,7 +29,7 @@ public final class QualifiedName extends BaseObject {
       if (packagePath.startsWith("gen.") || packagePath.equals("gen"))
         packagePath = "crate." + packagePath;
       else if (defaultPackage != null && defaultPackage.startsWith("crate.")) {
-        packagePath = defaultPackage;
+        packagePath =  defaultPackage;
       }
 
       QualifiedName result = new QualifiedName(packagePath, className);
