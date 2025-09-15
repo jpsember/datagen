@@ -6,7 +6,6 @@ import js.data.DataUtil;
 
 public class RustFieldDef extends FieldDef {
 
-
   @Override
   public String provideSetterName() {
     return "set_" + provideGetterName();

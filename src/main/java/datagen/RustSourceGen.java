@@ -132,11 +132,13 @@ public final class RustSourceGen extends SourceGen {
       }
 
       // If the combined path equals that of the file being generated, don't import anything
+      //
+      // For murky reasons, it works if I convert both sides to snake case (underscores)
       {
         var current = Context.generatedTypeDef.qualifiedName();
         if (db)
           log("...name for file being generated:", INDENT, current);
-        if (current.combined().equals(qn.combined())) {
+        if (convertCamelToUnderscore(current.combined()).equals(convertCamelToUnderscore(qn.combined()))) {
           if (db)
             log("...same; skipping");
           continue;
@@ -268,13 +270,14 @@ public final class RustSourceGen extends SourceGen {
       m.put("default_enum", type.qualifiedName().className() + "::" + enumType.labels().get(0));
       m.put("init_enum_map_fields", generateEnumInitEnumMapFields());
     } else {
+      m.put("snake_class", convertCamelToUnderscore(def.name()));
       m.put("static_class", type.qualifiedName(DataType.NAME_ALT).className());
       m.put("class_init_fields_to_defaults", generateInitFieldsToDefaults());
       m.put("class_getter_declaration", generateGetters());
       m.put("go_builder_getter_implementation", generateBuilderGetterImplementation());
       var x = pt.PKG_RUST_JTOOLS_LITERAL.toString();
-      pJTOOLS("setting jtools=",x);
-      m.put("jtools",x);
+      pJTOOLS("setting jtools=", x);
+      m.put("jtools", x);
     }
   }
 

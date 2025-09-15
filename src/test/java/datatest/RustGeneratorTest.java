@@ -63,6 +63,16 @@ public class RustGeneratorTest extends GenBaseTest {
   }
 
   @Test
+  public void bigBar() {
+    p().pr("extern gen.abc.Contract;", CR, //
+        "class {", INDENT, //
+        "int foo;", CR, //
+        "Contract contract;", OUTDENT, //
+        "}");
+    compile();
+  }
+
+  @Test
   public void pluto() {
     p().pr("extern gen.abc.Contract;", CR, //
         "class {", INDENT, //
@@ -169,6 +179,37 @@ public class RustGeneratorTest extends GenBaseTest {
             "    string name;\n" +
             "    string description;\n" +
             "}\n");
+    compile();
+  }
+
+  @Test
+  public void snakeCase() {
+    rv();
+    withDatFilename("classes");
+    p().pr(
+        "class node {\n" +
+            "  string id;\n" +
+            "  *FPoint vertices;\n" +
+            "\n" +
+            "  *string original_column_contents;\n" +
+            "}\n" +
+            "\n" +
+            "// enum experiment { alpha, beta }\n" +
+            "\n" +
+            "class alg_result {\n" +
+            "  Node candidate;\n" +
+            "\n" +
+            "  float score;\n" +
+            "\n" +
+            "  string note;\n" +
+            "}\n" +
+            "\n" +
+            "class node_set {\n" +
+            "  *Node nodes;\n" +
+            "  FPoint origin;\n" +
+            "  FPoint size;\n" +
+            "}\n"
+    );
     compile();
   }
 }

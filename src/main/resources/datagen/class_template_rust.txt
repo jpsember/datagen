@@ -4,7 +4,6 @@
 @@
 
 #![allow(dead_code)]
-#![allow(non_snake_case)]
 [!deprecated]
 [!imports]
 
@@ -60,7 +59,7 @@ impl fmt::Debug for [!class] {
 
 // Return a newly-built default instance
 //
-pub fn new_[!class]() -> [!class] {
+pub fn new_[!snake_class]() -> [!class] {
   [!class] {
 [!class_init_fields_to_defaults]
   }
@@ -68,14 +67,14 @@ pub fn new_[!class]() -> [!class] {
 
 // Attempt to parse (deserialize) a [!class] from a JSValue
 //
-pub fn parse_[!class](m: &{{[!jtools]tools.*|}}JSValue) -> Result<[!class], {{[!jtools]jerror.JError|JError}}> {
-    let mut n = new_[!class]();
+pub fn parse_[!snake_class](m: &{{[!jtools]tools.*|}}JSValue) -> Result<[!class], {{[!jtools]jerror.JError|JError}}> {
+    let mut n = new_[!snake_class]();
 [!parse]
     Ok(n)
 }
 
 // Encode (serialize) a [!class] to a JSValue
 //
-pub fn to_json_[!class](obj: &[!class]) -> JSValue {
+pub fn to_json_[!snake_class](obj: &[!class]) -> JSValue {
     obj.to_json()
 }

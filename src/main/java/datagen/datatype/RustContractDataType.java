@@ -35,7 +35,9 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public String provideSourceDefaultValue() {
-    var result = "new_" + Context.pt.importExprWithClassName(qualifiedName(NAME_HUMAN)) + "()";
+    var result = "new_" +
+        convertCamelToUnderscore(
+            Context.pt.importExprWithClassName(qualifiedName(NAME_HUMAN))) + "()";
     return result;
   }
 
@@ -43,7 +45,7 @@ public class RustContractDataType extends RustDataType {
   public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
     s.a(OPEN, "let x = m.opt(", f.nameStringConstantQualified(), ");", CR, //
         "if !x.is_null()", OPEN, //
-        "n.", f.instanceName(), " = parse_", qualifiedName(NAME_HUMAN).className(), "(&x)?;", CLOSE, //
+        "n.", f.instanceName(), " = parse_", classNameSuffix(), "(&x)?;", CLOSE, //
         CLOSE);
   }
 
@@ -59,7 +61,7 @@ public class RustContractDataType extends RustDataType {
     s.a(
         OPEN, //
         "let x = m.opt(", f.nameStringConstantQualified(), ").or_empty_list()?.extract_list_elements()?;", CR, //
-        "for y in x ", OPEN, target, ".push(parse_", qualifiedName(NAME_HUMAN).className(), "(&y)?);", CLOSE, //
+        "for y in x ", OPEN, target, ".push(parse_", classNameSuffix(), "(&y)?);", CLOSE, //
         CLOSE //
     );
   }
@@ -84,7 +86,7 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
-    return "parse_" + qualifiedName(NAME_HUMAN).className() + "(" + jsentityExpression + ")";
+    return "parse_" + classNameSuffix() + "(" + jsentityExpression + ")";
   }
 
   @Override
@@ -115,7 +117,7 @@ public class RustContractDataType extends RustDataType {
 
   @Override
   public String buildRustJsonValueFrom(String expr) {
-    return "parse_" + qualifiedName(NAME_HUMAN).className() + "(" + expr + ")";
+    return "parse_" + classNameSuffix() + "(" + expr + ")";
   }
 
   @Override
@@ -131,4 +133,11 @@ public class RustContractDataType extends RustDataType {
   public String wrapInBuildExpression(String expr) {
     return expr;
   }
+
+
+  private String classNameSuffix() {
+    // I suspect we might ALWAYS want to convert the NAME_HUMAN to underscore...
+    return convertCamelToUnderscore(qualifiedName(NAME_HUMAN).className());
+  }
+
 }
