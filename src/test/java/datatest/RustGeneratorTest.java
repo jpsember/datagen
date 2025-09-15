@@ -184,7 +184,6 @@ public class RustGeneratorTest extends GenBaseTest {
 
   @Test
   public void snakeCase() {
-    rv();
     withDatFilename("classes");
     p().pr(
         "class node {\n" +
