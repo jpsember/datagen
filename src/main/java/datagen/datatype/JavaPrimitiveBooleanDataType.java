@@ -67,4 +67,15 @@ public class JavaPrimitiveBooleanDataType extends JavaDataType {
         f.nameStringConstantQualified(), "), false);", CR);
   }
 
+  @Override
+  public void sourceGenerateEquals(SourceBuilder s, String a, String b) {
+    s.a(a, " == ", b);
+  }
+
+
+  @Override
+  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+    s.a(targetExpr, " = x");
+  }
+
 }

@@ -27,7 +27,10 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
+import js.data.DataUtil;
 import js.json.JSMap;
+
+import static js.base.Tools.notSupported;
 
 /**
  * Datatype for longs (and boxed version)
@@ -57,6 +60,27 @@ public class JavaPrimitiveLongDataType extends JavaDataType {
   @Override
   public DataType listVariant() {
     return JavaLongArrayDataType.TYPE;
+  }
+
+  @Override
+  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+    s.a(targetExpr, " = x");
+  }
+
+  @Override
+  public String deserializeStringToMapKey(String stringValueExpression) {
+    return typeName() + ".parse" + DataUtil.capitalizeFirst(typeName()) + "(" + stringValueExpression + ")";
+  }
+
+
+  @Override
+  public void sourceGenerateEquals(SourceBuilder s, String a, String b) {
+    s.a(a, " == ", b);
+  }
+
+  @Override
+  public String deserializeJsonToMapValue(String jsonValue) {
+    return jsonValue;
   }
 
 }

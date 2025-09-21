@@ -128,5 +128,8 @@ public final class RustBoolDataType extends RustDataType {
     s.a(targetExpr, " = ", f.instanceName(), ";", CR);
   }
 
-
+  @Override
+  public void sourceGenerateEquals(SourceBuilder s, String a, String b) {
+    s.a(a, " == ", b);
+  }
 }

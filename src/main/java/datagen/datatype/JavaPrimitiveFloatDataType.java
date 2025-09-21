@@ -56,4 +56,14 @@ public class JavaPrimitiveFloatDataType extends JavaDataType {
     return JavaFloatArrayDataType.TYPE;
   }
 
+  @Override
+  public void sourceGenerateEquals(SourceBuilder s, String a, String b) {
+    s.a(a, " == ", b);
+  }
+
+  @Override
+  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+    s.a(targetExpr, " = x");
+  }
+
 }

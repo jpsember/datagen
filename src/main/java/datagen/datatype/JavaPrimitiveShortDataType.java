@@ -28,6 +28,7 @@ import datagen.DataType;
 import datagen.FieldDef;
 import datagen.JavaDataType;
 import datagen.SourceBuilder;
+import js.data.DataUtil;
 import js.json.JSMap;
 
 /**
@@ -60,5 +61,20 @@ public class JavaPrimitiveShortDataType extends JavaDataType {
     return JavaShortArrayDataType.TYPE;
   }
 
+
+  @Override
+  public void sourceGenerateEquals(SourceBuilder s, String a, String b) {
+    s.a(a, " == ", b);
+  }
+
+  @Override
+  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+    s.a(targetExpr, " = x");
+  }
+
+  @Override
+  public String deserializeStringToMapKey(String stringValueExpression) {
+    return typeName() + ".parse" + DataUtil.capitalizeFirst(typeName()) + "(" + stringValueExpression + ")";
+  }
 
 }

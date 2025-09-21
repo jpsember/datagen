@@ -26,7 +26,7 @@ public class JavaDataType extends DataType {
   @Override
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String expr;
-    if (isPrimitive()) {
+    if (avoidIsPrimitive()) {
       expr = "x";
     } else {
       expr = "(x == null) ? " + f.defaultValueSource() + " : x";
@@ -44,7 +44,7 @@ public class JavaDataType extends DataType {
 
   @Override
   public void sourceGenerateEquals(SourceBuilder s, String a, String b) {
-    if (isPrimitive())
+    if (avoidIsPrimitive())
       s.a(a, " == ", b);
     else
       s.a(a, ".equals(", b, ")");
@@ -103,7 +103,7 @@ public class JavaDataType extends DataType {
    * Generate source code to convert a string to a value to be used as a map key
    */
   public String deserializeStringToMapKey(String stringValueExpression) {
-    if (isPrimitive())
+    if (avoidIsPrimitive())
       return typeName() + ".parse" + DataUtil.capitalizeFirst(typeName()) + "(" + stringValueExpression + ")";
     throw notSupported("deserializeStringToMapKey for dataType:", getClass());
   }
@@ -116,7 +116,7 @@ public class JavaDataType extends DataType {
    *                  JSList value
    */
   public String deserializeJsonToMapValue(String jsonValue) {
-    if (isPrimitive())
+    if (avoidIsPrimitive())
       return jsonValue;
     throw notSupported("deserializeJsonToJavaValue for dataType:" + getClass());
   }
