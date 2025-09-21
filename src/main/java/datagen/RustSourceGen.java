@@ -68,21 +68,7 @@ public final class RustSourceGen extends SourceGen {
 
   @Override
   protected String generateSetters() {
-    s.setIndent(2);
-    GeneratedTypeDef def = Context.generatedTypeDef;
-    for (FieldDef f : def.fields()) {
-      if (f.deprecated())
-        s.addSafe(getDeprecationSourceInner());
-      DataType d = f.dataType();
-      var argName = f.instanceName();
-      s.a("pub fn ", f.setterName(), "(&mut self, ", argName, ": ", d.setterArgSignature(argName),
-          ") -> &mut Self", OPEN);
-      String targetExpr = "self." + f.instanceName();
-      d.sourceSetter(s, f, targetExpr);
-      s.a(CR, "self", CLOSE);
-      s.br();
-    }
-    return content();
+    return "";
   }
 
   @Override
@@ -179,22 +165,13 @@ public final class RustSourceGen extends SourceGen {
   }
 
   @Override
-  protected final String generateGetters() {
-    s.setIndent(2);
-    GeneratedTypeDef def = Context.generatedTypeDef;
-    for (FieldDef f : def.fields()) {
-      s.a("pub fn ", f.getterName(), "(&self) -> ", f.dataType().getterReturnTypeExpr(), " ", OPEN, //
-          "  ");
-      f.dataType().getterBody(s, f);
-      s.a(CLOSE);
-      s.br();
-    }
-    return content();
+  protected String generateGetters() {
+    return "";
   }
 
   @Override
-  protected final String generateImmutableToBuilder() {
-    return "!!! not required !!!";
+  protected String generateImmutableToBuilder() {
+    return "";
   }
 
   @Override
@@ -211,7 +188,7 @@ public final class RustSourceGen extends SourceGen {
       max = Math.max(max, f.instanceName().length());
     }
     for (FieldDef f : def.fields()) {
-      s.a(f.instanceName(), ":", spaces(1 + max - f.instanceName().length()), f.dataType().typeName(), ",");
+      s.a("pub ", f.instanceName(), ":", spaces(1 + max - f.instanceName().length()), f.dataType().typeName(), ",");
       s.a(CR);
     }
     return content();
@@ -273,7 +250,7 @@ public final class RustSourceGen extends SourceGen {
       m.put("snake_class", convertCamelToUnderscore(def.name()));
       m.put("static_class", type.qualifiedName(DataType.NAME_ALT).className());
       m.put("class_init_fields_to_defaults", generateInitFieldsToDefaults());
-      m.put("class_getter_declaration", generateGetters());
+      m.put("class_getter_declaration", "");
       m.put("go_builder_getter_implementation", generateBuilderGetterImplementation());
       var x = pt.PKG_RUST_JTOOLS_LITERAL.toString();
       pJTOOLS("setting jtools=", x);

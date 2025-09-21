@@ -17,23 +17,11 @@ pub struct [!class] {
 
 impl [!class] {
 
-[!class_getter_declaration]
-
-  pub fn build(&self) -> [!class] {
-      self.clone()
-  }
-
-  pub fn to_builder(&self) -> [!class] {
-      self.clone()
-  }
-
   pub fn to_json(&self) -> {{[!jtools]tools.*|}}JSValue {
     let m = new_map();
 [!to_json]
     m
   }
-
-[!setters]
 
 }
 
@@ -64,6 +52,9 @@ pub fn new_[!snake_class]() -> [!class] {
 [!class_init_fields_to_defaults]
   }
 }
+
+// TODO: Consider making serialization a per-class option.
+// TODO: Use serde for serialization
 
 // Attempt to parse (deserialize) a [!class] from a JSValue
 //
