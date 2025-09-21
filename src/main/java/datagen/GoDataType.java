@@ -28,7 +28,7 @@ public abstract class GoDataType extends DataType {
 
   public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
     String arg = f.instanceName();
-    if (isPrimitive()) {
+    if (avoidIsPrimitive()) {
       s.a(targetExpr, " = ", arg, CR);
     } else {
       s.a("if x == nil {", IN, //
@@ -96,8 +96,6 @@ public abstract class GoDataType extends DataType {
    *                  JSList value
    */
   public String deserializeJsonToMapValue(String jsonValue) {
-    if (isPrimitive())
-      return jsonValue;
     throw notSupported("deserializeJsonToMapValue for dataType:" + getClass());
   }
 

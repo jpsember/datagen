@@ -102,10 +102,7 @@ public abstract class RustDataType extends DataType {
 
   @Override
   public void getterBody(SourceBuilder s, FieldDef f) {
-    checkArgument(!isPrimitive(), "add getterBody method for type:",this.typeName());
-    if (!isPrimitive())
-      s.a("&");
-    s.a("self.", f.instanceName());
+    s.a("&self.", f.instanceName());
   }
 
 }

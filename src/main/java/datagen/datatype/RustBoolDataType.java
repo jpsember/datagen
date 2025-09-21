@@ -23,6 +23,8 @@
  **/
 package datagen.datatype;
 
+import static datagen.SourceBuilder.IN;
+import static datagen.SourceBuilder.OUT;
 import static js.base.Tools.*;
 
 import datagen.DataType;
@@ -120,5 +122,11 @@ public final class RustBoolDataType extends RustDataType {
   public void generateSerializeListOf(SourceBuilder s, FieldDef f) {
     s.a("encode_bool_list(&self.", f.instanceName(), ")");
   }
+
+  @Override
+  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+    s.a(targetExpr, " = ", f.instanceName(), ";", CR);
+  }
+
 
 }

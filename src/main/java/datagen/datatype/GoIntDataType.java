@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,10 +20,11 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datagen.datatype;
 
+import static datagen.SourceBuilder.IN;
+import static datagen.SourceBuilder.OUT;
 import static js.base.Tools.*;
 
 import datagen.DataType;
@@ -70,20 +71,20 @@ public final class GoIntDataType extends GoDataType {
 
   private GoIntDataType(int nbits, boolean generic) {
     switch (nbits) {
-    case 8:
-      with("byte");
-      break;
-    case 16:
-    case 32:
-    case 64:
-      if (generic) {
-        with("int");
-      } else {
-        with("int" + nbits);
-      }
-      break;
-    default:
-      throw badArg("nbits:", nbits);
+      case 8:
+        with("byte");
+        break;
+      case 16:
+      case 32:
+      case 64:
+        if (generic) {
+          with("int");
+        } else {
+          with("int" + nbits);
+        }
+        break;
+      default:
+        throw badArg("nbits:", nbits);
     }
     mBits = nbits;
   }
@@ -113,6 +114,16 @@ public final class GoIntDataType extends GoDataType {
       expr = "int" + mBits + "(" + expr + ")";
     }
     return expr;
+  }
+
+  @Override
+  public String deserializeJsonToMapValue(String jsonValue) {
+    return jsonValue;
+  }
+
+  @Override
+  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+    s.a(targetExpr, " = ", f.instanceName(), CR);
   }
 
   public String sqlType() {

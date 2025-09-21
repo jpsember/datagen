@@ -76,4 +76,8 @@ public final class GoFileDataType extends GoDataType {
     return "string("+valueExpression + ")";
   }
 
+  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+    s.a(targetExpr, " = ", f.instanceName(), CR);
+  }
+
 }

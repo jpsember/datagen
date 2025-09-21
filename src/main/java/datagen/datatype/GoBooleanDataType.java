@@ -1,18 +1,18 @@
 /**
  * MIT License
- * 
+ *
  * Copyright (c) 2021 Jeff Sember
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in all
  * copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -20,7 +20,6 @@
  * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
  * SOFTWARE.
- * 
  **/
 package datagen.datatype;
 
@@ -29,6 +28,10 @@ import datagen.FieldDef;
 import datagen.GoDataType;
 import datagen.SourceBuilder;
 import js.json.JSMap;
+
+import static datagen.SourceBuilder.IN;
+import static datagen.SourceBuilder.OUT;
+import static js.base.Tools.CR;
 
 public final class GoBooleanDataType extends GoDataType {
 
@@ -67,6 +70,10 @@ public final class GoBooleanDataType extends GoDataType {
     // From https://www.sqlite.org/datatype3.html:
     // "SQLite does not have a separate Boolean storage class. Instead, Boolean values are stored as integers 0 (false) and 1 (true)."
     return "INTEGER";
+  }
+
+  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+    s.a(targetExpr, " = ", f.instanceName(),   CR);
   }
 
 }

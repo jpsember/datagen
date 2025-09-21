@@ -115,6 +115,13 @@ public abstract class DataType implements DefaultValueParser {
   @Deprecated
   public abstract boolean isPrimitive();
 
+  public boolean avoidIsPrimitive() {
+    if (isPrimitive()) {
+      throw badState("isPrimitive call for datatype:", typeName());
+    }
+    return false;
+  }
+
   // ------------------------------------------------------------------
   // Default values
   // ------------------------------------------------------------------

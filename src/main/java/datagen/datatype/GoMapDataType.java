@@ -88,6 +88,12 @@ public class GoMapDataType extends GoDataType {
     return fieldDef.constantName();
   }
 
+
+  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+    s.a(targetExpr, " = ", f.instanceName(),   CR);
+  }
+
+
   private final GoDataType mWrappedKeyType;
   private final GoDataType mWrappedValueType;
 }

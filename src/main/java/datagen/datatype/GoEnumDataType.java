@@ -84,4 +84,9 @@ public class GoEnumDataType extends GoDataType implements EnumDataType {
     return "INTEGER";
   }
 
+  @Override
+  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+    s.a(targetExpr, " = ", f.instanceName(), CR);
+  }
+
 }

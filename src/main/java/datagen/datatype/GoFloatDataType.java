@@ -71,6 +71,11 @@ public final class GoFloatDataType extends GoDataType {
     s.a("n.", f.instanceName(), " = s.Opt", DataUtil.capitalizeFirst(qualifiedName().className()), "(",
         f.nameStringConstantQualified(), ", ", f.defaultValueSource(),")",CR);
   }
- 
+
+  @Override
+  public void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr) {
+    s.a(targetExpr, " = ", f.instanceName(), CR);
+  }
+
 
 }
