@@ -112,6 +112,7 @@ public abstract class DataType implements DefaultValueParser {
   /**
    * Determine if the type is a primitive type, e.g. int, short, etc
    */
+  @Deprecated
   public abstract boolean isPrimitive();
 
   // ------------------------------------------------------------------

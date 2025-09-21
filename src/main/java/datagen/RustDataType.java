@@ -92,19 +92,17 @@ public abstract class RustDataType extends DataType {
    *                  JSList value
    */
   public String deserializeJsonToMapValue(String jsonValue) {
-    if (isPrimitive())
-      return jsonValue;
     throw notSupported("deserializeJsonToMapValue for dataType:" + getClass());
   }
 
   @Override
   public String getterReturnTypeExpr() {
-    var prefix = isPrimitive() ? "" : "&";
-    return prefix + typeName();
+    return "&" + typeName();
   }
 
   @Override
   public void getterBody(SourceBuilder s, FieldDef f) {
+    checkArgument(!isPrimitive(), "add getterBody method for type:",this.typeName());
     if (!isPrimitive())
       s.a("&");
     s.a("self.", f.instanceName());

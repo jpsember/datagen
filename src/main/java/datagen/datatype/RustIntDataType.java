@@ -110,8 +110,19 @@ public final class RustIntDataType extends RustDataType {
   }
 
   @Override
+  public String getterReturnTypeExpr() {
+    return typeName();
+  }
+
+  @Override
   public String buildRustJsonValueFrom(String expr) {
     return "new_int(*" + expr + ((mBitSize != 64) ? " as i64" : "") + ")";
+  }
+
+
+  @Override
+  public void getterBody(SourceBuilder s, FieldDef f) {
+    s.a("self.", f.instanceName());
   }
 
   @Override

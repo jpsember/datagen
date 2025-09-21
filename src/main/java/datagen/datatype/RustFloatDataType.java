@@ -52,6 +52,16 @@ public class RustFloatDataType extends RustDataType {
   }
 
   @Override
+  public void getterBody(SourceBuilder s, FieldDef f) {
+    s.a("self.", f.instanceName());
+  }
+
+  @Override
+  public String getterReturnTypeExpr() {
+    return typeName();
+  }
+
+  @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
     return valueExpression;
   }
