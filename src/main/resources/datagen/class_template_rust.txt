@@ -1,32 +1,21 @@
-@@// ---------------------------------------------------------------------------------------
-@@// Generated code: DO NOT MODIFY
-@@// ---------------------------------------------------------------------------------------
-@@
-
 #![allow(dead_code)]
 [!deprecated]
 [!imports]
 
-// ---------------------------------------------------------------------------------------
-// [!class] data type
-// ---------------------------------------------------------------------------------------
 
-#[derive(Clone)]
+use serde::{Serialize, Deserialize};
+
+#[derive(Serialize, Deserialize, Clone)]
 pub struct [!class] {
 [!instance_fields]}
 
 impl [!class] {
 
-  pub fn to_json(&self) -> {{[!jtools]tools.*|}}JSValue {
-    let m = new_map();
-[!to_json]
-    m
+  pub fn to_json(&self) -> String {
+    serde_json::to_string_pretty(&self).unwrap()
   }
 
 }
-
-[!class_specific]
-
 
 impl {{std.fmt|fmt}}::Display for [!class] {
   fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -34,38 +23,22 @@ impl {{std.fmt|fmt}}::Display for [!class] {
   }
 }
 
-
 impl fmt::Debug for [!class] {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(self, f)
     }
 }
 
-// ---------------------------------------------------------------------------------------
-// Global functions
-// ---------------------------------------------------------------------------------------
-
-// Return a newly-built default instance
-//
 pub fn new_[!snake_class]() -> [!class] {
   [!class] {
 [!class_init_fields_to_defaults]
   }
 }
 
-// TODO: Consider making serialization a per-class option.
-// TODO: Use serde for serialization
-
-// Attempt to parse (deserialize) a [!class] from a JSValue
-//
-pub fn parse_[!snake_class](m: &{{[!jtools]tools.*|}}JSValue) -> Result<[!class], {{[!jtools]jerror.JError|JError}}> {
-    let mut n = new_[!snake_class]();
-[!parse]
-    Ok(n)
+pub fn parse_[!snake_class](m: &str) -> [!class] {
+    serde_json::from_str(m).unwrap()
 }
 
-// Encode (serialize) a [!class] to a JSValue
-//
-pub fn to_json_[!snake_class](obj: &[!class]) -> JSValue {
+pub fn to_json_[!snake_class](obj: &[!class]) -> String {
     obj.to_json()
 }
