@@ -35,7 +35,6 @@ import js.json.JSMap;
 public class JavaPrimitiveLongDataType extends JavaDataType {
 
   public static final DataType PRIM_TYPE = new JavaPrimitiveLongDataType().with("java.lang.long");
-  private static final DataType BOXED_TYPE = new Boxed().with("java.lang.Long");
 
   private JavaPrimitiveLongDataType() {
   }
@@ -56,36 +55,8 @@ public class JavaPrimitiveLongDataType extends JavaDataType {
   }
 
   @Override
-  public DataType optionalVariant() {
-    return BOXED_TYPE;
-  }
-
-  @Override
   public DataType listVariant() {
     return JavaLongArrayDataType.TYPE;
-  }
-
-  private static class Boxed extends JavaPrimitiveLongDataType {
-
-    @Override
-    public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a(f.instanceName(), " = m.optLong(", f.nameStringConstantQualified(), ");");
-    }
-
-    @Override
-    public String deserializeJsonToMapValue(String jsonValue) {
-      return "(Long) " + jsonValue;
-    }
-
-    @Override
-    public String deserializeStringToMapKey(String jsonStringValue) {
-      return "Long.parseLong(" + jsonStringValue + ")";
-    }
-
-    @Override
-    public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-      return valueExpression + ".toString()";
-    }
   }
 
 }

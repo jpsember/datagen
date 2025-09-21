@@ -35,14 +35,8 @@ import js.json.JSMap;
 public class JavaPrimitiveBooleanDataType extends JavaDataType {
 
   public static final DataType PRIM_TYPE = new JavaPrimitiveBooleanDataType().with("java.lang.boolean");
-  public static final DataType BOXED_TYPE = new Boxed().with("java.lang.Boolean");
 
   private JavaPrimitiveBooleanDataType() {
-  }
-
-  @Override
-  public DataType optionalVariant() {
-    return BOXED_TYPE;
   }
 
   @Override
@@ -71,21 +65,6 @@ public class JavaPrimitiveBooleanDataType extends JavaDataType {
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a(f.instanceName(), " = ", Context.pt.PKG_DATAUTIL, ".parseListOfObjects(m.optJSList(",
         f.nameStringConstantQualified(), "), false);", CR);
-  }
-
-  private static class Boxed extends JavaPrimitiveBooleanDataType {
-
-    @Override
-    public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a(f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ", ");
-      s.a(f.defaultValueSource());
-      s.a(");");
-    }
-
-    @Override
-    public String deserializeJsonToMapValue(String jsonValue) {
-      return "(Boolean) " + jsonValue;
-    }
   }
 
 }

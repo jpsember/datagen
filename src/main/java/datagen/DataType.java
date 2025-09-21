@@ -241,28 +241,11 @@ public abstract class DataType implements DefaultValueParser {
   public abstract void sourceHashCalculationCode(SourceBuilder s, FieldDef f);
 
   /**
-   * If this DataType has an alternate suitable for optional types, return it;
-   * default returns this. Required for supporting boxed java primitive types
-   */
-  public DataType optionalVariant() {
-    return this;
-  }
-
-  /**
    * If array versions of this DataType have an alternate scalar type, return
    * it; else, null
    */
   public DataType listVariant() {
     return null;
-  }
-
-  @Deprecated
-  public final DataType getOptionalVariant() {
-    if (!mPreparedVariantOptional) {
-      mPreparedVariantOptional = true;
-      mOptionalVariant = optionalVariant();
-    }
-    return mOptionalVariant;
   }
 
   public final DataType getListVariant() {
@@ -273,9 +256,7 @@ public abstract class DataType implements DefaultValueParser {
     return mListVariant;
   }
 
-  private boolean mPreparedVariantOptional;
   private boolean mPreparedVariantList;
-  private DataType mOptionalVariant;
   private DataType mListVariant;
 
   public abstract void sourceSetter(SourceBuilder s, FieldDef f, String targetExpr);

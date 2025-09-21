@@ -33,7 +33,6 @@ import java.util.List;
 import datagen.datatype.EnumDataType;
 import datagen.gen.PartialType;
 import datagen.gen.TypeStructure;
-import js.app.App;
 import js.file.Files;
 import js.json.JSMap;
 import js.parsing.Lexeme;
@@ -192,9 +191,7 @@ public final class DataDefinitionParser extends BaseObject {
     String sourceClassName;
 
     switch (Context.config.language()) {
-      default:
-        throw languageNotSupported();
-      case JAVA:
+       case JAVA:
         sourceClassName = DataUtil.convertUnderscoresToCamelCase(dataTypeName);
         break;
       case PYTHON:
@@ -206,6 +203,8 @@ public final class DataDefinitionParser extends BaseObject {
       case RUST:
         sourceClassName = dataTypeName;
         break;
+      default:
+        throw languageNotSupported();
     }
     return sourceClassName;
   }
@@ -259,9 +258,7 @@ public final class DataDefinitionParser extends BaseObject {
 
     read(BROP);
 
-    while (true) {
-      if (readIf(BRCL))
-        break;
+    while (!readIf(BRCL)) {
 
       TypeStructure structure;
 
@@ -355,9 +352,7 @@ public final class DataDefinitionParser extends BaseObject {
 
     read(BROP);
 
-    while (true) {
-      if (readIf(BRCL))
-        break;
+    while (!readIf(BRCL)) {
       String name = read(ID);
       ((EnumDataType) dataType).addLabel(name);
       while (readIf(COMMA) || readIf(SEMI))
@@ -512,7 +507,7 @@ public final class DataDefinitionParser extends BaseObject {
    * Get package for the data type being generated
    */
   private String packageName() {
-    String name = null;
+    String name;
     String parentName = Context.datDirectoryRelative().toString();
     switch (Context.config.language()) {
       default:

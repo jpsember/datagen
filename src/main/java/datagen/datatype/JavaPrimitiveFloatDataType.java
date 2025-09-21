@@ -32,7 +32,6 @@ import js.json.JSMap;
 public class JavaPrimitiveFloatDataType extends JavaDataType {
 
   public static final DataType PRIM_TYPE = new JavaPrimitiveFloatDataType().with("java.lang.float");
-  private static final DataType BOXED_TYPE = new Boxed().with("java.lang.Float");
 
   private JavaPrimitiveFloatDataType() {
   }
@@ -53,26 +52,8 @@ public class JavaPrimitiveFloatDataType extends JavaDataType {
   }
 
   @Override
-  public DataType optionalVariant() {
-    return BOXED_TYPE;
-  }
-
-  @Override
   public DataType listVariant() {
     return JavaFloatArrayDataType.TYPE;
-  }
-
-  private static class Boxed extends JavaPrimitiveFloatDataType {
-
-    @Override
-    public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a(f.instanceName(), " = m.optFloat(", f.nameStringConstantQualified(), ");");
-    }
-
-    @Override
-    public String deserializeJsonToMapValue(String jsonValue) {
-      return "(Float) " + jsonValue;
-    }
   }
 
 }

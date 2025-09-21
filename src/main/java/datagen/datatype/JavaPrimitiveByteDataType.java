@@ -38,7 +38,6 @@ public class JavaPrimitiveByteDataType extends JavaDataType {
   }
 
   public static final DataType PRIM_TYPE = new JavaPrimitiveByteDataType().with("java.lang.byte");
-  public static final DataType BOXED_TYPE = new Boxed().with("java.lang.Byte");
 
 
   @Override
@@ -57,26 +56,8 @@ public class JavaPrimitiveByteDataType extends JavaDataType {
   }
 
   @Override
-  public DataType optionalVariant() {
-    return BOXED_TYPE;
-  }
-
-  @Override
   public DataType listVariant() {
     return JavaByteArrayDataType.TYPE;
-  }
-
-  private static class Boxed extends JavaPrimitiveByteDataType {
-
-    @Override
-    public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a(f.instanceName(), " = m.optByte(", f.nameStringConstantQualified(), ");");
-    }
-
-    @Override
-    public String deserializeJsonToMapValue(String jsonValue) {
-      return "(Byte) " + jsonValue;
-    }
   }
 
 }

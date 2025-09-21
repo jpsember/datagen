@@ -32,7 +32,6 @@ import js.json.JSMap;
 public class JavaPrimitiveDoubleDataType extends JavaDataType {
 
   public static final DataType PRIM_TYPE = new JavaPrimitiveDoubleDataType().with("java.lang.double");
-  private static final DataType BOXED_TYPE = new Boxed().with("java.lang.Double");
 
   private JavaPrimitiveDoubleDataType() {
   }
@@ -53,26 +52,8 @@ public class JavaPrimitiveDoubleDataType extends JavaDataType {
   }
 
   @Override
-  public DataType optionalVariant() {
-    return BOXED_TYPE;
-  }
-
-  @Override
   public DataType listVariant() {
     return JavaDoubleArrayDataType.TYPE;
-  }
-
-  private static class Boxed extends JavaPrimitiveDoubleDataType {
-
-    @Override
-    public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a(f.instanceName(), " = m.optDouble(", f.nameStringConstantQualified(), ");");
-    }
-
-    @Override
-    public String deserializeJsonToMapValue(String jsonValue) {
-      return "(Double) " + jsonValue;
-    }
   }
 
 }

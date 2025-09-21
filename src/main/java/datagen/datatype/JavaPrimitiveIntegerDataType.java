@@ -36,7 +36,6 @@ import js.json.JSMap;
 public class JavaPrimitiveIntegerDataType extends JavaDataType {
 
   public static final DataType PRIM_TYPE = new JavaPrimitiveIntegerDataType().with("java.lang.int");
-  public static final DataType BOXED_TYPE = new Boxed().with("java.lang.Integer");
 
   private JavaPrimitiveIntegerDataType() {
   }
@@ -57,36 +56,8 @@ public class JavaPrimitiveIntegerDataType extends JavaDataType {
   }
 
   @Override
-  public DataType optionalVariant() {
-    return BOXED_TYPE;
-  }
-
-  @Override
   public DataType listVariant() {
     return JavaIntArrayDataType.TYPE;
-  }
-
-  private static class Boxed extends JavaPrimitiveIntegerDataType {
-
-    @Override
-    public void sourceDeserializeFromObject(SourceBuilder s, FieldDef f) {
-      s.a(f.instanceName(), " = m.optInt(", f.nameStringConstantQualified(), ");");
-    }
-
-    @Override
-    public String deserializeJsonToMapValue(String jsonValue) {
-      return "((Number)" + jsonValue+").intValue()";
-    }
-
-    @Override
-    public String deserializeStringToMapKey(String jsonStringValue) {
-      return "Integer.parseInt(" + jsonStringValue + ")";
-    }
-
-    @Override
-    public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-      return valueExpression + ".toString()";
-    }
   }
 
 }
