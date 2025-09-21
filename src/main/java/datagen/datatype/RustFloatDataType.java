@@ -8,7 +8,7 @@ import datagen.RustDataType;
 import datagen.SourceBuilder;
 import js.json.JSMap;
 
-public class RustFloatDataType  extends RustDataType {
+public class RustFloatDataType extends RustDataType {
 
   public static final DataType FLOAT_TYPE = new RustFloatDataType(32).with("f32");
   public static final DataType DOUBLE_TYPE = new RustFloatDataType(64).with("f64");
@@ -36,12 +36,12 @@ public class RustFloatDataType  extends RustDataType {
 
   @Override
   public void sourceSerializeToObject(SourceBuilder s, FieldDef f) {
-    s.a("m.put_"+bitSizeSuffix() +"(", f.nameStringConstantQualified(), ", ", //
+    s.a("m.put_" + bitSizeSuffix() + "(", f.nameStringConstantQualified(), ", ", //
         sourceGenerateSerializeToObjectExpression("self." + f.instanceName()), ");", CR);
   }
 
   private String bitSizeSuffix() {
-    return "f"+mBitSize;
+    return "f" + mBitSize;
   }
 
   @Override
@@ -51,13 +51,10 @@ public class RustFloatDataType  extends RustDataType {
       s.a(" as f", mBitSize);
   }
 
-//  @Override
-//  public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-//    var x = valueExpression;
-//    if (mBitSize != 64)
-//      x += " as f64";
-//    return x;
-//  }
+  @Override
+  public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
+    return valueExpression;
+  }
 
   @Override
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
@@ -95,7 +92,7 @@ public class RustFloatDataType  extends RustDataType {
   @Override
   public void sourceDeserializeFromList(SourceBuilder s, FieldDef f) {
     s.a("n.", f.instanceName(), " = m.opt(", f.nameStringConstantQualified(), ").or_empty_list()?.parse_",
-       bitSizeSuffix(), "_list()?;");
+        bitSizeSuffix(), "_list()?;");
   }
 
   @Override

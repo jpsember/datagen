@@ -91,7 +91,7 @@ public abstract class DataType implements DefaultValueParser {
   }
 
   public QualifiedName qualifiedName(int index) {
-    QualifiedName q = optName(index);
+    QualifiedName q = mQualNameMap.get(index);
     if (q == null) {
       if (index == NAME_MAIN)
         throw badState("no qualified name with index", index, "for", getClass().getSimpleName());
@@ -99,10 +99,6 @@ public abstract class DataType implements DefaultValueParser {
       with(index, q);
     }
     return q;
-  }
-
-  private QualifiedName optName(int index) {
-    return mQualNameMap.get(index);
   }
 
   private Map<Integer, QualifiedName> mQualNameMap = hashMap();
@@ -137,7 +133,7 @@ public abstract class DataType implements DefaultValueParser {
       case GO:
         return "nil";
       case RUST:
-        return "<rust has no nulls though!>";
+        throw badState("rust has no nulls, should not have got here");
     }
   }
 

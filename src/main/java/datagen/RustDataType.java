@@ -58,9 +58,6 @@ public abstract class RustDataType extends DataType {
     );
   }
 
-  /**
-   * Construct go source code to extract a datatype's value from a JSEntity
-   */
   protected String parseElementFromJsonValue(FieldDef f, String jsentityExpression) {
     return notSupportedMessage();
   }
@@ -73,8 +70,7 @@ public abstract class RustDataType extends DataType {
 
   @Override
   public String sourceGenerateSerializeToObjectExpression(String valueExpression) {
-    var prefix = isPrimitive() ? "" : "&";
-    return prefix + valueExpression;
+    return "&" + valueExpression;
   }
 
   // ------------------------------------------------------------------

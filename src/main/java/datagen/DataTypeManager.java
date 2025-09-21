@@ -75,7 +75,7 @@ public final class DataTypeManager extends BaseObject {
         add("float", RustFloatDataType.FLOAT_TYPE);
         add("byte", RustIntDataType.BYTE_TYPE);
         add("File", RustFileDataType.TYPE);
-        add("FPoint",RustFPointDataType.TYPE);
+        add("FPoint", RustFPointDataType.TYPE);
       }
       break;
       case PYTHON:
@@ -141,6 +141,7 @@ public final class DataTypeManager extends BaseObject {
     StringBuilder sb = new StringBuilder();
     Map<String, DataType> sortedMap = treeMap();
     for (DataType t : mTypeMap.values()) {
+      todo("can we avoid use of isPrimitive?  And in fact many of these 'optimizations' for specific data types?");
       if (t.isPrimitive())
         continue;
       sortedMap.put(t.typeName(), t);
